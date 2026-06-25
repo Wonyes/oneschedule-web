@@ -1,0 +1,221 @@
+@import "tailwindcss";
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css");
+
+@theme {
+  --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.06);
+  --shadow-float: 0 20px 60px rgba(15, 23, 42, 0.08);
+}
+
+/* =========================
+   LIGHT THEME (BASE)
+========================= */
+:root {
+  /* base */
+  --main-bg: #f6f7fb;
+  --surface: rgba(255, 255, 255, 0.7);
+  --back: #fff;
+
+  /* text */
+  --foreground: #111827;
+  --primary: #374151;
+  --t-title: #0f172a;
+  --text: #475569;
+  --muted: #94a3b8;
+  --secondarty: #6b7280;
+  --place-h: #9ca3af;
+
+  /* borders */
+  --divider: rgba(17, 24, 39, 0.08);
+  --disable: #e5e7eb;
+  --b-color: rgba(15, 23, 42, 0.06);
+  --table-header: #f9fafb;
+
+  /* accent */
+  --primary-500: #4f46e5;
+  --success-500: #22c55e;
+  --error-500: #ef4444;
+  --pending-500: #f59e0b;
+
+  --accent: #6366f1;
+  --accent-soft: rgba(99, 102, 241, 0.08);
+
+  /* gradients */
+  --gradient-mint: linear-gradient(90deg, #93d8de 0%, #65c8d0 100%);
+  --gradient-pink: linear-gradient(90deg, #ff6574 0%, #e46975 100%);
+  --gradient-yellow: linear-gradient(90deg, #f39800 0%, #ffc225 100%);
+  --gradient-primary: linear-gradient(90deg, #221eca 0%, #6461da 100%);
+}
+
+/* =========================
+   DARK THEME
+========================= */
+[data-theme="dark"] {
+  --main-bg: #12141a;
+  --surface: #1a1d24;
+  --back: #151821;
+
+  --foreground: #e5e7eb;
+  --primary: #d1d5db;
+  --t-title: #f9fafb;
+  --secondarty: #9ca3af;
+  --place-h: #6b7280;
+
+  --divider: rgba(255, 255, 255, 0.06);
+  --disable: #2a2f3a;
+  --b-color: #1f2430;
+  --table-header: #1b1f2a;
+
+  --primary-500: #6366f1;
+  --success-500: #22c55e;
+  --error-500: #ef4444;
+  --pending-500: #f59e0b;
+}
+
+/* =========================
+   BASE (그대로 유지)
+========================= */
+@layer base {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--background);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--divider);
+    border-radius: 100px;
+    border: 2px solid var(--background);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--secondarty);
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--divider) var(--background);
+  }
+}
+
+/* Tailwind Theme Configuration */
+@theme inline {
+  --font-sans: "General Sans", "Pretendard", sans-serif;
+
+  --color-background: var(--main-bg);
+  --color-foreground: var(--foreground);
+
+  --color-primary-500: var(--primary-500);
+  --color-success-500: var(--success-500);
+  --color-error-500: var(--error-500);
+  --color-pending-500: var(--pending-500);
+
+  --color-b-color: var(--b-color);
+  --color-divider: var(--divider);
+  --color-disable: var(--disable);
+  --color-place-h: var(--place-h);
+
+  --color-back: var(--back);
+  --color-surface: var(--surface);
+  --color-main-bg: var(--main-bg);
+  --color-t-title: var(--t-title);
+  --color-table-header: var(--table-header);
+
+  --background-image-gradient-mint: var(--gradient-mint);
+  --background-image-gradient-pink: var(--gradient-pink);
+  --background-image-gradient-yellow: var(--gradient-yellow);
+  --background-image-gradient-primary: var(--gradient-primary);
+}
+
+@utility typo-h1 {
+  font-size: 48px;
+  line-height: 64px;
+  font-weight: 600;
+}
+@utility typo-h2 {
+  font-size: 40px;
+  line-height: 56px;
+  font-weight: 500;
+}
+@utility typo-h3 {
+  font-size: 36px;
+  line-height: 48px;
+  font-weight: 500;
+}
+@utility typo-h4 {
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 600;
+}
+
+@utility typo-title-1 {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 600;
+}
+@utility typo-title-2 {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 600;
+}
+
+@utility typo-sub-t-1 {
+  font-size: 15px;
+  line-height: 24px;
+  font-weight: 600;
+}
+@utility typo-sub-t-2 {
+  font-size: 15px;
+  line-height: 24px;
+  font-weight: 500;
+}
+@utility typo-sub-t-3 {
+  font-size: 13px;
+  line-height: 24px;
+  font-weight: 600;
+}
+@utility typo-sub-t-4 {
+  font-size: 13px;
+  line-height: 24px;
+  font-weight: 500;
+}
+
+@utility typo-body-1 {
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 400;
+}
+@utility typo-body-2 {
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 500;
+}
+
+@utility typo-caption-1 {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+}
+@utility typo-caption-2 {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+}
+@utility typo-caption-3 {
+  font-size: 10px;
+  line-height: 16px;
+  font-weight: 500;
+}
+
+/* base */
+@layer base {
+  html {
+    font-family: var(--font-sans);
+  }
+
+  button {
+    cursor: pointer;
+  }
+}
