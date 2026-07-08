@@ -1,4 +1,4 @@
-import { Primary } from "@/src/components/common/Button";
+import { Primary } from "@//components/common/Button";
 
 export default function page() {
   return (

@@ -3,8 +3,8 @@ import {
   Primary,
   Secondary,
   WhiteGhost,
-} from "@/src/components/common/Button";
-import { Labels } from "@/src/components/common/Labels";
+} from "@//components/common/Button";
+import { Labels } from "@//components/common/Labels";
 
 export default function StyleGuide() {
   return (

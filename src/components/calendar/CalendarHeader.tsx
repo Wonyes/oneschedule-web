@@ -1,25 +1,18 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Labels } from "../common/Labels";
-import { useCalendarStore } from "@/src/hooks/stores/CalendarStore";
+import { useCalendarStore } from "@//hooks/stores/CalendarStore";
 
 const tabs = [
-  { label: "연별", value: "year" },
   { label: "월별", value: "month" },
   { label: "주별", value: "week" },
   { label: "오늘", value: "day" },
 ] as const;
 
 function formatDate(mode: string, date: Date) {
-  if (mode === "year") {
-    return date.getFullYear();
-  }
-
   if (mode === "month") {
     return date.toLocaleDateString("ko", {
       month: "long",
-      year: "numeric",
     });
   }
 
@@ -44,7 +37,7 @@ export default function CalendarHeader() {
   const { mode, currentDate, setMode, next, prev } = useCalendarStore();
 
   return (
-    <div className="flex items-center justify-center rounded-3xl bg-white px-4 py-10">
+    <div className="flex items-center justify-center rounded-3xl bg-white px-4 py-4">
       <div className="flex items-center gap-6">
         <button
           onClick={prev}

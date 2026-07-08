@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Geist, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
+import { Geist, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import Header from "../components/header";
 import Sidebar from "../components/sidebar/Sidebar";
+import { Providers } from "./providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,31 +37,15 @@ export default function RootLayout({
       lang="ko"
       className={`${geistSans.variable} ${geistMono.variable} ${jakarta.variable} antialiased`}
     >
-      <head>
-        <Script id="theme-init" strategy="beforeInteractive">
-          {`
-            (function () {
-              try {
-                const theme = localStorage.getItem('theme');
-                if (theme) {
-                  document.documentElement.setAttribute('data-theme', theme);
-                } else {
-                  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                  document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
-                }
-              } catch (e) {}
-            })();
-          `}
-        </Script>
-      </head>
-
       <body className="bg-main-bg h-screen flex flex-col">
         <div className="flex flex-col h-full px-16 py-8">
           <Header />
 
           <div className="flex flex-1 gap-8 overflow-hidden">
             <Sidebar />
-            <main className="flex-1 overflow-auto">{children}</main>
+            <main className="flex-1">
+              <Providers>{children}</Providers>
+            </main>
           </div>
         </div>
       </body>

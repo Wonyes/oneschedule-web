@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-type ViewMode = "day" | "week" | "month" | "year";
+type ViewMode = "day" | "week" | "month";
 
 interface CalendarStore {
   mode: ViewMode;
@@ -27,8 +27,6 @@ export const useCalendarStore = create<CalendarStore>((set) => ({
 
       if (state.mode === "month") date.setMonth(date.getMonth() + 1);
 
-      if (state.mode === "year") date.setFullYear(date.getFullYear() + 1);
-
       return { currentDate: date };
     }),
 
@@ -41,8 +39,6 @@ export const useCalendarStore = create<CalendarStore>((set) => ({
       if (state.mode === "week") date.setDate(date.getDate() - 7);
 
       if (state.mode === "month") date.setMonth(date.getMonth() - 1);
-
-      if (state.mode === "year") date.setFullYear(date.getFullYear() - 1);
 
       return { currentDate: date };
     }),

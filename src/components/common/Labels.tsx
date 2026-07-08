@@ -1,23 +1,31 @@
 type Props = {
   text: string | number;
-  color?: "pink" | "yellow" | "primary" | "mint";
+  className?: string;
 };
 
-const colorMap = {
-  pink: "bg-gradient-pink",
-  yellow: "bg-gradient-yellow",
-  primary: "bg-gradient-primary",
-  mint: "bg-gradient-mint",
-};
-
-export const Labels = ({ text, color = "pink" }: Props) => {
+export const Labels = ({ text, className = "" }: Props) => {
   return (
     <div
-      className={`w-fit h-fit  rounded-[12px] shadow-float ${colorMap[color]}`}
+      className={`
+        w-fit
+        h-fit
+        rounded-[4px]
+        flex
+        items-center
+        justify-center
+        ${className}
+      `}
     >
-      <button className="px-[12px] py-[4px] text-white typo-body-1">
+      <span
+        className="
+          px-[4px]
+          py-[2px]
+          text-center
+          typo-caption-2
+        "
+      >
         {text}
-      </button>
+      </span>
     </div>
   );
 };
