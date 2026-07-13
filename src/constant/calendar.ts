@@ -1,3 +1,5 @@
+import { CalendarEvent } from "@/types/calendar";
+
 const HOUR_HEIGHT = 56;
 
 const DAYS = [
@@ -49,4 +51,28 @@ const EVENT_STYLES = {
   },
 } as const;
 
-export { HOUR_HEIGHT, DAYS, HOURS, EVENT_STYLES };
+const dummyEvents: CalendarEvent[] = [
+  {
+    id: 1,
+    title: "Frontend Meeting",
+    startDate: "2026-07-16T11:00:00",
+    endDate: "2026-07-16T13:00:00",
+    category: "meeting",
+  },
+  {
+    id: 2,
+    title: "Project Work",
+    startDate: "2026-07-15T09:30:00",
+    endDate: "2026-07-15T11:30:00",
+    category: "work",
+  },
+  {
+    id: 3,
+    title: "Gym",
+    startDate: "2026-07-08T18:00:00",
+    endDate: "2026-07-19T19:30:00",
+    category: "personal",
+  },
+];
+
+export { HOUR_HEIGHT, DAYS, HOURS, EVENT_STYLES, dummyEvents };

@@ -9,17 +9,15 @@ import {
   isSameDate,
 } from "@//utils/calendar";
 import CalendarCard from "../common/CalendarCard";
-import { dummyEvents } from "./WeekView";
 import { useCalendarStore } from "@//hooks/stores/CalendarStore";
-import { holidayType, ProcessedWeather } from "@//types/calendar";
+import { CalendarViewProps } from "@//types/calendar";
+import WeatherBadge from "./WeatherBadge";
 
 export default function MonthView({
+  events,
   holidays,
   weathers,
-}: {
-  holidays: holidayType[];
-  weathers: ProcessedWeather | undefined;
-}) {
+}: CalendarViewProps) {
   const currentDate = useCalendarStore((s) => s.currentDate);
   const monthDates = getMonthDates(currentDate);
 
@@ -44,7 +42,7 @@ export default function MonthView({
           const dateKey = format(date, "yyyyMMdd");
           const targetWeather = weathers?.[dateKey];
 
-          const dayEvents = dummyEvents.filter((e) => {
+          const dayEvents = events.filter((e) => {
             const start = new Date(e.startDate).setHours(0, 0, 0, 0);
             const end = new Date(e.endDate).setHours(23, 59, 59, 999);
             const target = date.getTime();
@@ -82,16 +80,7 @@ export default function MonthView({
                   {format(date, "d")}
                 </span>
 
-                {targetWeather ? (
-                  <div>
-                    <span>
-                      {getWeatherIcon(targetWeather.PTY, targetWeather.SKY)}
-                    </span>
-                    <span className="text-[12px] text-muted">
-                      {targetWeather.TMP}°
-                    </span>
-                  </div>
-                ) : null}
+                <WeatherBadge targetWeather={targetWeather} />
               </div>
 
               <div className="flex flex-col gap-0.5 mt-1">
@@ -106,7 +95,7 @@ export default function MonthView({
                       key={`${event.id}-${date.toISOString()}`}
                       event={event}
                       date={date}
-                      variant="compact"
+                      variant="month"
                       className={`
                          ${!isStartOfDay ? "ml-[-8px] rounded-l-none border-l-0" : ""} 
                          ${!isEndOfDay ? "mr-[-8px] rounded-r-none border-r-0" : ""}

@@ -9,6 +9,9 @@ import {
   isSunday,
   isSaturday,
   eachDayOfInterval,
+  isWithinInterval,
+  startOfDay,
+  endOfDay,
 } from "date-fns";
 import { CalendarEvent, holidayType } from "../types/calendar";
 
@@ -41,10 +44,11 @@ const getEventPosition = (
 ) => {
   const start = new Date(startDate);
   const end = new Date(endDate);
-  const targetDate = new Date(currentDate);
 
-  const todayStart = new Date(targetDate.setHours(0, 0, 0, 0));
-  const todayEnd = new Date(targetDate.setHours(23, 59, 59, 999));
+  const todayStart = new Date(currentDate);
+  todayStart.setHours(0, 0, 0, 0);
+  const todayEnd = new Date(currentDate);
+  todayEnd.setHours(23, 59, 59, 999);
 
   const renderStart = start < todayStart ? todayStart : start;
   const renderEnd = end > todayEnd ? todayEnd : end;
@@ -169,7 +173,7 @@ const splitEventByDate = (event: CalendarEvent) => {
   });
 };
 
-const getCompactTime = (startStr: string, endStr: string, date: Date) => {
+const getmonthTime = (startStr: string, endStr: string, date: Date) => {
   const start = new Date(startStr);
   const end = new Date(endStr);
   const isMultiDay = !isSameDate(start, end);
@@ -184,6 +188,70 @@ const getCompactTime = (startStr: string, endStr: string, date: Date) => {
   return `진행 중`; // 중간 날짜
 };
 
+function getWeekEvents(events: CalendarEvent[], date: Date) {
+  return events
+    .filter((event) => {
+      const start = new Date(event.startDate);
+      const end = new Date(event.endDate);
+
+      return (
+        date >= new Date(start.setHours(0, 0, 0, 0)) &&
+        date <= new Date(end.setHours(23, 59, 59, 999))
+      );
+    })
+    .map((event) => {
+      const isStart = isSameDay(new Date(event.startDate), date);
+
+      const position = getEventPosition(event.startDate, event.endDate, date);
+
+      return {
+        event,
+        date,
+        top: isStart ? position.top : 0,
+        height:
+          isStart || isSameDay(new Date(event.endDate), date)
+            ? position.height
+            : 1344,
+      };
+    });
+}
+
+function getDayEvents(events: CalendarEvent[], currentDate: Date) {
+  return events
+    .filter((event) => {
+      const start = new Date(event.startDate);
+      const end = new Date(event.endDate);
+
+      return isWithinInterval(currentDate, {
+        start: startOfDay(start),
+        end: endOfDay(end),
+      });
+    })
+    .map((event) => {
+      const start = new Date(event.startDate);
+      const end = new Date(event.endDate);
+
+      const displayStart = new Date(currentDate);
+      displayStart.setHours(start.getHours(), start.getMinutes(), 0, 0);
+
+      const displayEnd = new Date(currentDate);
+      displayEnd.setHours(end.getHours(), end.getMinutes(), 0, 0);
+
+      const { top, height } = getEventPosition(
+        displayStart,
+        displayEnd,
+        currentDate,
+      );
+
+      return {
+        event,
+        date: currentDate,
+        top,
+        height,
+      };
+    });
+}
+
 export {
   getDays,
   getTimes,
@@ -192,9 +260,11 @@ export {
   getDayColor,
   findHoliday,
   getWeekDates,
+  getDayEvents,
   getDaysOfTime,
+  getWeekEvents,
   getMonthDates,
-  getCompactTime,
+  getmonthTime,
   splitEventByDate,
   getEventsForDate,
   getEventPosition,

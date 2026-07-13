@@ -1,15 +1,16 @@
 import { Labels } from "../common/Labels";
 import { EVENT_STYLES } from "@//constant/calendar";
 import { CalendarEvent } from "@//types/calendar";
-import { getDaysOfTime, getTimes, isSameDate } from "@//utils/calendar";
+import { getTimes, isSameDate } from "@//utils/calendar";
 
 type EventCardProps = {
   event: CalendarEvent;
-  variant?: "block" | "compact";
+  variant?: "week" | "month" | "day";
   top?: number;
   height?: number;
   date?: Date;
   className?: string;
+  alwaysShow?: boolean;
 };
 
 export default function CalendarCard({
@@ -18,7 +19,7 @@ export default function CalendarCard({
   date,
   height,
   className = "",
-  variant = "block",
+  variant = "week",
 }: EventCardProps) {
   const style = EVENT_STYLES[event.category];
 
@@ -33,9 +34,9 @@ export default function CalendarCard({
   ${!isEnd ? "-mr-[1px] rounded-r-none border-r-0" : "rounded-r-[8px]"}
 `;
 
-  const connectionClass = variant === "block" && horizontalConnection;
+  const connectionClass = variant === "week" && horizontalConnection;
 
-  if (variant === "compact") {
+  if (variant === "month") {
     return (
       <div
         className={`p-1 rounded truncate flex flex-col h-12 items-left gap-1 border ${style.bg} ${style.border} ${connectionClass} ${className}`}
@@ -47,6 +48,25 @@ export default function CalendarCard({
           />
         )}
         <span className="typo-caption-1 truncate">{event.title}</span>
+      </div>
+    );
+  }
+
+  if (variant === "day") {
+    return (
+      <div
+        className={`
+        absolute left-0 right-0 scale-[0.92]
+        border ${style.bg} ${style.border}
+        p-2 shadow-sm z-10 ${className}
+      `}
+        style={{ top: `${top}px`, height: `${height}px` }}
+      >
+        <Labels
+          text={`${getTimes(event.startDate)} - ${getTimes(event.endDate)}`}
+          className={style.label}
+        />
+        <span className="typo-caption-1 mt-1">{event.title}</span>
       </div>
     );
   }
@@ -64,17 +84,17 @@ export default function CalendarCard({
       {isStart && (
         <>
           <Labels
-            text={`${getDaysOfTime(event.startDate)} - ${getDaysOfTime(event.endDate)}`}
+            text={`${getTimes(event.startDate)} - ${getTimes(event.endDate)}`}
             className={style.label}
           />
           <span className="typo-caption-1 mt-1">{event.title}</span>
         </>
       )}
 
-      {isEnd && (
+      {isEnd && isStart !== isEnd && (
         <>
           <Labels
-            text={`${getDaysOfTime(event.startDate)} - ${getDaysOfTime(event.endDate)}`}
+            text={`${getTimes(event.startDate)} - ${getTimes(event.endDate)}`}
             className={style.label}
           />
           <span className="typo-caption-1 mt-1">{event.title}</span>

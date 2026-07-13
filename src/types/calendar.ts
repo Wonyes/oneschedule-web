@@ -20,8 +20,8 @@ export type CalendarEvent = {
   startDate: string;
   endDate: string;
   category: EventCategory;
-  displayStart?: string;
-  displayEnd?: string;
+  displayStart?: Date;
+  displayEnd?: Date;
 };
 
 export type holidayType = {
@@ -52,3 +52,9 @@ export interface WeatherData {
 export interface ProcessedWeather {
   [key: string]: WeatherData;
 }
+
+export type CalendarViewProps = {
+  events: CalendarEvent[];
+  holidays: holidayType[];
+  weathers: ProcessedWeather | undefined;
+};
