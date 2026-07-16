@@ -36,12 +36,15 @@ export default function DayView({
       </div>
 
       <div className="flex-1 overflow-y-auto min-h-0">
-        <div className="grid grid-cols-[60px_1fr] min-h-[1400px]">
+        <div className="grid grid-cols-[60px_1fr] h-full">
           <HourColumn />
 
-          <div className="relative">
+          <div className="relative pb-16">
             {HOURS.map((_, i) => (
-              <div key={i} className="h-14 border-b border-divider" />
+              <div
+                key={i}
+                className="h-[56px] border-b border-divider box-border"
+              />
             ))}
             {getDayLayouts.map((layout) => (
               <CalendarCard

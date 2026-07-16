@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useCalendarStore } from "../stores/CalendarStore";
 import api from "@/src/lib/api";
 import { publicKeys } from "./key/publicKey";
+import { useWeatherStore } from "../stores/WeatherStore";
 
 export function useHolidays() {
   const currentDate = useCalendarStore((s) => s.currentDate);
@@ -24,9 +25,11 @@ export function useHolidays() {
   });
 }
 
-export function useWeathers(nx: number = 60, ny: number = 127) {
+export function useWeathers() {
+  const { nx, ny, name } = useWeatherStore();
+
   return useQuery({
-    queryKey: [publicKeys.weather, nx, ny],
+    queryKey: [publicKeys.weather, nx, ny, name],
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 10,
     placeholderData: (prev) => prev,
