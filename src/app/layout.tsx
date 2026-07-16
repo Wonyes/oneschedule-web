@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { Geist, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import Header from "../components/header";

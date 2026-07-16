@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useCalendarStore } from "@//hooks/stores/CalendarStore";
+import { useCalendarStore } from "@/src/hooks/stores/CalendarStore";
 
 const tabs = [
   { label: "월별", value: "month" },

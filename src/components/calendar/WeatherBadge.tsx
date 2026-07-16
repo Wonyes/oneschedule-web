@@ -1,5 +1,5 @@
-import { ProcessedWeather } from "@/types/calendar";
-import { getWeatherIcon } from "@/utils/calendar";
+import { ProcessedWeather } from "@/src/types/calendar";
+import { getWeatherIcon } from "@/src/utils/calendar";
 
 type WeatherProps = {
   targetWeather?: ProcessedWeather[string];

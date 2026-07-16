@@ -1,4 +1,4 @@
-import { CalendarEvent } from "@/types/calendar";
+import { CalendarEvent } from "@/src/types/calendar";
 
 const HOUR_HEIGHT = 56;
 
@@ -69,6 +69,20 @@ const dummyEvents: CalendarEvent[] = [
   {
     id: 3,
     title: "Gym",
+    startDate: "2026-07-08T18:00:00",
+    endDate: "2026-07-19T19:30:00",
+    category: "personal",
+  },
+  {
+    id: 4,
+    title: "Test",
+    startDate: "2026-07-08T18:00:00",
+    endDate: "2026-07-19T19:30:00",
+    category: "personal",
+  },
+  {
+    id: 5,
+    title: "Test",
     startDate: "2026-07-08T18:00:00",
     endDate: "2026-07-19T19:30:00",
     category: "personal",

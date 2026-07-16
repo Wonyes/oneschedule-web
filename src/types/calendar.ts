@@ -19,6 +19,8 @@ export type CalendarEvent = {
   title: string;
   startDate: string;
   endDate: string;
+  width?: number;
+  left?: number;
   category: EventCategory;
   displayStart?: Date;
   displayEnd?: Date;
@@ -31,6 +33,15 @@ export type holidayType = {
   locdate: string;
   seq: number;
 };
+
+export interface EventLayout {
+  event: CalendarEvent;
+  date: Date;
+  top: number;
+  height: number;
+  width?: number;
+  left?: number;
+}
 
 export interface WeatherItem {
   baseDate: string;

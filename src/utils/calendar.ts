@@ -13,7 +13,7 @@ import {
   startOfDay,
   endOfDay,
 } from "date-fns";
-import { CalendarEvent, holidayType } from "../types/calendar";
+import { CalendarEvent, EventLayout, holidayType } from "../types/calendar";
 
 const getTimes = (date: string) => {
   return format(new Date(date), "HH:mm");
@@ -38,26 +38,18 @@ const isSameDate = (dateA: string | Date, dateB: Date | undefined) => {
 };
 
 const getEventPosition = (
-  startDate: string | Date,
-  endDate: string | Date,
+  displayStart: Date,
+  displayEnd: Date,
   currentDate: Date,
 ) => {
-  const start = new Date(startDate);
-  const end = new Date(endDate);
+  const dayStart = startOfDay(currentDate);
+  const totalMinutes =
+    (displayStart.getTime() - dayStart.getTime()) / (1000 * 60);
+  const duration =
+    (displayEnd.getTime() - displayStart.getTime()) / (1000 * 60);
 
-  const todayStart = new Date(currentDate);
-  todayStart.setHours(0, 0, 0, 0);
-  const todayEnd = new Date(currentDate);
-  todayEnd.setHours(23, 59, 59, 999);
-
-  const renderStart = start < todayStart ? todayStart : start;
-  const renderEnd = end > todayEnd ? todayEnd : end;
-
-  const top =
-    (renderStart.getHours() * 60 + renderStart.getMinutes()) * (1344 / 1440);
-  const height =
-    ((renderEnd.getTime() - renderStart.getTime()) / (1000 * 60)) *
-    (1344 / 1440);
+  const top = totalMinutes * (1344 / 1440);
+  const height = duration * (1344 / 1440);
 
   return { top, height };
 };
@@ -96,8 +88,8 @@ const findHoliday = (date: Date, holidays: holidayType[] | holidayType) => {
   const targetDateStr = format(date, "yyyy-MM-dd");
 
   return holidayList.find((h) => {
-    const s = h.locdate.toString();
-    const hDateStr = `${s.substring(0, 4)}-${s.substring(4, 6)}-${s.substring(6, 8)}`;
+    const s = h.locdate?.toString();
+    const hDateStr = `${s?.substring(0, 4)}-${s?.substring(4, 6)}-${s?.substring(6, 8)}`;
 
     return targetDateStr === hDateStr;
   });
@@ -182,46 +174,60 @@ const getmonthTime = (startStr: string, endStr: string, date: Date) => {
     return `${getTimes(startStr)} - ${getTimes(endStr)}`;
   }
 
-  // 여러 날에 걸친 일정 처리
   if (isSameDate(start, date)) return `${getTimes(startStr)} ~ 끝`;
   if (isSameDate(end, date)) return `시작 ~ ${getTimes(endStr)}`;
-  return `진행 중`; // 중간 날짜
+  return `진행 중`;
 };
 
-function getWeekEvents(events: CalendarEvent[], date: Date) {
-  return events
-    .filter((event) => {
-      const start = new Date(event.startDate);
-      const end = new Date(event.endDate);
+const applyLayout = (events: EventLayout[]): EventLayout[] => {
+  return events.map((event) => {
+    const overlaps = events.filter(
+      (other) =>
+        event.top < other.top + other.height &&
+        event.top + event.height > other.top,
+    );
 
-      return (
-        date >= new Date(start.setHours(0, 0, 0, 0)) &&
-        date <= new Date(end.setHours(23, 59, 59, 999))
-      );
-    })
-    .map((event) => {
-      const isStart = isSameDay(new Date(event.startDate), date);
+    return {
+      ...event,
+      width: 100 / overlaps.length,
+      left:
+        (100 / overlaps.length) *
+        overlaps.findIndex((o) => o.event.id === event.event.id),
+    };
+  });
+};
 
-      const position = getEventPosition(event.startDate, event.endDate, date);
+function getWeekEvents(
+  events: CalendarEvent[],
+  weekDates: Date[],
+): EventLayout[] {
+  const layouts: EventLayout[] = events.map((event) => {
+    const start = new Date(event.startDate);
+    const end = new Date(event.endDate);
 
-      return {
-        event,
-        date,
-        top: isStart ? position.top : 0,
-        height:
-          isStart || isSameDay(new Date(event.endDate), date)
-            ? position.height
-            : 1344,
-      };
-    });
+    const { top, height } = getEventPosition(start, end, start);
+
+    return {
+      event,
+      date: startOfDay(start),
+      top,
+      height,
+    };
+  });
+
+  return weekDates.flatMap((date) => {
+    const dailyEvents = layouts.filter((e) => isSameDay(e.date, date));
+    return applyLayout(dailyEvents);
+  });
 }
-
-function getDayEvents(events: CalendarEvent[], currentDate: Date) {
-  return events
+function getDayEvents(
+  events: CalendarEvent[],
+  currentDate: Date,
+): EventLayout[] {
+  const processed = events
     .filter((event) => {
       const start = new Date(event.startDate);
       const end = new Date(event.endDate);
-
       return isWithinInterval(currentDate, {
         start: startOfDay(start),
         end: endOfDay(end),
@@ -243,13 +249,10 @@ function getDayEvents(events: CalendarEvent[], currentDate: Date) {
         currentDate,
       );
 
-      return {
-        event,
-        date: currentDate,
-        top,
-        height,
-      };
+      return { event, date: currentDate, top, height };
     });
+
+  return applyLayout(processed);
 }
 
 export {

@@ -1,22 +1,25 @@
+import { CalendarEvent } from "@/src/types/calendar";
 import { Labels } from "../common/Labels";
-import { EVENT_STYLES } from "@//constant/calendar";
-import { CalendarEvent } from "@//types/calendar";
-import { getTimes, isSameDate } from "@//utils/calendar";
+import { EVENT_STYLES } from "@/src/constant/calendar";
+import { getTimes, isSameDate } from "@/src/utils/calendar";
 
 type EventCardProps = {
   event: CalendarEvent;
   variant?: "week" | "month" | "day";
   top?: number;
+  width?: number;
+  left?: number;
   height?: number;
   date?: Date;
   className?: string;
-  alwaysShow?: boolean;
 };
 
 export default function CalendarCard({
-  event,
   top,
   date,
+  left,
+  width,
+  event,
   height,
   className = "",
   variant = "week",
@@ -60,7 +63,12 @@ export default function CalendarCard({
         border ${style.bg} ${style.border}
         p-2 shadow-sm z-10 ${className}
       `}
-        style={{ top: `${top}px`, height: `${height}px` }}
+        style={{
+          top: `${top}px`,
+          height: `${height}px`,
+          width: `${width}%`,
+          left: `${left}%`,
+        }}
       >
         <Labels
           text={`${getTimes(event.startDate)} - ${getTimes(event.endDate)}`}
@@ -77,9 +85,14 @@ export default function CalendarCard({
         absolute left-0 right-0 scale-[0.92]
         border ${style.bg} ${style.border} 
         p-2 shadow-sm z-10
+        hover:z-50 hover:scale-100 hover:opacity-100 opacity-90
+        transition-all duration-200
         ${connectionClass} ${className}
       `}
-      style={{ top: `${top}px`, height: `${height}px` }}
+      style={{
+        top: `${top}px`,
+        height: `${height}px`,
+      }}
     >
       {isStart && (
         <>

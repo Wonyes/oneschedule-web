@@ -4,7 +4,6 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
@@ -13,13 +12,35 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
+    "useUnknownInCatchVariables": false,
+    // 파일 이름 대소문자 일관성 강제
+    "forceConsistentCasingInFileNames": true,
+    // switch 문에서 fallthrough 방지
+    "noFallthroughCasesInSwitch": true,
+    // 기본 내보내기 허용
+    "allowSyntheticDefaultImports": true,
+    // 암시적인 any 타입 사용 허용
+    "noImplicitAny": false,
+    // 사용되지 않는 로컬 변수 경고
+    "noUnusedLocals": true,
+    // 사용되지 않는 매개변수 경고
+    "noUnusedParameters": true,
+    // TypeScript 확장자 허용
+    "allowImportingTsExtensions": true,
+    // 엄격한 타입 검사
+    "strict": false,
     "plugins": [
       {
         "name": "next"
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./*"],
+      "@components/*": ["./components/*"],
+      "@assets/*": ["./assets/*"],
+      "@pages/*": ["./pages/*"],
+      "@util/*": ["./util/*"],
+      "@typing/*": ["./typing/*"]
     }
   },
   "include": [

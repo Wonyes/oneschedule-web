@@ -1,11 +1,11 @@
 "use client";
 
-import { useCalendarStore } from "@//hooks/stores/CalendarStore";
+import { useCalendarStore } from "@/src/hooks/stores/CalendarStore";
 import DayView from "./DayView";
 import MonthView from "./MonthView";
-import { useHolidays, useWeathers } from "@//hooks/querys/useCommonApi";
-import { dummyEvents } from "@/constant/calendar";
 import WeekView from "./WeekView";
+import { useHolidays, useWeathers } from "@/src/hooks/querys/useCommonApi";
+import { dummyEvents } from "@/src/constant/calendar";
 
 export default function Calendar() {
   const mode = useCalendarStore((s) => s.mode);

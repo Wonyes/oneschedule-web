@@ -5,12 +5,11 @@ import {
   findHoliday,
   getDayColor,
   getMonthDates,
-  getWeatherIcon,
   isSameDate,
-} from "@//utils/calendar";
+} from "@/src/utils/calendar";
 import CalendarCard from "../common/CalendarCard";
-import { useCalendarStore } from "@//hooks/stores/CalendarStore";
-import { CalendarViewProps } from "@//types/calendar";
+import { useCalendarStore } from "@/src/hooks/stores/CalendarStore";
+import { CalendarViewProps } from "@/src/types/calendar";
 import WeatherBadge from "./WeatherBadge";
 
 export default function MonthView({

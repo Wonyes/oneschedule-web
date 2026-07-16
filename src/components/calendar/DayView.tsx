@@ -1,12 +1,12 @@
 "use client";
 
 import { format } from "date-fns";
-import { HOURS } from "@//constant/calendar";
-import { getDayColor, getDayEvents } from "@//utils/calendar";
-import { useCalendarStore } from "@//hooks/stores/CalendarStore";
+import { HOURS } from "@/src/constant/calendar";
+import { getDayColor, getDayEvents } from "@/src/utils/calendar";
+import { useCalendarStore } from "@/src/hooks/stores/CalendarStore";
 import CalendarCard from "../common/CalendarCard";
-import { CalendarViewProps } from "@//types/calendar";
-import { useIsHoliday } from "@//hooks/useIsHoliday";
+import { CalendarViewProps } from "@/src/types/calendar";
+import { useIsHoliday } from "@/src/hooks/useIsHoliday";
 import WeatherBadge from "./WeatherBadge";
 import HourColumn from "./HourColumn";
 
@@ -36,7 +36,7 @@ export default function DayView({
       </div>
 
       <div className="flex-1 overflow-y-auto min-h-0">
-        <div className="grid grid-cols-[60px_1fr] min-h-[1344px]">
+        <div className="grid grid-cols-[60px_1fr] min-h-[1400px]">
           <HourColumn />
 
           <div className="relative">
@@ -50,6 +50,8 @@ export default function DayView({
                 date={layout.date}
                 top={layout.top}
                 height={layout.height}
+                width={layout.width}
+                left={layout.left}
                 variant="day"
               />
             ))}

@@ -1,4 +1,4 @@
-import { HOURS } from "@/constant/calendar";
+import { HOURS } from "@/src/constant/calendar";
 
 type TimeGridProps = {
   className?: string;

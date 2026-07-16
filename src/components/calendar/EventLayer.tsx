@@ -1,5 +1,5 @@
 import CalendarCard from "../common/CalendarCard";
-import { CalendarEvent } from "@/types/calendar";
+import { CalendarEvent } from "@/src/types/calendar";
 
 type EventLayout = {
   key: string;
@@ -8,6 +8,8 @@ type EventLayout = {
   top: number;
   height: number;
   className?: string;
+  width?: number;
+  left?: number;
 };
 
 type EventLayerProps = {
