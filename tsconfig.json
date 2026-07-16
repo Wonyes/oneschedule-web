@@ -40,7 +40,9 @@
       "@assets/*": ["./assets/*"],
       "@pages/*": ["./pages/*"],
       "@util/*": ["./util/*"],
-      "@typing/*": ["./typing/*"]
+      "@typing/*": ["./typing/*"],
+      "@constant/*": ["./constant/*"],
+      "@utils/*": ["./utils/*"]
     }
   },
   "include": [

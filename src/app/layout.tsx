@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import Header from "../components/header";
-import Sidebar from "../components/sidebar/Sidebar";
 import { Providers } from "./providers";
 
 const geistSans = Geist({
@@ -40,8 +39,7 @@ export default function RootLayout({
         <div className="flex flex-col h-full px-16 py-8">
           <Header />
 
-          <div className="flex flex-1 gap-8 overflow-hidden">
-            <Sidebar />
+          <div className="flex flex-1 gap-8 pt-4 overflow-hidden">
             <main className="flex-1">
               <Providers>{children}</Providers>
             </main>

@@ -36,3 +36,26 @@ export function latLngToGrid(lat: number, lng: number) {
     ny: Math.floor(ro - ra * Math.cos(theta) + YO + 0.5),
   };
 }
+
+export const getBrowserLocation = (): Promise<GeolocationPosition> => {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
+};
+
+// 2. 주소 변환 로직
+export const getAddressFromCoords = async (
+  longitude: number,
+  latitude: number,
+) => {
+  const response = await fetch(`/api/address?x=${longitude}&y=${latitude}`);
+  if (!response.ok) throw new Error(`API 호출 실패: ${response.status}`);
+
+  const data = await response.json();
+
+  return (
+    data.documents?.[0]?.address?.region_2depth_name ||
+    data.documents?.[0]?.address?.region_1depth_name ||
+    "알 수 없는 지역"
+  );
+};

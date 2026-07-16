@@ -1,114 +1,100 @@
 "use client";
 
 import { useState } from "react";
-import { Search, MapPin, MenuIcon, ChevronDown } from "lucide-react";
-import { latLngToGrid } from "../utils/weather";
+import { MapPin, ChevronDown } from "lucide-react";
+import {
+  getAddressFromCoords,
+  getBrowserLocation,
+  latLngToGrid,
+} from "@/src/utils/weather";
 import { useWeatherStore } from "@/src/hooks/stores/WeatherStore";
-
-const LOCATIONS = [
-  { name: "서울", nx: 60, ny: 127 },
-  { name: "수원", nx: 60, ny: 121 },
-  { name: "인천", nx: 55, ny: 124 },
-  { name: "대전", nx: 67, ny: 100 },
-  { name: "대구", nx: 89, ny: 90 },
-  { name: "부산", nx: 98, ny: 76 },
-  { name: "광주", nx: 58, ny: 74 },
-  { name: "울산", nx: 102, ny: 84 },
-  { name: "제주", nx: 52, ny: 38 },
-];
+import { LOCATIONS } from "@/src/constant/weathet";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<"my" | "group">("my");
   const { name, setLocation } = useWeatherStore();
 
   const handleCurrentLocation = async () => {
     if (!navigator.geolocation) return alert("위치 정보를 지원하지 않습니다.");
-
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const { latitude, longitude } = position.coords;
-        const { nx, ny } = latLngToGrid(latitude, longitude);
-
-        try {
-          const response = await fetch(
-            `/api/address?x=${longitude}&y=${latitude}`,
-          );
-
-          if (!response.ok) {
-            throw new Error(`API 호출 실패: ${response.status}`);
-          }
-
-          const data = await response.json();
-          console.log(data);
-
-          const region =
-            data.documents?.[0]?.address?.region_2depth_name ||
-            data.documents?.[0]?.address?.region_1depth_name ||
-            "알 수 없는 지역";
-
-          setLocation(region, nx, ny);
-        } catch (error) {
-          console.error("주소 변환 실패:", error);
-          setLocation("현재 위치", nx, ny);
-        }
-
-        setIsOpen(false);
-      },
-      () => alert("위치 권한을 허용해주세요."),
-    );
+    try {
+      const position = await getBrowserLocation();
+      const { latitude, longitude } = position.coords;
+      const region = await getAddressFromCoords(longitude, latitude);
+      const { nx, ny } = latLngToGrid(latitude, longitude);
+      setLocation(region, nx, ny);
+    } catch (error) {
+      console.error("위치/주소 오류:", error);
+      alert("위치 정보를 가져올 수 없습니다.");
+    } finally {
+      setIsOpen(false);
+    }
   };
 
   return (
-    <header className="flex items-center pb-8 justify-between">
+    <header className="flex items-center rounded-4xl justify-between px-8 py-4 bg-white border-b border-gray-200 text-slate-800">
       <div className="flex gap-4 items-center">
-        <MenuIcon size={24} />
-        <h1 className="text-2xl font-bold">Constructor</h1>
+        <h1 className="text-xl font-bold tracking-tighter text-black">
+          ONE SCHEDULER
+        </h1>
       </div>
 
-      <div className="flex gap-4 items-center">
-        <div className="relative">
-          <Search size={18} className="absolute left-3 top-3" />
-          <input
-            className="pl-10 h-10 rounded-xl bg-gray-100 outline-none px-4"
-            placeholder="Search..."
-          />
-        </div>
+      <nav className="flex gap-8">
+        <button
+          onClick={() => setActiveTab("my")}
+          className={`text-sm font-semibold transition-all ${
+            activeTab === "my"
+              ? "text-black border-b-2 border-black"
+              : "text-slate-400 hover:text-slate-600"
+          }`}
+        >
+          MY CALENDAR
+        </button>
+        <button
+          onClick={() => setActiveTab("group")}
+          className={`text-sm font-semibold transition-all ${
+            activeTab === "group"
+              ? "text-black border-b-2 border-black"
+              : "text-slate-400 hover:text-slate-600"
+          }`}
+        >
+          GROUP CALENDAR
+        </button>
+      </nav>
 
-        {/* 위치 드롭다운 영역 */}
-        <div className="relative">
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="flex gap-2 items-center px-3 py-2 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <MapPin size={16} />
-            <span className="font-medium">{name}</span>
-            <ChevronDown size={14} />
-          </button>
+      <div className="relative">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="flex gap-2 items-center px-4 py-2 bg-slate-50 border border-slate-200 hover:bg-slate-100 rounded-lg transition-all"
+        >
+          <MapPin size={16} className="text-slate-500" />
+          <span className="font-medium text-sm text-slate-700">{name}</span>
+          <ChevronDown size={14} className="text-slate-400" />
+        </button>
 
-          {isOpen && (
-            <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-xl shadow-lg z-50 overflow-hidden py-1">
+        {isOpen && (
+          <div className="absolute right-0 mt-2 w-40 bg-white border border-slate-200 rounded-xl shadow-lg z-50 overflow-hidden py-1">
+            <button
+              onClick={handleCurrentLocation}
+              className="w-full text-left px-4 py-2 hover:bg-blue-50 text-blue-600 font-medium transition-colors"
+            >
+              📍 현재 위치
+            </button>
+            <div className="border-t border-slate-100 my-1" />
+            {LOCATIONS.map((loc) => (
               <button
-                onClick={handleCurrentLocation}
-                className="w-full text-left px-4 py-2 hover:bg-blue-50 text-blue-600 font-medium transition-colors"
+                key={loc.name}
+                onClick={() => {
+                  setLocation(loc.name, loc.nx, loc.ny);
+                  setIsOpen(false);
+                }}
+                className="w-full text-left px-4 py-2 hover:bg-slate-100 transition-colors text-slate-700"
               >
-                📍 현재 위치
+                {loc.name}
               </button>
-              <div className="border-t border-gray-100 my-1" />
-              {LOCATIONS.map((loc) => (
-                <button
-                  key={loc.name}
-                  onClick={() => {
-                    setLocation(loc.name, loc.nx, loc.ny);
-                    setIsOpen(false);
-                  }}
-                  className="w-full text-left px-4 py-2 hover:bg-gray-100 transition-colors"
-                >
-                  {loc.name}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </header>
   );
