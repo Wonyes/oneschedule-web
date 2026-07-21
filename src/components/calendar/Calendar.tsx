@@ -15,6 +15,9 @@ export default function Calendar() {
 
   const events = dummyEvents;
 
+  console.log(holidays);
+  console.log(weathers);
+
   if (mode === "day")
     return <DayView events={events} holidays={holidays} weathers={weathers} />;
   if (mode === "week")

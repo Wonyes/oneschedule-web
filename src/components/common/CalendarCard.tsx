@@ -37,14 +37,6 @@ export default function CalendarCard({
   ${!isEnd ? "-mr-[1px] rounded-r-none border-r-0" : "rounded-r-[8px]"}
 `;
 
-  const baseClasses = `
-    absolute border-l-4 ${style.border} bg-white
-    rounded-md shadow-[0_2px_8px_rgba(0,0,0,0.04)]
-    p-3 z-10 transition-all duration-300
-    hover:shadow-lg hover:scale-[1.02] cursor-pointer
-    ${className}
-  `;
-
   const connectionClass = variant === "week" && horizontalConnection;
 
   if (variant === "month") {

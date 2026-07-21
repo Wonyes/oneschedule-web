@@ -85,14 +85,14 @@ export default function WeekView({
       </div>
 
       <div className="flex-1 scroll-stable overflow-y-auto min-h-0">
-        <div className="grid grid-cols-[60px_repeat(7,1fr)] min-h-[1344px]">
+        <div className="grid grid-cols-[60px_repeat(7,1fr)] h-full">
           <HourColumn />
 
           {weekDates.map((date) => {
             return (
               <div
                 key={date.toISOString()}
-                className="relative border-r border-divider"
+                className="relative pb-16 border-r border-divider"
               >
                 <TimeGrid />
 
