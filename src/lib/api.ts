@@ -22,22 +22,16 @@ api.interceptors.request.use(
     const isPublic = publicPaths.some((path) => config.url?.includes(path));
     if (isPublic) return config;
 
-    // HTTP Authorization 요청 헤더에 jwt-token을 넣음
-    // 서버측 미들웨어에서 이를 확인하고 검증한 후 해당 API에 요청함.
-
-    const accessToken =
-      typeof window !== "undefined"
-        ? localStorage.getItem("access-token")
-        : null;
-    const refreshToken =
-      typeof window !== "undefined"
-        ? localStorage.getItem("refresh-token")
-        : null;
+    const accessToken = localStorage.getItem("access-token");
+    const refreshToken = localStorage.getItem("refresh-token");
 
     try {
       if (accessToken) {
-        config.headers.req = refreshToken;
-        config.headers.Authorization = accessToken;
+        config.headers.Authorization = `Bearer ${accessToken}`;
+      }
+
+      if (refreshToken) {
+        config.headers["Refresh-Token"] = refreshToken;
       }
 
       return config;
@@ -59,9 +53,14 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => {
     const accessToken = response.headers["authorization"];
+    const refreshToken = response.headers["refresh-token"];
 
     if (accessToken) {
-      localStorage.setItem("access-token", response.headers["authorization"]);
+      localStorage.setItem("access-token", accessToken.replace("Bearer ", ""));
+    }
+
+    if (refreshToken) {
+      localStorage.setItem("refresh-token", refreshToken);
     }
     return response;
   },

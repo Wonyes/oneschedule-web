@@ -5,15 +5,21 @@ interface MutationProps {
   body?: object;
   params?: object;
   headers?: object;
+  responseFull?: boolean;
 }
+
 export const Post = async <T>({
   url,
   body,
   params,
   headers,
+  responseFull = false,
 }: MutationProps): Promise<T> => {
   const response = await api.post(url, body, { params, headers });
-  return (response.data.result ?? response.data) as T;
+
+  return (
+    responseFull ? response : (response.data.result ?? response.data)
+  ) as T;
 };
 
 export const Delete = async <T>({ url, params }: MutationProps): Promise<T> => {

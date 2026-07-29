@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { useCalendarStore } from "../stores/CalendarStore";
+import { useScheduleStore } from "../stores/useScheduleStore";
 import api from "@/src/lib/api";
 import { publicKeys } from "./key/publicKey";
-import { useWeatherStore } from "../stores/WeatherStore";
+import { useWeatherStore } from "../stores/useWeatherStore";
 
 export function useHolidays() {
-  const currentDate = useCalendarStore((s) => s.currentDate);
+  const currentDate = useScheduleStore((s) => s.currentDate);
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth() + 1;

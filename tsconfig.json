@@ -42,7 +42,9 @@
       "@util/*": ["./util/*"],
       "@typing/*": ["./typing/*"],
       "@constant/*": ["./constant/*"],
-      "@utils/*": ["./utils/*"]
+      "@utils/*": ["./utils/*"],
+      "@lib/*": ["./lib/*"],
+      "@types/*": ["./types/*"]
     }
   },
   "include": [
