@@ -7,6 +7,7 @@ type ButtonProps = {
   className?: string;
   isDisabled?: boolean;
   onClick?: () => void;
+  type?: "button" | "submit" | "reset";
 };
 
 const BaseButton = ({
@@ -15,9 +16,11 @@ const BaseButton = ({
   className,
   isDisabled,
   onClick,
+  type = "button",
 }: ButtonProps) => {
   return (
     <button
+      type={type}
       disabled={isDisabled}
       onClick={onClick}
       className={cn(
@@ -27,13 +30,16 @@ const BaseButton = ({
         justify-center
         gap-2
         rounded-xl
-        typo-caption-2
+        font-medium
+        text-sm
         transition-all
+        duration-200
         whitespace-nowrap
+        active:scale-[0.98]
         disabled:cursor-not-allowed
         `,
         className,
-        isDisabled && "opacity-60 grayscale",
+        isDisabled && "opacity-40 grayscale pointer-events-none",
       )}
     >
       {icon && icon}
@@ -42,16 +48,19 @@ const BaseButton = ({
   );
 };
 
-// 메인 버튼
 const Primary = (props: ButtonProps) => {
   return (
     <BaseButton
       {...props}
       className={cn(
         `
-        bg-black
+        bg-indigo-600
         text-white
-        hover:opacity-90
+        shadow-lg
+        shadow-indigo-600/25
+        hover:bg-indigo-500
+        py-3
+        px-4
         `,
         props.className,
       )}
@@ -59,54 +68,20 @@ const Primary = (props: ButtonProps) => {
   );
 };
 
-// 파란 배경 버튼
-const BlueBtn = (props: ButtonProps) => {
+const SecondaryBtn = (props: ButtonProps) => {
   return (
     <BaseButton
       {...props}
       className={cn(
         `
-        bg-[#EFF4FB]
-        text-[#2E81FF]
-        hover:bg-[#2E81FF]
-        hover:text-white
-        `,
-        props.className,
-      )}
-    />
-  );
-};
-
-// 흰색 버튼
-const WhiteBtn = (props: ButtonProps) => {
-  return (
-    <BaseButton
-      {...props}
-      className={cn(
-        `
-        bg-white
-        text-[#2B3674]
+        bg-white/[0.04]
+        text-slate-200
         border
-        border-[#E0E5F2]
-        hover:bg-[#F4F7FE]
-        `,
-        props.className,
-      )}
-    />
-  );
-};
-
-// 빨간 버튼
-const RedBtn = (props: ButtonProps) => {
-  return (
-    <BaseButton
-      {...props}
-      className={cn(
-        `
-        bg-[#FFF5F5]
-        text-[#E31A1A]
-        hover:bg-[#E31A1A]
+        border-white/10
+        hover:bg-white/[0.08]
         hover:text-white
+        py-3
+        px-4
         `,
         props.className,
       )}
@@ -114,7 +89,6 @@ const RedBtn = (props: ButtonProps) => {
   );
 };
 
-// 라인 버튼
 const LineBtn = (props: ButtonProps) => {
   return (
     <BaseButton
@@ -122,11 +96,13 @@ const LineBtn = (props: ButtonProps) => {
       className={cn(
         `
         bg-transparent
-        text-[#2E81FF]
+        text-slate-300
         border
-        border-[#2E81FF]
-        hover:bg-[#2E81FF]
+        border-white/10
+        hover:bg-white/[0.04]
         hover:text-white
+        py-3
+        px-4
         `,
         props.className,
       )}
@@ -134,4 +110,29 @@ const LineBtn = (props: ButtonProps) => {
   );
 };
 
-export { Primary, BlueBtn, WhiteBtn, RedBtn, LineBtn };
+const RedBtn = (props: ButtonProps) => {
+  return (
+    <BaseButton
+      {...props}
+      className={cn(
+        `
+        bg-rose-500/15
+        text-rose-400
+        border
+        border-rose-500/30
+        hover:bg-rose-600
+        hover:text-white
+        hover:border-transparent
+        py-3
+        px-4
+        `,
+        props.className,
+      )}
+    />
+  );
+};
+
+const WhiteBtn = SecondaryBtn;
+const BlueBtn = SecondaryBtn;
+
+export { Primary, SecondaryBtn, LineBtn, RedBtn, WhiteBtn, BlueBtn };

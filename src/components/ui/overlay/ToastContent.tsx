@@ -24,13 +24,15 @@ export default function ToastContent({ message }: ToastContentProps) {
     };
   }, []);
 
+  if (!message) return null;
+
   return (
     <div
-      className={`fixed left-1/2 top-1/2 z-[10000] flex w-fit max-w-[728px] -translate-x-1/2 -translate-y-1/2 items-center rounded-full bg-blue-600 px-4 py-2 text-center transition-opacity duration-500 ${
-        visible ? "opacity-100" : "opacity-0"
+      className={`fixed bottom-10 left-1/2 z-[10000] flex w-fit max-w-[728px] -translate-x-1/2 items-center rounded-2xl bg-indigo-600 px-5 py-3 shadow-xl transition-all duration-300 ${
+        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
       }`}
     >
-      <span className="whitespace-nowrap text-white text-sm font-medium">
+      <span className="whitespace-nowrap text-white text-xs font-semibold">
         {message}
       </span>
     </div>

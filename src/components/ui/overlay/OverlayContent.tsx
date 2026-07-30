@@ -21,20 +21,27 @@ export default function OverlayContent({
 
   return (
     <>
-      <div className="fixed inset-0 z-[9990] bg-black/60 transition-opacity duration-300 opacity-100" />
+      {/* Dimmed Background */}
+      <div className="fixed inset-0 z-[9990] bg-black/70  transition-opacity duration-300 opacity-100" />
 
-      <div className="fixed left-1/2 top-1/2 z-[9999] flex w-[calc(100%-200px)] max-w-[320px] -translate-x-1/2 -translate-y-1/2 flex-col justify-between rounded-[20px] bg-white shadow-[0_10px_40px_rgba(0,0,0,0.15)] transition-all duration-300">
-        <div className="flex items-center justify-between px-[20px] pt-[24px] pb-[16px] m-0">
-          <span className="typo-title-2 font-bold text-[#2b3674]">{title}</span>
+      {/* Alert / Confirm Box */}
+      <div className="fixed left-1/2 top-1/2 z-[9999] flex w-[calc(100%-32px)] max-w-[360px] -translate-x-1/2 -translate-y-1/2 flex-col rounded-2xl bg-[#1e2538] border border-white/10 shadow-2xl transition-all duration-300 text-slate-100 overflow-hidden">
+        {/* 상단 타이틀 */}
+        <div className="px-6 pt-6 pb-2">
+          <h3 className="text-base font-bold text-slate-100 tracking-tight">
+            {title}
+          </h3>
         </div>
 
-        <div className="flex flex-grow flex-col px-[20px] pb-[10px] space-y-2">
-          {message && <p className="typo-body-2">{message}</p>}
-          {message2 && <p className="typo-body-2">{message2}</p>}
-          {message3 && <p className="typo-body-2">{message3}</p>}
+        {/* 메시지 영역 */}
+        <div className="px-6 py-2 space-y-1 text-slate-300 text-sm">
+          {message && <p>{message}</p>}
+          {message2 && <p>{message2}</p>}
+          {message3 && <p>{message3}</p>}
         </div>
 
-        <div className="flex items-center justify-end gap-[12px] rounded-b-[20px] bg-[#f8f9fc] px-[20px] py-[16px]">
+        {/* 버튼 영역 (구분선 없이 깔끔하게 배치) */}
+        <div className="px-6 pt-4 pb-6 flex items-center gap-2.5">
           {buttons}
         </div>
       </div>

@@ -5,6 +5,7 @@ import Header from "../components/common/header";
 import { Providers } from "./providers";
 import Sheet from "../components/ui/sheet/sheet";
 import GlobalOverlays from "../components/ui/GlobalOverlay";
+import Sidebar from "../components/common/Sidebar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,16 +39,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${jakarta.variable} antialiased`}
     >
       <body className="bg-main-bg w-full h-screen flex justify-center">
-        <div className="flex max-w-[1400px] w-full flex-col h-full px-16 py-8">
-          <Header />
-
-          <div className="realtive flex flex-1 gap-8 pt-4 overflow-hidden">
-            <main className="flex-1">
-              <Providers>{children}</Providers>
-              <GlobalOverlays />
-            </main>
-          </div>
-        </div>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

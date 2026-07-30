@@ -1,6 +1,6 @@
 "use client";
 
-import { LineBtn, Primary } from "@/src/components/ui/layout/button";
+import { Primary } from "@/src/components/ui/layout/button";
 import { Column } from "@/src/components/ui/layout/flex";
 import { Input, PasswordInput } from "@/src/components/ui/layout/input";
 import { useForm } from "@/src/hooks/useForm";
@@ -21,6 +21,7 @@ export default function SignForm() {
     phone: "",
   });
   const { openAlert } = useOverlay();
+
   const { mutate: signUp } = useAppMutation({
     mutationFn: () => {
       return Post({
@@ -37,90 +38,116 @@ export default function SignForm() {
     onSuccess: () => {
       router.push("/login");
     },
-    onError: () => {
+    onError: (err) => {
       openAlert({
         title: "회원가입에 실패하였습니다.",
-        message: "가입정보를 다시 확인해 주세요.",
+        message: err.data.result.errorMessage,
       });
     },
   });
 
   return (
-    <div className="max-w-[420px] relative w-full flex flex-col h-full">
-      <header className="pb-[20px] shrink-0">
-        <h1 className="typo-title-2">회원정보 입력</h1>
+    <div className="max-w-[420px] w-full mx-auto relative flex flex-col h-full text-slate-100">
+      {/* 상단 타이틀 영역 */}
+      <header className="pt-2 pb-5 px-1 shrink-0">
+        <h1 className="text-xl font-bold text-slate-100">회원정보 입력</h1>
+        <p className="text-xs text-slate-400 mt-1">
+          서비스 이용을 위한 정보를 입력해주세요.
+        </p>
       </header>
 
-      <Column className="gap-[28px] flex-1 overflow-y-auto pb-[80px]">
+      {/* 스크롤 영역 (하단 고정 버튼에 가리지 않도록 pb-28 넉넉히 확보) */}
+      <Column className="gap-5 flex-1 overflow-y-auto px-1 pb-28">
         <Field label="이메일">
           <Input
+            className="h-[52px]"
             name="email"
             placeholder="이메일"
             value={form.email}
             onChange={formChange}
+            description="로그인 및 계정 복구, 주요 알림 수신에 사용됩니다."
             rightSection={
               <Primary
                 text="중복확인"
-                className="py-[4px] px-[8px] rounded-[4px]"
+                className="py-[6px] px-3 rounded-lg text-xs"
+                onClick={() => {
+                  // TODO: 이메일 중복 확인 로직
+                }}
               />
             }
           />
         </Field>
 
         <Field label="비밀번호">
-          <PasswordInput
-            name="password"
-            value={form.password}
+          <div className="flex flex-col gap-3 w-full">
+            <PasswordInput
+              className="h-[52px]"
+              name="password"
+              value={form.password}
+              onChange={formChange}
+              placeholder="비밀번호"
+            />
+            <PasswordInput
+              className="h-[52px]"
+              name="passwordConfirm"
+              value={form.passwordConfirm}
+              onChange={formChange}
+              placeholder="비밀번호 확인"
+              description="영문, 숫자, 특수문자를 조합하여 8자 이상 입력해주세요."
+            />
+          </div>
+        </Field>
+
+        <Field label="이름">
+          <Input
+            className="h-[52px]"
+            name="name"
+            value={form.name}
             onChange={formChange}
-            placeholder="비밀번호"
-          />
-          <PasswordInput
-            name="passwordConfirm"
-            value={form.passwordConfirm}
-            onChange={formChange}
-            placeholder="비밀번호 확인"
+            placeholder="이름"
+            description="본인 명의의 실명을 입력해주세요."
           />
         </Field>
 
         <Field label="닉네임">
           <Input
+            className="h-[52px]"
             name="nickname"
             placeholder="닉네임"
             value={form.nickname}
             onChange={formChange}
+            description="서비스 내에서 사용될 고유한 닉네임을 입력해주세요."
             rightSection={
               <Primary
                 text="중복확인"
-                className="py-[4px] px-[8px] rounded-[4px]"
+                className="py-[6px] px-3 rounded-lg text-xs"
+                onClick={() => {
+                  // TODO: 닉네임 중복 확인 로직
+                }}
               />
             }
           />
         </Field>
 
-        <Field label="이름">
-          <Input
-            name="name"
-            value={form.name}
-            onChange={formChange}
-            placeholder="이름"
-          />
-        </Field>
-
         <Field label="전화번호">
           <Input
+            className="h-[52px]"
             name="phone"
             value={form.phone}
             onChange={formChange}
             placeholder="전화번호"
+            description="'-'를 제외한 숫자만 입력해주세요."
           />
         </Field>
       </Column>
 
-      <LineBtn
-        text="회원가입"
-        onClick={signUp}
-        className="absolute bottom-0 left-0 w-full px-4 pb-[env(safe-area-inset-bottom)] h-[48px] z-[999]"
-      />
+      <div className="absolute bottom-4 left-0 w-full pb-[calc(env(safe-area-inset-bottom)+12px)] px-1 z-[999]">
+        <Primary
+          text="회원가입"
+          onClick={signUp}
+          className="w-full py-3.5 rounded-xl font-semibold shadow-lg shadow-indigo-600/30"
+        />
+      </div>
     </div>
   );
 }

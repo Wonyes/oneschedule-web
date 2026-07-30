@@ -4,27 +4,45 @@ import { useState } from "react";
 
 type InputProps = React.ComponentProps<"input"> & {
   rightSection?: React.ReactNode;
+  description?: string;
 };
 
-export function Input({ rightSection, className, ...props }: InputProps) {
+export function Input({
+  rightSection,
+  description,
+  className,
+  ...props
+}: InputProps) {
   return (
-    <div
-      className={cn(
-        "w-full rounded-xl flex shadow-soft transition px-4 py-3 border border-gray-300",
-        "focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100",
-      )}
-    >
-      <div className={cn("flex w-full", rightSection && "justify-between")}>
-        <input
-          {...props}
+    <div className="flex flex-col gap-1.5 w-full">
+      <div
+        className={cn(
+          "w-full rounded-xl flex items-center transition px-4",
+          "neu-pressed",
+          "focus-within:ring-2 focus-within:ring-indigo-500/30",
+          "py-3",
+          className,
+        )}
+      >
+        <div
           className={cn(
-            "w-full outline-none typo-caption-2",
-            "disabled:bg-gray-100 disabled:text-gray-400",
-            className,
+            "flex w-full items-center h-full",
+            rightSection && "justify-between gap-2",
           )}
-        />
-        {rightSection}
+        >
+          <input
+            {...props}
+            className={cn(
+              "w-full outline-none typo-caption-2 bg-transparent text-slate-100 placeholder:text-slate-500",
+              "disabled:text-slate-600",
+            )}
+          />
+          {rightSection}
+        </div>
       </div>
+      {description && (
+        <span className="text-[11px] text-slate-400 pl-1">{description}</span>
+      )}
     </div>
   );
 }
@@ -37,8 +55,12 @@ export function PasswordInput(props: InputProps) {
       {...props}
       type={show ? "text" : "password"}
       rightSection={
-        <button type="button" onClick={() => setShow(!show)}>
-          {show ? <Eye size={20} /> : <EyeClosed size={20} />}
+        <button
+          type="button"
+          onClick={() => setShow(!show)}
+          className="text-slate-400 hover:text-slate-200 transition flex items-center"
+        >
+          {show ? <Eye size={18} /> : <EyeClosed size={18} />}
         </button>
       }
     />

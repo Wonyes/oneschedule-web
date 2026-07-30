@@ -1,6 +1,11 @@
 "use client";
 
-import { BlueBtn, LineBtn, WhiteBtn } from "../components/ui/layout/button";
+import {
+  BlueBtn,
+  LineBtn,
+  Primary,
+  WhiteBtn,
+} from "../components/ui/layout/button";
 import OverlayContent from "../components/ui/overlay/OverlayContent";
 import ModalContent from "../components/ui/overlay/ModalContent";
 import ToastContent from "../components/ui/overlay/ToastContent";
@@ -39,7 +44,7 @@ export function useOverlay() {
       message2={alert.message2}
       show={alert.isShow}
       buttons={
-        <LineBtn
+        <Primary
           onClick={() => closeOverlay("alert", true)}
           className="typo-caption-2 w-full p-3"
           text={alert.mainBtn}

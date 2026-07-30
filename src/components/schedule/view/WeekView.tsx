@@ -35,10 +35,11 @@ const Weeks = ({ weekDates, holidays, weathers }: WeeksType) => {
         return (
           <div
             key={date.toISOString()}
-            className={`flex flex-col items-center justify-center typo-body-2 text-secondarty
-              ${i !== weekDates.length - 1 ? "border-r border-divider" : ""}`}
+            className={`flex flex-col items-center justify-center typo-body-2 text-secondary ${
+              i !== weekDates.length - 1 ? "border-r border-divider/40" : ""
+            }`}
           >
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-1.5 items-center">
               <span className={getDayColor(date, isHoliday)}>
                 {format(date, "EEE")}
               </span>
@@ -72,10 +73,10 @@ export default function WeekView({
   );
 
   return (
-    <div className="h-full border border-divider bg-surface flex flex-col">
-      <div className="pr-2.5">
-        <div className="grid grid-cols-[60px_repeat(7,minmax(0,1fr))] h-14 shrink-0 bg-back border-b border-divider">
-          <div className="flex items-center justify-center border-r border-divider text-muted">
+    <div className="h-full neu-flat rounded-3xl flex flex-col overflow-hidden">
+      <div className="pr-2.5 shrink-0">
+        <div className="grid grid-cols-[60px_repeat(7,minmax(0,1fr))] h-14 bg-transparent border-b border-divider">
+          <div className="flex items-center justify-center border-r border-divider/40 text-muted">
             <Timer size={14} />
           </div>
 
@@ -87,15 +88,17 @@ export default function WeekView({
         </div>
       </div>
 
-      <div className="flex-1 scroll-stable overflow-y-auto min-h-0">
-        <div className="grid grid-cols-[60px_repeat(7,1fr)] h-full">
+      <div className="flex-1 overflow-y-auto min-h-0 p-2">
+        <div className="grid grid-cols-[60px_repeat(7,1fr)] min-h-full neu-pressed rounded-2xl">
           <HourColumn />
 
-          {weekDates.map((date) => {
+          {weekDates.map((date, i) => {
             return (
               <div
                 key={date.toISOString()}
-                className="relative pb-16 border-r border-divider"
+                className={`relative ${
+                  i !== weekDates.length - 1 ? "border-r border-divider/40" : ""
+                }`}
               >
                 <TimeGrid
                   onClickTime={(startTime) =>

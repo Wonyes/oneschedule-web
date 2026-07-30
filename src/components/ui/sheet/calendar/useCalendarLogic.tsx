@@ -20,20 +20,19 @@ const CalendarTD = ({
       className={cn(
         `
         typo-body-2
-
         w-[40px]
         h-[40px]
-
         align-middle
         text-center
-
         border-none
         cursor-pointer
+        text-slate-300
+        select-none
         `,
 
-        className?.includes("sunday") && "text-red",
+        className?.includes("sunday") && "text-rose-400 font-medium",
 
-        className?.includes("saturday") && "text-blue",
+        className?.includes("saturday") && "text-sky-400 font-medium",
 
         className?.includes("impossible_select") &&
           `
@@ -43,7 +42,7 @@ const CalendarTD = ({
         $disabled &&
           `
           cursor-not-allowed
-          opacity-50
+          opacity-25
           pointer-events-none
           `,
 
@@ -88,29 +87,33 @@ const Day = ({
       className={cn(
         `
         typo-caption-2
-
         w-full
         h-[40px]
         min-w-[40px]
-
         flex
         items-center
         justify-center
-
         rounded-lg
+        transition-colors
         `,
+
+        !isSelected && !isRange && "hover:bg-white/10 hover:text-white",
 
         isRange &&
           `
-          bg-input
+          bg-indigo-950/70
+          text-indigo-200
           rounded-none
           `,
 
         isSelected &&
           `
-          bg-blue
+          bg-indigo-600
           text-white
+          font-semibold
           rounded-lg
+          shadow-md
+          shadow-indigo-600/30
           `,
       )}
     >
@@ -118,6 +121,7 @@ const Day = ({
     </div>
   );
 };
+
 export const useCalendarLogic = () => {
   const { today, currentDate, moveMonth } = useCalendarStore();
 
@@ -187,6 +191,7 @@ export const useCalendarLogic = () => {
 
     return classes.join(" ");
   };
+
   const createWeekRow = (
     week: number,
     startDateNumber: number,
@@ -295,19 +300,33 @@ export const useCalendarLogic = () => {
       <CalendarTable>
         <thead>
           <tr>
-            <CalendarTD className="sunday weekly">일</CalendarTD>
+            <CalendarTD className="sunday weekly text-rose-400 font-semibold">
+              일
+            </CalendarTD>
 
-            <CalendarTD className="weekly">월</CalendarTD>
+            <CalendarTD className="weekly text-slate-400 font-medium">
+              월
+            </CalendarTD>
 
-            <CalendarTD className="weekly">화</CalendarTD>
+            <CalendarTD className="weekly text-slate-400 font-medium">
+              화
+            </CalendarTD>
 
-            <CalendarTD className="weekly">수</CalendarTD>
+            <CalendarTD className="weekly text-slate-400 font-medium">
+              수
+            </CalendarTD>
 
-            <CalendarTD className="weekly">목</CalendarTD>
+            <CalendarTD className="weekly text-slate-400 font-medium">
+              목
+            </CalendarTD>
 
-            <CalendarTD className="weekly">금</CalendarTD>
+            <CalendarTD className="weekly text-slate-400 font-medium">
+              금
+            </CalendarTD>
 
-            <CalendarTD className="saturday weekly">토</CalendarTD>
+            <CalendarTD className="saturday weekly text-sky-400 font-semibold">
+              토
+            </CalendarTD>
           </tr>
         </thead>
 

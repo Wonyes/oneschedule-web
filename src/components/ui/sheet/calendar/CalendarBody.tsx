@@ -17,72 +17,55 @@ export default function CalendarBody() {
 
   return (
     <div
-      className="
-        p-5
-        rounded-lg
-        bg-white
-        shadow-[0_4px_30px_rgba(0,0,0,0.1)]
-        mt-2
-        z-[999]
-        w-full
-        flex
-        flex-col
-        items-center
-        gap-4
-      "
+      className={cn(
+        "p-5 rounded-2xl bg-[#1b2233] border border-white/10",
+        "shadow-2xl mt-2 z-[999] w-full flex flex-col items-center gap-4 text-slate-100",
+      )}
     >
-      <Column>
-        <Between>
+      <Column className="w-full">
+        <Between className="w-full items-center">
           <button
+            type="button"
             className={cn(
-              `
-                w-6
-                h-6
-                flex
-                items-center
-                justify-center
-                rounded
-                hover:bg-input
-                cursor-pointer
-                rotate-180
-                `,
+              "w-7 h-7 flex items-center justify-center rounded-lg",
+              "text-slate-400 hover:bg-white/10 hover:text-white transition-colors",
+              "cursor-pointer rotate-180",
               isCurrentMonth &&
-                `
-                  cursor-auto
-                  opacity-50
-                  hover:bg-transparent
-                  `,
+                "cursor-auto opacity-30 hover:bg-transparent hover:text-slate-400",
             )}
             disabled={isCurrentMonth}
             onClick={() => moveMonth("prev")}
           >
-            <ChevronRight size={20} />
+            <ChevronRight size={18} />
           </button>
 
-          <span className="month typo-body-2 px-4">
+          <span className="typo-body-2 text-white font-semibold px-4">
             {`${today.getFullYear()}년 ${currentMonth.name}`}
           </span>
 
           <button
-            className="
-                w-6
-                h-6
-                flex
-                items-center
-                justify-center
-                rounded
-                cursor-pointer
-                hover:bg-input
-              "
+            type="button"
+            className={cn(
+              "w-7 h-7 flex items-center justify-center rounded-lg",
+              "text-slate-400 hover:bg-white/10 hover:text-white transition-colors",
+              "cursor-pointer",
+            )}
             onClick={() => moveMonth("next")}
           >
-            <ChevronRight size={20} />
+            <ChevronRight size={18} />
           </button>
         </Between>
       </Column>
-      {createCalendar()}
 
-      <BlueBtn text="확인" onClick={() => toggleCalendar()} />
+      <div>{createCalendar()}</div>
+
+      <div className="w-full p-2">
+        <BlueBtn
+          text="확인"
+          className="w-full p-3"
+          onClick={() => toggleCalendar()}
+        />
+      </div>
     </div>
   );
 }

@@ -16,38 +16,43 @@ const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
 
 const EVENT_STYLES = {
   meeting: {
-    bg: "bg-primary-500/8",
-    border: "border-primary-500",
-    text: "text-primary-500",
-    label: "bg-primary-500 text-white",
-    hover:
-      "hover:bg-primary-500/10 hover:border-primary-500 hover:text-primary-500",
+    bg: "bg-[#e5ede7]/80 ",
+    border:
+      "border border-[#2f855a]/20 shadow-[inset_2px_2px_5px_rgba(255,255,255,0.7),2px_2px_6px_rgba(130,150,135,0.15)]",
+    text: "text-[#2f855a]",
+    label: "bg-[#2f855a] text-white font-medium",
+    dot: "bg-[#2f855a]",
+    hover: "hover:border-[#2f855a]/50",
   },
 
   work: {
-    bg: "bg-success-500/8",
-    border: "border-success-500",
-    text: "text-success-500",
-    label: "bg-success-500 text-white",
-    hover:
-      "hover:bg-success-500/10 hover:border-success-500 hover:text-success-500",
+    bg: "bg-[#e4ece9]/80 ",
+    border:
+      "border border-[#319795]/20 shadow-[inset_2px_2px_5px_rgba(255,255,255,0.7),2px_2px_6px_rgba(130,150,135,0.15)]",
+    text: "text-[#319795]",
+    label: "bg-[#319795] text-white font-medium",
+    dot: "bg-[#319795]",
+    hover: "hover:border-[#319795]/50",
   },
 
   personal: {
-    bg: "bg-pending-500/8",
-    border: "border-pending-500",
-    text: "text-pending-500",
-    label: "bg-pending-500 text-white",
-    hover:
-      "hover:bg-pending-500/10 hover:border-pending-500 hover:text-pending-500",
+    bg: "bg-[#f4f2e6]/80 ",
+    border:
+      "border border-[#d69e2e]/20 shadow-[inset_2px_2px_5px_rgba(255,255,255,0.7),2px_2px_6px_rgba(130,150,135,0.15)]",
+    text: "text-[#d69e2e]",
+    label: "bg-[#d69e2e] text-white font-medium",
+    dot: "bg-[#d69e2e]",
+    hover: "hover:border-[#d69e2e]/50",
   },
 
   important: {
-    bg: "bg-error-500/8",
-    border: "border-error-500",
-    text: "text-error-500",
-    label: "bg-error-500 text-white",
-    hover: "hover:bg-error-500/10 hover:border-error-500 hover:text-error-500",
+    bg: "bg-[#f5e6e6]/80 ",
+    border:
+      "border border-[#e53e3e]/20 shadow-[inset_2px_2px_5px_rgba(255,255,255,0.7),2px_2px_6px_rgba(130,150,135,0.15)]",
+    text: "text-[#e53e3e]",
+    label: "bg-[#e53e3e] text-white font-medium",
+    dot: "bg-[#e53e3e]",
+    hover: "hover:border-[#e53e3e]/50",
   },
 } as const;
 

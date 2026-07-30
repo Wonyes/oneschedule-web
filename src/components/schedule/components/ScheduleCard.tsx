@@ -33,35 +33,43 @@ export default function ScheduleCard({
   const isEnd = isSameDate(end, date);
 
   const horizontalConnection = `
-  ${!isStart ? "-ml-[1px] rounded-l-none border-l-0" : "rounded-l-[8px]"}
-  ${!isEnd ? "-mr-[1px] rounded-r-none border-r-0" : "rounded-r-[8px]"}
-`;
+    ${!isStart ? "-ml-[1px] rounded-l-none border-l-0" : "rounded-l-lg"}
+    ${!isEnd ? "-mr-[1px] rounded-r-none border-r-0" : "rounded-r-lg"}
+  `;
 
   const connectionClass = variant === "week" && horizontalConnection;
 
+  // 1. Month 뷰 카드 (슬림하고 간결한 인라인 칩 형태)
   if (variant === "month") {
     return (
       <div
-        className={`p-1 rounded truncate flex flex-col h-12 items-left gap-1 border ${style.bg} ${style.border} ${connectionClass} ${className}`}
+        className={`
+          group px-2 py-1 rounded-md truncate flex items-center gap-1.5 
+          bg-[#232b42]/80  border border-white/5
+          hover:border-white/15 hover:bg-[#293450] 
+          transition-all duration-150 ${connectionClass} ${className}
+        `}
       >
-        {isStart && (
-          <Label className={`${style.label}`}>
-            {getTimes(event.startDate)} - {getTimes(event.endDate)}
-          </Label>
-        )}
-        <span className="typo-caption-1 truncate">{event.title}</span>
+        <span
+          className={`w-1.5 h-1.5 rounded-full shrink-0 ${style.dot || "bg-indigo-400"}`}
+        />
+        <span className="typo-caption-2 truncate font-medium text-slate-200 group-hover:text-white">
+          {event.title}
+        </span>
       </div>
     );
   }
 
+  // 2. Day 뷰 카드 (Linear/Vercel 스타일의 깊이감 있는 플로팅 카드)
   if (variant === "day") {
     return (
       <div
         className={`
-        absolute left-0 right-0 scale-[0.92]
-        border ${style.bg} ${style.border}
-        p-2 shadow-sm z-10 ${className}
-      `}
+          absolute left-0 right-0 rounded-xl
+          bg-[#232b42]/90  border border-white/10
+          p-2.5 shadow-xl z-10 transition-all duration-200
+          hover:border-indigo-500/40 hover:bg-[#293450] ${className}
+        `}
         style={{
           top: `${top}px`,
           height: `${height}px`,
@@ -69,23 +77,29 @@ export default function ScheduleCard({
           left: `${left}%`,
         }}
       >
-        <Label className={style.label}>
-          <span>
+        <div className="flex items-center gap-1.5 mb-1">
+          <span
+            className={`w-1.5 h-1.5 rounded-full ${style.dot || "bg-indigo-400"}`}
+          />
+          <span className="text-[11px] font-medium text-indigo-300/90 tracking-tight">
             {getTimes(event.startDate)} - {getTimes(event.endDate)}
           </span>
-        </Label>
-        <span className="typo-caption-1 mt-1">{event.title}</span>
+        </div>
+        <span className="typo-caption-1 font-semibold text-white block truncate">
+          {event.title}
+        </span>
       </div>
     );
   }
 
+  // 3. Week 뷰 카드 (정교한 좌측 포인트 라인과 모던한 글래스 서피스)
   return (
     <div
       className={`
-        absolute left-0 right-0 scale-[0.92]
-        border ${style.bg} ${style.border} 
-        p-2 shadow-sm z-10
-        hover:z-50 hover:scale-100 hover:opacity-100 opacity-90
+        absolute left-0 right-0 rounded-xl
+        bg-[#232b42]/90 border border-white/10
+        p-2.5 z-10 overflow-hidden
+        hover:z-50 hover:border-indigo-500/50 hover:bg-[#293450] hover:shadow-2xl
         transition-all duration-200
         ${connectionClass} ${className}
       `}
@@ -94,26 +108,35 @@ export default function ScheduleCard({
         height: `${height}px`,
       }}
     >
+      {/* 좌측에 은은한 카테고리 컬러 인디케이터 바 추가 */}
+      <div
+        className={`absolute left-0 top-0 bottom-0 w-1 ${style.dot || "bg-indigo-500"}`}
+      />
+
       {isStart && (
-        <>
-          <Label className={style.label}>
-            <span>
+        <div className="flex flex-col gap-1 pl-1">
+          <div className="flex items-center gap-1.5">
+            <span className="text-[11px] font-medium text-indigo-300/90 tracking-tight">
               {getTimes(event.startDate)} - {getTimes(event.endDate)}
             </span>
-          </Label>
-          <span className="typo-caption-1 mt-1">{event.title}</span>
-        </>
+          </div>
+          <span className="typo-caption-1 font-semibold text-white truncate">
+            {event.title}
+          </span>
+        </div>
       )}
 
       {isEnd && isStart !== isEnd && (
-        <>
-          <Label className={style.label}>
-            <span>
+        <div className="flex flex-col gap-1 pl-1">
+          <div className="flex items-center gap-1.5">
+            <span className="text-[11px] font-medium text-indigo-300/90 tracking-tight">
               {getTimes(event.startDate)} - {getTimes(event.endDate)}
             </span>
-          </Label>
-          <span className="typo-caption-1 mt-1">{event.title}</span>
-        </>
+          </div>
+          <span className="typo-caption-1 font-semibold text-white truncate">
+            {event.title}
+          </span>
+        </div>
       )}
     </div>
   );
