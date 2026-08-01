@@ -4,6 +4,7 @@ import { Primary } from "@/src/components/ui/layout/button";
 import { Row, Column } from "@/src/components/ui/layout/flex";
 import { Input, PasswordInput } from "@/src/components/ui/layout/input";
 import { Post } from "@/src/hooks/querys/useMutations";
+import { useLoginStore } from "@/src/hooks/stores/useLoginStore";
 import { useForm } from "@/src/hooks/useForm";
 import { useOverlay } from "@/src/hooks/useOverlay";
 import { useAppMutation } from "@/src/types/ErrorResponse";
@@ -17,7 +18,7 @@ export default function LoginForm() {
   });
   const { openAlert } = useOverlay();
 
-  const { mutate: login } = useAppMutation({
+  const { mutate: loginForm } = useAppMutation({
     mutationFn: () => {
       return Post({
         url: "/members/login",
@@ -25,6 +26,7 @@ export default function LoginForm() {
       });
     },
     onSuccess: () => {
+      useLoginStore.getState().login();
       router.push("/");
     },
     onError: (err) => {
@@ -51,18 +53,21 @@ export default function LoginForm() {
           value={form.email}
           className="w-full"
           placeholder="이메일"
+          onEnter={loginForm}
           onChange={formChange}
+          autoFocus
         />
         <PasswordInput
           name="password"
           value={form.password}
           className="w-full"
           placeholder="비밀번호"
+          onEnter={loginForm}
           onChange={formChange}
         />
       </Column>
 
-      <Primary className="w-full py-4" text="로그인" onClick={login} />
+      <Primary className="w-full py-4" text="로그인" onClick={loginForm} />
       <Row className="flex justify-center w-full gap-2">
         <p className="typo-sub-t-3 text-slate-500">계정이 없나요?</p>
 

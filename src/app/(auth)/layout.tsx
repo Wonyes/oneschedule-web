@@ -1,4 +1,4 @@
-import AuthHeader from "@/src/components/common/AuthHeader";
+import AuthHeader from "@/src/components/common/header/AuthHeader";
 import GlobalOverlays from "@/src/components/ui/GlobalOverlay";
 
 export default function AuthLayout({

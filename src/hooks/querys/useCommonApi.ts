@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { useScheduleStore } from "../stores/useScheduleStore";
-import api from "@/src/lib/api";
 import { publicKeys } from "./key/publicKey";
 import { useWeatherStore } from "../stores/useWeatherStore";
+import { Get } from "./useMutations";
 
 export function useHolidays() {
   const currentDate = useScheduleStore((s) => s.currentDate);
@@ -13,15 +13,14 @@ export function useHolidays() {
   return useQuery({
     queryKey: [publicKeys.holiday, year, month],
 
-    queryFn: async () => {
-      const { data } = await api.get("/holiday/info", {
+    queryFn: () =>
+      Get<object[]>({
+        url: "/holiday/info",
         params: {
           year: year,
           month: month.toString().padStart(2, "0"),
         },
-      });
-      return data.result || [];
-    },
+      }),
   });
 }
 
@@ -35,14 +34,14 @@ export function useWeathers() {
     placeholderData: (prev) => prev,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
-    queryFn: async () => {
-      const { data } = await api.get("/weather/info", {
+
+    queryFn: () =>
+      Get<object[]>({
+        url: "/weather/info",
         params: {
           nx: nx,
           ny: ny,
         },
-      });
-      return data.result;
-    },
+      }),
   });
 }

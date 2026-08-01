@@ -4,6 +4,12 @@ import * as React from "react";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 import { cn } from "@/src/utils/cn";
 
+interface UserAvatarProps {
+  nickname: string;
+  name?: string;
+  className?: string;
+}
+
 function Avatar({
   className,
   ...props
@@ -46,6 +52,20 @@ function AvatarFallback({
       )}
       {...props}
     />
+  );
+}
+
+export default function UserAvatar({
+  name,
+  nickname,
+  className,
+}: UserAvatarProps) {
+  return (
+    <Avatar className={className}>
+      {name && <AvatarImage src={""} alt={name} />}
+
+      <AvatarFallback>{nickname.charAt(0)}</AvatarFallback>
+    </Avatar>
   );
 }
 

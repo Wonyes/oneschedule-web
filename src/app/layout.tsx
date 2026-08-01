@@ -1,11 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import Header from "../components/common/header";
-import { Providers } from "./providers";
-import Sheet from "../components/ui/sheet/sheet";
-import GlobalOverlays from "../components/ui/GlobalOverlay";
-import Sidebar from "../components/common/Sidebar";
+import Providers from "./providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

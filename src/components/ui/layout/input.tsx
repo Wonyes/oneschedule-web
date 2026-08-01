@@ -5,14 +5,22 @@ import { useState } from "react";
 type InputProps = React.ComponentProps<"input"> & {
   rightSection?: React.ReactNode;
   description?: string;
+  onEnter?: () => void;
 };
 
 export function Input({
   rightSection,
   description,
   className,
+  onEnter,
   ...props
 }: InputProps) {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      onEnter?.();
+    }
+  };
+
   return (
     <div className="flex flex-col gap-1.5 w-full">
       <div
@@ -32,6 +40,7 @@ export function Input({
         >
           <input
             {...props}
+            onKeyDown={handleKeyDown}
             className={cn(
               "w-full outline-none typo-caption-2 bg-transparent text-slate-100 placeholder:text-slate-500",
               "disabled:text-slate-600",

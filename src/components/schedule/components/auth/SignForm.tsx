@@ -9,9 +9,13 @@ import { Post } from "@/src/hooks/querys/useMutations";
 import { useRouter } from "next/navigation";
 import { useAppMutation } from "@/src/types/ErrorResponse";
 import { useOverlay } from "@/src/hooks/useOverlay";
+import { useEmailCheck, useNicknameCheck } from "@/src/hooks/querys/useMembers";
+import { useState } from "react";
 
 export default function SignForm() {
   const router = useRouter();
+  const { openAlert } = useOverlay();
+
   const { form, formChange } = useForm({
     email: "",
     password: "",
@@ -20,7 +24,12 @@ export default function SignForm() {
     name: "",
     phone: "",
   });
-  const { openAlert } = useOverlay();
+
+  const [emailChecked, setEmailChecked] = useState(false);
+  const [nicknameChecked, setNicknameChecked] = useState(false);
+
+  const { refetch: checkEmail } = useEmailCheck(form.email);
+  const { refetch: checkNickname } = useNicknameCheck(form.nickname);
 
   const { mutate: signUp } = useAppMutation({
     mutationFn: () => {
@@ -46,9 +55,62 @@ export default function SignForm() {
     },
   });
 
+  const signForm = () => {
+    if (!emailChecked) {
+      return openAlert({
+        title: "이메일 중복확인이 필요합니다.",
+        message: "이메일 중복확인을 해주세요.",
+      });
+    } else if (!nicknameChecked) {
+      return openAlert({
+        title: "닉네임 중복확인이 필요합니다.",
+        message: "닉네임 중복확인을 해주세요.",
+      });
+    } else if (form.password !== form.passwordConfirm) {
+      return openAlert({
+        title: "비밀번호가 일치하지 않습니다.",
+        message: "비밀번호가 일치하지 않습니다.",
+      });
+    } else if (form.password.length < 8) {
+      return openAlert({
+        title: "비밀번호는 8자 이상이어야 합니다.",
+        message: "비밀번호는 8자 이상이어야 합니다.",
+      });
+    } else if (!form.name) {
+      return openAlert({
+        title: "이름을 입력해주세요.",
+        message: "이름을 입력해주세요.",
+      });
+    } else {
+      signUp();
+    }
+  };
+
+  const duplicationCheck = async (name: "email" | "nickname") => {
+    const { data } =
+      name === "email" ? await checkEmail() : await checkNickname();
+
+    if (name === "email") {
+      setEmailChecked(data);
+    } else {
+      setNicknameChecked(data);
+    }
+
+    if (!data) {
+      return openAlert({
+        title: "중복 확인 실패",
+        message: `이미 사용 중인 ${name ? "이메일" : "닉네임"}입니다.`,
+      });
+    }
+
+    openAlert({
+      title: "사용 가능합니다.",
+      message: `사용 가능한 ${name ? "이메일" : "닉네임"}입니다.`,
+    });
+  };
+
   return (
     <div className="max-w-[420px] w-full mx-auto relative flex flex-col h-full text-slate-100">
-      {/* 상단 타이틀 영역 */}
       <header className="pt-2 pb-5 px-1 shrink-0">
         <h1 className="text-xl font-bold text-slate-100">회원정보 입력</h1>
         <p className="text-xs text-slate-400 mt-1">
@@ -56,7 +118,6 @@ export default function SignForm() {
         </p>
       </header>
 
-      {/* 스크롤 영역 (하단 고정 버튼에 가리지 않도록 pb-28 넉넉히 확보) */}
       <Column className="gap-5 flex-1 overflow-y-auto px-1 pb-28">
         <Field label="이메일">
           <Input
@@ -71,7 +132,7 @@ export default function SignForm() {
                 text="중복확인"
                 className="py-[6px] px-3 rounded-lg text-xs"
                 onClick={() => {
-                  // TODO: 이메일 중복 확인 로직
+                  duplicationCheck("email");
                 }}
               />
             }
@@ -122,7 +183,7 @@ export default function SignForm() {
                 text="중복확인"
                 className="py-[6px] px-3 rounded-lg text-xs"
                 onClick={() => {
-                  // TODO: 닉네임 중복 확인 로직
+                  duplicationCheck("nickname");
                 }}
               />
             }
@@ -144,7 +205,7 @@ export default function SignForm() {
       <div className="absolute bottom-4 left-0 w-full pb-[calc(env(safe-area-inset-bottom)+12px)] px-1 z-[999]">
         <Primary
           text="회원가입"
-          onClick={signUp}
+          onClick={signForm}
           className="w-full py-3.5 rounded-xl font-semibold shadow-lg shadow-indigo-600/30"
         />
       </div>
