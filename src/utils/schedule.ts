@@ -13,7 +13,7 @@ import {
   startOfDay,
   endOfDay,
 } from "date-fns";
-import { ScheduleEvent, EventLayout, holidayType } from "../types/Schedule";
+import { ScheduleEvent, EventLayout, holidayType } from "../types/schedule";
 
 const getTimes = (date: string) => {
   return format(new Date(date), "HH:mm");

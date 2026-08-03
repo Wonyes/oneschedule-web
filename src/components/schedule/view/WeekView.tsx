@@ -14,7 +14,7 @@ import {
   getDayColor,
   getWeekDates,
   getWeekEvents,
-} from "@/src/utils/Schedule";
+} from "@/src/utils/schedule";
 import { useScheduleStore } from "@/src/hooks/stores/useScheduleStore";
 import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
 

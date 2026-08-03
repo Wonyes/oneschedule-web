@@ -1,6 +1,5 @@
 import { ScheduleEvent } from "@/src/types/schedule";
-import { getTimes, isSameDate } from "@/src/utils/Schedule";
-import { Label } from "../../ui/Labels";
+import { getTimes, isSameDate } from "@/src/utils/schedule";
 import { EVENT_STYLES } from "@/src/constant/schedule";
 
 type EventCardProps = {

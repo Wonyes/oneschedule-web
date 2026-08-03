@@ -1,15 +1,21 @@
 "use client";
 
 import { useScheduleStore } from "@/src/hooks/stores/useScheduleStore";
+import { usePathname } from "next/navigation";
 
 export default function ViewModeToggle() {
   const { mode, setMode } = useScheduleStore();
+  const pathname = usePathname();
 
   const labels = {
     day: "일",
     week: "주",
     month: "월",
   };
+
+  if (pathname !== "/") {
+    return null;
+  }
 
   return (
     <div className="relative flex rounded-xl neu-pressed p-1.5 py-3 w-[138px]">

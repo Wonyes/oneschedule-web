@@ -5,11 +5,13 @@ import { useState } from "react";
 type InputProps = React.ComponentProps<"input"> & {
   rightSection?: React.ReactNode;
   description?: string;
+  errorMessage?: string;
   onEnter?: () => void;
 };
 
 export function Input({
   rightSection,
+  errorMessage,
   description,
   className,
   onEnter,
@@ -50,7 +52,12 @@ export function Input({
         </div>
       </div>
       {description && (
-        <span className="text-[11px] text-slate-400 pl-1">{description}</span>
+        <span className="typo-caption-3 text-slate-400 pl-1">
+          {description}
+        </span>
+      )}
+      {errorMessage && (
+        <span className="typo-caption-3 text-red-400 pl-1">{errorMessage}</span>
       )}
     </div>
   );

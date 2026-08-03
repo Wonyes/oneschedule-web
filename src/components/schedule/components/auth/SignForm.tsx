@@ -99,13 +99,13 @@ export default function SignForm() {
     if (!data) {
       return openAlert({
         title: "중복 확인 실패",
-        message: `이미 사용 중인 ${name ? "이메일" : "닉네임"}입니다.`,
+        message: `이미 사용 중인 ${name === "email" ? "이메일" : "닉네임"}입니다.`,
       });
     }
 
     openAlert({
       title: "사용 가능합니다.",
-      message: `사용 가능한 ${name ? "이메일" : "닉네임"}입니다.`,
+      message: `사용 가능한 ${name === "email" ? "이메일" : "닉네임"}입니다.`,
     });
   };
 

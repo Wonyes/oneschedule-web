@@ -1,9 +1,13 @@
 import { Post } from "./useMutations";
 import { useAppMutation } from "@/src/types/ErrorResponse";
-import { useLoginStore } from "../stores/useLoginStore";
+import { useQueryClient } from "@tanstack/react-query";
+
+import { Get } from "./useMutations";
+import { MyInfoResponse } from "./useMembers";
+import { memberskeys } from "./key/members";
 
 export const useLogin = () => {
-  const login = useLoginStore((state) => state.login);
+  const queryClient = useQueryClient();
 
   return useAppMutation({
     mutationFn: (body: { email: string; password: string }) =>
@@ -12,23 +16,12 @@ export const useLogin = () => {
         body,
       }),
 
-    onSuccess: () => {
-      login();
-    },
-  });
-};
+    onSuccess: async () => {
+      const user = await Get<MyInfoResponse>({
+        url: "/members/info",
+      });
 
-export const useLogout = () => {
-  const logout = useLoginStore((state) => state.logout);
-
-  return useAppMutation({
-    mutationFn: () =>
-      Post({
-        url: "/members/logout",
-      }),
-
-    onSuccess: () => {
-      logout();
+      queryClient.setQueryData([memberskeys.myInfo], user);
     },
   });
 };

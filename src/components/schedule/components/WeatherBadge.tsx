@@ -1,5 +1,5 @@
 import { ProcessedWeather } from "@/src/types/schedule";
-import { getWeatherIcon } from "@/src/utils/Schedule";
+import { getWeatherIcon } from "@/src/utils/schedule";
 
 type WeatherProps = {
   targetWeather?: ProcessedWeather[string];

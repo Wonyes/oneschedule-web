@@ -5,21 +5,13 @@ export function middleware(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
 
-  const protectedRoutes = [];
-  const protectedRoutes2 = ["/sign", "/login"];
+  const protectedRoutes = ["/sign", "/login"];
 
   const isProtected = protectedRoutes.some((route) =>
     pathname.startsWith(route),
   );
 
-  const isProtected2 = protectedRoutes2.some((route) =>
-    pathname.startsWith(route),
-  );
-
-  if (isProtected && !accessToken) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-  if (isProtected2 && accessToken) {
+  if (isProtected && accessToken) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 

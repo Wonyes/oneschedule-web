@@ -1,7 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { getDayColor, getDayEvents } from "@/src/utils/Schedule";
+import { getDayColor, getDayEvents } from "@/src/utils/schedule";
 import { useScheduleStore } from "@/src/hooks/stores/useScheduleStore";
 import ScheduleCard from "../components/ScheduleCard";
 import { ScheduleViewProps } from "@/src/types/schedule";

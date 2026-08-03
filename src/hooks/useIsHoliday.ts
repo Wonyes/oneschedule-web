@@ -1,5 +1,5 @@
-import { findHoliday } from "@/src/utils/Schedule";
-import { holidayType } from "../types/Schedule";
+import { findHoliday } from "@/src/utils/schedule";
+import { holidayType } from "../types/schedule";
 
 export const useIsHoliday = (
   date: Date,

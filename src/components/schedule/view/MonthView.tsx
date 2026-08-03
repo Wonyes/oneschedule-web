@@ -6,7 +6,7 @@ import {
   getDayColor,
   getMonthDates,
   isSameDate,
-} from "@/src/utils/Schedule";
+} from "@/src/utils/schedule";
 import ScheduleCard from "../components/ScheduleCard";
 import { useScheduleStore } from "@/src/hooks/stores/useScheduleStore";
 import { ScheduleViewProps } from "@/src/types/schedule";

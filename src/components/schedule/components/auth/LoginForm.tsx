@@ -3,21 +3,24 @@
 import { Primary } from "@/src/components/ui/layout/button";
 import { Row, Column } from "@/src/components/ui/layout/flex";
 import { Input, PasswordInput } from "@/src/components/ui/layout/input";
-import { Post } from "@/src/hooks/querys/useMutations";
-import { useLoginStore } from "@/src/hooks/stores/useLoginStore";
+import { memberskeys } from "@/src/hooks/querys/key/members";
+import { MyInfoResponse } from "@/src/hooks/querys/useMembers";
+import { Get, Post } from "@/src/hooks/querys/useMutations";
 import { useForm } from "@/src/hooks/useForm";
 import { useOverlay } from "@/src/hooks/useOverlay";
 import { useAppMutation } from "@/src/types/ErrorResponse";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
   const router = useRouter();
+  const queryClient = useQueryClient();
+
   const { form, formChange } = useForm({
     email: "",
     password: "",
   });
   const { openAlert } = useOverlay();
-
   const { mutate: loginForm } = useAppMutation({
     mutationFn: () => {
       return Post({
@@ -25,8 +28,12 @@ export default function LoginForm() {
         body: { email: form.email, password: form.password },
       });
     },
-    onSuccess: () => {
-      useLoginStore.getState().login();
+    onSuccess: async () => {
+      const user = await Get<MyInfoResponse>({
+        url: "/members/info",
+      });
+
+      queryClient.setQueryData([memberskeys.myInfo], user);
       router.push("/");
     },
     onError: (err) => {

@@ -1,15 +1,20 @@
-import { useQuery } from "@tanstack/react-query";
-import { Get, Post } from "./useMutations";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Get, Patch, Post, Put } from "./useMutations";
 import { memberskeys } from "./key/members";
-import { useLoginStore } from "../stores/useLoginStore";
 import { useAppMutation } from "@/src/types/ErrorResponse";
+import { useRouter } from "next/navigation";
 
-type MyInfoResponse = {
+export type MyInfoResponse = {
   email: string;
   groupCode: string;
   name: string;
   nickname: string;
   phoneNumber: string;
+};
+
+type MyInfoChangeRequest = {
+  nickname?: string;
+  phoneNumber?: string;
 };
 
 export const useEmailCheck = (email: string) => {
@@ -40,7 +45,7 @@ export const useNicknameCheck = (nickname: string) => {
   });
 };
 
-export const useMyInfo = (enabled: boolean) => {
+export const useMyInfo = () => {
   return useQuery({
     queryKey: [memberskeys.myInfo],
 
@@ -48,13 +53,15 @@ export const useMyInfo = (enabled: boolean) => {
       Get<MyInfoResponse>({
         url: "/members/info",
       }),
-    enabled,
+
     retry: false,
     staleTime: Infinity,
   });
 };
 
 export const useLogout = () => {
+  const queryClient = useQueryClient();
+  const router = useRouter();
   return useAppMutation({
     mutationFn: () =>
       Post({
@@ -62,7 +69,47 @@ export const useLogout = () => {
       }),
 
     onSuccess: () => {
-      useLoginStore.getState().logout();
+      queryClient.removeQueries({
+        queryKey: [memberskeys.myInfo],
+      });
+
+      router.refresh();
+    },
+  });
+};
+
+export const useMyinfoChange = () => {
+  const queryClient = useQueryClient();
+
+  return useAppMutation({
+    mutationFn: (body: MyInfoChangeRequest) =>
+      Patch({
+        url: "/members/info",
+        body,
+      }),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [memberskeys.myInfo],
+      });
+    },
+  });
+};
+
+export const usePasswordChange = ({ body }: { body: MyInfoChangeRequest }) => {
+  const queryClient = useQueryClient();
+
+  return useAppMutation({
+    mutationFn: () =>
+      Put({
+        url: "/members/password",
+        body,
+      }),
+
+    onSuccess: () => {
+      queryClient.removeQueries({
+        queryKey: [memberskeys.myInfo],
+      });
     },
   });
 };

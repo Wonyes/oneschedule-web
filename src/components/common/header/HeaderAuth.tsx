@@ -3,16 +3,13 @@
 import { LogIn, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-import { useLogout, useMyInfo } from "@/src/hooks/querys/useMembers";
-import UserAvatar from "../../ui/avatar";
-import AuthSkeleton from "./AuthSkeleton";
+import { MyInfoResponse, useLogout } from "@/src/hooks/querys/useMembers";
 
-export default function HeaderAuth({ hasToken }: { hasToken: boolean }) {
+export default function HeaderAuth({ user }: { user: MyInfoResponse | null }) {
   const router = useRouter();
   const { mutate: logout } = useLogout();
-  const { data: user, isLoading } = useMyInfo(hasToken);
 
-  if (!hasToken) {
+  if (!user) {
     return (
       <button
         onClick={() => router.push("/login")}
@@ -31,20 +28,13 @@ export default function HeaderAuth({ hasToken }: { hasToken: boolean }) {
     );
   }
 
-  if (isLoading || !user) {
-    return <AuthSkeleton />;
-  }
-
   return (
     <div className="flex items-center gap-2">
-      <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl neu-flat">
-        <UserAvatar
-          name={user.name}
-          nickname={user.nickname}
-          className="w-6 h-6"
-        />
-
-        <span className="typo-caption-2 font-semibold">{user.nickname}</span>
+      <div
+        onClick={() => router.push("/profile")}
+        className="flex items-center gap-2 px-3 py-2 rounded-xl neu-pressed cursor-pointer"
+      >
+        <span className="typo-caption-2 ">{user.nickname}</span>
       </div>
 
       <button
