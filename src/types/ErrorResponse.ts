@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import { useMutation, UseMutationOptions } from "@tanstack/react-query";
 
 export interface ErrorResult {
@@ -14,9 +15,7 @@ export interface ErrorResponse<T = ErrorResult | null> {
   result: T;
 }
 
-export interface CustomError extends ErrorResponse {
-  data?: ErrorResponse;
-}
+export type CustomError<T = ErrorResponse> = AxiosError<T>;
 
 export function useAppMutation<
   TData = unknown,

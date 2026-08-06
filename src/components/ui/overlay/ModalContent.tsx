@@ -24,11 +24,7 @@ export default function ModalContent({
       {/* Modal Box */}
       <div className="fixed left-1/2 top-1/2 z-[9999] flex w-[calc(100%-32px)] max-w-[500px] -translate-x-1/2 -translate-y-1/2 flex-col justify-between rounded-[20px] bg-[#232b42] border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.5)] transition-all duration-300 text-slate-100">
         <div className="flex items-center justify-between px-[30px] pt-[24px] pb-[16px] m-0">
-          <TitleHeader
-            title={title}
-            pad="0"
-            className="text-[20px] text-slate-100 font-bold"
-          />
+          <TitleHeader title={title} pad="0" className="text-[20px]" />
         </div>
 
         <div className="flex-grow px-[30px] pb-[20px] text-slate-300">

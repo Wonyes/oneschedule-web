@@ -6,6 +6,7 @@ import axios, {
 
 interface CustomAxiosRequestConfig extends AxiosRequestConfig {
   _retry?: boolean;
+  _skipAuthRefresh?: boolean; // ⬅️ 추가
 }
 
 const api = axios.create({
@@ -17,38 +18,27 @@ const api = axios.create({
   },
 });
 
-// 여러 401 요청이 발생해도 토큰 갱신 요청은 하나만 유지
 let refreshPromise: Promise<void> | null = null;
 
-/**
- * 인증 없이 접근 가능한 API
- */
 const publicPaths = [
   "/holidays",
   "/weather",
   "/members/email-check",
   "/members/nickname-check",
+  "/members/login",
 ];
 
-/**
- * 요청 인터셉터
- */
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const isPublic = publicPaths.some((path) => config.url?.startsWith(path));
-
     if (isPublic) {
       return config;
     }
-
     return config;
   },
   (error) => Promise.reject(error),
 );
 
-/**
- * 응답 인터셉터
- */
 api.interceptors.response.use(
   (response) => response,
 
@@ -57,14 +47,25 @@ api.interceptors.response.use(
       console.error("네트워크 오류:", error.message ?? "알 수 없는 오류");
       return Promise.reject(error);
     }
-
     const originalRequest = error.config as CustomAxiosRequestConfig;
+    const status = error.response.status;
+
+    if (
+      status === 401 &&
+      (originalRequest.url?.includes("/members/login") ||
+        originalRequest.url?.includes("/token-refresh") ||
+        originalRequest._skipAuthRefresh)
+    ) {
+      return Promise.reject(error);
+    }
 
     switch (error.response.status) {
-      /**
-       * Access Token 만료
-       */
       case 401: {
+        // ⬅️ 로그인 등 리프레시를 스킵해야 하는 요청이면 바로 거부
+        if (originalRequest._skipAuthRefresh) {
+          return Promise.reject(error);
+        }
+
         if (originalRequest.url?.includes("/token-refresh")) {
           return Promise.reject(error);
         }
@@ -89,7 +90,6 @@ api.interceptors.response.use(
 
           await refreshPromise;
 
-          // refresh를 실제로 시작한 요청에서만 한 번 발생
           if (shouldRefreshHeader && typeof window !== "undefined") {
             window.dispatchEvent(new Event("auth:refreshed"));
           }
@@ -100,21 +100,16 @@ api.interceptors.response.use(
           return Promise.reject(refreshError);
         }
       }
-      /**
-       * 권한 없음
-       */
+
       case 403: {
         alert("권한이 없습니다.");
         window.location.href = "/";
-
         return Promise.reject(error);
       }
 
-      /**
-       * 기타 오류
-       */
       default: {
-        return Promise.reject(error.response.data);
+        console.log(error.response, "#@#!");
+        return Promise.reject(error);
       }
     }
   },

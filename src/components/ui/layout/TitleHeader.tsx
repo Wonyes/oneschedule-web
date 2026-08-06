@@ -23,12 +23,12 @@ export default function TitleHeader({
         className,
       )}
     >
-      <span className="text-[20px] font-bold text-[#2b3674]">{title}</span>
+      <span className="typo-title-2">{title}</span>
       {subTitle && (
         <button
           type="button"
           onClick={onClick}
-          className="text-[12px] text-[var(--c-gray888)] transition-colors hover:text-gray-600"
+          className="typo-caption-2 text-[var(--c-gray888)] transition-colors hover:text-gray-600"
         >
           {subTitle}
         </button>

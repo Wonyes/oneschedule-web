@@ -17,6 +17,11 @@ type MyInfoChangeRequest = {
   phoneNumber?: string;
 };
 
+type PasswordChangeRequest = {
+  currentPassword: string;
+  newPassword: string;
+};
+
 export const useEmailCheck = (email: string) => {
   return useQuery({
     queryKey: [memberskeys.emailCheck, email],
@@ -42,6 +47,7 @@ export const useNicknameCheck = (nickname: string) => {
         },
       }),
     enabled: false,
+    retry: false,
   });
 };
 
@@ -93,14 +99,15 @@ export const useMyinfoChange = () => {
         queryKey: [memberskeys.myInfo],
       });
     },
+    retry: false,
   });
 };
 
-export const usePasswordChange = ({ body }: { body: MyInfoChangeRequest }) => {
+export const usePasswordChange = () => {
   const queryClient = useQueryClient();
 
   return useAppMutation({
-    mutationFn: () =>
+    mutationFn: (body: PasswordChangeRequest) =>
       Put({
         url: "/members/password",
         body,
@@ -111,5 +118,6 @@ export const usePasswordChange = ({ body }: { body: MyInfoChangeRequest }) => {
         queryKey: [memberskeys.myInfo],
       });
     },
+    retry: false,
   });
 };

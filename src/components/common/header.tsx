@@ -6,7 +6,6 @@ import ViewModeToggle from "./header/ViewModeToggle";
 
 export default async function Header() {
   const user = await getMyInfo();
-  console.log("HEADER USER", user);
   return (
     <header className="grid grid-cols-3 items-center px-4 py-3 shrink-0">
       <Logo />

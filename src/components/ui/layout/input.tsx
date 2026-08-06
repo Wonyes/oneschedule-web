@@ -3,15 +3,19 @@ import { Eye, EyeClosed } from "lucide-react";
 import { useState } from "react";
 
 type InputProps = React.ComponentProps<"input"> & {
+  leftSection?: React.ReactNode;
   rightSection?: React.ReactNode;
   description?: string;
   errorMessage?: string;
+  successMessage?: string;
   onEnter?: () => void;
 };
 
 export function Input({
+  successMessage,
   rightSection,
   errorMessage,
+  leftSection,
   description,
   className,
   onEnter,
@@ -37,9 +41,11 @@ export function Input({
         <div
           className={cn(
             "flex w-full items-center h-full",
+            leftSection && "gap-4",
             rightSection && "justify-between gap-2",
           )}
         >
+          {leftSection}
           <input
             {...props}
             onKeyDown={handleKeyDown}
@@ -51,13 +57,18 @@ export function Input({
           {rightSection}
         </div>
       </div>
-      {description && (
+      {!errorMessage && !successMessage && description && (
         <span className="typo-caption-3 text-slate-400 pl-1">
           {description}
         </span>
       )}
       {errorMessage && (
         <span className="typo-caption-3 text-red-400 pl-1">{errorMessage}</span>
+      )}
+      {successMessage && (
+        <span className="typo-caption-3 text-blue-400 pl-1">
+          {successMessage}
+        </span>
       )}
     </div>
   );

@@ -10,7 +10,7 @@ export interface OverlayProps {
   mainBtn?: string;
   subBtn?: string;
   onFunc?: () => void;
-  content?: React.ReactNode;
+  content?: React.ReactNode | (() => React.ReactNode);
 }
 
 interface OverlayState {
@@ -38,7 +38,7 @@ interface OverlayState {
     subBtn: string;
     mainBtn: string;
     onFunc?: () => void;
-    content: React.ReactNode;
+    content: React.ReactNode | (() => React.ReactNode);
   };
   toast: {
     isShow: boolean;
@@ -100,7 +100,7 @@ export const useOverlayStore = create<OverlayStore>((set) => ({
   closeOverlay: (type, withState) =>
     set((state) => {
       if (withState) {
-        state[type].onFunc?.();
+        state[type];
       }
       switch (type) {
         case "alert":

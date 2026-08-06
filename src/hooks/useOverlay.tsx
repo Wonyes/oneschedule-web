@@ -22,6 +22,7 @@ interface TwoButton extends OverlayProps {
 
 interface ToastProps {
   message: string;
+  onFunc?: () => void;
 }
 
 export function useOverlay() {
@@ -35,8 +36,10 @@ export function useOverlay() {
     openOverlay("toast", props);
     setTimeout(() => {
       closeOverlay("toast");
+      props.onFunc?.();
     }, 2000);
   };
+
   const alertComponent = (
     <OverlayContent
       title={alert.title}
@@ -88,15 +91,15 @@ export function useOverlay() {
             text={modal.subBtn}
             className="w-[100px] p-[12px] w-full"
           />
-          <BlueBtn
-            onClick={() => closeOverlay("modal", true)}
+          <Primary
+            onClick={() => modal.onFunc?.()}
             text={modal.mainBtn}
             className="w-[100px] p-[12px] w-full"
           />
         </>
       }
     >
-      {modal.content}
+      {typeof modal.content === "function" ? modal.content() : modal.content}
     </ModalContent>
   );
 
@@ -113,6 +116,7 @@ export function useOverlay() {
     openToast,
     openAlert,
     openConfirm,
+    closeModal: () => closeOverlay("modal"),
     closeAlert: () => closeOverlay("alert"),
     closeConfirm: () => closeOverlay("confirm"),
   };

@@ -1,33 +1,39 @@
 import { Pencil } from "lucide-react";
-import { Input } from "./input";
-import { LineBtn, Primary } from "./button";
-import { Row } from "./flex";
+import EditArea from "../EditArea";
+
+interface InfoRowProps {
+  deps?: string;
+  name?: string;
+  label: string;
+  value?: string;
+  error?: string;
+  success?: string;
+  editing?: boolean;
+  showCheck?: boolean;
+
+  onEdit?: () => void;
+  onSave?: () => boolean | void;
+  onCancel?: () => void;
+  onCheck?: () => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
 
 export function InfoRow({
+  deps,
   name,
   label,
   value,
   error,
-  editing,
-  showCheck,
+  success,
+  editing = false,
+  showCheck = false,
+
   onEdit,
   onSave,
   onCancel,
   onChange,
   onCheck,
-}: {
-  name?: string;
-  label: string;
-  error?: string;
-  value?: string;
-  editing?: boolean;
-  showCheck?: boolean;
-  onEdit?: () => void;
-  onSave?: () => void;
-  onCancel?: () => void;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onCheck?: () => void;
-}) {
+}: InfoRowProps) {
   return (
     <div
       className="
@@ -59,53 +65,28 @@ export function InfoRow({
       </div>
 
       {editing ? (
-        <div className="mt-3">
-          <Input
-            name={name}
-            value={value ?? ""}
-            onChange={onChange}
-            errorMessage={error}
-            autoFocus
-            rightSection={
-              showCheck && (
-                <Primary
-                  text="중복확인"
-                  className="
-                    py-[6px]
-                    px-3
-                    rounded-lg
-                    text-xs
-                  "
-                  onClick={onCheck}
-                />
-              )
-            }
-          />
-
-          <Row className="mt-3 justify-end gap-2">
-            <LineBtn
-              text="취소"
-              onClick={onCancel}
-              className="
-                px-3
-                h-8
-                typo-caption-2
-              "
-            />
-
-            <Primary
-              text="완료"
-              onClick={onSave}
-              className="
-                px-3
-                h-8
-                typo-caption-2
-              "
-            />
-          </Row>
-        </div>
+        <EditArea
+          name={name}
+          value={value}
+          error={error}
+          deps={deps}
+          success={success}
+          showCheck={showCheck}
+          onChange={onChange}
+          onCheck={onCheck}
+          onSave={onSave}
+          onCancel={onCancel}
+        />
       ) : (
-        <p className="mt-1 typo-sub-t-3 text-slate-100">{value}</p>
+        <p
+          className="
+          mt-1
+          typo-sub-t-3
+          text-slate-100
+        "
+        >
+          {value}
+        </p>
       )}
     </div>
   );

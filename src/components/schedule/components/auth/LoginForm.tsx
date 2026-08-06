@@ -21,6 +21,7 @@ export default function LoginForm() {
     password: "",
   });
   const { openAlert } = useOverlay();
+
   const { mutate: loginForm } = useAppMutation({
     mutationFn: () => {
       return Post({
@@ -39,10 +40,15 @@ export default function LoginForm() {
     onError: (err) => {
       openAlert({
         title: "로그인에 실패하였습니다.",
-        message: err.data.result.errorMessage,
+        message: err.response.data.message,
       });
     },
   });
+
+  const handleLogin = (e?: React.SyntheticEvent) => {
+    e?.preventDefault();
+    loginForm();
+  };
 
   return (
     <Column className="max-w-[420px] w-full gap-6">
@@ -60,7 +66,7 @@ export default function LoginForm() {
           value={form.email}
           className="w-full"
           placeholder="이메일"
-          onEnter={loginForm}
+          onEnter={handleLogin}
           onChange={formChange}
           autoFocus
         />
@@ -69,12 +75,13 @@ export default function LoginForm() {
           value={form.password}
           className="w-full"
           placeholder="비밀번호"
-          onEnter={loginForm}
+          onEnter={handleLogin}
           onChange={formChange}
         />
       </Column>
 
-      <Primary className="w-full py-4" text="로그인" onClick={loginForm} />
+      <Primary className="w-full py-4" text="로그인" onClick={handleLogin} />
+
       <Row className="flex justify-center w-full gap-2">
         <p className="typo-sub-t-3 text-slate-500">계정이 없나요?</p>
 

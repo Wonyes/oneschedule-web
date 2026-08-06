@@ -4,6 +4,7 @@ export function useForm<T extends Record<string, unknown>>(initialValue?: T) {
   const [form, setForm] = useState(initialValue);
 
   const [errors, setErrors] = useState<Partial<Record<keyof T, string>>>({});
+  const [success, setSuccess] = useState<Partial<Record<keyof T, string>>>({});
 
   const formChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -14,6 +15,11 @@ export function useForm<T extends Record<string, unknown>>(initialValue?: T) {
     }));
 
     setErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
+
+    setSuccess((prev) => ({
       ...prev,
       [name]: "",
     }));
@@ -34,7 +40,9 @@ export function useForm<T extends Record<string, unknown>>(initialValue?: T) {
   return {
     form,
     errors,
+    success,
     setForm,
+    setSuccess,
     resetForm,
     formChange,
     setErrors,

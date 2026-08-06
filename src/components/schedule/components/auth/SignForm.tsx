@@ -48,9 +48,10 @@ export default function SignForm() {
       router.push("/login");
     },
     onError: (err) => {
+      console.log(err, "#@#@");
       openAlert({
         title: "회원가입에 실패하였습니다.",
-        message: err.data.result.errorMessage,
+        message: err.response.data.message,
       });
     },
   });
@@ -154,7 +155,7 @@ export default function SignForm() {
               value={form.passwordConfirm}
               onChange={formChange}
               placeholder="비밀번호 확인"
-              description="영문, 숫자, 특수문자를 조합하여 8자 이상 입력해주세요."
+              description="비밀번호는 8~20자의 영문, 숫자, 특수문자를 포함해야 합니다."
             />
           </div>
         </Field>
