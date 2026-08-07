@@ -3,12 +3,42 @@ import { GhostBtn, Primary } from "../ui/layout/button";
 import { Input } from "../ui/layout/input";
 import BaseCard from "../ui/card/BaseCard";
 import { ArrowLeft } from "lucide-react";
+import { useAppMutation } from "@/src/types/ErrorResponse";
+import { Post } from "@/src/hooks/querys/useMutations";
 
 export default function CreateGroup({ onBack }: { onBack: () => void }) {
   const { form, formChange } = useForm({
     groupName: "",
     position: "",
   });
+
+  const { mutate: createGroup } = useAppMutation({
+    mutationFn: () => {
+      return Post({
+        url: "group/create",
+        body: {
+          groupName: form.groupName,
+          position: form.position,
+        },
+      });
+    },
+    onSuccess: (data) => {
+      console.log(data);
+    },
+    onError: (err) => {
+      console.log(err.response);
+    },
+  });
+
+  const handleCreateGroup = () => {
+    if (form.groupName.length < 0) {
+      return alert("그룹 이름을 입력해주세요.");
+    } else if (form.position.length < 0) {
+      return alert("내 직책을 입력해주세요.");
+    }
+
+    createGroup();
+  };
 
   return (
     <BaseCard className="w-full px-6 py-8" glow>
@@ -65,15 +95,8 @@ export default function CreateGroup({ onBack }: { onBack: () => void }) {
 
         <Primary
           text="그룹 생성"
-          className="
-            w-full
-            h-14
-            rounded-2xl
-            bg-indigo-600
-            typo-sub-t-1
-            hover:bg-indigo-500
-            transition
-          "
+          className="w-full typo-sub-t-1"
+          onClick={handleCreateGroup}
         />
       </div>
     </BaseCard>

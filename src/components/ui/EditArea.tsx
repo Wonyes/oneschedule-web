@@ -1,4 +1,4 @@
-import { LineBtn, Primary } from "./layout/button";
+import { GhostBtn, Primary } from "./layout/button";
 import { Row } from "./layout/flex";
 import { Input } from "./layout/input";
 
@@ -62,7 +62,7 @@ export default function EditArea({
           gap-2
         "
       >
-        <LineBtn
+        <GhostBtn
           text="취소"
           onClick={onCancel}
           className="

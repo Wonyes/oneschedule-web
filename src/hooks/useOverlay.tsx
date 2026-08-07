@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  BlueBtn,
-  LineBtn,
-  Primary,
-  WhiteBtn,
-} from "../components/ui/layout/button";
+import { Primary, SecondaryBtn } from "../components/ui/layout/button";
 import OverlayContent from "../components/ui/overlay/OverlayContent";
 import ModalContent from "../components/ui/overlay/ModalContent";
 import ToastContent from "../components/ui/overlay/ToastContent";
@@ -65,12 +60,12 @@ export function useOverlay() {
       show={confirm.isShow}
       buttons={
         <>
-          <LineBtn
+          <SecondaryBtn
             onClick={() => closeOverlay("confirm")}
             text={confirm.subBtn}
             className="p-[12px] w-full"
           />
-          <BlueBtn
+          <Primary
             onClick={() => closeOverlay("confirm", true)}
             text={confirm.mainBtn}
             className="p-[12px] w-full"
@@ -86,7 +81,7 @@ export function useOverlay() {
       show={modal.isShow}
       buttons={
         <>
-          <WhiteBtn
+          <SecondaryBtn
             onClick={() => closeOverlay("modal")}
             text={modal.subBtn}
             className="w-[100px] p-[12px] w-full"

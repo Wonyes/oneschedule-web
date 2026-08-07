@@ -21,6 +21,7 @@ export default function AccountInfo({ user }: { user: MyInfoResponse }) {
     saveEdit,
     cancelEdit,
   } = useProfileEdit(user);
+
   const nicknameDes = "한글 2~5자 또는 영문·숫자 4~10자까지 입력 가능합니다.";
   const phoneDes = "'-'를 제외한 숫자만 입력해주세요.";
 

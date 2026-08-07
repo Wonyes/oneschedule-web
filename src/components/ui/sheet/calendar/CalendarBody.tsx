@@ -4,7 +4,7 @@ import { Column, Between } from "../../layout/flex";
 import { useCalendarStore } from "@/src/hooks/stores/useCalendarStore";
 import { cn } from "@/src/utils/cn";
 import { ChevronRight } from "lucide-react";
-import { BlueBtn } from "../../layout/button";
+import { Primary } from "../../layout/button";
 
 export default function CalendarBody() {
   const { currentMonth, createCalendar } = useCalendarLogic();
@@ -60,7 +60,7 @@ export default function CalendarBody() {
       <div>{createCalendar()}</div>
 
       <div className="w-full p-2">
-        <BlueBtn
+        <Primary
           text="확인"
           className="w-full p-3"
           onClick={() => toggleCalendar()}

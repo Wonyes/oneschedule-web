@@ -102,13 +102,12 @@ api.interceptors.response.use(
       }
 
       case 403: {
-        alert("권한이 없습니다.");
         window.location.href = "/";
         return Promise.reject(error);
       }
 
       default: {
-        console.log(error.response, "#@#!");
+        console.log(error.response);
         return Promise.reject(error);
       }
     }
