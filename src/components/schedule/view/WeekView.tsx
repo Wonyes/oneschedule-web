@@ -17,6 +17,7 @@ import {
 } from "@/src/utils/schedule";
 import { useScheduleStore } from "@/src/hooks/stores/useScheduleStore";
 import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
+import BaseCard from "../../ui/card/BaseCard";
 
 interface WeeksType {
   weekDates: Date[];
@@ -74,7 +75,7 @@ export default function WeekView({
 
   return (
     <div className="h-full neu-flat rounded-3xl flex flex-col overflow-hidden">
-      <div className="pr-2.5 shrink-0">
+      <BaseCard className="pr-2.5 shrink-0" glow>
         <div className="grid grid-cols-[60px_repeat(7,minmax(0,1fr))] h-14 bg-transparent border-b border-divider">
           <div className="flex items-center justify-center border-r border-divider/40 text-muted">
             <Timer size={14} />
@@ -86,7 +87,7 @@ export default function WeekView({
             weathers={weathers}
           />
         </div>
-      </div>
+      </BaseCard>
 
       <div className="flex-1 overflow-y-auto min-h-0 p-2">
         <div className="grid grid-cols-[60px_repeat(7,1fr)] min-h-full neu-pressed rounded-2xl">

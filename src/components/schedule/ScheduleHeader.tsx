@@ -5,6 +5,7 @@ import { format, addDays } from "date-fns";
 import { useScheduleStore } from "@/src/hooks/stores/useScheduleStore";
 import { useWeathers } from "@/src/hooks/querys/useCommonApi";
 import WeatherBadge from "./components/WeatherBadge";
+import BaseCard from "../ui/card/BaseCard";
 
 function getFormattedDateTitle(mode: string, date: Date) {
   if (!date || !(date instanceof Date)) return "";
@@ -35,7 +36,7 @@ export default function ScheduleHeader() {
   const tomorrowWeather = weathers?.[tomorrowKey];
 
   return (
-    <div className="neu-flat rounded-3xl flex flex-col shrink-0 overflow-hidden">
+    <BaseCard className="flex flex-col shrink-0 overflow-hidden" glow>
       <div className="flex items-center justify-between px-6 py-4 border-b border-divider">
         <button
           onClick={prev}
@@ -86,6 +87,6 @@ export default function ScheduleHeader() {
           </div>
         </div>
       </div>
-    </div>
+    </BaseCard>
   );
 }

@@ -3,6 +3,11 @@ import { useScheduleStore } from "../stores/useScheduleStore";
 import { publicKeys } from "./key/publicKey";
 import { useWeatherStore } from "../stores/useWeatherStore";
 import { Get } from "./useMutations";
+import {
+  holidayType,
+  ProcessedWeather,
+  WeatherData,
+} from "@/src/types/schedule";
 
 export function useHolidays() {
   const currentDate = useScheduleStore((s) => s.currentDate);
@@ -14,7 +19,7 @@ export function useHolidays() {
     queryKey: [publicKeys.holiday, year, month],
 
     queryFn: () =>
-      Get<object[]>({
+      Get<holidayType[]>({
         url: "/holiday/info",
         params: {
           year: year,
@@ -36,7 +41,7 @@ export function useWeathers() {
     refetchOnMount: false,
 
     queryFn: () =>
-      Get<object[]>({
+      Get<WeatherData[]>({
         url: "/weather/info",
         params: {
           nx: nx,

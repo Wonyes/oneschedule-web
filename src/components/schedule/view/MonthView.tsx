@@ -12,6 +12,7 @@ import { useScheduleStore } from "@/src/hooks/stores/useScheduleStore";
 import { ScheduleViewProps } from "@/src/types/schedule";
 import WeatherBadge from "../components/WeatherBadge";
 import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
+import BaseCard from "../../ui/card/BaseCard";
 
 export default function MonthView({
   events,
@@ -24,16 +25,18 @@ export default function MonthView({
 
   return (
     <div className="h-full neu-flat rounded-3xl flex flex-col overflow-hidden">
-      <div className="grid grid-cols-7 border-b border-divider shrink-0">
-        {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
-          <div
-            key={d}
-            className="h-10 flex items-center justify-center text-xs text-muted"
-          >
-            {d}
-          </div>
-        ))}
-      </div>
+      <BaseCard glow>
+        <div className="grid grid-cols-7 border-b border-divider shrink-0">
+          {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
+            <div
+              key={d}
+              className="h-10 flex items-center justify-center text-xs text-muted"
+            >
+              {d}
+            </div>
+          ))}
+        </div>
+      </BaseCard>
 
       <div className="flex-1 overflow-y-auto min-h-0 p-2">
         <div className="grid grid-cols-6 grid-rows-6 min-h-full neu-pressed rounded-2xl overflow-hidden">

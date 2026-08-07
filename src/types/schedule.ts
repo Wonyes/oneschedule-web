@@ -27,11 +27,10 @@ export type ScheduleEvent = {
 };
 
 export type holidayType = {
-  dateKind: string;
   dateName: string;
+  id: number;
   isHoliday: string;
   locdate: string;
-  seq: number;
 };
 
 export interface EventLayout {
@@ -43,29 +42,29 @@ export interface EventLayout {
   left?: number;
 }
 
-export interface WeatherItem {
-  baseDate: string;
-  baseTime: string;
-  category: string;
-  fcstDate: string;
-  fcstTime: string;
-  fcstValue: string;
-  nx: number;
-  ny: number;
-}
-
-export interface WeatherData {
+export type WeatherData = {
   date: string;
   time: string;
-  [key: string]: string;
-}
 
-export interface ProcessedWeather {
-  [key: string]: WeatherData;
-}
+  // 하늘 상태
+  SKY: string;
+
+  // 습도
+  REH: string;
+
+  // 강수 형태
+  PTY: string;
+
+  // 기온
+  TMP: string;
+};
+
+export type ProcessedWeather = {
+  [date: string]: WeatherData;
+};
 
 export type ScheduleViewProps = {
   events: ScheduleEvent[];
   holidays: holidayType[];
-  weathers: ProcessedWeather | undefined;
+  weathers: WeatherData[];
 };

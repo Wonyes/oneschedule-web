@@ -10,6 +10,8 @@ import WeatherBadge from "../components/WeatherBadge";
 import HourColumn from "../layout/HourColumn";
 import { HOURS } from "@/src/constant/schedule";
 import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
+import BaseCard from "../../ui/card/BaseCard";
+import { Column } from "../../ui/layout/flex";
 
 export default function DayView({
   events,
@@ -27,15 +29,16 @@ export default function DayView({
 
   return (
     <div className="h-full neu-flat rounded-3xl flex flex-col overflow-hidden">
-      <div
-        className={`h-14 shrink-0 flex items-center gap-2 justify-center border-b border-divider typo-body-2 ${getDayColor(
-          currentDate,
-          holiday,
-        )}`}
+      <BaseCard
+        className={`h-14 shrink-0 flex flex-col items-center text-center gap-2 justify-center border-b border-divider typo-body-2 
+          ${getDayColor(currentDate, holiday)}`}
+        glow
       >
-        <span>{format(currentDate, "M월, d일 EEEE")}</span>
-        <WeatherBadge targetWeather={targetWeather} />
-      </div>
+        <Column className="items-center">
+          <span>{format(currentDate, "M월, d일 EEEE")}</span>
+          <WeatherBadge targetWeather={targetWeather} />
+        </Column>
+      </BaseCard>
 
       <div className="flex-1 overflow-y-auto min-h-0 p-2">
         <div className="grid grid-cols-[60px_1fr] min-h-full neu-pressed rounded-2xl">
