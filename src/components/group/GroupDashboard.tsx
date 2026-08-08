@@ -14,13 +14,15 @@ export default function GroupDashboard({ group }: { group: MyGroupResponse }) {
       <GroupHero group={group} />
 
       {/* Summary */}
-
       <GroupSummary group={group} />
 
       {/* Main */}
-
       <Row className="w-full gap-5">
-        <GroupMemberSection members={group.members} />
+        <GroupMemberSection
+          isAdmin={group.groupRole === "SUPER"}
+          members={group.members}
+          groupNo={group.groupNo}
+        />
         <GroupScheduleSection />
       </Row>
 

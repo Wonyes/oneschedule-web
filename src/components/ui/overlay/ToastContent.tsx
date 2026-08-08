@@ -28,7 +28,7 @@ export default function ToastContent({ message }: ToastContentProps) {
 
   return (
     <div
-      className={`fixed bottom-10 left-1/2 z-[10000] flex w-fit max-w-[728px] -translate-x-1/2 items-center rounded-2xl bg-indigo-600 px-5 py-3 shadow-xl transition-all duration-300 ${
+      className={`fixed top-[40%] left-[55%] -translate-x-1/2 z-[10000] flex w-fit max-w-[728px]  items-center rounded-2xl bg-indigo-600 px-5 py-3 shadow-xl transition-all duration-300 ${
         visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
       }`}
     >

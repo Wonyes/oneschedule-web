@@ -75,11 +75,8 @@ export const useLogout = () => {
       }),
 
     onSuccess: () => {
-      queryClient.removeQueries({
-        queryKey: [memberskeys.myInfo],
-      });
-
-      router.refresh();
+      queryClient.clear();
+      router.push("/");
     },
   });
 };

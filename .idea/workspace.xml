@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="b2fdb4b5-3774-4bbc-ad1c-782a0decbfe4" name="변경" comment="">
+      <change beforePath="$PROJECT_DIR$/src/app/(main)/group/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(main)/group/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/common/header/HeaderAuth.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/common/header/HeaderAuth.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/group/CreateGroup.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/group/CreateGroup.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/group/GroupActivitySection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/group/GroupActivitySection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/group/GroupDashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/group/GroupDashboard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/group/GroupHero.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/group/GroupHero.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/group/GroupLanding.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/group/GroupLanding.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/group/GroupMemberSection .tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/group/GroupMemberSection .tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/group/GroupScheduleSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/group/GroupScheduleSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/group/GroupSummary.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/group/GroupSummary.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/schedule/components/auth/SignForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/schedule/components/auth/SignForm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/EditArea.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/EditArea.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/layout/button.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/layout/button.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/layout/flex.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/layout/flex.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/overlay/ToastContent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/overlay/ToastContent.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hooks/querys/useGroup.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/querys/useGroup.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hooks/querys/useMembers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/querys/useMembers.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hooks/querys/useMutations.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/querys/useMutations.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hooks/stores/useOverlayStore.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/stores/useOverlayStore.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hooks/useForm.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/useForm.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hooks/useProfileEdit.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/useProfileEdit.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/api.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types/group.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/group.ts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DBNavigator.Project.Workspace.Settings">
+    <assistant-settings>
+      <credential-settings>
+        <credentials />
+      </credential-settings>
+      <profile-settings>
+        <profiles />
+      </profile-settings>
+      <mcp-server-settings>
+        <workspace-integration value="false" />
+        <mcp-servers />
+        <mcp-tool-approvals />
+      </mcp-server-settings>
+    </assistant-settings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "Wonyes"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Wonyes/dashboard_web.git",
+    "accountId": "9a09d552-d10a-49d6-bfe5-72403ff8c3f5"
+  }
+}]]></component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 0
+}]]></component>
+  <component name="ProjectId" id="3HccKv7uxYGEFD484vZfkmckSHu" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="애플리케이션 수준" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="디폴트 작업">
+      <changelist id="b2fdb4b5-3774-4bbc-ad1c-782a0decbfe4" name="변경" comment="" />
+      <created>1786170738777</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1786170738777</updated>
+    </task>
+    <servers />
+  </component>
+</project>

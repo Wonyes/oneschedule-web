@@ -48,7 +48,6 @@ export default function SignForm() {
       router.push("/login");
     },
     onError: (err) => {
-      console.log(err, "#@#@");
       openAlert({
         title: "회원가입에 실패하였습니다.",
         message: err.response.data.message,

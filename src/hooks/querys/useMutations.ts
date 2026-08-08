@@ -54,8 +54,8 @@ export const Delete = async <T>({ url, params }: ApiProps): Promise<T> => {
   return (response.data.result ?? response.data) as T;
 };
 
-export const Patch = async <T>({ url, body }: ApiProps): Promise<T> => {
-  const response = await api.patch(url, body);
+export const Patch = async <T>({ url, body, params }: ApiProps): Promise<T> => {
+  const response = await api.patch(url, body, { params });
   return (response.data.result ?? response.data) as T;
 };
 

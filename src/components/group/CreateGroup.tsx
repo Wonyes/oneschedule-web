@@ -5,8 +5,14 @@ import BaseCard from "../ui/card/BaseCard";
 import { ArrowLeft } from "lucide-react";
 import { useAppMutation } from "@/src/types/ErrorResponse";
 import { Post } from "@/src/hooks/querys/useMutations";
+import { useOverlay } from "@/src/hooks/useOverlay";
+import { useQueryClient } from "@tanstack/react-query";
+import { groupkeys } from "@/src/hooks/querys/key/groupKey";
+import { memberskeys } from "@/src/hooks/querys/key/members";
 
 export default function CreateGroup({ onBack }: { onBack: () => void }) {
+  const queryClient = useQueryClient();
+  const { openToast } = useOverlay();
   const { form, formChange } = useForm({
     groupName: "",
     position: "",
@@ -16,17 +22,29 @@ export default function CreateGroup({ onBack }: { onBack: () => void }) {
     mutationFn: () => {
       return Post({
         url: "group/create",
-        body: {
+        params: {
           groupName: form.groupName,
           position: form.position,
         },
       });
     },
-    onSuccess: (data) => {
-      console.log(data);
+    onSuccess: () => {
+      openToast({
+        message: "그룹이 생성되었습니다.",
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [memberskeys.myInfo],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [groupkeys.myGroup],
+      });
     },
     onError: (err) => {
-      console.log(err.response);
+      openToast({
+        message: err.response.data.message ?? "그룹 생성에 실패했습니다.",
+      });
     },
   });
 

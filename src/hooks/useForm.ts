@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 export function useForm<T extends Record<string, unknown>>(initialValue?: T) {
-  const [form, setForm] = useState(initialValue);
+  const [form, setForm] = useState<T>(initialValue ?? ({} as T));
 
   const [errors, setErrors] = useState<Partial<Record<keyof T, string>>>({});
   const [success, setSuccess] = useState<Partial<Record<keyof T, string>>>({});

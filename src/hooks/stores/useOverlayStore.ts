@@ -100,7 +100,7 @@ export const useOverlayStore = create<OverlayStore>((set) => ({
   closeOverlay: (type, withState) =>
     set((state) => {
       if (withState) {
-        state[type];
+        state[type].onFunc?.();
       }
       switch (type) {
         case "alert":

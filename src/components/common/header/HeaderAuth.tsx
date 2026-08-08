@@ -9,6 +9,11 @@ export default function HeaderAuth({ user }: { user: MyInfoResponse | null }) {
   const router = useRouter();
   const { mutate: logout } = useLogout();
 
+  const handleLogout = () => {
+    logout();
+    router.push("/");
+  };
+
   if (!user) {
     return (
       <button
@@ -38,7 +43,7 @@ export default function HeaderAuth({ user }: { user: MyInfoResponse | null }) {
       </div>
 
       <button
-        onClick={() => logout()}
+        onClick={handleLogout}
         className="p-2 rounded-xl neu-pressed text-slate-400"
       >
         <LogOut size={16} />

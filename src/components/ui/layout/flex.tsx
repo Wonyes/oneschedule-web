@@ -24,7 +24,7 @@ const Column = ({ className, children, ...props }: FlexProps) => {
 const Between = ({ className, children, ...props }: FlexProps) => {
   return (
     <div
-      className={cn("flex justify-between items-center", className)}
+      className={cn("flex justify-between w-full items-center", className)}
       {...props}
     >
       {children}

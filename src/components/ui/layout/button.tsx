@@ -2,7 +2,7 @@ import React from "react";
 import { cn } from "@/src/utils/cn";
 
 type ButtonProps = {
-  text: string;
+  text?: string;
   icon?: React.ReactNode;
   className?: string;
   isDisabled?: boolean;
@@ -126,7 +126,6 @@ const GhostBtn = (props: ButtonProps) => {
 
         hover:bg-white/[0.05]
         hover:text-white
-
         `,
         props.className,
       )}

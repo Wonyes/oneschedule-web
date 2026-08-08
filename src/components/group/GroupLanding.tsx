@@ -7,9 +7,54 @@ import CreateGroup from "./CreateGroup";
 import BaseCard from "../ui/card/BaseCard";
 import { Row } from "../ui/layout/flex";
 import { Input } from "../ui/layout/input";
+import { useAppMutation } from "@/src/types/ErrorResponse";
+import { Post } from "@/src/hooks/querys/useMutations";
+import { useQueryClient } from "@tanstack/react-query";
+import { groupkeys } from "@/src/hooks/querys/key/groupKey";
+import { useOverlay } from "@/src/hooks/useOverlay";
+import { useForm } from "@/src/hooks/useForm";
+import { memberskeys } from "@/src/hooks/querys/key/members";
 
 export default function GroupLanding() {
+  const queryClient = useQueryClient();
+  const { openToast } = useOverlay();
+
+  const { form, formChange } = useForm({
+    groupCode: "",
+  });
+
   const [createGroup, setCreateGroup] = useState(false);
+
+  const { mutate: joinGroup } = useAppMutation({
+    mutationFn: () =>
+      Post({
+        url: "/group/join",
+        body: null,
+        params: {
+          groupCode: form.groupCode,
+        },
+      }),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [memberskeys.myInfo],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [groupkeys.myGroup],
+      });
+
+      openToast({
+        message: "그룹에 가입했습니다.",
+      });
+    },
+    onError: (err) => {
+      openToast({
+        message:
+          err.response.data.message ?? err.response.data.result.errorMessage,
+      });
+    },
+  });
 
   return (
     <main className="max-w-[420px] w-full mx-auto">
@@ -56,15 +101,27 @@ export default function GroupLanding() {
 
           <div className="mt-8 flex flex-col w-full gap-3">
             <Primary
-              text="그룹 만들기"
-              icon={<Users size={14} />}
-              onClick={() => setCreateGroup(true)}
+              text={form.groupCode ? "그룹 가입하기" : "그룹 만들기"}
+              icon={
+                form.groupCode ? <KeySquare size={14} /> : <Users size={14} />
+              }
+              onClick={() => {
+                if (form.groupCode) {
+                  joinGroup();
+                  return;
+                }
+
+                setCreateGroup(true);
+              }}
             />
 
             <Input
-              placeholder="초대 코드를 입력해주세요"
+              name="groupCode"
+              value={form.groupCode}
+              onChange={formChange}
+              type="text"
+              placeholder="초대코드를 입력해 주세요."
               className="h-[44px]"
-              leftSection={<KeySquare size={14} />}
             />
           </div>
         </BaseCard>

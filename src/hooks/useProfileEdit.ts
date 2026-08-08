@@ -1,4 +1,5 @@
 "use client";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { useState } from "react";
 
@@ -9,11 +10,13 @@ import {
   useNicknameCheck,
 } from "@/src/hooks/querys/useMembers";
 import { CustomError } from "../types/ErrorResponse";
+import { memberskeys } from "./querys/key/members";
 
 export function useProfileEdit(user: MyInfoResponse) {
   const [editingField, setEditingField] = useState<
     "nickname" | "phoneNumber" | null
   >(null);
+  const queryClient = useQueryClient();
 
   const [nicknameChecked, setNicknameChecked] = useState(false);
 

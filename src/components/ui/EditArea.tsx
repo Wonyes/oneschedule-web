@@ -46,6 +46,7 @@ export default function EditArea({
               className="
                 py-[6px]
                 px-3
+                h-fit
                 rounded-lg
                 text-xs
               "

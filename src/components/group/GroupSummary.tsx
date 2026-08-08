@@ -33,47 +33,16 @@ function Summary({
   value: string;
 }) {
   return (
-    <BaseCard
-      glow
-      className="
-        flex-1
-        p-5
-      "
-    >
+    <BaseCard className="flex-1 p-5" glow>
       <Row className="gap-4">
-        <Row
-          className="
-            h-12
-            w-12
-            justify-center
-            rounded-2xl
-            bg-blue-500/10
-            text-blue-400
-          "
-        >
+        <Row className="h-11 w-11 justify-center rounded-xl bg-blue-500/10 text-blue-400">
           {icon}
         </Row>
 
         <Column>
-          <span
-            className="
-              typo-caption-2
-              text-slate-500
-            "
-          >
-            {title}
-          </span>
+          <span className="typo-caption-2 text-slate-500">{title}</span>
 
-          <span
-            className="
-              mt-1
-              text-xl
-              font-bold
-              text-white
-            "
-          >
-            {value}
-          </span>
+          <span className="mt-1 text-xl font-bold text-white">{value}</span>
         </Column>
       </Row>
     </BaseCard>

@@ -102,7 +102,6 @@ api.interceptors.response.use(
       }
 
       case 403: {
-        window.location.href = "/";
         return Promise.reject(error);
       }
 

@@ -4,14 +4,7 @@ import { CalendarDays } from "lucide-react";
 
 export default function GroupScheduleSection() {
   return (
-    <BaseCard
-      glow
-      className="
-            flex-1
-            p-6
-            h-[520px]
-          "
-    >
+    <BaseCard glow className="flex-1 p-6 h-[520px]">
       <Row className="mb-6 gap-2">
         <CalendarDays size={18} />
 
@@ -29,34 +22,10 @@ export default function GroupScheduleSection() {
 
 function ScheduleItem({ time, title }: { time: string; title: string }) {
   return (
-    <Between
-      className="
-        rounded-xl
-        border
-        border-slate-800
-        bg-slate-900/40
-        px-4
-        w-full
-        neu-pressed
-        py-3
-      "
-    >
-      <span
-        className="
-          typo-caption-2
-          text-slate-500
-        "
-      >
-        {time}
-      </span>
+    <Between className="rounded-xl border border-slate-800 bg-slate-900/40 px-4 w-full neu-pressed py-3 ">
+      <span className="typo-caption-2 text-slate-500 ">{time}</span>
 
-      <span
-        className="
-          typo-sub-t-3
-        "
-      >
-        {title}
-      </span>
+      <span className="typo-sub-t-3">{title}</span>
     </Between>
   );
 }
