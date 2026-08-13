@@ -3,11 +3,7 @@ import { useScheduleStore } from "../stores/useScheduleStore";
 import { publicKeys } from "./key/publicKey";
 import { useWeatherStore } from "../stores/useWeatherStore";
 import { Get } from "./useMutations";
-import {
-  holidayType,
-  ProcessedWeather,
-  WeatherData,
-} from "@/src/types/schedule";
+import { holidayType, WeatherData } from "@/src/types/schedule";
 
 export function useHolidays() {
   const currentDate = useScheduleStore((s) => s.currentDate);
