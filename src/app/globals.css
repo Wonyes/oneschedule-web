@@ -1,18 +1,37 @@
-@import "tailwindcss";
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css");
-@import url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff");
+
+@import "tailwindcss";
+
+/* =========================================================
+   FONT
+========================================================= */
+
+@font-face {
+  font-family: "GmarketSans";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff")
+    format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* =========================================================
+   THEME
+========================================================= */
 
 @theme {
   --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.4);
   --shadow-float: 0 20px 45px rgba(0, 0, 0, 0.55);
 }
 
-/* =========================
-   HIGH-END TRUE NEUMORPHISM (Enhanced Contrast & Tactile Depth)
-========================= */
+/* =========================================================
+   HIGH-END TRUE NEUMORPHISM
+   Enhanced Contrast & Tactile Depth
+========================================================= */
 
 @utility neu-flat {
   background: #232b42;
+
   box-shadow:
     7px 7px 18px rgba(8, 11, 16, 0.55),
     -7px -7px 18px rgba(255, 255, 255, 0.07),
@@ -21,6 +40,7 @@
 
 @utility neu-float {
   background: #2a344e;
+
   box-shadow:
     12px 12px 28px rgba(8, 11, 16, 0.65),
     -10px -10px 24px rgba(255, 255, 255, 0.08),
@@ -29,6 +49,7 @@
 
 @utility neu-pressed {
   background: #171e2e;
+
   box-shadow:
     inset 5px 5px 12px rgba(8, 11, 16, 0.7),
     inset -5px -5px 12px rgba(255, 255, 255, 0.03),
@@ -37,14 +58,17 @@
 
 @utility neu-btn {
   background: #232b42;
+
   box-shadow:
     5px 5px 14px rgba(8, 11, 16, 0.45),
     -5px -5px 14px rgba(255, 255, 255, 0.06),
     inset 0 0 0 1px rgba(255, 255, 255, 0.09);
+
   transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:hover {
     background: #293450;
+
     box-shadow:
       3px 3px 8px rgba(8, 11, 16, 0.35),
       -3px -3px 8px rgba(255, 255, 255, 0.09),
@@ -53,22 +77,27 @@
 
   &:active {
     background: #171e2e;
+
     box-shadow:
       inset 5px 5px 12px rgba(8, 11, 16, 0.7),
       inset 0 0 0 1px rgba(129, 140, 248, 0.6);
   }
 }
 
-/* =========================
-   TWILIGHT BLUE-GRAY PALETTE (Optimized Contrast)
-========================= */
+/* =========================================================
+   TWILIGHT BLUE-GRAY PALETTE
+   Optimized Contrast
+========================================================= */
+
 :root {
   --main-bg: linear-gradient(135deg, #1f273d 0%, #151b2a 50%, #0e121b 100%);
+
   --surface: #232b42;
   --back: #171e2e;
 
   --foreground: #f8fafc;
-  --primary: #818cf8; /* 뮤트 인디고 포인트 */
+  --primary: #818cf8;
+
   --t-title: #ffffff;
   --text: #e2e8f0;
   --muted: #94a3b8;
@@ -96,21 +125,28 @@
   --soft: 0 10px 30px rgba(0, 0, 0, 0.4);
 
   --gradient-mint: linear-gradient(90deg, #34d399 0%, #059669 100%);
+
   --gradient-pink: linear-gradient(90deg, #f43f5e 0%, #e11d48 100%);
+
   --gradient-yellow: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+
   --gradient-primary: linear-gradient(135deg, #818cf8 0%, #4f46e5 100%);
 }
 
-/* =========================
+/* =========================================================
    BASE & SCROLLBAR
-========================= */
+========================================================= */
+
 @layer base {
   html,
   body {
     background: var(--main-bg);
     color: var(--foreground);
+
     font-family: var(--font-sans);
+
     min-height: 100vh;
+
     background-attachment: fixed;
   }
 
@@ -146,9 +182,14 @@
   }
 }
 
-/* Tailwind v4 Theme Configuration */
+/* =========================================================
+   TAILWIND V4 THEME CONFIGURATION
+========================================================= */
+
 @theme inline {
-  --font-sans: "Wanted Sans", sans-serif;
+  --font-sans: "Pretendard", sans-serif;
+
+  --font-gmarket: "GmarketSans", sans-serif;
 
   --color-background: var(--main-bg);
   --color-foreground: var(--foreground);
@@ -167,7 +208,6 @@
   --color-red: var(--red);
   --color-back: var(--back);
   --color-blue: var(--blue);
-  --color-input: var(--input);
   --color-secondarty: var(--secondarty);
   --color-surface: var(--surface);
   --color-main-bg: var(--main-bg);
@@ -182,77 +222,94 @@
   --shadow-soft: var(--soft);
 }
 
-/* Typography Utilities */
+/* =========================================================
+   TYPOGRAPHY UTILITIES
+========================================================= */
+
 @utility typo-h1 {
   font-size: 48px;
   line-height: 64px;
   font-weight: 600;
 }
+
 @utility typo-h2 {
   font-size: 40px;
   line-height: 56px;
   font-weight: 500;
 }
+
 @utility typo-h3 {
   font-size: 36px;
   line-height: 48px;
   font-weight: 500;
 }
+
 @utility typo-h4 {
   font-size: 32px;
   line-height: 40px;
   font-weight: 600;
 }
+
 @utility typo-title-1 {
   font-size: 24px;
   line-height: 32px;
   font-weight: 600;
 }
+
 @utility typo-title-2 {
   font-size: 18px;
   line-height: 24px;
   font-weight: 700;
 }
+
 @utility typo-sub-t-1 {
   font-size: 15px;
   line-height: 24px;
   font-weight: 600;
 }
+
 @utility typo-sub-t-2 {
   font-size: 15px;
   line-height: 24px;
   font-weight: 500;
 }
+
 @utility typo-sub-t-3 {
   font-size: 13px;
   line-height: 24px;
   font-weight: 600;
 }
+
 @utility typo-sub-t-4 {
   font-size: 13px;
   line-height: 20px;
   font-weight: 500;
 }
+
 @utility typo-body-1 {
   font-size: 13px;
   line-height: 20px;
   font-weight: 400;
 }
+
 @utility typo-body-2 {
   font-size: 13px;
   line-height: 20px;
   font-weight: 500;
 }
+
 @utility typo-caption-1 {
   font-size: 12px;
   line-height: 16px;
   font-weight: 400;
 }
+
 @utility typo-caption-2 {
   font-size: 12px;
   line-height: 16px;
   font-weight: 500;
 }
+
 @utility typo-caption-3 {
   font-size: 10px;
   line-height: 16px;

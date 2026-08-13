@@ -17,12 +17,20 @@ import { groupkeys } from "@/src/hooks/querys/key/groupKey";
 
 type GroupRole = "SUPER" | "SUB" | "MEMBER";
 
+interface Member {
+  email: string;
+  memberNo: number;
+  nickname: string;
+  position: string;
+  groupRole: GroupRole;
+}
+
 export default function GroupMemberSection({
   members,
   isAdmin,
   groupNo,
 }: {
-  members;
+  members: Member[];
   isAdmin: boolean;
   groupNo: number;
 }) {
@@ -31,7 +39,6 @@ export default function GroupMemberSection({
   const { openModal, openToast, openConfirm, closeModal } = useOverlay();
 
   const queryClient = useQueryClient();
-
   const { mutate: updateMember } = useAppMutation({
     mutationFn: ({
       memberNo,
@@ -94,7 +101,7 @@ export default function GroupMemberSection({
 
   const memberEditRef = useRef<GroupMemberEditRef>(null);
 
-  const memberChanges = (member) => {
+  const memberChanges = (member: Member) => {
     setOpenMenu(null);
 
     openModal({
@@ -116,7 +123,9 @@ export default function GroupMemberSection({
     });
   };
 
-  const memberDelete = (member) => {
+  const memberDelete = (member: Member) => {
+    setOpenMenu(null);
+
     openConfirm({
       title: `${member.nickname} 멤버 삭제`,
       message: `정말 ${member.nickname}를 추방하시겠습니까?`,
@@ -135,7 +144,7 @@ export default function GroupMemberSection({
       </div>
 
       <Column className="h-[430px] gap-4 overflow-y-auto pr-2">
-        {members.map((member) => (
+        {members.map((member: Member) => (
           <Between
             key={member.memberNo}
             className="
