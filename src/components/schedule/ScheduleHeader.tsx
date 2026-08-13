@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, Sun } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { format, addDays } from "date-fns";
 import { useScheduleStore } from "@/src/hooks/stores/useScheduleStore";
 import { useWeathers } from "@/src/hooks/querys/useCommonApi";
