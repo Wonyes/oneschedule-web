@@ -1,6 +1,6 @@
 import { endOfDay, isWithinInterval, startOfDay } from "date-fns";
-import { getEventPosition } from "./Schedule";
-import { ScheduleEvent } from "../types/Schedule";
+import { getEventPosition } from "./schedule";
+import { ScheduleEvent } from "../types/schedule";
 
 export function getDayLayouts(events: ScheduleEvent[], currentDate: Date) {
   return events
