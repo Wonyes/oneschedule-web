@@ -6,6 +6,7 @@ import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
 import { format } from "date-fns";
 import { Input } from "../layout/input";
 import { Column } from "../layout/flex";
+import { Primary, SecondaryBtn, GhostBtn } from "../layout/button";
 import CalendarBody from "./calendar/CalendarBody";
 import { useCalendarStore } from "@/src/hooks/stores/useCalendarStore";
 import { formatTime } from "@/src/utils/time";
@@ -20,36 +21,23 @@ const categories = [
 
 function SheetHeader({ onClose }: { onClose: () => void }) {
   return (
-    <header className="flex items-center justify-between border-b border-white/10 px-6 py-4">
+    <header className="flex items-center justify-between border-b border-white/10 px-4 sm:px-6 py-4">
       <h2 className="typo-title-2 text-white">일정 추가</h2>
-      <button
-        type="button"
+      <GhostBtn
+        icon={<X size={20} />}
         onClick={onClose}
-        className="rounded-full p-2 text-slate-400 hover:bg-white/10 hover:text-white transition-all"
-      >
-        <X size={20} />
-      </button>
+        className="h-auto rounded-full p-2"
+      />
     </header>
   );
 }
 
 function SheetFooter({ onClose }: { onClose: () => void }) {
   return (
-    <footer className="border-t border-white/10 px-6 py-4 bg-[#232b42]/90  rounded-b-[32px]">
+    <footer className="border-t border-white/10 px-4 sm:px-6 py-4 bg-surface/90  rounded-b-[32px]">
       <div className="flex gap-3">
-        <button
-          type="button"
-          onClick={onClose}
-          className="flex-1 rounded-xl typo-caption-2 border border-white/10 neu-pressed py-3 font-medium text-slate-300 hover:text-white transition-colors"
-        >
-          취소
-        </button>
-        <button
-          type="button"
-          className="flex-1 rounded-xl typo-caption-2 bg-indigo-600 py-3 font-medium text-white shadow-lg shadow-indigo-600/30 hover:bg-indigo-500 transition-all"
-        >
-          저장
-        </button>
+        <SecondaryBtn text="취소" onClick={onClose} className="flex-1" />
+        <Primary text="저장" className="flex-1" />
       </div>
     </footer>
   );
@@ -87,7 +75,7 @@ export default function Sheet() {
       />
 
       <section
-        className={`fixed bottom-0 left-0 right-0 z-50 mx-auto flex h-[75vh] max-w-[800px] flex-col rounded-t-[32px] bg-[#232b42] text-slate-100 border-t border-x border-white/15 shadow-2xl transition-transform duration-300 ease-out ${
+        className={`fixed bottom-0 left-0 right-0 z-50 mx-auto flex h-[75vh] max-w-[800px] flex-col rounded-t-[32px] glass text-slate-100 transition-transform duration-300 ease-out ${
           open
             ? "translate-y-0 pointer-events-auto"
             : "translate-y-full pointer-events-none"
@@ -95,7 +83,7 @@ export default function Sheet() {
       >
         <SheetHeader onClose={close} />
 
-        <div className="flex-1 space-y-6 overflow-y-auto px-6 py-6 scrollbar-thin">
+        <div className="flex-1 space-y-6 overflow-y-auto px-4 sm:px-6 py-6 scrollbar-thin">
           <Column className="space-y-2 gap-1.5">
             <label className="typo-sub-t-2 text-slate-200">📝 제목</label>
             <Input

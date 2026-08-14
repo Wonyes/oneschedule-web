@@ -2,10 +2,11 @@ import React from "react";
 import { Column, Row } from "../ui/layout/flex";
 import BaseCard from "../ui/card/BaseCard";
 import { CalendarDays, Clock, Users } from "lucide-react";
+import { MyGroupResponse } from "@/src/types/group";
 
-export default function GroupSummary({ group }) {
+export default function GroupSummary({ group }: { group: MyGroupResponse }) {
   return (
-    <Row className="w-full gap-5">
+    <Row className="w-full gap-3 flex-col sm:flex-row sm:gap-5">
       <Summary
         icon={<Users size={22} />}
         title="멤버"

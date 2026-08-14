@@ -4,7 +4,7 @@ import { forwardRef, useImperativeHandle } from "react";
 import { Column } from "../../layout/flex";
 import Dropdown from "../../Dropdown";
 import { useForm } from "@/src/hooks/useForm";
-import { GroupMemberResponse } from "@/src/types/group";
+import { GroupMember } from "@/src/types/group";
 import { Input } from "../../layout/input";
 
 type GroupRole = "SUPER" | "SUB" | "MEMBER";
@@ -27,7 +27,7 @@ export interface GroupMemberEditRef {
 export const GroupMemberEditContent = forwardRef<
   GroupMemberEditRef,
   {
-    member: GroupMemberResponse;
+    member: GroupMember;
   }
 >(({ member }, ref) => {
   const { form, setForm, formChange } = useForm({

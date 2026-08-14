@@ -56,6 +56,34 @@
     inset 0 0 0 1px rgba(0, 0, 0, 0.4);
 }
 
+/* =========================================================
+   GLASSMORPHISM
+   떠 있는 오버레이(모달/시트/드롭다운/플로팅 독) 전용
+========================================================= */
+
+@utility scroll-fade {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    black 20px,
+    black calc(100% - 20px),
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    black 20px,
+    black calc(100% - 20px),
+    transparent 100%
+  );
+}
+
+@utility glass {
+  background: rgba(35, 43, 66, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: var(--shadow-float);
+}
+
 @utility neu-btn {
   background: #232b42;
 
@@ -101,7 +129,7 @@
   --t-title: #ffffff;
   --text: #e2e8f0;
   --muted: #94a3b8;
-  --secondarty: #cbd5e1;
+  --secondary: #cbd5e1;
   --place-h: #64748b;
 
   --divider: rgba(255, 255, 255, 0.1);
@@ -194,6 +222,8 @@
   --color-background: var(--main-bg);
   --color-foreground: var(--foreground);
 
+  --color-primary: var(--primary);
+  --color-muted: var(--muted);
   --color-primary-500: var(--primary-500);
   --color-success-500: var(--success-500);
   --color-error-500: var(--error-500);
@@ -208,7 +238,7 @@
   --color-red: var(--red);
   --color-back: var(--back);
   --color-blue: var(--blue);
-  --color-secondarty: var(--secondarty);
+  --color-secondary: var(--secondary);
   --color-surface: var(--surface);
   --color-main-bg: var(--main-bg);
   --color-t-title: var(--t-title);

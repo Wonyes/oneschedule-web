@@ -14,11 +14,3 @@ export interface MyGroupResponse {
   position: string;
   members: GroupMember[];
 }
-
-export interface GroupMemberResponse {
-  memberNo: number;
-  nickname: string;
-  email: string;
-  groupRole: "SUPER" | "SUB" | "MEMBER";
-  position: string;
-}

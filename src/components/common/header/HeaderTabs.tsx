@@ -1,9 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function HeaderTabs() {
   const [activeTab, setActiveTab] = useState<"my" | "group">("my");
+  const pathname = usePathname();
+
+  if (pathname !== "/") {
+    return null;
+  }
 
   return (
     <nav className="relative flex rounded-xl neu-pressed p-1.5 w-[280px] justify-self-center">
@@ -26,7 +32,7 @@ export default function HeaderTabs() {
             relative z-10
             w-1/2 py-2
             typo-caption-2
-            ${activeTab === tab ? "text-blue" : "text-secondarty"}
+            ${activeTab === tab ? "text-blue" : "text-secondary"}
           `}
         >
           {tab === "my" ? "MY Schedule" : "GROUP Schedule"}

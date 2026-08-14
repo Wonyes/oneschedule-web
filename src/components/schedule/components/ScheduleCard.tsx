@@ -4,7 +4,7 @@ import { EVENT_STYLES } from "@/src/constant/schedule";
 
 type EventCardProps = {
   event: ScheduleEvent;
-  variant?: "week" | "month" | "day";
+  variant?: "week" | "month" | "day" | "agenda";
   top?: number;
   width?: number;
   left?: number;
@@ -44,7 +44,7 @@ export default function ScheduleCard({
       <div
         className={`
           group px-2 py-1 rounded-md truncate flex items-center gap-1.5 
-          bg-[#232b42]/80  border border-white/5
+          bg-surface/80  border border-white/5
           hover:border-white/15 hover:bg-[#293450] 
           transition-all duration-150 ${connectionClass} ${className}
         `}
@@ -59,13 +59,39 @@ export default function ScheduleCard({
     );
   }
 
+  // 1.5 Agenda 리스트 카드 (모바일 월간뷰에서 선택한 날짜의 일정 목록)
+  if (variant === "agenda") {
+    return (
+      <div
+        className={`
+          flex items-center gap-3 rounded-xl
+          bg-surface/90 border border-white/10
+          p-3 transition-all duration-150
+          hover:border-indigo-500/40 hover:bg-[#293450] ${className}
+        `}
+      >
+        <span
+          className={`h-2 w-2 shrink-0 rounded-full ${style.dot || "bg-indigo-400"}`}
+        />
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <span className="typo-caption-1 font-semibold text-white truncate">
+            {event.title}
+          </span>
+          <span className="text-[11px] font-medium text-indigo-300/90 tracking-tight">
+            {getTimes(event.startDate)} - {getTimes(event.endDate)}
+          </span>
+        </div>
+      </div>
+    );
+  }
+
   // 2. Day 뷰 카드 (Linear/Vercel 스타일의 깊이감 있는 플로팅 카드)
   if (variant === "day") {
     return (
       <div
         className={`
           absolute left-0 right-0 rounded-xl
-          bg-[#232b42]/90  border border-white/10
+          bg-surface/90  border border-white/10
           p-2.5 shadow-xl z-10 transition-all duration-200
           hover:border-indigo-500/40 hover:bg-[#293450] ${className}
         `}
@@ -96,7 +122,7 @@ export default function ScheduleCard({
     <div
       className={`
         absolute left-0 right-0 rounded-xl
-        bg-[#232b42]/90 border border-white/10
+        bg-surface/90 border border-white/10
         p-2.5 z-10 overflow-hidden
         hover:z-50 hover:border-indigo-500/50 hover:bg-[#293450] hover:shadow-2xl
         transition-all duration-200

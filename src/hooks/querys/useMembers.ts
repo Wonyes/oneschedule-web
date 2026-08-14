@@ -111,7 +111,7 @@ export const usePasswordChange = () => {
       }),
 
     onSuccess: () => {
-      queryClient.removeQueries({
+      queryClient.invalidateQueries({
         queryKey: [memberskeys.myInfo],
       });
     },

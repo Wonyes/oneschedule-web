@@ -5,6 +5,7 @@ import {
   useLogout,
   useMyinfoChange,
   useNicknameCheck,
+  usePasswordChange,
   MyInfoResponse,
 } from "@/src/hooks/querys/useMembers";
 
@@ -18,6 +19,7 @@ const mockUseMyInfo = useMyInfo as jest.MockedFunction<typeof useMyInfo>;
 const mockUseLogout = useLogout as jest.Mock;
 const mockUseMyinfoChange = useMyinfoChange as jest.Mock;
 const mockUseNicknameCheck = useNicknameCheck as jest.Mock;
+const mockUsePasswordChange = usePasswordChange as jest.Mock;
 
 describe("ProfilePage", () => {
   beforeEach(() => {
@@ -48,6 +50,10 @@ describe("ProfilePage", () => {
     mockUseNicknameCheck.mockReturnValue({
       refetch: jest.fn(),
     });
+
+    mockUsePasswordChange.mockReturnValue({
+      mutate: jest.fn(),
+    });
   });
 
   test("닉네임 중복 확인 없이 저장하면 에러 메시지가 표시된다", () => {
@@ -57,7 +63,7 @@ describe("ProfilePage", () => {
 
     fireEvent.click(editButtons[0]);
 
-    const saveButton = screen.getByText("확인");
+    const saveButton = screen.getByText("완료");
 
     fireEvent.click(saveButton);
 

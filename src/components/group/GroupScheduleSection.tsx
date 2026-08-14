@@ -4,7 +4,7 @@ import { CalendarDays } from "lucide-react";
 
 export default function GroupScheduleSection() {
   return (
-    <BaseCard glow className="flex-1 p-6 h-[520px]">
+    <BaseCard glow className="flex-1 p-6 h-[420px] lg:h-[520px]">
       <Row className="mb-6 gap-2">
         <CalendarDays size={18} />
 

@@ -7,7 +7,7 @@ import { useForm } from "@/src/hooks/useForm";
 import Field from "../../layout/Field";
 import { Post } from "@/src/hooks/querys/useMutations";
 import { useRouter } from "next/navigation";
-import { useAppMutation } from "@/src/types/ErrorResponse";
+import { getErrorMessage, useAppMutation } from "@/src/types/ErrorResponse";
 import { useOverlay } from "@/src/hooks/useOverlay";
 import { useEmailCheck, useNicknameCheck } from "@/src/hooks/querys/useMembers";
 import { useState } from "react";
@@ -50,7 +50,7 @@ export default function SignForm() {
     onError: (err) => {
       openAlert({
         title: "회원가입에 실패하였습니다.",
-        message: err.response.data.message,
+        message: getErrorMessage(err),
       });
     },
   });

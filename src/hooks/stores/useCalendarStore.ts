@@ -56,7 +56,7 @@ export const useCalendarStore = create<CalendarState & CalendarActions>(
       return new Date(today.getFullYear(), today.getMonth(), dayToRender);
     },
 
-    toggleCalendar: ({ date }: { date?: Date | null } = {}) =>
+    toggleCalendar: (date) =>
       set((state) => ({
         isCalendarOpen: !state.isCalendarOpen,
 

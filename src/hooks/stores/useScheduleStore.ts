@@ -7,6 +7,7 @@ interface ScheduleStore {
   currentDate: Date;
 
   setMode: (mode: ViewMode) => void;
+  setCurrentDate: (date: Date) => void;
   next: () => void;
   prev: () => void;
 }
@@ -16,6 +17,7 @@ export const useScheduleStore = create<ScheduleStore>((set) => ({
   currentDate: new Date(),
 
   setMode: (mode) => set({ mode }),
+  setCurrentDate: (date) => set({ currentDate: date }),
 
   next: () =>
     set((state) => {

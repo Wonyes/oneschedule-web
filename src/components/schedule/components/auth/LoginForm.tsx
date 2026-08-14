@@ -8,7 +8,7 @@ import { MyInfoResponse } from "@/src/hooks/querys/useMembers";
 import { Get, Post } from "@/src/hooks/querys/useMutations";
 import { useForm } from "@/src/hooks/useForm";
 import { useOverlay } from "@/src/hooks/useOverlay";
-import { useAppMutation } from "@/src/types/ErrorResponse";
+import { getErrorMessage, useAppMutation } from "@/src/types/ErrorResponse";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
@@ -40,7 +40,7 @@ export default function LoginForm() {
     onError: (err) => {
       openAlert({
         title: "로그인에 실패하였습니다.",
-        message: err.response.data.message,
+        message: getErrorMessage(err),
       });
     },
   });

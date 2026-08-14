@@ -9,7 +9,7 @@ import GroupActivitySection from "./GroupActivitySection";
 
 export default function GroupDashboard({ group }: { group: MyGroupResponse }) {
   return (
-    <Column className="w-full gap-5">
+    <Column className="w-full h-full py-2 gap-5 overflow-y-auto scroll-stable">
       {/* Hero */}
       <GroupHero group={group} />
 
@@ -17,7 +17,7 @@ export default function GroupDashboard({ group }: { group: MyGroupResponse }) {
       <GroupSummary group={group} />
 
       {/* Main */}
-      <Row className="w-full gap-5">
+      <Row className="w-full gap-5 flex-col lg:flex-row">
         <GroupMemberSection
           isAdmin={group.groupRole === "SUPER"}
           members={group.members}

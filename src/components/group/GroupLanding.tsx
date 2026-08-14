@@ -7,7 +7,7 @@ import CreateGroup from "./CreateGroup";
 import BaseCard from "../ui/card/BaseCard";
 import { Row } from "../ui/layout/flex";
 import { Input } from "../ui/layout/input";
-import { useAppMutation } from "@/src/types/ErrorResponse";
+import { getErrorMessage, useAppMutation } from "@/src/types/ErrorResponse";
 import { Post } from "@/src/hooks/querys/useMutations";
 import { useQueryClient } from "@tanstack/react-query";
 import { groupkeys } from "@/src/hooks/querys/key/groupKey";
@@ -50,8 +50,7 @@ export default function GroupLanding() {
     },
     onError: (err) => {
       openToast({
-        message:
-          err.response.data.message ?? err.response.data.result.errorMessage,
+        message: getErrorMessage(err),
       });
     },
   });

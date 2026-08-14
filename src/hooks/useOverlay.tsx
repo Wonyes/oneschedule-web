@@ -20,6 +20,8 @@ interface ToastProps {
   onFunc?: () => void;
 }
 
+let toastTimer: ReturnType<typeof setTimeout> | null = null;
+
 export function useOverlay() {
   const { modal, alert, confirm, toast, closeOverlay, openOverlay } =
     useOverlayStore();
@@ -28,10 +30,13 @@ export function useOverlay() {
   const openModal = (props: TwoButton) => openOverlay("modal", props);
   const openConfirm = (props: TwoButton) => openOverlay("confirm", props);
   const openToast = (props: ToastProps) => {
+    if (toastTimer) clearTimeout(toastTimer);
+
     openOverlay("toast", props);
-    setTimeout(() => {
+    toastTimer = setTimeout(() => {
       closeOverlay("toast");
       props.onFunc?.();
+      toastTimer = null;
     }, 2000);
   };
 

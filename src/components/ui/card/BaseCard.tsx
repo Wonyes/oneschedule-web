@@ -3,6 +3,7 @@ import { cn } from "@/src/utils/cn";
 type BaseCardProps = {
   children: React.ReactNode;
   className?: string;
+  childClass?: string;
   variant?: "flat" | "pressed";
   glow?: boolean;
 };
@@ -10,6 +11,7 @@ type BaseCardProps = {
 export default function BaseCard({
   children,
   className,
+  childClass,
   variant = "flat",
   glow = false,
 }: BaseCardProps) {
@@ -18,7 +20,6 @@ export default function BaseCard({
       className={cn(
         `
         relative
-        overflow-hidden
         rounded-[28px]
         w-full
         `,
@@ -28,23 +29,24 @@ export default function BaseCard({
       )}
     >
       {glow && (
-        <div
-          className="
-            absolute
-            -top-24
-            left-1/2
-            -translate-x-1/2
-            w-72
-            h-72
-            rounded-full
-            bg-indigo-500/20
-            blur-3xl
-            pointer-events-none
-          "
-        />
+        <div className="absolute inset-0 overflow-hidden rounded-[28px] pointer-events-none">
+          <div
+            className="
+              absolute
+              -top-24
+              left-1/2
+              -translate-x-1/2
+              w-72
+              h-72
+              rounded-full
+              bg-indigo-500/20
+              blur-3xl
+            "
+          />
+        </div>
       )}
 
-      <div className="relative z-10">{children}</div>
+      <div className={cn("relative z-10", childClass)}>{children}</div>
     </div>
   );
 }

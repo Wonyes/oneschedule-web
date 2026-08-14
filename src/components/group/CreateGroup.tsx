@@ -3,7 +3,7 @@ import { GhostBtn, Primary } from "../ui/layout/button";
 import { Input } from "../ui/layout/input";
 import BaseCard from "../ui/card/BaseCard";
 import { ArrowLeft } from "lucide-react";
-import { useAppMutation } from "@/src/types/ErrorResponse";
+import { getErrorMessage, useAppMutation } from "@/src/types/ErrorResponse";
 import { Post } from "@/src/hooks/querys/useMutations";
 import { useOverlay } from "@/src/hooks/useOverlay";
 import { useQueryClient } from "@tanstack/react-query";
@@ -43,7 +43,7 @@ export default function CreateGroup({ onBack }: { onBack: () => void }) {
     },
     onError: (err) => {
       openToast({
-        message: err.response.data.message ?? "그룹 생성에 실패했습니다.",
+        message: getErrorMessage(err, "그룹 생성에 실패했습니다."),
       });
     },
   });

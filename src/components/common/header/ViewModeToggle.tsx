@@ -26,6 +26,8 @@ const labels = {
   month: "월",
 };
 
+const views = ["day", "week", "month"] as const;
+
 export default function ViewModeToggle() {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -33,6 +35,8 @@ export default function ViewModeToggle() {
   const { name, setLocation } = useWeatherStore();
 
   const pathname = usePathname();
+
+  const activeIndex = views.indexOf(mode);
 
   const handleCurrentLocation = async () => {
     if (!navigator.geolocation) {
@@ -79,7 +83,7 @@ export default function ViewModeToggle() {
   }
 
   return (
-    <Row className="gap-3">
+    <Row className="gap-1.5 sm:gap-3">
       {/* 위치 선택 */}
 
       <div className="relative">
@@ -90,7 +94,8 @@ export default function ViewModeToggle() {
             items-center
             gap-2
             rounded-xl
-            px-4
+            px-2
+            lg:px-4
             py-2.5
             text-sm
             text-primary
@@ -100,11 +105,17 @@ export default function ViewModeToggle() {
         >
           <MapPin size={15} className="text-blue" />
 
-          <span>{name}</span>
+          <span
+            className="hidden lg:inline whitespace-nowrap
+          "
+          >
+            {name}
+          </span>
 
           <ChevronDown
             size={14}
             className={`
+              hidden lg:block
               transition-transform
               ${isOpen ? "rotate-180" : ""}
             `}
@@ -120,7 +131,7 @@ export default function ViewModeToggle() {
               mt-2
               w-44
               rounded-2xl
-              neu-flat
+              glass
               p-2
               z-50
             "
@@ -187,41 +198,37 @@ export default function ViewModeToggle() {
           relative
           flex
           h-11
-          w-[138px]
+          w-[88px]
+          lg:w-[138px]
           rounded-xl
           neu-pressed
           p-1.5
         "
       >
         <div
-          className={`
+          className="
             absolute
             inset-y-1.5
             left-1.5
-            w-[calc(33.333%-4px)]
             rounded-lg
             neu-flat
             transition-transform
             duration-300
-
-            ${
-              mode === "day"
-                ? "translate-x-0"
-                : mode === "week"
-                  ? "translate-x-full"
-                  : "translate-x-[200%]"
-            }
-          `}
+          "
+          style={{
+            width: `calc(${100 / views.length}% - 4px)`,
+            transform: `translateX(${Math.max(activeIndex, 0) * 100}%)`,
+          }}
         />
 
-        {(["day", "week", "month"] as const).map((view) => (
+        {views.map((view) => (
           <button
             key={view}
             onClick={() => setMode(view)}
             className={`
               relative
               z-10
-              w-1/3
+              flex-1
               typo-caption-2
 
               ${mode === view ? "text-blue" : "text-secondary"}

@@ -25,6 +25,7 @@ export default function HeaderAuth({ user }: { user: MyInfoResponse | null }) {
           bg-indigo-600
           text-white
           typo-caption-2
+          whitespace-nowrap
         "
       >
         <LogIn size={14} />
@@ -37,9 +38,11 @@ export default function HeaderAuth({ user }: { user: MyInfoResponse | null }) {
     <div className="flex items-center gap-2">
       <div
         onClick={() => router.push("/profile")}
-        className="flex items-center gap-2 px-3 py-2 rounded-xl neu-pressed cursor-pointer"
+        className="flex items-center gap-2 px-2.5 lg:px-3 py-2 rounded-xl neu-pressed cursor-pointer"
       >
-        <span className="typo-caption-2 ">{user.nickname}</span>
+        <span className="typo-caption-2 max-w-[40px] truncate lg:max-w-none">
+          {user.nickname}
+        </span>
       </div>
 
       <button

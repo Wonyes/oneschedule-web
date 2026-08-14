@@ -11,7 +11,7 @@ import {
   GroupMemberEditContent,
   GroupMemberEditRef,
 } from "../ui/overlay/modal/GroupMemberEditContent";
-import { useAppMutation } from "@/src/types/ErrorResponse";
+import { getErrorMessage, useAppMutation } from "@/src/types/ErrorResponse";
 import { Patch, Delete } from "@/src/hooks/querys/useMutations";
 import { groupkeys } from "@/src/hooks/querys/key/groupKey";
 
@@ -72,7 +72,7 @@ export default function GroupMemberSection({
 
     onError: (err) => {
       openToast({
-        message: err.response.data.message,
+        message: getErrorMessage(err),
       });
     },
   });
@@ -94,7 +94,7 @@ export default function GroupMemberSection({
     },
     onError: (err) => {
       openToast({
-        message: err.response.data.message,
+        message: getErrorMessage(err),
       });
     },
   });
@@ -138,12 +138,12 @@ export default function GroupMemberSection({
   };
 
   return (
-    <BaseCard glow className="flex-1 p-6 h-[520px]">
+    <BaseCard glow className="flex-1 p-6 h-[420px] lg:h-[520px]">
       <div className="mb-6">
         <h2 className="typo-title-2 text-white">그룹 멤버</h2>
       </div>
 
-      <Column className="h-[430px] gap-4 overflow-y-auto pr-2">
+      <Column className="h-[330px] lg:h-[430px] gap-4 overflow-y-auto pr-2">
         {members.map((member: Member) => (
           <Between
             key={member.memberNo}

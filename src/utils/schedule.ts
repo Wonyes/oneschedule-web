@@ -8,7 +8,6 @@ import {
   startOfWeek,
   isSunday,
   isSaturday,
-  eachDayOfInterval,
   isWithinInterval,
   startOfDay,
   endOfDay,
@@ -17,14 +16,6 @@ import { ScheduleEvent, EventLayout, holidayType } from "../types/schedule";
 
 const getTimes = (date: string) => {
   return format(new Date(date), "HH:mm");
-};
-
-const getDays = (date: string) => {
-  return format(new Date(date), "EEEE");
-};
-
-const getDaysOfTime = (date: string) => {
-  return format(new Date(date), "MM-dd HH:mm");
 };
 
 const getWeekDates = (currentDate: Date) => {
@@ -69,17 +60,6 @@ const getMonthDates = (currentDate: Date) => {
   return dates;
 };
 
-const isHoliday = (date: Date, holidays: holidayType[]) => {
-  if (!holidays) return false;
-
-  return holidays.some((h) => {
-    const holidayDate = new Date(
-      `${h.locdate.substring(0, 4)}-${h.locdate.substring(4, 6)}-${h.locdate.substring(6, 8)}`,
-    );
-    return isSameDay(holidayDate, date);
-  });
-};
-
 const findHoliday = (date: Date, holidays: holidayType[] | holidayType) => {
   if (!holidays) return undefined;
 
@@ -119,50 +99,6 @@ export const getWeatherIcon = (pty: string, sky: string): string => {
   };
 
   return skyIcons[sky] || "";
-};
-
-const getEventsForDate = (events: ScheduleEvent[], targetDate: Date) => {
-  return events
-    .map((event) => {
-      const start = new Date(event.startDate);
-      const end = new Date(event.endDate);
-
-      const dayStart = new Date(targetDate);
-      dayStart.setHours(0, 0, 0, 0);
-
-      const dayEnd = new Date(targetDate);
-      dayEnd.setHours(23, 59, 59, 999);
-
-      if (start <= dayEnd && end >= dayStart) {
-        const displayStart = start < dayStart ? dayStart : start;
-        const displayEnd = end > dayEnd ? dayEnd : end;
-
-        return { ...event, displayStart, displayEnd };
-      }
-      return null;
-    })
-    .filter(Boolean) as (ScheduleEvent & {
-    displayStart: Date;
-    displayEnd: Date;
-  })[];
-};
-
-const splitEventByDate = (event: ScheduleEvent) => {
-  const start = new Date(event.startDate);
-  const end = new Date(event.endDate);
-
-  const days = eachDayOfInterval({ start, end });
-
-  return days.map((day) => {
-    const isFirstDay = isSameDay(day, start);
-    const isLastDay = isSameDay(day, end);
-
-    return {
-      ...event,
-      displayStart: isFirstDay ? start : new Date(day.setHours(0, 0, 0, 0)),
-      displayEnd: isLastDay ? end : new Date(day.setHours(23, 59, 59, 999)),
-    };
-  });
 };
 
 const getmonthTime = (startStr: string, endStr: string, date: Date) => {
@@ -255,20 +191,39 @@ function getDayEvents(
   return applyLayout(processed);
 }
 
+const getSortedDayEvents = (events: ScheduleEvent[], date: Date) => {
+  const dayEvents = events.filter((event) => {
+    const start = new Date(event.startDate).setHours(0, 0, 0, 0);
+    const end = new Date(event.endDate).setHours(23, 59, 59, 999);
+    const target = date.getTime();
+
+    return target >= start && target <= end;
+  });
+
+  return [...dayEvents].sort((a, b) => {
+    const durationA =
+      new Date(a.endDate).getTime() - new Date(a.startDate).getTime();
+    const durationB =
+      new Date(b.endDate).getTime() - new Date(b.startDate).getTime();
+
+    if (durationB !== durationA) {
+      return durationB - durationA;
+    }
+
+    return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
+  });
+};
+
 export {
-  getDays,
   getTimes,
-  isHoliday,
   isSameDate,
   getDayColor,
   findHoliday,
   getWeekDates,
   getDayEvents,
-  getDaysOfTime,
   getWeekEvents,
   getMonthDates,
   getmonthTime,
-  splitEventByDate,
-  getEventsForDate,
   getEventPosition,
+  getSortedDayEvents,
 };

@@ -12,6 +12,8 @@ import { HOURS } from "@/src/constant/schedule";
 import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
 import BaseCard from "../../ui/card/BaseCard";
 import { Column } from "../../ui/layout/flex";
+import { useSwipe } from "@/src/hooks/useSwipe";
+import NavButton from "../components/NavButton";
 
 export default function DayView({
   events,
@@ -19,6 +21,8 @@ export default function DayView({
   weathers,
 }: ScheduleViewProps) {
   const currentDate = useScheduleStore((s) => s.currentDate);
+  const next = useScheduleStore((s) => s.next);
+  const prev = useScheduleStore((s) => s.prev);
   const holiday = useIsHoliday(currentDate, holidays);
   const { openSheet } = useSheetStore();
 
@@ -27,20 +31,43 @@ export default function DayView({
 
   const getDayLayouts = getDayEvents(events, currentDate);
 
+  const swipeHandlers = useSwipe(next, prev);
+
   return (
     <div className="h-full neu-flat rounded-3xl flex flex-col overflow-hidden">
       <BaseCard
-        className={`h-14 shrink-0 flex flex-col items-center text-center gap-2 justify-center border-b border-divider typo-body-2 
-          ${getDayColor(currentDate, holiday)}`}
+        className="shrink-0 px-3 py-3"
         glow
+        childClass="flex items-center justify-between sm:justify-center"
       >
+        <NavButton
+          direction="prev"
+          onClick={prev}
+          label="이전 날"
+          className="shrink-0 sm:hidden"
+        />
+
         <Column className="items-center">
-          <span>{format(currentDate, "M월, d일 EEEE")}</span>
+          <span
+            className={`typo-body-2 font-semibold ${getDayColor(currentDate, holiday)}`}
+          >
+            {format(currentDate, "M월, d일 EEEE")}
+          </span>
           <WeatherBadge targetWeather={targetWeather} />
         </Column>
+
+        <NavButton
+          direction="next"
+          onClick={next}
+          label="다음 날"
+          className="shrink-0 sm:hidden"
+        />
       </BaseCard>
 
-      <div className="flex-1 overflow-y-auto min-h-0 p-2">
+      <div
+        className="flex-1 overflow-y-auto min-h-0 p-2"
+        {...swipeHandlers}
+      >
         <div className="grid grid-cols-[60px_1fr] min-h-full neu-pressed rounded-2xl">
           <HourColumn />
 

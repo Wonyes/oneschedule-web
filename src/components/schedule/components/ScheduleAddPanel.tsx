@@ -49,7 +49,7 @@ export default function ScheduleAddPanel() {
             defaultValue="05:00"
             className="w-full px-4 py-2.5 rounded-xl neu-pressed outline-none typo-caption-2 text-center text-foreground"
           />
-          <span className="text-secondarty font-bold">~</span>
+          <span className="text-secondary font-bold">~</span>
           <input
             type="text"
             defaultValue="00:00"
@@ -73,7 +73,7 @@ export default function ScheduleAddPanel() {
               className={`py-2 rounded-xl text-xs font-semibold transition-all ${
                 category === cat
                   ? "neu-pressed text-blue font-bold shadow-inner"
-                  : "neu-btn text-secondarty hover:text-foreground"
+                  : "neu-btn text-secondary hover:text-foreground"
               }`}
             >
               {cat}

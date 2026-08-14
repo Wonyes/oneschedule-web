@@ -36,7 +36,7 @@ export default function ScheduleHeader() {
   const tomorrowWeather = weathers?.[tomorrowKey];
 
   return (
-    <BaseCard className="flex flex-col shrink-0 overflow-hidden" glow>
+    <BaseCard className="hidden sm:flex flex-col shrink-0 overflow-hidden" glow>
       <div className="flex items-center justify-between px-6 py-4 border-b border-divider">
         <button
           onClick={prev}

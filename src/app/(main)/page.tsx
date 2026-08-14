@@ -9,7 +9,7 @@ export default function DashboardPage() {
       <div className="flex-1 flex flex-col gap-4">
         <ScheduleHeader />
 
-        <div className="flex-1 overflow-y-auto scroll-stable neu-flat rounded-3xl p-4">
+        <div className="flex-1 min-h-0 neu-flat rounded-3xl p-4">
           <Schedule />
         </div>
       </div>

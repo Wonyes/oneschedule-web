@@ -8,13 +8,14 @@ import { useOverlay } from "@/src/hooks/useOverlay";
 import { useState } from "react";
 import { Input } from "../ui/layout/input";
 import { useForm } from "@/src/hooks/useForm";
-import { useAppMutation } from "@/src/types/ErrorResponse";
+import { getErrorMessage, useAppMutation } from "@/src/types/ErrorResponse";
 import { Delete, Put } from "@/src/hooks/querys/useMutations";
 import { useQueryClient } from "@tanstack/react-query";
 import { groupkeys } from "@/src/hooks/querys/key/groupKey";
 import { memberskeys } from "@/src/hooks/querys/key/members";
+import { MyGroupResponse } from "@/src/types/group";
 
-export const GroupHero = ({ group }) => {
+export const GroupHero = ({ group }: { group: MyGroupResponse }) => {
   const queryClient = useQueryClient();
 
   const { openToast, openConfirm } = useOverlay();
@@ -50,7 +51,7 @@ export const GroupHero = ({ group }) => {
     },
     onError: (err) => {
       openToast({
-        message: err.response.data.message,
+        message: getErrorMessage(err),
       });
     },
     retry: false,
@@ -83,7 +84,7 @@ export const GroupHero = ({ group }) => {
     onError: (err) => {
       console.log(err);
       openToast({
-        message: err.response.data.message,
+        message: getErrorMessage(err),
       });
     },
   });
