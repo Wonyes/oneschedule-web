@@ -255,12 +255,11 @@ export default function WeekView({
           onNext={handleMobileNext}
         />
 
-        <div className="min-h-0 flex-1 overflow-x-auto overflow-y-auto p-2">
+        <div className="min-h-0 flex-1 overflow-y-auto p-2">
           <div
             className="
               grid min-h-full
-              min-w-[382px]
-              grid-cols-[52px_repeat(3,minmax(110px,1fr))]
+              grid-cols-[36px_repeat(3,minmax(0,1fr))]
               overflow-hidden
               rounded-2xl
               neu-pressed
