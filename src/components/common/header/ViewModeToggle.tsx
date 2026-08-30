@@ -78,7 +78,7 @@ export default function ViewModeToggle() {
     );
   };
 
-  if (pathname !== "/") {
+  if (pathname !== "/schedule") {
     return null;
   }
 
@@ -92,18 +92,19 @@ export default function ViewModeToggle() {
           className="
             flex
             items-center
-            gap-2
-            rounded-xl
+            gap-1.5
+            rounded-lg
             px-2
-            lg:px-4
-            py-2.5
-            text-sm
-            text-primary
-            transition
+            lg:px-2.5
+            py-1.5
+            typo-caption-2
+            text-secondary
+            btn-spring
             hover:bg-white/5
+            hover:text-foreground
           "
         >
-          <MapPin size={15} className="text-blue" />
+          <MapPin size={13} strokeWidth={1.75} className="text-accent" />
 
           <span
             className="hidden lg:inline whitespace-nowrap
@@ -113,7 +114,8 @@ export default function ViewModeToggle() {
           </span>
 
           <ChevronDown
-            size={14}
+            size={12}
+            strokeWidth={1.75}
             className={`
               hidden lg:block
               transition-transform
@@ -146,13 +148,13 @@ export default function ViewModeToggle() {
                 rounded-xl
                 px-3
                 py-2
-                text-sm
-                text-blue
+                typo-caption-2
+                text-accent
                 transition
-                hover:bg-blue/10
+                hover:bg-accent/10
               "
             >
-              <MapPin size={14} />
+              <MapPin size={14} strokeWidth={1.75} />
               현재 위치
             </button>
 
@@ -178,7 +180,7 @@ export default function ViewModeToggle() {
                   px-3
                   py-2
                   text-left
-                  text-sm
+                  typo-caption-2
                   text-secondary
                   transition
                   hover:bg-white/5
@@ -197,26 +199,26 @@ export default function ViewModeToggle() {
         className="
           relative
           flex
-          h-11
-          w-[88px]
-          lg:w-[138px]
-          rounded-xl
+          h-8
+          w-[72px]
+          lg:w-[108px]
+          rounded-lg
           neu-pressed
-          p-1.5
+          p-1
         "
       >
         <div
           className="
             absolute
-            inset-y-1.5
-            left-1.5
-            rounded-lg
+            inset-y-1
+            left-1
+            rounded-md
             neu-flat
             transition-transform
             duration-300
           "
           style={{
-            width: `calc(${100 / views.length}% - 4px)`,
+            width: `calc(${100 / views.length}% - 2.7px)`,
             transform: `translateX(${Math.max(activeIndex, 0) * 100}%)`,
           }}
         />
@@ -229,9 +231,10 @@ export default function ViewModeToggle() {
               relative
               z-10
               flex-1
-              typo-caption-2
+              typo-caption-3
+              font-semibold
 
-              ${mode === view ? "text-blue" : "text-secondary"}
+              ${mode === view ? "text-accent" : "text-secondary"}
             `}
           >
             {labels[view]}

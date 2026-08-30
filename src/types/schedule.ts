@@ -22,8 +22,41 @@ export type ScheduleEvent = {
   width?: number;
   left?: number;
   category: EventCategory;
+  content?: string;
+  participantMemberNos?: number[];
   displayStart?: Date;
   displayEnd?: Date;
+};
+
+export type ScheduleViewType = "PERSONAL" | "GROUP";
+
+export type ScheduleApiRequest = {
+  title: string;
+  category: string;
+  content?: string;
+  startDate: string; // yyyy-MM-dd
+  endDate?: string; // yyyy-MM-dd
+  startTime?: string; // HH:mm:ss
+  endTime?: string; // HH:mm:ss
+  participantMemberNos?: number[];
+};
+
+export type ScheduleParticipant = {
+  memberNo: number;
+  nickname: string;
+};
+
+export type ScheduleApiResponse = {
+  id: number;
+  title: string;
+  content: string;
+  category: string;
+  startDate: string;
+  endDate: string;
+  startTime: string;
+  endTime: string;
+  createdAt: string;
+  participants: ScheduleParticipant[];
 };
 
 export type holidayType = {
@@ -67,4 +100,5 @@ export type ScheduleViewProps = {
   events: ScheduleEvent[];
   holidays: holidayType[];
   weathers: WeatherData[];
+  isWeatherLoading?: boolean;
 };

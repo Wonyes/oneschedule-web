@@ -13,9 +13,9 @@ export default function ProfilePage() {
   if (isLoading) {
     return (
       <main className="max-w-[420px] mx-auto flex flex-col gap-5">
-        <div className="h-[220px] rounded-[32px] neu-flat animate-pulse" />
+        <div className="h-[220px] rounded-[var(--radius-outer)] neu-flat animate-pulse" />
 
-        <div className="h-[280px] rounded-[32px] neu-flat animate-pulse" />
+        <div className="h-[280px] rounded-[var(--radius-outer)] neu-flat animate-pulse" />
       </main>
     );
   }
@@ -24,7 +24,7 @@ export default function ProfilePage() {
     return (
       <main className="max-w-[420px] mx-auto">
         <BaseCard className="p-8" glow>
-          <p className="text-slate-300">사용자 정보를 불러오지 못했습니다.</p>
+          <p className="text-secondary">사용자 정보를 불러오지 못했습니다.</p>
         </BaseCard>
       </main>
     );

@@ -20,7 +20,7 @@ export default function BaseCard({
       className={cn(
         `
         relative
-        rounded-[28px]
+        rounded-[var(--radius-outer)]
         w-full
         `,
         variant === "flat" ? "neu-flat" : "neu-pressed",
@@ -29,17 +29,17 @@ export default function BaseCard({
       )}
     >
       {glow && (
-        <div className="absolute inset-0 overflow-hidden rounded-[28px] pointer-events-none">
+        <div className="absolute inset-0 overflow-hidden rounded-[var(--radius-outer)] pointer-events-none">
           <div
             className="
               absolute
-              -top-24
+              -top-20
               left-1/2
               -translate-x-1/2
-              w-72
-              h-72
+              w-64
+              h-64
               rounded-full
-              bg-indigo-500/20
+              bg-[var(--accent-glow)]
               blur-3xl
             "
           />

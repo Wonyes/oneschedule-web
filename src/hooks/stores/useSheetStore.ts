@@ -1,11 +1,13 @@
-import { EventCategory } from "@/src/types/schedule";
+import { EventCategory, ScheduleEvent } from "@/src/types/schedule";
 import { formatTime } from "@/src/utils/time";
+import { format } from "date-fns";
 import { create } from "zustand";
 
 type OpenSheetParams = {
   date?: Date;
   startTime?: string;
   endTime?: string;
+  event?: ScheduleEvent;
 };
 
 type SheetForm = {
@@ -18,6 +20,7 @@ type SheetForm = {
   endTime: string;
   category: EventCategory | "";
   content: string;
+  participantMemberNos: number[];
 };
 
 const initialForm: SheetForm = {
@@ -31,12 +34,14 @@ const initialForm: SheetForm = {
 
   category: "",
   content: "",
+  participantMemberNos: [],
 };
 
 type SheetStore = {
   open: boolean;
 
   form: SheetForm;
+  editingId: number | null;
 
   updateForm: (values: Partial<SheetForm>) => void;
 
@@ -47,6 +52,7 @@ type SheetStore = {
 export const useSheetStore = create<SheetStore>((set) => ({
   open: false,
   form: initialForm,
+  editingId: null,
 
   updateForm: (values) =>
     set((state) => ({
@@ -56,9 +62,31 @@ export const useSheetStore = create<SheetStore>((set) => ({
       },
     })),
 
-  openSheet: ({ date, startTime, endTime } = {}) =>
+  openSheet: ({ date, startTime, endTime, event } = {}) => {
+    if (event) {
+      const start = new Date(event.startDate);
+      const end = new Date(event.endDate);
+
+      set({
+        open: true,
+        editingId: event.id,
+        form: {
+          title: event.title,
+          startDate: start,
+          endDate: end,
+          startTime: format(start, "HH:mm"),
+          endTime: format(end, "HH:mm"),
+          category: event.category,
+          content: event.content ?? "",
+          participantMemberNos: event.participantMemberNos ?? [],
+        },
+      });
+      return;
+    }
+
     set({
       open: true,
+      editingId: null,
       form: {
         ...initialForm,
 
@@ -68,11 +96,13 @@ export const useSheetStore = create<SheetStore>((set) => ({
         startTime: formatTime(startTime ?? ""),
         endTime: formatTime(endTime ?? ""),
       },
-    }),
+    });
+  },
 
   closeSheet: () =>
     set({
       open: false,
       form: initialForm,
+      editingId: null,
     }),
 }));

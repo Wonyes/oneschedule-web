@@ -1,16 +1,37 @@
 "use client";
 
-import { useEffect } from "react";
-import { X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Check, ChevronDown, Search, X } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
+import { useScheduleViewStore } from "@/src/hooks/stores/useScheduleViewStore";
 import { format } from "date-fns";
 import { Input } from "../layout/input";
 import { Column } from "../layout/flex";
-import { Primary, SecondaryBtn, GhostBtn } from "../layout/button";
+import { Primary, SecondaryBtn, GhostBtn, RedBtn } from "../layout/button";
 import CalendarBody from "./calendar/CalendarBody";
 import { useCalendarStore } from "@/src/hooks/stores/useCalendarStore";
 import { formatTime } from "@/src/utils/time";
 import { EVENT_STYLES } from "@/src/constant/schedule";
+import { toScheduleRequest } from "@/src/utils/schedule";
+import {
+  createSchedule,
+  createGroupSchedule,
+  deleteSchedule,
+  updateSchedule,
+} from "@/src/hooks/querys/useSchedule";
+import { scheduleKeys } from "@/src/hooks/querys/key/scheduleKey";
+import { useOverlay } from "@/src/hooks/useOverlay";
+import { getErrorMessage, useAppMutation } from "@/src/types/ErrorResponse";
+import { useMyGroup } from "@/src/hooks/querys/useGroup";
+import { GroupMember } from "@/src/types/group";
+
+const combineDateTime = (date: Date, time: string) => {
+  const [hour, minute] = time.split(":").map(Number);
+  const combined = new Date(date);
+  combined.setHours(hour || 0, minute || 0, 0, 0);
+  return format(combined, "yyyy-MM-dd'T'HH:mm:ss");
+};
 
 const categories = [
   { value: "work", label: "업무" },
@@ -19,10 +40,131 @@ const categories = [
   { value: "important", label: "운동" },
 ] as const;
 
-function SheetHeader({ onClose }: { onClose: () => void }) {
+function ParticipantPicker({
+  members,
+  selected,
+  onChange,
+}: {
+  members: GroupMember[];
+  selected: number[];
+  onChange: (ids: number[]) => void;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [query, setQuery] = useState("");
+
+  const filtered = members.filter((m) =>
+    m.nickname.toLowerCase().includes(query.toLowerCase()),
+  );
+
+  const selectedMembers = members.filter((m) => selected.includes(m.memberNo));
+
+  const toggle = (memberNo: number) => {
+    onChange(
+      selected.includes(memberNo)
+        ? selected.filter((id) => id !== memberNo)
+        : [...selected, memberNo],
+    );
+  };
+
+  return (
+    <div className="relative w-full">
+      <button
+        type="button"
+        onClick={() => setIsOpen((v) => !v)}
+        className="flex w-full items-center justify-between gap-2 rounded-xl neu-pressed px-4 py-3 text-left shadow-sm transition-all hover:ring-2 hover:ring-indigo-500/30"
+      >
+        {selectedMembers.length === 0 ? (
+          <span className="typo-caption-2 text-place-h">
+            참여자를 선택하세요.
+          </span>
+        ) : (
+          <div className="flex flex-wrap items-center gap-1.5">
+            {selectedMembers.map((m) => (
+              <span
+                key={m.memberNo}
+                className="flex items-center gap-1 rounded-full bg-accent/10 py-0.5 pl-1 pr-2"
+              >
+                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-accent/20 text-[9px] font-bold text-accent">
+                  {m.nickname[0]}
+                </span>
+                <span className="typo-caption-3 text-secondary">
+                  {m.nickname}
+                </span>
+              </span>
+            ))}
+          </div>
+        )}
+
+        <ChevronDown
+          size={14}
+          strokeWidth={1.75}
+          className={`shrink-0 text-muted transition-transform ${isOpen ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      {isOpen && (
+        <div className="glass absolute left-0 right-0 top-full z-50 mt-2 rounded-2xl p-2">
+          <div className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2">
+            <Search size={14} strokeWidth={1.75} className="text-muted" />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="이름으로 검색"
+              className="typo-caption-2 text-foreground placeholder:text-place-h w-full bg-transparent focus:outline-none"
+            />
+          </div>
+
+          <div className="mt-2 flex max-h-48 flex-col gap-0.5 overflow-y-auto">
+            {filtered.length === 0 ? (
+              <p className="typo-caption-2 text-muted py-4 text-center">
+                검색 결과가 없습니다.
+              </p>
+            ) : (
+              filtered.map((m) => {
+                const isSelected = selected.includes(m.memberNo);
+                return (
+                  <button
+                    key={m.memberNo}
+                    type="button"
+                    onClick={() => toggle(m.memberNo)}
+                    className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left transition-colors hover:bg-white/5"
+                  >
+                    <span className="typo-caption-3 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent/15 font-bold text-accent">
+                      {m.nickname[0]}
+                    </span>
+                    <span className="typo-caption-2 flex-1 text-secondary">
+                      {m.nickname}
+                    </span>
+                    {isSelected && (
+                      <Check
+                        size={14}
+                        strokeWidth={2}
+                        className="text-accent"
+                      />
+                    )}
+                  </button>
+                );
+              })
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SheetHeader({
+  onClose,
+  isEditing,
+}: {
+  onClose: () => void;
+  isEditing: boolean;
+}) {
   return (
     <header className="flex items-center justify-between border-b border-white/10 px-4 sm:px-6 py-4">
-      <h2 className="typo-title-2 text-white">일정 추가</h2>
+      <h2 className="typo-title-2 text-white">
+        {isEditing ? "일정 수정" : "일정 추가"}
+      </h2>
       <GhostBtn
         icon={<X size={20} />}
         onClick={onClose}
@@ -32,20 +174,37 @@ function SheetHeader({ onClose }: { onClose: () => void }) {
   );
 }
 
-function SheetFooter({ onClose }: { onClose: () => void }) {
+function SheetFooter({
+  onClose,
+  onSave,
+  onDelete,
+  isEditing,
+}: {
+  onClose: () => void;
+  onSave: () => void;
+  onDelete: () => void;
+  isEditing: boolean;
+}) {
   return (
     <footer className="border-t border-white/10 px-4 sm:px-6 py-4 bg-surface/90  rounded-b-[32px]">
       <div className="flex gap-3">
+        {isEditing && (
+          <RedBtn text="삭제" onClick={onDelete} className="flex-1" />
+        )}
         <SecondaryBtn text="취소" onClick={onClose} className="flex-1" />
-        <Primary text="저장" className="flex-1" />
+        <Primary text="저장" onClick={onSave} className="flex-1" />
       </div>
     </footer>
   );
 }
 
 export default function Sheet() {
-  const { form, updateForm, open, closeSheet } = useSheetStore();
+  const { form, updateForm, open, closeSheet, editingId } = useSheetStore();
   const { isCalendarOpen, toggleCalendar } = useCalendarStore();
+  const { data: group } = useMyGroup();
+  const viewType = useScheduleViewStore((s) => s.viewType);
+  const { openAlert } = useOverlay();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "unset";
@@ -60,8 +219,86 @@ export default function Sheet() {
     if (isCalendarOpen) toggleCalendar();
   };
 
+  const invalidateSchedules = () => {
+    queryClient.invalidateQueries({ queryKey: [scheduleKeys.list] });
+  };
+
+  const { mutate: create } = useAppMutation({
+    mutationFn: viewType === "GROUP" ? createGroupSchedule : createSchedule,
+    onSuccess: () => {
+      invalidateSchedules();
+      close();
+    },
+    onError: (err) =>
+      openAlert({
+        title: "일정 저장에 실패했습니다.",
+        message: getErrorMessage(err),
+      }),
+  });
+
+  const { mutate: update } = useAppMutation({
+    mutationFn: ({
+      id,
+      body,
+    }: {
+      id: number;
+      body: ReturnType<typeof toScheduleRequest>;
+    }) => updateSchedule(id, body),
+    onSuccess: () => {
+      invalidateSchedules();
+      close();
+    },
+    onError: (err) =>
+      openAlert({
+        title: "일정 수정에 실패했습니다.",
+        message: getErrorMessage(err),
+      }),
+  });
+
+  const { mutate: remove } = useAppMutation({
+    mutationFn: deleteSchedule,
+    onSuccess: () => {
+      invalidateSchedules();
+      close();
+    },
+    onError: (err) =>
+      openAlert({
+        title: "일정 삭제에 실패했습니다.",
+        message: getErrorMessage(err),
+      }),
+  });
+
   const currentForm = form;
   if (!currentForm) return null;
+
+  const handleSave = () => {
+    if (!currentForm.title.trim()) return;
+
+    const startDate = currentForm.startDate ?? new Date();
+    const endDate = currentForm.endDate ?? startDate;
+    const startTime = currentForm.startTime || "00:00";
+    const endTime = currentForm.endTime || startTime;
+
+    const body = toScheduleRequest({
+      title: currentForm.title.trim(),
+      content: currentForm.content,
+      category: currentForm.category || "personal",
+      startDate: combineDateTime(startDate, startTime),
+      endDate: combineDateTime(endDate, endTime),
+      participantMemberNos:
+        viewType === "GROUP" ? currentForm.participantMemberNos : undefined,
+    });
+
+    if (editingId) {
+      update({ id: editingId, body });
+    } else {
+      create(body);
+    }
+  };
+
+  const handleDelete = () => {
+    if (editingId) remove(editingId);
+  };
 
   return (
     <>
@@ -81,7 +318,7 @@ export default function Sheet() {
             : "translate-y-full pointer-events-none"
         }`}
       >
-        <SheetHeader onClose={close} />
+        <SheetHeader onClose={close} isEditing={!!editingId} />
 
         <div className="flex-1 space-y-6 overflow-y-auto px-4 sm:px-6 py-6 scrollbar-thin">
           <Column className="space-y-2 gap-1.5">
@@ -184,6 +421,17 @@ export default function Sheet() {
             </div>
           </Column>
 
+          {viewType === "GROUP" && (
+            <Column className="space-y-2  gap-1.5">
+              <label className="typo-sub-t-2 text-slate-200">👥 참여자</label>
+              <ParticipantPicker
+                members={group?.members ?? []}
+                selected={currentForm.participantMemberNos}
+                onChange={(ids) => updateForm({ participantMemberNos: ids })}
+              />
+            </Column>
+          )}
+
           <Column className="space-y-2 gap-1.5">
             <label className="typo-sub-t-2 text-slate-200">📌 메모</label>
 
@@ -195,7 +443,12 @@ export default function Sheet() {
           </Column>
         </div>
 
-        <SheetFooter onClose={close} />
+        <SheetFooter
+          onClose={close}
+          onSave={handleSave}
+          onDelete={handleDelete}
+          isEditing={!!editingId}
+        />
       </section>
     </>
   );

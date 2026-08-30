@@ -33,8 +33,7 @@ const BaseButton = ({
         font-medium
         text-sm
         whitespace-nowrap
-        transition-all
-        duration-200
+        btn-spring
         active:scale-[0.98]
         disabled:cursor-not-allowed
         disabled:opacity-40
@@ -62,13 +61,13 @@ const Primary = (props: ButtonProps) => {
         px-5
         rounded-xl
 
-        bg-indigo-600
-        text-white
+        bg-accent
+        text-on-primary
 
         shadow-lg
-        shadow-indigo-600/20
+        shadow-accent/25
 
-        hover:bg-indigo-500
+        hover:bg-accent/90
 
         `,
         props.className,
@@ -92,13 +91,13 @@ const SecondaryBtn = (props: ButtonProps) => {
         rounded-xl
 
         bg-white/[0.05]
-        text-slate-200
+        text-secondary
 
         border
         border-white/10
 
         hover:bg-white/[0.1]
-        hover:text-white
+        hover:text-foreground
 
         `,
         props.className,
@@ -122,10 +121,10 @@ const GhostBtn = (props: ButtonProps) => {
         rounded-lg
 
         bg-transparent
-        text-slate-400
+        text-muted
 
         hover:bg-white/[0.05]
-        hover:text-white
+        hover:text-foreground
         `,
         props.className,
       )}
@@ -147,13 +146,13 @@ const RedBtn = (props: ButtonProps) => {
         px-5
         rounded-xl
 
-        bg-rose-500/15
-        text-rose-400
+        bg-error-500/15
+        text-error-500
 
         border
-        border-rose-500/20
+        border-error-500/25
 
-        hover:bg-rose-500
+        hover:bg-error-500
         hover:text-white
         hover:border-transparent
 

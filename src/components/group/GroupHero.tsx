@@ -105,9 +105,11 @@ export const GroupHero = ({ group }: { group: MyGroupResponse }) => {
   };
 
   return (
-    <BaseCard glow className="p-6">
-      <Between>
+    <BaseCard glow className="p-5">
+      <Between className="items-start">
         <Column className="w-full">
+          <span className="eyebrow mb-1.5">GROUP</span>
+
           <Between className="w-full">
             <Row className="gap-2 justify-center">
               {groupNameCorrection ? (
@@ -132,41 +134,43 @@ export const GroupHero = ({ group }: { group: MyGroupResponse }) => {
                 </>
               ) : (
                 <>
-                  <h1 className="typo-title-1 text-white">{group.groupName}</h1>
+                  <h1 className="typo-title-1 text-foreground">{group.groupName}</h1>
                   {group.groupRole === "SUPER" && (
                     <GhostBtn
                       onClick={() => setGroupNameCorrection(true)}
-                      icon={<Pencil size={18} className="text-indigo-400" />}
+                      icon={
+                        <Pencil size={16} strokeWidth={1.5} className="text-accent" />
+                      }
                     />
                   )}
                 </>
               )}
             </Row>
             {group.groupRole === "SUPER" && (
-              <Row className="gap-1 rounded-full bg-yellow-400/10 px-3 py-1">
-                <Crown size={18} className="text-yellow-400" />
-                <span className="typo-sub-t-3 text-yellow-400">관리자</span>
+              <Row className="gap-1 rounded-full bg-pending-500/10 px-3 py-1 shrink-0">
+                <Crown size={16} strokeWidth={1.75} className="text-pending-500" />
+                <span className="typo-sub-t-3 text-pending-500">관리자</span>
               </Row>
             )}
           </Between>
 
-          <p className="mt-3 typo-sub-t-3 text-slate-400">
+          <p className="mt-1.5 typo-caption-2 text-muted">
             함께 일정을 관리하는 그룹입니다.
           </p>
-          <Between className="mt-6">
+          <Between className="mt-5">
             <Row className="gap-3">
-              <span className="typo-caption-2 text-slate-500">초대 코드</span>
+              <span className="typo-caption-2 text-place-h">초대 코드</span>
 
-              <Row className="gap-2 rounded-xl bg-slate-800 px-4 py-2">
-                <span className="typo-sub-t-3 text-slate-200">
+              <Row className="gap-2 rounded-lg bg-surface-hover px-3 py-1.5">
+                <span className="typo-caption-2 font-semibold text-secondary">
                   {group.groupCode}
                 </span>
 
                 <button
                   onClick={copyCode}
-                  className="text-slate-400 transition hover:text-white"
+                  className="text-muted transition hover:text-foreground"
                 >
-                  <Copy size={14} />
+                  <Copy size={14} strokeWidth={1.75} />
                 </button>
               </Row>
             </Row>

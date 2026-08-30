@@ -13,7 +13,16 @@ async function HeaderAuthResolved() {
 
 export default function Header() {
   return (
-    <header className="relative flex flex-col gap-3 px-3 py-3 shrink-0 lg:flex-row lg:items-center lg:gap-4 lg:px-4">
+    <header
+      className="
+        relative flex flex-col gap-2 shrink-0
+        mx-2 mt-2 px-3 py-2
+        rounded-2xl
+        glass
+        sm:mx-3 sm:mt-3 sm:px-4
+        lg:h-14 lg:flex-row lg:items-center lg:gap-4 lg:py-0
+      "
+    >
       <div className="flex items-center justify-between lg:contents">
         <Logo />
         <div className="flex items-center gap-1.5 sm:gap-3 justify-end lg:hidden">

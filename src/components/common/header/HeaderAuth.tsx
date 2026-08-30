@@ -4,6 +4,7 @@ import { LogIn, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { MyInfoResponse, useLogout } from "@/src/hooks/querys/useMembers";
+import { Primary } from "../../ui/layout/button";
 
 export default function HeaderAuth({ user }: { user: MyInfoResponse | null }) {
   const router = useRouter();
@@ -16,40 +17,34 @@ export default function HeaderAuth({ user }: { user: MyInfoResponse | null }) {
 
   if (!user) {
     return (
-      <button
+      <Primary
         onClick={() => router.push("/login")}
-        className="
-          flex items-center gap-1.5
-          px-4 py-2
-          rounded-xl
-          bg-indigo-600
-          text-white
-          typo-caption-2
-          whitespace-nowrap
-        "
-      >
-        <LogIn size={14} />
-        로그인
-      </button>
+        icon={<LogIn size={13} strokeWidth={1.75} />}
+        text="로그인"
+        className="h-8 gap-1.5 px-3.5 py-0 typo-caption-2 whitespace-nowrap"
+      />
     );
   }
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1.5">
       <div
         onClick={() => router.push("/profile")}
-        className="flex items-center gap-2 px-2.5 lg:px-3 py-2 rounded-xl neu-pressed cursor-pointer"
+        className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg cursor-pointer btn-spring hover:bg-white/5"
       >
-        <span className="typo-caption-2 max-w-[40px] truncate lg:max-w-none">
+        <span className="h-6 w-6 shrink-0 rounded-full bg-accent/15 text-accent typo-caption-3 font-bold flex items-center justify-center">
+          {user.nickname[0]}
+        </span>
+        <span className="typo-caption-2 text-secondary max-w-[40px] truncate lg:max-w-none">
           {user.nickname}
         </span>
       </div>
 
       <button
         onClick={handleLogout}
-        className="p-2 rounded-xl neu-pressed text-slate-400"
+        className="p-1.5 rounded-lg text-muted btn-spring hover:bg-white/5 hover:text-foreground active:scale-95"
       >
-        <LogOut size={16} />
+        <LogOut size={15} strokeWidth={1.75} />
       </button>
     </div>
   );

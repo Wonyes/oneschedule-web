@@ -11,6 +11,7 @@ type EventCardProps = {
   height?: number;
   date?: Date;
   className?: string;
+  onClick?: () => void;
 };
 
 export default function ScheduleCard({
@@ -22,6 +23,7 @@ export default function ScheduleCard({
   height,
   className = "",
   variant = "week",
+  onClick,
 }: EventCardProps) {
   const style = EVENT_STYLES[event.category];
 
@@ -42,15 +44,19 @@ export default function ScheduleCard({
   if (variant === "month") {
     return (
       <div
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick?.();
+        }}
         className={`
-          group px-2 py-1 rounded-md truncate flex items-center gap-1.5 
+          group px-2 py-1 rounded-md truncate flex items-center gap-1.5
           bg-surface/80  border border-white/5
-          hover:border-white/15 hover:bg-[#293450] 
-          transition-all duration-150 ${connectionClass} ${className}
+          hover:border-white/15 hover:bg-surface-hover
+          cursor-pointer transition-all duration-150 ${connectionClass} ${className}
         `}
       >
         <span
-          className={`w-1.5 h-1.5 rounded-full shrink-0 ${style.dot || "bg-indigo-400"}`}
+          className={`w-1.5 h-1.5 rounded-full shrink-0 ${style.dot || "bg-accent"}`}
         />
         <span className="typo-caption-2 truncate font-medium text-slate-200 group-hover:text-white">
           {event.title}
@@ -63,21 +69,22 @@ export default function ScheduleCard({
   if (variant === "agenda") {
     return (
       <div
+        onClick={onClick}
         className={`
           flex items-center gap-3 rounded-xl
           bg-surface/90 border border-white/10
           p-3 transition-all duration-150
-          hover:border-indigo-500/40 hover:bg-[#293450] ${className}
+          cursor-pointer hover:border-accent/40 hover:bg-surface-hover ${className}
         `}
       >
         <span
-          className={`h-2 w-2 shrink-0 rounded-full ${style.dot || "bg-indigo-400"}`}
+          className={`h-2 w-2 shrink-0 rounded-full ${style.dot || "bg-accent"}`}
         />
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="typo-caption-1 font-semibold text-white truncate">
             {event.title}
           </span>
-          <span className="text-[11px] font-medium text-indigo-300/90 tracking-tight">
+          <span className="text-[11px] font-medium text-accent/80 tracking-tight">
             {getTimes(event.startDate)} - {getTimes(event.endDate)}
           </span>
         </div>
@@ -89,24 +96,26 @@ export default function ScheduleCard({
   if (variant === "day") {
     return (
       <div
+        onClick={onClick}
         className={`
           absolute left-0 right-0 rounded-xl
           bg-surface/90  border border-white/10
           p-2.5 shadow-xl z-10 transition-all duration-200
-          hover:border-indigo-500/40 hover:bg-[#293450] ${className}
+          cursor-pointer hover:border-accent/40 hover:bg-surface-hover ${className}
         `}
         style={{
-          top: `${top}px`,
-          height: `${height}px`,
+          top: `${top}%`,
+          height: `${height}%`,
+          minHeight: 26,
           width: `${width}%`,
           left: `${left}%`,
         }}
       >
         <div className="flex items-center gap-1.5 mb-1">
           <span
-            className={`w-1.5 h-1.5 rounded-full ${style.dot || "bg-indigo-400"}`}
+            className={`w-1.5 h-1.5 rounded-full ${style.dot || "bg-accent"}`}
           />
-          <span className="text-[11px] font-medium text-indigo-300/90 tracking-tight">
+          <span className="text-[11px] font-medium text-accent/80 tracking-tight">
             {getTimes(event.startDate)} - {getTimes(event.endDate)}
           </span>
         </div>
@@ -120,28 +129,30 @@ export default function ScheduleCard({
   // 3. Week 뷰 카드 (정교한 좌측 포인트 라인과 모던한 글래스 서피스)
   return (
     <div
+      onClick={onClick}
       className={`
         absolute left-0 right-0 rounded-xl
         bg-surface/90 border border-white/10
         p-2.5 z-10 overflow-hidden
-        hover:z-50 hover:border-indigo-500/50 hover:bg-[#293450] hover:shadow-2xl
+        cursor-pointer hover:z-50 hover:border-accent/50 hover:bg-surface-hover hover:shadow-2xl
         transition-all duration-200
         ${connectionClass} ${className}
       `}
       style={{
-        top: `${top}px`,
-        height: `${height}px`,
+        top: `${top}%`,
+        height: `${height}%`,
+        minHeight: 26,
       }}
     >
       {/* 좌측에 은은한 카테고리 컬러 인디케이터 바 추가 */}
       <div
-        className={`absolute left-0 top-0 bottom-0 w-1 ${style.dot || "bg-indigo-500"}`}
+        className={`absolute left-0 top-0 bottom-0 w-1 ${style.dot || "bg-accent"}`}
       />
 
       {isStart && (
         <div className="flex flex-col gap-1 pl-1">
           <div className="flex items-center gap-1.5">
-            <span className="text-[11px] font-medium text-indigo-300/90 tracking-tight">
+            <span className="text-[11px] font-medium text-accent/80 tracking-tight">
               {getTimes(event.startDate)} - {getTimes(event.endDate)}
             </span>
           </div>
@@ -154,7 +165,7 @@ export default function ScheduleCard({
       {isEnd && isStart !== isEnd && (
         <div className="flex flex-col gap-1 pl-1">
           <div className="flex items-center gap-1.5">
-            <span className="text-[11px] font-medium text-indigo-300/90 tracking-tight">
+            <span className="text-[11px] font-medium text-accent/80 tracking-tight">
               {getTimes(event.startDate)} - {getTimes(event.endDate)}
             </span>
           </div>

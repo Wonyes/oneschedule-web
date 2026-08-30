@@ -6,7 +6,7 @@ export default function HourColumn() {
       {HOURS.map((hour) => (
         <div
           key={hour}
-          className="h-14 flex items-center justify-center text-[11px] text-muted border-b border-divider"
+          className="h-11 sm:h-14 flex items-center justify-center text-[11px] text-muted border-b border-divider"
         >
           {hour}
         </div>

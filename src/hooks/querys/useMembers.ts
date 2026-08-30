@@ -10,6 +10,7 @@ export type MyInfoResponse = {
   name: string;
   nickname: string;
   phoneNumber: string;
+  imageUrl?: string;
 };
 
 type MyInfoChangeRequest = {
@@ -95,6 +96,30 @@ export const useMyinfoChange = () => {
       queryClient.invalidateQueries({
         queryKey: [memberskeys.myInfo],
       });
+    },
+    retry: false,
+  });
+};
+
+export const useProfileImageUpload = () => {
+  const queryClient = useQueryClient();
+
+  return useAppMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      return (await Post<{ imageUrl: string }>({
+        url: "/members/profile-image",
+        body: formData,
+      })) as { imageUrl: string };
+    },
+
+    onSuccess: (data) => {
+      queryClient.setQueryData<MyInfoResponse>(
+        [memberskeys.myInfo],
+        (prev) => (prev ? { ...prev, imageUrl: data.imageUrl } : prev),
+      );
     },
     retry: false,
   });

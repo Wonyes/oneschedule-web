@@ -47,11 +47,14 @@ api.interceptors.response.use(
       console.error("네트워크 오류:", error.message ?? "알 수 없는 오류");
       return Promise.reject(error);
     }
+
+    console.error(error.response);
+
     const originalRequest = error.config as CustomAxiosRequestConfig;
     const status = error.response.status;
 
     if (
-      status === 401 &&
+      (status === 401 || status === 403) &&
       (originalRequest.url?.includes("/members/login") ||
         originalRequest.url?.includes("/token-refresh") ||
         originalRequest._skipAuthRefresh)
@@ -59,17 +62,10 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    switch (error.response.status) {
-      case 401: {
-        // ⬅️ 로그인 등 리프레시를 스킵해야 하는 요청이면 바로 거부
-        if (originalRequest._skipAuthRefresh) {
-          return Promise.reject(error);
-        }
-
-        if (originalRequest.url?.includes("/token-refresh")) {
-          return Promise.reject(error);
-        }
-
+    switch (status) {
+      // 액세스 토큰 만료(401) / 재발급 필요(403) 둘 다 같은 리프레시 흐름을 탄다
+      case 401:
+      case 403: {
         if (originalRequest._retry) {
           return Promise.reject(error);
         }
@@ -101,12 +97,7 @@ api.interceptors.response.use(
         }
       }
 
-      case 403: {
-        return Promise.reject(error);
-      }
-
       default: {
-        console.log(error.response);
         return Promise.reject(error);
       }
     }

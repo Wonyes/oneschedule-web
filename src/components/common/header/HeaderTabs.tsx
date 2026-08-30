@@ -1,41 +1,65 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { useScheduleViewStore } from "@/src/hooks/stores/useScheduleViewStore";
+import { ScheduleViewType } from "@/src/types/schedule";
+
+const TABS = [
+  { key: "PERSONAL", label: "MY Schedule" },
+  { key: "GROUP", label: "GROUP Schedule" },
+] as const;
+
+type TabKey = (typeof TABS)[number]["key"];
 
 export default function HeaderTabs() {
-  const [activeTab, setActiveTab] = useState<"my" | "group">("my");
+  const { viewType, setViewType } = useScheduleViewStore();
   const pathname = usePathname();
 
-  if (pathname !== "/") {
+  const navRef = useRef<HTMLElement>(null);
+  const btnRefs = useRef<Partial<Record<TabKey, HTMLButtonElement | null>>>({});
+  const [indicator, setIndicator] = useState({ left: 0, width: 0 });
+
+  useEffect(() => {
+    const nav = navRef.current;
+    const btn = btnRefs.current[viewType];
+
+    if (nav && btn) {
+      const navRect = nav.getBoundingClientRect();
+      const btnRect = btn.getBoundingClientRect();
+
+      setIndicator({
+        left: btnRect.left - navRect.left,
+        width: btnRect.width,
+      });
+    }
+  }, [viewType]);
+
+  if (pathname !== "/schedule") {
     return null;
   }
 
   return (
-    <nav className="relative flex rounded-xl neu-pressed p-1.5 w-[280px] justify-self-center">
-      <div
-        className={`
-          absolute top-1.5 bottom-1.5
-          w-[calc(50%-6px)]
-          neu-flat rounded-lg
-          transition-transform
-          duration-300
-          ${activeTab === "my" ? "translate-x-0" : "translate-x-full"}
-        `}
+    <nav ref={navRef} className="relative flex rounded-xl neu-pressed p-1">
+      <span
+        className="absolute inset-y-1 rounded-lg neu-flat transition-all duration-300 ease-out"
+        style={{ left: indicator.left, width: indicator.width }}
       />
 
-      {(["my", "group"] as const).map((tab) => (
+      {TABS.map(({ key, label }) => (
         <button
-          key={tab}
-          onClick={() => setActiveTab(tab)}
+          key={key}
+          ref={(el) => {
+            btnRefs.current[key] = el;
+          }}
+          onClick={() => setViewType(key as ScheduleViewType)}
           className={`
-            relative z-10
-            w-1/2 py-2
-            typo-caption-2
-            ${activeTab === tab ? "text-blue" : "text-secondary"}
+            relative z-10 px-4 py-1.5 typo-caption-2 font-semibold whitespace-nowrap
+            transition-colors
+            ${viewType === key ? "text-accent" : "text-secondary"}
           `}
         >
-          {tab === "my" ? "MY Schedule" : "GROUP Schedule"}
+          {label}
         </button>
       ))}
     </nav>

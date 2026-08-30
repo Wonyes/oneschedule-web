@@ -1,6 +1,11 @@
+import { addDays, format } from "date-fns";
 import { ScheduleEvent } from "../types/schedule";
 
-const HOUR_HEIGHT = 56;
+const at = (dayOffset: number, hour: number, minute = 0) => {
+  const date = addDays(new Date(), dayOffset);
+  date.setHours(hour, minute, 0, 0);
+  return format(date, "yyyy-MM-dd'T'HH:mm:ss");
+};
 
 const DAYS = [
   "Monday",
@@ -60,38 +65,38 @@ const dummyEvents: ScheduleEvent[] = [
   {
     id: 1,
     title: "Frontend Meeting",
-    startDate: "2026-07-16T11:00:00",
-    endDate: "2026-07-16T13:00:00",
+    startDate: at(0, 11, 0),
+    endDate: at(0, 13, 0),
     category: "meeting",
   },
   {
     id: 2,
     title: "Project Work",
-    startDate: "2026-07-15T09:30:00",
-    endDate: "2026-07-15T11:30:00",
+    startDate: at(1, 9, 30),
+    endDate: at(1, 11, 30),
     category: "work",
   },
   {
     id: 3,
     title: "Gym",
-    startDate: "2026-07-08T18:00:00",
-    endDate: "2026-07-19T19:30:00",
+    startDate: at(2, 18, 0),
+    endDate: at(2, 19, 30),
     category: "personal",
   },
   {
     id: 4,
-    title: "Test",
-    startDate: "2026-07-08T18:00:00",
-    endDate: "2026-07-19T19:30:00",
-    category: "personal",
+    title: "Team Sync",
+    startDate: at(3, 14, 0),
+    endDate: at(3, 15, 0),
+    category: "meeting",
   },
   {
     id: 5,
-    title: "Test",
-    startDate: "2026-07-08T18:00:00",
-    endDate: "2026-07-19T19:30:00",
-    category: "personal",
+    title: "1:1",
+    startDate: at(4, 16, 0),
+    endDate: at(4, 16, 30),
+    category: "work",
   },
 ];
 
-export { HOUR_HEIGHT, DAYS, HOURS, EVENT_STYLES, dummyEvents };
+export { DAYS, HOURS, EVENT_STYLES, dummyEvents };

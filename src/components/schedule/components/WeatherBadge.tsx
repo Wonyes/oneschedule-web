@@ -4,13 +4,26 @@ import { getWeatherIcon } from "@/src/utils/schedule";
 type WeatherProps = {
   targetWeather?: ProcessedWeather[string];
   iconOnly?: boolean;
+  isLoading?: boolean;
 };
 
 export default function WeatherBadge({
   targetWeather,
   iconOnly = false,
+  isLoading = false,
 }: WeatherProps) {
-  if (!targetWeather) return null;
+  if (!targetWeather) {
+    if (!isLoading) return null;
+
+    return (
+      <span
+        className={`inline-block animate-pulse rounded-full bg-muted/30 ${
+          iconOnly ? "h-2.5 w-2.5" : "h-3.5 w-9"
+        }`}
+        aria-hidden="true"
+      />
+    );
+  }
 
   if (iconOnly) {
     return (

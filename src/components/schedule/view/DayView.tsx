@@ -19,6 +19,7 @@ export default function DayView({
   events,
   holidays,
   weathers,
+  isWeatherLoading,
 }: ScheduleViewProps) {
   const currentDate = useScheduleStore((s) => s.currentDate);
   const next = useScheduleStore((s) => s.next);
@@ -36,7 +37,7 @@ export default function DayView({
   return (
     <div className="h-full neu-flat rounded-3xl flex flex-col overflow-hidden">
       <BaseCard
-        className="shrink-0 px-3 py-3"
+        className="shrink-0 px-3 py-1"
         glow
         childClass="flex items-center justify-between sm:justify-center"
       >
@@ -53,7 +54,10 @@ export default function DayView({
           >
             {format(currentDate, "M월, d일 EEEE")}
           </span>
-          <WeatherBadge targetWeather={targetWeather} />
+          <WeatherBadge
+            targetWeather={targetWeather}
+            isLoading={isWeatherLoading}
+          />
         </Column>
 
         <NavButton
@@ -64,10 +68,7 @@ export default function DayView({
         />
       </BaseCard>
 
-      <div
-        className="flex-1 overflow-y-auto min-h-0 p-2"
-        {...swipeHandlers}
-      >
+      <div className="flex-1 overflow-y-auto min-h-0 p-2" {...swipeHandlers}>
         <div className="grid grid-cols-[60px_1fr] min-h-full neu-pressed rounded-2xl">
           <HourColumn />
 
@@ -81,7 +82,7 @@ export default function DayView({
                     startTime: hour,
                   })
                 }
-                className="h-[56px] border-b border-divider/40 box-border hover:bg-surface/40 transition-colors cursor-pointer"
+                className="h-11 sm:h-14 border-b border-divider/40 box-border hover:bg-surface/40 transition-colors cursor-pointer"
               />
             ))}
             {getDayLayouts.map((layout) => (
@@ -94,6 +95,7 @@ export default function DayView({
                 width={layout.width}
                 left={layout.left}
                 variant="day"
+                onClick={() => openSheet({ event: layout.event })}
               />
             ))}
           </div>

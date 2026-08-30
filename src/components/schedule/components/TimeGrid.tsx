@@ -17,7 +17,7 @@ export default function TimeGrid({
             onClickTime?.(hour);
           }}
           key={i}
-          className="h-14 border-b border-divider"
+          className="h-11 sm:h-14 border-b border-divider"
         />
       ))}
     </div>

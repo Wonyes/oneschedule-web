@@ -25,6 +25,7 @@ export default function MonthView({
   events,
   holidays,
   weathers,
+  isWeatherLoading,
 }: ScheduleViewProps) {
   const currentDate = useScheduleStore((s) => s.currentDate);
   const next = useScheduleStore((s) => s.next);
@@ -49,9 +50,8 @@ export default function MonthView({
 
   return (
     <div className="h-full neu-flat rounded-3xl flex flex-col overflow-hidden">
-      {/* 모바일 월 이동 */}
       <BaseCard
-        className="shrink-0 px-3 py-3 sm:hidden"
+        className="shrink-0 px-3 py-1 sm:hidden"
         childClass="flex items-center justify-between"
         glow
       >
@@ -64,9 +64,6 @@ export default function MonthView({
         <NavButton direction="next" onClick={next} label="다음 달" />
       </BaseCard>
 
-      {/* =====================================================
-          DESKTOP
-      ====================================================== */}
       <div className="hidden min-h-0 flex-1 flex-col sm:flex sm:overflow-x-auto">
         <div className="min-w-[560px] flex flex-col flex-1 min-h-0">
           <BaseCard glow>
@@ -113,14 +110,17 @@ export default function MonthView({
                       <span
                         className={`flex h-5 w-5 items-center justify-center rounded-full text-xs ${
                           isSameDay(date, new Date())
-                            ? "bg-primary text-white"
+                            ? "bg-primary text-on-primary"
                             : getDayColor(date, isHoliday)
                         }`}
                       >
                         {format(date, "d")}
                       </span>
 
-                      <WeatherBadge targetWeather={targetWeather} />
+                      <WeatherBadge
+                        targetWeather={targetWeather}
+                        isLoading={isWeatherLoading}
+                      />
                     </div>
 
                     <div className="relative h-full flex flex-col gap-0.5 mt-1">
@@ -136,6 +136,7 @@ export default function MonthView({
                             event={event}
                             date={date}
                             variant="month"
+                            onClick={() => openSheet({ event })}
                             className={`
                               ${!isStartOfDay ? "ml-[-8px] rounded-l-none border-l-0" : ""}
                               ${!isEndOfDay ? "mr-[-8px] rounded-r-none border-r-0" : ""}
@@ -159,19 +160,15 @@ export default function MonthView({
         </div>
       </div>
 
-      {/* =====================================================
-          MOBILE
-          날짜 그리드는 선택용, 일정은 아래 리스트로 분리
-      ====================================================== */}
       <div
-        className="flex min-h-0 flex-1 flex-col sm:hidden"
+        className="flex min-h-0 flex-1 flex-col overflow-y-auto sm:hidden"
         {...swipeHandlers}
       >
         <div className="grid grid-cols-7 shrink-0 px-2 pt-1.5">
           {WEEKDAY_LABELS.map((d) => (
             <div
               key={d}
-              className="h-5 flex items-center justify-center text-[11px] text-muted"
+              className="h-4 flex items-center justify-center text-[11px] text-muted"
             >
               {d}
             </div>
@@ -194,14 +191,14 @@ export default function MonthView({
                 type="button"
                 key={date.toISOString()}
                 onClick={() => setSelectedDate(date)}
-                className={`flex flex-col items-center gap-0.5 py-1 transition-transform active:scale-95 ${
+                className={`flex flex-col items-center gap-0.5 py-0.5 transition-transform active:scale-95 ${
                   inCurrentMonth ? "" : "opacity-40"
                 }`}
               >
                 <span
-                  className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-medium transition-colors ${
+                  className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium transition-colors ${
                     isSelected
-                      ? "bg-primary text-white"
+                      ? "bg-primary text-on-primary"
                       : isToday
                         ? "border border-primary text-primary"
                         : getDayColor(date, isHoliday)
@@ -210,8 +207,12 @@ export default function MonthView({
                   {format(date, "d")}
                 </span>
 
-                <span className="flex h-2.5 items-center gap-0.5">
-                  <WeatherBadge targetWeather={targetWeather} iconOnly />
+                <span className="flex h-2 items-center gap-0.5">
+                  <WeatherBadge
+                    targetWeather={targetWeather}
+                    isLoading={isWeatherLoading}
+                    iconOnly
+                  />
 
                   {dotEvents.map((event) => (
                     <span
@@ -226,7 +227,7 @@ export default function MonthView({
           })}
         </div>
 
-        <div className="flex-1 overflow-y-auto min-h-0 border-t border-divider px-3 py-3">
+        <div className="shrink-0 border-t border-divider px-3 py-3">
           <div className="mb-2 flex items-center justify-between">
             <span className="typo-body-2 font-semibold text-primary">
               {format(selectedDate, "M월 d일 EEEE")}
@@ -254,6 +255,7 @@ export default function MonthView({
                   event={event}
                   date={selectedDate}
                   variant="agenda"
+                  onClick={() => openSheet({ event })}
                 />
               ))}
             </div>

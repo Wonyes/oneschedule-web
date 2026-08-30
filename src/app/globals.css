@@ -20,40 +20,48 @@
 ========================================================= */
 
 @theme {
-  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.4);
-  --shadow-float: 0 20px 45px rgba(0, 0, 0, 0.55);
+  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.18);
+  --shadow-float: 0 12px 28px -10px rgba(0, 0, 0, 0.4);
 }
 
 /* =========================================================
-   HIGH-END TRUE NEUMORPHISM
-   Enhanced Contrast & Tactile Depth
+   SURFACES
+   Double-bezel: hairline core + faint outer ring, like
+   glass set in a tray — kept subtle, not the old dual
+   dark/light drop-shadow neumorphism.
 ========================================================= */
 
 @utility neu-flat {
-  background: #232b42;
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 
   box-shadow:
-    7px 7px 18px rgba(8, 11, 16, 0.55),
-    -7px -7px 18px rgba(255, 255, 255, 0.07),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 0 0 5px rgba(255, 255, 255, 0.012),
+    0 0 0 6px rgba(6, 8, 16, 0.28),
+    0 14px 28px -20px rgba(6, 8, 16, 0.45),
+    0 6px 16px -10px rgba(124, 108, 246, 0.12);
 }
 
 @utility neu-float {
-  background: #2a344e;
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 
   box-shadow:
-    12px 12px 28px rgba(8, 11, 16, 0.65),
-    -10px -10px 24px rgba(255, 255, 255, 0.08),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 0 0 5px rgba(255, 255, 255, 0.016),
+    0 0 0 6px rgba(6, 8, 16, 0.3),
+    0 22px 44px -18px rgba(6, 8, 16, 0.5),
+    0 10px 22px -10px rgba(124, 108, 246, 0.18);
 }
 
 @utility neu-pressed {
-  background: #171e2e;
+  background: var(--back);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 
   box-shadow:
-    inset 5px 5px 12px rgba(8, 11, 16, 0.7),
-    inset -5px -5px 12px rgba(255, 255, 255, 0.03),
-    inset 0 0 0 1px rgba(0, 0, 0, 0.4);
+    inset 0 2px 6px rgba(0, 0, 0, 0.4),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.04);
 }
 
 /* =========================================================
@@ -79,78 +87,102 @@
 }
 
 @utility glass {
-  background: rgba(35, 43, 66, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(30, 34, 51, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: var(--shadow-float);
 }
 
 @utility neu-btn {
-  background: #232b42;
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 
   box-shadow:
-    5px 5px 14px rgba(8, 11, 16, 0.45),
-    -5px -5px 14px rgba(255, 255, 255, 0.06),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.09);
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 10px 20px -16px rgba(6, 8, 16, 0.45);
 
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    background-color 200ms ease,
+    box-shadow 200ms ease,
+    border-color 200ms ease;
 
   &:hover {
-    background: #293450;
-
-    box-shadow:
-      3px 3px 8px rgba(8, 11, 16, 0.35),
-      -3px -3px 8px rgba(255, 255, 255, 0.09),
-      inset 0 0 0 1px rgba(129, 140, 248, 0.45);
+    background: var(--surface-hover);
+    border-color: rgba(124, 108, 246, 0.3);
   }
 
   &:active {
-    background: #171e2e;
-
+    background: var(--back);
     box-shadow:
-      inset 5px 5px 12px rgba(8, 11, 16, 0.7),
-      inset 0 0 0 1px rgba(129, 140, 248, 0.6);
+      inset 0 2px 6px rgba(0, 0, 0, 0.5),
+      inset 0 0 0 1px rgba(124, 108, 246, 0.35);
   }
 }
 
+@utility eyebrow {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+@utility btn-spring {
+  transition:
+    transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    background-color 200ms ease,
+    box-shadow 200ms ease,
+    border-color 200ms ease,
+    opacity 200ms ease;
+}
+
 /* =========================================================
-   TWILIGHT BLUE-GRAY PALETTE
-   Optimized Contrast
+   FLAT DARK PALETTE — Apple/Toss reference.
+   Solid backgrounds, one accent, hierarchy from color
+   steps and type weight rather than shadow or glow.
 ========================================================= */
 
 :root {
-  --main-bg: linear-gradient(135deg, #1f273d 0%, #151b2a 50%, #0e121b 100%);
+  --main-bg: #15171f;
 
-  --surface: #232b42;
-  --back: #171e2e;
+  --surface: #1e2233;
+  --surface-hover: #272c42;
+  --back: #151824;
 
-  --foreground: #f8fafc;
-  --primary: #818cf8;
+  --foreground: #f5f6fb;
+  --primary: #7c6cf6;
 
   --t-title: #ffffff;
-  --text: #e2e8f0;
-  --muted: #94a3b8;
-  --secondary: #cbd5e1;
-  --place-h: #64748b;
+  --text: #e4e6f0;
+  --muted: #98a0b8;
+  --secondary: #ccd0e0;
+  --place-h: #6b7290;
 
   --divider: rgba(255, 255, 255, 0.1);
-  --disable: #1b2336;
-  --b-color: rgba(129, 140, 248, 0.3);
-  --table-header: #232b42;
+  --disable: #1e2233;
+  --b-color: rgba(124, 108, 246, 0.32);
+  --table-header: #1e2233;
 
-  --primary-500: #6366f1;
+  --primary-500: #6d5bf2;
   --success-500: #34d399;
   --error-500: #f87171;
   --pending-500: #fbbf24;
 
-  --accent: #818cf8;
-  --accent-soft: rgba(129, 140, 248, 0.15);
+  --accent: #7c6cf6;
+  --accent-soft: rgba(124, 108, 246, 0.15);
+  --accent-glow: rgba(124, 108, 246, 0.18);
+  --on-primary: #ffffff;
 
   --blue: #38bdf8;
-  --input: #171e2e;
+  --input: #151824;
   --line: rgba(255, 255, 255, 0.12);
   --red: #f87171;
 
   --soft: 0 10px 30px rgba(0, 0, 0, 0.4);
+  --radius-outer: 1.25rem;
+  --radius-inner: 0.875rem;
 
   --gradient-mint: linear-gradient(90deg, #34d399 0%, #059669 100%);
 
@@ -158,7 +190,7 @@
 
   --gradient-yellow: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
 
-  --gradient-primary: linear-gradient(135deg, #818cf8 0%, #4f46e5 100%);
+  --gradient-primary: linear-gradient(135deg, #8b7cf7 0%, #5b4fd6 100%);
 }
 
 /* =========================================================
@@ -240,9 +272,14 @@
   --color-blue: var(--blue);
   --color-secondary: var(--secondary);
   --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
   --color-main-bg: var(--main-bg);
   --color-t-title: var(--t-title);
   --color-table-header: var(--table-header);
+
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-primary: var(--on-primary);
 
   --background-image-gradient-mint: var(--gradient-mint);
   --background-image-gradient-pink: var(--gradient-pink);
@@ -257,33 +294,41 @@
 ========================================================= */
 
 @utility typo-h1 {
+  font-family: var(--font-gmarket);
   font-size: 48px;
   line-height: 64px;
-  font-weight: 600;
+  font-weight: 500;
+  letter-spacing: -0.01em;
 }
 
 @utility typo-h2 {
+  font-family: var(--font-gmarket);
   font-size: 40px;
   line-height: 56px;
   font-weight: 500;
+  letter-spacing: -0.01em;
 }
 
 @utility typo-h3 {
+  font-family: var(--font-gmarket);
   font-size: 36px;
   line-height: 48px;
   font-weight: 500;
+  letter-spacing: -0.005em;
 }
 
 @utility typo-h4 {
+  font-family: var(--font-gmarket);
   font-size: 32px;
   line-height: 40px;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 @utility typo-title-1 {
+  font-family: var(--font-gmarket);
   font-size: 24px;
   line-height: 32px;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 @utility typo-title-2 {

@@ -138,62 +138,59 @@ export default function GroupMemberSection({
   };
 
   return (
-    <BaseCard glow className="flex-1 p-6 h-[420px] lg:h-[520px]">
-      <div className="mb-6">
-        <h2 className="typo-title-2 text-white">그룹 멤버</h2>
+    <BaseCard glow className="flex-1 p-5 h-[420px] lg:h-[520px]">
+      <div className="mb-4 flex flex-col gap-1.5">
+        <span className="eyebrow">TEAM</span>
+        <h2 className="typo-sub-t-1 text-foreground">그룹 멤버</h2>
       </div>
 
-      <Column className="h-[330px] lg:h-[430px] gap-4 overflow-y-auto pr-2">
+      <Column className="h-[340px] lg:h-[440px] gap-2.5 overflow-y-auto pr-2">
         {members.map((member: Member) => (
           <Between
             key={member.memberNo}
-            className="
-              w-full rounded-2xl 
-              border border-slate-800 
-              bg-slate-900/40 
-              px-5 py-4 
-              neu-pressed
-            "
+            className="w-full rounded-xl px-4 py-3 neu-pressed"
           >
-            <Row className="gap-4">
+            <Row className="gap-3">
               <Row
                 className="
-                h-11 w-11 
-                justify-center 
-                rounded-full 
-                bg-blue-500/10 
-                font-bold 
-                text-blue-400
+                h-9 w-9
+                justify-center
+                rounded-xl
+                bg-accent/10
+                typo-caption-2
+                font-bold
+                text-accent
               "
               >
                 {member.nickname[0]}
               </Row>
 
               <Column>
-                <Row className="gap-2">
-                  <span className="typo-sub-t-2 text-white">
+                <Row className="gap-1.5">
+                  <span className="typo-caption-2 font-semibold text-foreground">
                     {member.nickname}
                   </span>
 
                   {member.groupRole === "SUPER" && (
-                    <Crown size={14} className="text-yellow-400" />
+                    <Crown size={12} strokeWidth={1.75} className="text-pending-500" />
                   )}
                 </Row>
 
-                <span className="mt-1 typo-caption-2 text-slate-500">
+                <span className="mt-0.5 typo-caption-3 text-place-h">
                   {member.position}
                 </span>
               </Column>
             </Row>
 
-            <Row className="relative gap-3">
+            <Row className="relative gap-2">
               <span
                 className="
-                rounded-full 
-                bg-slate-800 
-                px-3 py-1 
-                typo-caption-2 
-                text-slate-300
+                rounded-full
+                bg-surface-hover
+                px-2.5 py-1
+                typo-caption-3
+                font-medium
+                text-secondary
               "
               >
                 {member.groupRole}
@@ -208,15 +205,16 @@ export default function GroupMemberSection({
                       )
                     }
                     className="
-                      flex h-8 w-8 
-                      items-center justify-center 
-                      rounded-lg 
-                      text-slate-400 
-                      hover:bg-slate-800 
-                      hover:text-white
+                      flex h-7 w-7
+                      items-center justify-center
+                      rounded-lg
+                      text-muted
+                      btn-spring
+                      hover:bg-surface-hover
+                      hover:text-foreground
                     "
                   >
-                    <MoreVertical size={16} />
+                    <MoreVertical size={15} strokeWidth={1.75} />
                   </button>
 
                   {openMenu === member.memberNo && (
@@ -224,9 +222,8 @@ export default function GroupMemberSection({
                       className="
                       absolute right-0 top-10 z-30
                       w-40 rounded-xl
-                      border border-slate-800
-                      bg-slate-900
-                      p-2 shadow-xl
+                      glass
+                      p-2
                     "
                     >
                       <button
@@ -236,8 +233,8 @@ export default function GroupMemberSection({
                           px-3 py-2
                           text-left
                           typo-caption-2
-                          text-slate-200
-                          hover:bg-slate-800
+                          text-secondary
+                          hover:bg-white/5
                         "
                       >
                         멤버 수정
@@ -250,8 +247,8 @@ export default function GroupMemberSection({
                           px-3 py-2
                           text-left
                           typo-caption-2
-                          text-red-400
-                          hover:bg-slate-800
+                          text-error-500
+                          hover:bg-white/5
                         "
                       >
                         그룹 내보내기

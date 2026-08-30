@@ -6,6 +6,7 @@ import {
   useMyinfoChange,
   useNicknameCheck,
   usePasswordChange,
+  useProfileImageUpload,
   MyInfoResponse,
 } from "@/src/hooks/querys/useMembers";
 
@@ -20,6 +21,7 @@ const mockUseLogout = useLogout as jest.Mock;
 const mockUseMyinfoChange = useMyinfoChange as jest.Mock;
 const mockUseNicknameCheck = useNicknameCheck as jest.Mock;
 const mockUsePasswordChange = usePasswordChange as jest.Mock;
+const mockUseProfileImageUpload = useProfileImageUpload as jest.Mock;
 
 describe("ProfilePage", () => {
   beforeEach(() => {
@@ -53,6 +55,11 @@ describe("ProfilePage", () => {
 
     mockUsePasswordChange.mockReturnValue({
       mutate: jest.fn(),
+    });
+
+    mockUseProfileImageUpload.mockReturnValue({
+      mutate: jest.fn(),
+      isPending: false,
     });
   });
 

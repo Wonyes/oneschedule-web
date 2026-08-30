@@ -12,7 +12,53 @@ import {
   startOfDay,
   endOfDay,
 } from "date-fns";
-import { ScheduleEvent, EventLayout, holidayType } from "../types/schedule";
+import {
+  ScheduleEvent,
+  EventLayout,
+  holidayType,
+  EventCategory,
+  ScheduleApiRequest,
+  ScheduleApiResponse,
+} from "../types/schedule";
+
+const toScheduleEvent = (res: ScheduleApiResponse): ScheduleEvent => {
+  const startTime = res.startTime ?? "00:00:00";
+  const endTime = res.endTime ?? startTime;
+  const endDate = res.endDate ?? res.startDate;
+
+  return {
+    id: res.id,
+    title: res.title,
+    content: res.content,
+    category: (res.category as EventCategory) || "personal",
+    startDate: `${res.startDate}T${startTime}`,
+    endDate: `${endDate}T${endTime}`,
+    participantMemberNos: (res.participants ?? []).map((p) => p.memberNo),
+  };
+};
+
+const toScheduleRequest = (payload: {
+  title: string;
+  content?: string;
+  category: string;
+  startDate: string;
+  endDate: string;
+  participantMemberNos?: number[];
+}): ScheduleApiRequest => {
+  const [startDatePart, startTimePart] = payload.startDate.split("T");
+  const [endDatePart, endTimePart] = payload.endDate.split("T");
+
+  return {
+    title: payload.title,
+    category: payload.category,
+    content: payload.content,
+    startDate: startDatePart,
+    endDate: endDatePart,
+    startTime: startTimePart,
+    endTime: endTimePart,
+    participantMemberNos: payload.participantMemberNos,
+  };
+};
 
 const getTimes = (date: string) => {
   return format(new Date(date), "HH:mm");
@@ -39,8 +85,10 @@ const getEventPosition = (
   const duration =
     (displayEnd.getTime() - displayStart.getTime()) / (1000 * 60);
 
-  const top = totalMinutes * (1344 / 1440);
-  const height = duration * (1344 / 1440);
+  // 그리드 행 높이가 브레이크포인트별 CSS 값이라 절대 px 대신 하루(1440분) 대비 비율(%)로 위치를 계산한다.
+  const top = Math.min(Math.max((totalMinutes / 1440) * 100, 0), 100);
+  // 종료 시각이 비었거나 시작보다 빠른 경우에도 카드가 사라지지 않도록 최소 높이를 보장한다.
+  const height = Math.max((duration / 1440) * 100, 2);
 
   return { top, height };
 };
@@ -226,4 +274,6 @@ export {
   getmonthTime,
   getEventPosition,
   getSortedDayEvents,
+  toScheduleEvent,
+  toScheduleRequest,
 };

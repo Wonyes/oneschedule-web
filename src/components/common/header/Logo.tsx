@@ -15,21 +15,20 @@ export default function Logo() {
     >
       <span
         className="
-          flex h-9 w-9 shrink-0 items-center justify-center
-          rounded-xl
-          bg-gradient-to-br from-indigo-500 to-blue-600
-          shadow-sm
+          flex h-7 w-7 shrink-0 items-center justify-center
+          rounded-lg
+          bg-accent/12
         "
       >
-        <CalendarClock size={20} className="text-white" strokeWidth={2.25} />
+        <CalendarClock size={15} strokeWidth={1.75} className="text-accent" />
       </span>
 
       <span className="hidden items-baseline gap-1 sm:flex">
-        <span className="typo-title-2 font-extrabold text-foreground">
+        <span className="typo-sub-t-2 font-bold text-foreground tracking-tight">
           ONE
         </span>
-        <span className="typo-title-2 font-medium text-foreground">
-          SCHEDULER
+        <span className="typo-sub-t-2 font-medium text-muted tracking-tight">
+          Scheduler
         </span>
       </span>
     </button>

@@ -182,7 +182,7 @@ describe("getMonthDates", () => {
 });
 
 describe("getEventPosition", () => {
-  test("자정 기준 경과 시간을 1344/1440 비율로 픽셀 변환한다", () => {
+  test("자정 기준 경과 시간을 하루(1440분) 대비 비율(%)로 변환한다", () => {
     const dayStart = new Date(2024, 0, 1, 0, 0);
     const displayStart = new Date(2024, 0, 1, 1, 0); // 60분 경과
     const displayEnd = new Date(2024, 0, 1, 2, 0); // 60분 길이
@@ -193,8 +193,8 @@ describe("getEventPosition", () => {
       dayStart,
     );
 
-    expect(top).toBe(56);
-    expect(height).toBe(56);
+    expect(top).toBeCloseTo((60 / 1440) * 100);
+    expect(height).toBeCloseTo((60 / 1440) * 100);
   });
 });
 

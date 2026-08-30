@@ -130,7 +130,7 @@ export default function SignForm() {
             rightSection={
               <Primary
                 text="중복확인"
-                className="py-[6px] px-3 rounded-lg text-xs"
+                className="py-[6px] h-fit px-3 rounded-lg text-xs"
                 onClick={() => {
                   duplicationCheck("email");
                 }}
@@ -181,7 +181,7 @@ export default function SignForm() {
             rightSection={
               <Primary
                 text="중복확인"
-                className="py-[6px] px-3 rounded-lg text-xs"
+                className="py-[6px] h-fit px-3 rounded-lg text-xs"
                 onClick={() => {
                   duplicationCheck("nickname");
                 }}
