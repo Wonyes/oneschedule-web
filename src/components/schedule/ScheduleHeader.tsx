@@ -1,9 +1,14 @@
 "use client";
 
+import { useMemo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { format, addDays } from "date-fns";
+import { format, addDays, startOfDay, endOfDay } from "date-fns";
 import { useScheduleStore } from "@/src/hooks/stores/useScheduleStore";
+import { useScheduleViewStore } from "@/src/hooks/stores/useScheduleViewStore";
 import { useWeathers } from "@/src/hooks/querys/useCommonApi";
+import { useSchedules } from "@/src/hooks/querys/useSchedule";
+import { getTimes, toScheduleEvent } from "@/src/utils/schedule";
+import { ScheduleEvent, WeatherData } from "@/src/types/schedule";
 import WeatherBadge from "./components/WeatherBadge";
 import BaseCard from "../ui/card/BaseCard";
 import { Column } from "../ui/layout/flex";
@@ -26,15 +31,81 @@ function getFormattedDateTitle(mode: string, date: Date) {
   return format(date, "yyyy년 M월 d일");
 }
 
+function eventsOnDay(schedules: ScheduleEvent[], date: Date) {
+  const start = startOfDay(date).getTime();
+  const end = endOfDay(date).getTime();
+
+  return schedules
+    .filter((e) => {
+      const s = new Date(e.startDate).getTime();
+      return s >= start && s <= end;
+    })
+    .sort(
+      (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
+    );
+}
+
+function SummaryRow({
+  label,
+  dotClassName,
+  events,
+  weather,
+  isWeatherLoading,
+}: {
+  label: string;
+  dotClassName: string;
+  events: ScheduleEvent[];
+  weather?: WeatherData;
+  isWeatherLoading?: boolean;
+}) {
+  const primary = events[0];
+
+  return (
+    <div className="flex items-center justify-between neu-pressed px-4 py-3 rounded-xl text-xs text-secondary">
+      <div className="flex items-center gap-2 shrink-0">
+        <span className={`w-1.5 h-1.5 rounded-full inline-block ${dotClassName}`} />
+        <span>{label}</span>
+      </div>
+      <div className="flex items-center gap-2 min-w-0 text-foreground font-medium">
+        {primary ? (
+          <span className="truncate">
+            {getTimes(primary.startDate)} · {primary.title}
+            {events.length > 1 ? ` 외 ${events.length - 1}건` : ""}
+          </span>
+        ) : (
+          <span className="text-muted font-normal">일정이 없어요</span>
+        )}
+        <WeatherBadge targetWeather={weather} isLoading={isWeatherLoading} />
+      </div>
+    </div>
+  );
+}
+
 export default function ScheduleHeader() {
   const { mode, currentDate, next, prev } = useScheduleStore();
+  const viewType = useScheduleViewStore((s) => s.viewType);
   const { data: weathers, isLoading: isWeatherLoading } = useWeathers();
+  const { data: schedules } = useSchedules(viewType);
 
-  const todayKey = format(currentDate, "yyyyMMdd");
-  const tomorrowKey = format(addDays(currentDate, 1), "yyyyMMdd");
+  const today = useMemo(() => new Date(), []);
+  const tomorrow = useMemo(() => addDays(today, 1), [today]);
+
+  const todayKey = format(today, "yyyyMMdd");
+  const tomorrowKey = format(tomorrow, "yyyyMMdd");
 
   const todayWeather = weathers?.[todayKey];
   const tomorrowWeather = weathers?.[tomorrowKey];
+
+  const events = useMemo(
+    () => (schedules ?? []).map(toScheduleEvent),
+    [schedules],
+  );
+
+  const todayEvents = useMemo(() => eventsOnDay(events, today), [events, today]);
+  const tomorrowEvents = useMemo(
+    () => eventsOnDay(events, tomorrow),
+    [events, tomorrow],
+  );
 
   return (
     <BaseCard className="hidden sm:flex flex-col shrink-0 overflow-hidden" glow>
@@ -67,33 +138,21 @@ export default function ScheduleHeader() {
             오늘의 주요 일정
           </h3>
           <div className="flex flex-col gap-2">
-            <div className="flex items-center justify-between neu-pressed px-4 py-3 rounded-xl text-xs text-secondary">
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-accent inline-block" />
-                <span>오늘의 주요 일정</span>
-              </div>
-              <div className="flex items-center gap-2 text-foreground font-medium">
-                <span>일정 계획을 입력하세요.</span>
-                <WeatherBadge
-                  targetWeather={todayWeather}
-                  isLoading={isWeatherLoading}
-                />
-              </div>
-            </div>
+            <SummaryRow
+              label="오늘의 주요 일정"
+              dotClassName="bg-accent"
+              events={todayEvents}
+              weather={todayWeather}
+              isWeatherLoading={isWeatherLoading}
+            />
 
-            <div className="flex items-center justify-between neu-pressed px-4 py-3 rounded-xl text-xs text-secondary">
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-muted inline-block" />
-                <span>내일의 계획</span>
-              </div>
-              <div className="flex items-center gap-2 text-foreground font-medium">
-                <span>내일의 계획을 입력하세요.</span>
-                <WeatherBadge
-                  targetWeather={tomorrowWeather}
-                  isLoading={isWeatherLoading}
-                />
-              </div>
-            </div>
+            <SummaryRow
+              label="내일의 계획"
+              dotClassName="bg-muted"
+              events={tomorrowEvents}
+              weather={tomorrowWeather}
+              isWeatherLoading={isWeatherLoading}
+            />
           </div>
         </div>
       </div>

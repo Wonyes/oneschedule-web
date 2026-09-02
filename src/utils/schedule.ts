@@ -87,8 +87,9 @@ const getEventPosition = (
 
   // 그리드 행 높이가 브레이크포인트별 CSS 값이라 절대 px 대신 하루(1440분) 대비 비율(%)로 위치를 계산한다.
   const top = Math.min(Math.max((totalMinutes / 1440) * 100, 0), 100);
-  // 종료 시각이 비었거나 시작보다 빠른 경우에도 카드가 사라지지 않도록 최소 높이를 보장한다.
-  const height = Math.max((duration / 1440) * 100, 2);
+  // 종료 시각이 비었거나 시작과 같은 일정도 시간 칸 하나(60분)는 꽉 채워서 보여준다.
+  const MIN_DURATION_MINUTES = 60;
+  const height = Math.max((duration / 1440) * 100, (MIN_DURATION_MINUTES / 1440) * 100);
 
   return { top, height };
 };
@@ -181,22 +182,39 @@ const applyLayout = (events: EventLayout[]): EventLayout[] => {
   });
 };
 
+// 하루를 벗어나는 일정은 시작/종료 시각을 그 날의 00:00~24:00으로 잘라서
+// top/height(%)를 계산해야 한다. 그렇지 않으면 여러 날에 걸친 일정의
+// height가 100%를 넘거나(week) 음수가 되어(day) 카드 높이가 그리드와 어긋난다.
+const clipToDay = (start: Date, end: Date, date: Date) => {
+  const displayStart = isSameDay(start, date) ? start : startOfDay(date);
+  const displayEnd = isSameDay(end, date) ? end : endOfDay(date);
+
+  return { displayStart, displayEnd };
+};
+
 function getWeekEvents(
   events: ScheduleEvent[],
   weekDates: Date[],
 ): EventLayout[] {
-  const layouts: EventLayout[] = events.map((event) => {
-    const start = new Date(event.startDate);
-    const end = new Date(event.endDate);
+  const layouts: EventLayout[] = weekDates.flatMap((date) => {
+    const dayEvents = events.filter((event) => {
+      const start = new Date(event.startDate);
+      const end = new Date(event.endDate);
+      return isWithinInterval(date, {
+        start: startOfDay(start),
+        end: endOfDay(end),
+      });
+    });
 
-    const { top, height } = getEventPosition(start, end, start);
+    return dayEvents.map((event) => {
+      const start = new Date(event.startDate);
+      const end = new Date(event.endDate);
+      const { displayStart, displayEnd } = clipToDay(start, end, date);
 
-    return {
-      event,
-      date: startOfDay(start),
-      top,
-      height,
-    };
+      const { top, height } = getEventPosition(displayStart, displayEnd, date);
+
+      return { event, date: startOfDay(date), top, height };
+    });
   });
 
   return weekDates.flatMap((date) => {
@@ -220,12 +238,7 @@ function getDayEvents(
     .map((event) => {
       const start = new Date(event.startDate);
       const end = new Date(event.endDate);
-
-      const displayStart = new Date(currentDate);
-      displayStart.setHours(start.getHours(), start.getMinutes(), 0, 0);
-
-      const displayEnd = new Date(currentDate);
-      displayEnd.setHours(end.getHours(), end.getMinutes(), 0, 0);
+      const { displayStart, displayEnd } = clipToDay(start, end, currentDate);
 
       const { top, height } = getEventPosition(
         displayStart,

@@ -1,8 +1,4 @@
-import axios, {
-  AxiosError,
-  AxiosRequestConfig,
-  InternalAxiosRequestConfig,
-} from "axios";
+import axios, { AxiosError, AxiosRequestConfig } from "axios";
 
 interface CustomAxiosRequestConfig extends AxiosRequestConfig {
   _retry?: boolean;
@@ -19,25 +15,6 @@ const api = axios.create({
 });
 
 let refreshPromise: Promise<void> | null = null;
-
-const publicPaths = [
-  "/holidays",
-  "/weather",
-  "/members/email-check",
-  "/members/nickname-check",
-  "/members/login",
-];
-
-api.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
-    const isPublic = publicPaths.some((path) => config.url?.startsWith(path));
-    if (isPublic) {
-      return config;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error),
-);
 
 api.interceptors.response.use(
   (response) => response,
@@ -92,7 +69,6 @@ api.interceptors.response.use(
 
           return api(originalRequest);
         } catch (refreshError) {
-          // window.location.replace("/login");
           return Promise.reject(refreshError);
         }
       }

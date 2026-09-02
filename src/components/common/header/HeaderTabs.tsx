@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useScheduleViewStore } from "@/src/hooks/stores/useScheduleViewStore";
+import { useMyInfo } from "@/src/hooks/querys/useMembers";
 import { ScheduleViewType } from "@/src/types/schedule";
 
 const TABS = [
@@ -15,6 +16,8 @@ type TabKey = (typeof TABS)[number]["key"];
 export default function HeaderTabs() {
   const { viewType, setViewType } = useScheduleViewStore();
   const pathname = usePathname();
+  const { data: user } = useMyInfo();
+  const hasGroup = !!user?.groupCode;
 
   const navRef = useRef<HTMLElement>(null);
   const btnRefs = useRef<Partial<Record<TabKey, HTMLButtonElement | null>>>({});
@@ -46,22 +49,29 @@ export default function HeaderTabs() {
         style={{ left: indicator.left, width: indicator.width }}
       />
 
-      {TABS.map(({ key, label }) => (
-        <button
-          key={key}
-          ref={(el) => {
-            btnRefs.current[key] = el;
-          }}
-          onClick={() => setViewType(key as ScheduleViewType)}
-          className={`
-            relative z-10 px-4 py-1.5 typo-caption-2 font-semibold whitespace-nowrap
-            transition-colors
-            ${viewType === key ? "text-accent" : "text-secondary"}
-          `}
-        >
-          {label}
-        </button>
-      ))}
+      {TABS.map(({ key, label }) => {
+        const disabled = key === "GROUP" && !hasGroup;
+
+        return (
+          <button
+            key={key}
+            ref={(el) => {
+              btnRefs.current[key] = el;
+            }}
+            onClick={() => !disabled && setViewType(key as ScheduleViewType)}
+            disabled={disabled}
+            title={disabled ? "소속된 그룹이 없어요" : undefined}
+            className={`
+              relative z-10 px-4 py-1.5 typo-caption-2 font-semibold whitespace-nowrap
+              transition-colors
+              disabled:cursor-not-allowed disabled:opacity-40
+              ${viewType === key ? "text-accent" : "text-secondary"}
+            `}
+          >
+            {label}
+          </button>
+        );
+      })}
     </nav>
   );
 }

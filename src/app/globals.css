@@ -25,43 +25,42 @@
 }
 
 /* =========================================================
-   SURFACES
-   Double-bezel: hairline core + faint outer ring, like
-   glass set in a tray — kept subtle, not the old dual
-   dark/light drop-shadow neumorphism.
+   SURFACES — soft-UI dual shadow. Surface sits flush with
+   the page background; depth comes from a light/dark shadow
+   pair cast from a single top-left light source.
 ========================================================= */
 
 @utility neu-flat {
   background: var(--surface);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 0 0 5px rgba(255, 255, 255, 0.012),
-    0 0 0 6px rgba(6, 8, 16, 0.28),
-    0 14px 28px -20px rgba(6, 8, 16, 0.45),
-    0 6px 16px -10px rgba(124, 108, 246, 0.12);
+    4px 4px 11px var(--neu-dark),
+    -4px -4px 11px var(--neu-light);
+
+  @media (min-width: 640px) {
+    box-shadow:
+      6px 6px 16px var(--neu-dark),
+      -6px -6px 16px var(--neu-light);
+  }
 }
 
 @utility neu-float {
   background: var(--surface);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.07),
-    0 0 0 5px rgba(255, 255, 255, 0.016),
-    0 0 0 6px rgba(6, 8, 16, 0.3),
-    0 22px 44px -18px rgba(6, 8, 16, 0.5),
-    0 10px 22px -10px rgba(124, 108, 246, 0.18);
+    6px 6px 16px var(--neu-dark),
+    -6px -6px 16px var(--neu-light);
+
+  @media (min-width: 640px) {
+    box-shadow:
+      10px 10px 24px var(--neu-dark),
+      -10px -10px 24px var(--neu-light);
+  }
 }
 
 @utility neu-pressed {
   background: var(--back);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-
   box-shadow:
-    inset 0 2px 6px rgba(0, 0, 0, 0.4),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+    inset 5px 5px 11px var(--neu-dark),
+    inset -5px -5px 11px var(--neu-light);
 }
 
 /* =========================================================
@@ -94,29 +93,53 @@
 
 @utility neu-btn {
   background: var(--surface);
-  border: 1px solid rgba(255, 255, 255, 0.08);
 
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 10px 20px -16px rgba(6, 8, 16, 0.45);
+    3px 3px 9px var(--neu-dark),
+    -3px -3px 9px var(--neu-light);
 
   transition:
     transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1),
     background-color 200ms ease,
-    box-shadow 200ms ease,
-    border-color 200ms ease;
+    box-shadow 200ms ease;
 
   &:hover {
     background: var(--surface-hover);
-    border-color: rgba(124, 108, 246, 0.3);
   }
 
   &:active {
-    background: var(--back);
     box-shadow:
-      inset 0 2px 6px rgba(0, 0, 0, 0.5),
-      inset 0 0 0 1px rgba(124, 108, 246, 0.35);
+      inset 3px 3px 8px var(--neu-dark),
+      inset -3px -3px 8px var(--neu-light);
   }
+}
+
+@keyframes float-a {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--float-rotate, 0deg));
+  }
+  50% {
+    transform: translateY(-6px) rotate(var(--float-rotate, 0deg));
+  }
+}
+
+@keyframes float-b {
+  0%,
+  100% {
+    transform: translateY(-3px) rotate(var(--float-rotate, 0deg));
+  }
+  50% {
+    transform: translateY(4px) rotate(var(--float-rotate, 0deg));
+  }
+}
+
+@utility animate-float-a {
+  animation: float-a 5s ease-in-out infinite;
+}
+
+@utility animate-float-b {
+  animation: float-b 6s ease-in-out infinite;
 }
 
 @utility eyebrow {
@@ -145,11 +168,14 @@
 ========================================================= */
 
 :root {
-  --main-bg: #15171f;
+  --main-bg: #191c26;
 
-  --surface: #1e2233;
-  --surface-hover: #272c42;
-  --back: #151824;
+  --surface: #1f2330;
+  --surface-hover: #262b3b;
+  --back: #14161e;
+
+  --neu-light: #2c3142;
+  --neu-dark: #0d0e13;
 
   --foreground: #f5f6fb;
   --primary: #7c6cf6;

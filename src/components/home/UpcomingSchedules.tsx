@@ -16,12 +16,14 @@ const MAX_ITEMS = 3;
 export default function UpcomingSchedules({ today }: { today: Date }) {
   const router = useRouter();
   const { openSheet } = useSheetStore();
-  const { data: schedules } = useSchedules("PERSONAL", true);
+  const { data: personalSchedules } = useSchedules("PERSONAL", true);
+  const { data: groupSchedules } = useSchedules("GROUP", true);
 
   const upcomingEvents = useMemo(() => {
     const start = startOfDay(today).getTime();
+    const combined = [...(personalSchedules ?? []), ...(groupSchedules ?? [])];
 
-    return (schedules ?? [])
+    return combined
       .map(toScheduleEvent)
       .filter((e) => new Date(e.startDate).getTime() >= start)
       .sort(
@@ -29,7 +31,7 @@ export default function UpcomingSchedules({ today }: { today: Date }) {
           new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
       )
       .slice(0, MAX_ITEMS);
-  }, [schedules, today]);
+  }, [personalSchedules, groupSchedules, today]);
 
   return (
     <BaseCard className="p-5">

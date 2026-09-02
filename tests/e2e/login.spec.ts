@@ -1,12 +1,12 @@
 import { test, expect } from "@playwright/test";
 
-const EMAIL = process.env.NEXT_PUBLIC_EMAIL ?? "";
-const PASSWORD = process.env.NEXT_PUBLIC_PASSWORD ?? "";
+const EMAIL = process.env.E2E_EMAIL ?? "";
+const PASSWORD = process.env.E2E_PASSWORD ?? "";
 
 test("로그인", async ({ page }) => {
   test.skip(
     !EMAIL || !PASSWORD,
-    "NEXT_PUBLIC_EMAIL / NEXT_PUBLIC_PASSWORD 환경변수가 필요합니다.",
+    "E2E_EMAIL / E2E_PASSWORD 환경변수가 필요합니다.",
   );
 
   await page.goto("/login");

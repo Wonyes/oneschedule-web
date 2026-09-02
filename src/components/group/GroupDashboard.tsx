@@ -3,7 +3,7 @@ import { Column, Row } from "../ui/layout/flex";
 import { MyGroupResponse } from "@/src/types/group";
 
 import GroupSummary from "./GroupSummary";
-import GroupMemberSection from "./GroupMemberSection ";
+import GroupMemberSection from "./GroupMemberSection";
 import GroupScheduleSection from "./GroupScheduleSection";
 import GroupActivitySection from "./GroupActivitySection";
 

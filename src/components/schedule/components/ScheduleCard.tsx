@@ -1,6 +1,7 @@
 import { ScheduleEvent } from "@/src/types/schedule";
 import { getTimes, isSameDate } from "@/src/utils/schedule";
 import { EVENT_STYLES } from "@/src/constant/schedule";
+import { Column, Row } from "../../ui/layout/flex";
 
 type EventCardProps = {
   event: ScheduleEvent;
@@ -40,7 +41,6 @@ export default function ScheduleCard({
 
   const connectionClass = variant === "week" && horizontalConnection;
 
-  // 1. Month 뷰 카드 (슬림하고 간결한 인라인 칩 형태)
   if (variant === "month") {
     return (
       <div
@@ -65,7 +65,6 @@ export default function ScheduleCard({
     );
   }
 
-  // 1.5 Agenda 리스트 카드 (모바일 월간뷰에서 선택한 날짜의 일정 목록)
   if (variant === "agenda") {
     return (
       <div
@@ -92,48 +91,50 @@ export default function ScheduleCard({
     );
   }
 
-  // 2. Day 뷰 카드 (Linear/Vercel 스타일의 깊이감 있는 플로팅 카드)
   if (variant === "day") {
     return (
       <div
         onClick={onClick}
         className={`
-          absolute left-0 right-0 rounded-xl
+          absolute left-0 right-0 rounded-lg
           bg-surface/90  border border-white/10
-          p-2.5 shadow-xl z-10 transition-all duration-200
+          px-2 py-1.5 shadow-xl z-10 overflow-hidden transition-all duration-200
           cursor-pointer hover:border-accent/40 hover:bg-surface-hover ${className}
         `}
         style={{
           top: `${top}%`,
           height: `${height}%`,
-          minHeight: 26,
+          minHeight: 28,
           width: `${width}%`,
           left: `${left}%`,
         }}
       >
-        <div className="flex items-center gap-1.5 mb-1">
-          <span
-            className={`w-1.5 h-1.5 rounded-full ${style.dot || "bg-accent"}`}
-          />
-          <span className="text-[11px] font-medium text-accent/80 tracking-tight">
-            {getTimes(event.startDate)} - {getTimes(event.endDate)}
-          </span>
-        </div>
-        <span className="typo-caption-1 font-semibold text-white block truncate">
-          {event.title}
-        </span>
+        {(isStart || isEnd) && (
+          <Column className="h-full min-w-0 justify-center gap-0.5">
+            <Row className="min-w-0 gap-1.5">
+              <span
+                className={`h-1.5 w-1.5 shrink-0 rounded-full ${style.dot || "bg-accent"}`}
+              />
+              <span className="typo-caption-1 truncate font-semibold text-white">
+                {event.title}
+              </span>
+            </Row>
+            <span className="shrink-0 whitespace-nowrap pl-3 text-[10px] font-medium text-accent/80 tracking-tight">
+              {getTimes(event.startDate)}-{getTimes(event.endDate)}
+            </span>
+          </Column>
+        )}
       </div>
     );
   }
 
-  // 3. Week 뷰 카드 (정교한 좌측 포인트 라인과 모던한 글래스 서피스)
   return (
     <div
       onClick={onClick}
       className={`
-        absolute left-0 right-0 rounded-xl
+        absolute left-0 right-0 rounded-lg
         bg-surface/90 border border-white/10
-        p-2.5 z-10 overflow-hidden
+        px-2 py-1.5 z-10 overflow-hidden
         cursor-pointer hover:z-50 hover:border-accent/50 hover:bg-surface-hover hover:shadow-2xl
         transition-all duration-200
         ${connectionClass} ${className}
@@ -141,38 +142,22 @@ export default function ScheduleCard({
       style={{
         top: `${top}%`,
         height: `${height}%`,
-        minHeight: 26,
+        minHeight: 28,
       }}
     >
-      {/* 좌측에 은은한 카테고리 컬러 인디케이터 바 추가 */}
       <div
         className={`absolute left-0 top-0 bottom-0 w-1 ${style.dot || "bg-accent"}`}
       />
 
-      {isStart && (
-        <div className="flex flex-col gap-1 pl-1">
-          <div className="flex items-center gap-1.5">
-            <span className="text-[11px] font-medium text-accent/80 tracking-tight">
-              {getTimes(event.startDate)} - {getTimes(event.endDate)}
-            </span>
-          </div>
-          <span className="typo-caption-1 font-semibold text-white truncate">
+      {(isStart || isEnd) && (
+        <Row className="h-full min-w-0 gap-1.5 pl-1.5">
+          <span className="typo-caption-1 truncate font-semibold text-white">
             {event.title}
           </span>
-        </div>
-      )}
-
-      {isEnd && isStart !== isEnd && (
-        <div className="flex flex-col gap-1 pl-1">
-          <div className="flex items-center gap-1.5">
-            <span className="text-[11px] font-medium text-accent/80 tracking-tight">
-              {getTimes(event.startDate)} - {getTimes(event.endDate)}
-            </span>
-          </div>
-          <span className="typo-caption-1 font-semibold text-white truncate">
-            {event.title}
+          <span className="shrink-0 whitespace-nowrap text-[10px] font-medium text-accent/80 tracking-tight">
+            {getTimes(event.startDate)}-{getTimes(event.endDate)}
           </span>
-        </div>
+        </Row>
       )}
     </div>
   );

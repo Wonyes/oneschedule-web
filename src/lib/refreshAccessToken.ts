@@ -11,7 +11,8 @@ export async function refreshAccessToken(cookieHeader: string) {
     );
 
     return res.ok ? res : null;
-  } catch {
+  } catch (error) {
+    console.error("토큰 재발급 요청 실패:", error);
     return null;
   }
 }

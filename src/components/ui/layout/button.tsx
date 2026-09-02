@@ -90,13 +90,9 @@ const SecondaryBtn = (props: ButtonProps) => {
         px-5
         rounded-xl
 
-        bg-white/[0.05]
+        neu-btn
         text-secondary
 
-        border
-        border-white/10
-
-        hover:bg-white/[0.1]
         hover:text-foreground
 
         `,

@@ -1,5 +1,6 @@
 "use client";
 
+import BrandHero from "@/src/components/common/BrandHero";
 import { Primary } from "@/src/components/ui/layout/button";
 import { Row, Column } from "@/src/components/ui/layout/flex";
 import { Input, PasswordInput } from "@/src/components/ui/layout/input";
@@ -44,6 +45,8 @@ export default function LoginForm() {
 
   return (
     <Column className="max-w-[420px] w-full gap-6">
+      <BrandHero />
+
       <div className="w-full">
         <h1 className="typo-h1 tracking-tight">Welcome 👋</h1>
 
