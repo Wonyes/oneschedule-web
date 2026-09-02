@@ -1,35 +1,53 @@
+import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import { cookies } from "next/headers";
-import { LogIn } from "lucide-react";
+
+import GuestHome from "@/src/components/home/GuestHome";
 import HomeContent from "@/src/components/home/HomeContent";
+import { groupkeys } from "@/src/hooks/querys/key/groupKey";
+import { memberskeys } from "@/src/hooks/querys/key/members";
+import { scheduleKeys } from "@/src/hooks/querys/key/scheduleKey";
+import { getMyInfo } from "@/src/lib/member";
+import { getServerQueryClient } from "@/src/lib/queryClient";
+import { serverGet } from "@/src/lib/serverApi";
+import { MyGroupResponse } from "@/src/types/group";
+import { ScheduleApiResponse } from "@/src/types/schedule";
 
 export default async function HomePage() {
   const cookieStore = await cookies();
-  const hasAccessToken = !!cookieStore.get("access-token");
 
-  if (!hasAccessToken) {
-    return (
-      <div className="neu-flat rounded-[var(--radius-outer)] p-8">
-        <div className="flex flex-col items-center gap-4 py-6 text-center">
-          <span className="eyebrow">HOME</span>
-          <div>
-            <h1 className="typo-title-1 text-foreground">
-              로그인하고 시작하세요
-            </h1>
-            <p className="mt-1.5 typo-caption-2 text-muted">
-              내 일정과 그룹 일정을 한눈에 보려면 로그인이 필요해요.
-            </p>
-          </div>
-          <a
-            href="/login"
-            className="btn-spring bg-accent text-on-primary flex h-10 items-center gap-1.5 rounded-xl px-5 text-sm font-medium shadow-lg shadow-accent/25 hover:bg-accent/90"
-          >
-            <LogIn size={15} strokeWidth={2} />
-            로그인
-          </a>
-        </div>
-      </div>
-    );
+  // 토큰이 없으면 어차피 전부 401이므로 왕복 없이 바로 게스트 화면
+  if (!cookieStore.get("access-token")) {
+    return <GuestHome />;
   }
 
-  return <HomeContent />;
+  const queryClient = getServerQueryClient();
+
+  // 세 호출은 서로 의존하지 않으므로 병렬로 돌린다.
+  // 실패한 prefetch는 dehydrate에서 빠져 클라이언트가 다시 받아온다.
+  const [user] = await Promise.all([
+    getMyInfo(),
+
+    queryClient.prefetchQuery({
+      queryKey: [scheduleKeys.list, "PERSONAL"],
+      queryFn: () =>
+        serverGet<ScheduleApiResponse[]>("/schedules", { type: "PERSONAL" }),
+    }),
+
+    queryClient.prefetchQuery({
+      queryKey: [groupkeys.myGroup],
+      queryFn: () => serverGet<MyGroupResponse>("/group/my"),
+    }),
+  ]);
+
+  if (!user) {
+    return <GuestHome />;
+  }
+
+  queryClient.setQueryData([memberskeys.myInfo], user);
+
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <HomeContent user={user} />
+    </HydrationBoundary>
+  );
 }

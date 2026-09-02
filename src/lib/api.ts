@@ -6,7 +6,7 @@ import axios, {
 
 interface CustomAxiosRequestConfig extends AxiosRequestConfig {
   _retry?: boolean;
-  _skipAuthRefresh?: boolean; // ⬅️ 추가
+  _skipAuthRefresh?: boolean;
 }
 
 const api = axios.create({
@@ -92,7 +92,7 @@ api.interceptors.response.use(
 
           return api(originalRequest);
         } catch (refreshError) {
-          window.location.replace("/login");
+          // window.location.replace("/login");
           return Promise.reject(refreshError);
         }
       }

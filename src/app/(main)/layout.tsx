@@ -1,13 +1,19 @@
+import { cookies } from "next/headers";
+
 import Header from "@/src/components/common/header";
 import Sidebar from "@/src/components/common/Sidebar";
 import AuthRefreshListener from "@/src/components/schedule/components/auth/AuthRefreshListener";
 import GlobalOverlays from "@/src/components/ui/GlobalOverlay";
+import Sheet from "@/src/components/ui/sheet/sheet";
 
-export default function MainLayout({
+export default async function MainLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const cookieStore = await cookies();
+  const isLoggedIn = !!cookieStore.get("access-token");
+
   return (
     <div className="flex flex-col w-full h-full overflow-hidden">
       <AuthRefreshListener />
@@ -19,6 +25,7 @@ export default function MainLayout({
             {children}
           </div>
           <GlobalOverlays />
+          {isLoggedIn && <Sheet />}
         </main>
       </div>
     </div>

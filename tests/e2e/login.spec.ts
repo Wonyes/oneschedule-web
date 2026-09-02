@@ -1,10 +1,18 @@
 import { test, expect } from "@playwright/test";
 
-test("로그인", async ({ page }) => {
-  await page.goto("http://localhost:3000/login");
+const EMAIL = process.env.NEXT_PUBLIC_EMAIL ?? "";
+const PASSWORD = process.env.NEXT_PUBLIC_PASSWORD ?? "";
 
-  await page.getByPlaceholder("이메일").fill("test@test.com");
-  await page.getByPlaceholder("비밀번호").fill("1234");
+test("로그인", async ({ page }) => {
+  test.skip(
+    !EMAIL || !PASSWORD,
+    "NEXT_PUBLIC_EMAIL / NEXT_PUBLIC_PASSWORD 환경변수가 필요합니다.",
+  );
+
+  await page.goto("/login");
+
+  await page.getByPlaceholder("이메일").fill(EMAIL);
+  await page.getByPlaceholder("비밀번호").fill(PASSWORD);
 
   await page
     .getByRole("button", {
@@ -12,5 +20,5 @@ test("로그인", async ({ page }) => {
     })
     .click();
 
-  await expect(page).toHaveURL(/dashboard/);
+  await expect(page).toHaveURL("/");
 });

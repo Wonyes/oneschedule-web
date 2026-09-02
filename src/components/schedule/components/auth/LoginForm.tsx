@@ -3,18 +3,14 @@
 import { Primary } from "@/src/components/ui/layout/button";
 import { Row, Column } from "@/src/components/ui/layout/flex";
 import { Input, PasswordInput } from "@/src/components/ui/layout/input";
-import { memberskeys } from "@/src/hooks/querys/key/members";
-import { MyInfoResponse } from "@/src/hooks/querys/useMembers";
-import { Get, Post } from "@/src/hooks/querys/useMutations";
+import { Post } from "@/src/hooks/querys/useMutations";
 import { useForm } from "@/src/hooks/useForm";
 import { useOverlay } from "@/src/hooks/useOverlay";
 import { getErrorMessage, useAppMutation } from "@/src/types/ErrorResponse";
-import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
   const router = useRouter();
-  const queryClient = useQueryClient();
 
   const { form, formChange } = useForm({
     email: "",
@@ -29,13 +25,9 @@ export default function LoginForm() {
         body: { email: form.email, password: form.password },
       });
     },
-    onSuccess: async () => {
-      const user = await Get<MyInfoResponse>({
-        url: "/members/info",
-      });
-
-      queryClient.setQueryData([memberskeys.myInfo], user);
-      router.push("/");
+    onSuccess: () => {
+      // 홈에서 서버가 유저 정보를 직접 조회하므로 여기서 미리 받을 필요가 없다
+      router.replace("/");
     },
     onError: (err) => {
       openAlert({

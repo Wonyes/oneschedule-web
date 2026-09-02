@@ -201,7 +201,7 @@ function SheetFooter({
 export default function Sheet() {
   const { form, updateForm, open, closeSheet, editingId } = useSheetStore();
   const { isCalendarOpen, toggleCalendar } = useCalendarStore();
-  const { data: group } = useMyGroup();
+  const { data: group } = useMyGroup(open);
   const viewType = useScheduleViewStore((s) => s.viewType);
   const { openAlert } = useOverlay();
   const queryClient = useQueryClient();
