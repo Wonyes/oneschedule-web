@@ -18,8 +18,8 @@ export default function CalendarBody() {
   return (
     <div
       className={cn(
-        "p-5 rounded-2xl bg-[#1b2233] border border-white/10",
-        "shadow-2xl mt-2 z-[999] w-full flex flex-col items-center gap-4 text-slate-100",
+        "p-5 rounded-2xl bg-surface border border-divider",
+        "shadow-2xl mt-2 z-[999] w-full flex flex-col items-center gap-4 text-foreground",
       )}
     >
       <Column className="w-full">
@@ -28,10 +28,10 @@ export default function CalendarBody() {
             type="button"
             className={cn(
               "w-7 h-7 flex items-center justify-center rounded-lg",
-              "text-slate-400 hover:bg-white/10 hover:text-white transition-colors",
+              "text-muted hover:bg-white/10 hover:text-foreground transition-colors",
               "cursor-pointer rotate-180",
               isCurrentMonth &&
-                "cursor-auto opacity-30 hover:bg-transparent hover:text-slate-400",
+                "cursor-auto opacity-30 hover:bg-transparent hover:text-muted",
             )}
             disabled={isCurrentMonth}
             onClick={() => moveMonth("prev")}
@@ -39,7 +39,7 @@ export default function CalendarBody() {
             <ChevronRight size={18} />
           </button>
 
-          <span className="typo-body-2 text-white font-semibold px-4">
+          <span className="typo-body-2 text-foreground font-semibold px-4">
             {`${today.getFullYear()}년 ${currentMonth.name}`}
           </span>
 
@@ -47,7 +47,7 @@ export default function CalendarBody() {
             type="button"
             className={cn(
               "w-7 h-7 flex items-center justify-center rounded-lg",
-              "text-slate-400 hover:bg-white/10 hover:text-white transition-colors",
+              "text-muted hover:bg-white/10 hover:text-foreground transition-colors",
               "cursor-pointer",
             )}
             onClick={() => moveMonth("next")}

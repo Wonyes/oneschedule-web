@@ -61,7 +61,7 @@ function SummaryRow({
   const primary = events[0];
 
   return (
-    <div className="flex items-center justify-between neu-pressed px-4 py-3 rounded-xl text-xs text-secondary">
+    <div className="flex items-center justify-between neu-flat px-4 py-3 rounded-xl text-xs text-secondary">
       <div className="flex items-center gap-2 shrink-0">
         <span className={`w-1.5 h-1.5 rounded-full inline-block ${dotClassName}`} />
         <span>{label}</span>

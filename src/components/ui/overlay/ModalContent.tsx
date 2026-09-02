@@ -22,12 +22,12 @@ export default function ModalContent({
       <div className="fixed inset-0 z-[9990] bg-black/70 transition-opacity duration-300 opacity-100" />
 
       {/* Modal Box */}
-      <div className="fixed left-1/2 top-1/2 z-[9999] flex w-[calc(100%-32px)] max-w-[500px] -translate-x-1/2 -translate-y-1/2 flex-col justify-between rounded-[20px] glass transition-all duration-300 text-slate-100">
+      <div className="fixed left-1/2 top-1/2 z-[9999] flex w-[calc(100%-32px)] max-w-[500px] -translate-x-1/2 -translate-y-1/2 flex-col justify-between rounded-[20px] glass transition-all duration-300 text-foreground">
         <div className="flex items-center justify-between px-[30px] pt-[24px] pb-[16px] m-0">
           <TitleHeader title={title} pad="0" className="text-[20px]" />
         </div>
 
-        <div className="flex-grow px-[30px] pb-[20px] text-slate-300">
+        <div className="flex-grow px-[30px] pb-[20px] text-secondary">
           {children}
         </div>
 

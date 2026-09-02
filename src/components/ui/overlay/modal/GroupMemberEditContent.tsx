@@ -47,12 +47,12 @@ export const GroupMemberEditContent = forwardRef<
 
   return (
     <Column className="gap-4 w-full">
-      <span className="typo-caption-2 text-slate-400">
+      <span className="typo-caption-2 text-muted">
         {member.nickname}님의 정보를 변경합니다.
       </span>
 
       <Column className="gap-2 w-full">
-        <span className="typo-caption-1 text-slate-400">권한</span>
+        <span className="typo-caption-1 text-muted">권한</span>
 
         <Dropdown
           value={form.groupRole}
@@ -67,7 +67,7 @@ export const GroupMemberEditContent = forwardRef<
       </Column>
 
       <Column className="gap-2 w-full">
-        <span className="typo-caption-1 text-slate-400">직책</span>
+        <span className="typo-caption-1 text-muted">직책</span>
 
         <Input
           name="position"

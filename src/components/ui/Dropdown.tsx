@@ -54,7 +54,7 @@ export default function Dropdown({
               className="
                 w-full rounded-xl px-3 py-2
                 text-left typo-caption-2
-                hover:bg-slate-800
+                hover:bg-surface-hover
               "
             >
               {option.label}

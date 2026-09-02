@@ -27,7 +27,7 @@ export default function AccountInfo({ user }: { user: MyInfoResponse }) {
 
   return (
     <BaseCard className="p-7" glow>
-      <h2 className="typo-sub-t-2 text-slate-100 mb-5">계정 정보</h2>
+      <h2 className="typo-sub-t-2 text-foreground mb-5">계정 정보</h2>
 
       <Column>
         <InfoRow

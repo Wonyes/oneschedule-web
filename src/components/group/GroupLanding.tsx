@@ -88,11 +88,11 @@ export default function GroupLanding() {
             </div>
           </Row>
 
-          <h1 className="mt-7 typo-title-1 text-slate-100">
+          <h1 className="mt-7 typo-title-1 text-foreground">
             함께할 그룹을 만들어보세요
           </h1>
 
-          <p className="mt-3 typo-caption-2 leading-relaxed text-slate-400">
+          <p className="mt-3 typo-caption-2 leading-relaxed text-muted">
             그룹을 만들고 친구들과
             <br />
             일정을 공유해보세요.

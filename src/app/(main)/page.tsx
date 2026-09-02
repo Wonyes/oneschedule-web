@@ -45,9 +45,15 @@ export default async function HomePage() {
 
   queryClient.setQueryData([memberskeys.myInfo], user);
 
+  // useMyGroup()이 하이드레이션 타이밍에 기대지 않고 첫 렌더부터 값을 갖도록
+  // 프리페치한 값을 initialData로 그대로 내려준다.
+  const group = queryClient.getQueryData<MyGroupResponse>([
+    groupkeys.myGroup,
+  ]);
+
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <HomeContent user={user} />
+      <HomeContent user={user} initialGroup={group} />
     </HydrationBoundary>
   );
 }

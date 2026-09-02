@@ -3,7 +3,7 @@ import { Get } from "./useMutations";
 import { groupkeys } from "./key/groupKey";
 import { MyGroupResponse } from "@/src/types/group";
 
-export const useMyGroup = (enabled = true) => {
+export const useMyGroup = (enabled = true, initialData?: MyGroupResponse) => {
   return useQuery({
     queryKey: [groupkeys.myGroup],
 
@@ -15,5 +15,6 @@ export const useMyGroup = (enabled = true) => {
     enabled,
     retry: false,
     staleTime: Infinity,
+    initialData,
   });
 };

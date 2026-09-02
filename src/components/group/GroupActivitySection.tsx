@@ -13,7 +13,7 @@ export default function GroupActivitySection() {
         </Row>
       </Column>
 
-      <Column className="rounded-lg px-4 py-3.5 neu-pressed gap-3">
+      <Column className="rounded-lg px-4 py-3.5 neu-flat gap-3">
         <span className="typo-caption-2 text-muted">
           최근 그룹 활동이 없습니다.
         </span>

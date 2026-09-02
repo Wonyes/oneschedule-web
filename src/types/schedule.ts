@@ -26,6 +26,7 @@ export type ScheduleEvent = {
   participantMemberNos?: number[];
   displayStart?: Date;
   displayEnd?: Date;
+  hasConflict?: boolean;
 };
 
 export type ScheduleViewType = "PERSONAL" | "GROUP";

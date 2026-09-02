@@ -50,15 +50,15 @@ export function Input({
             {...props}
             onKeyDown={handleKeyDown}
             className={cn(
-              "w-full outline-none typo-caption-2 bg-transparent text-slate-100 placeholder:text-slate-500",
-              "disabled:text-slate-600",
+              "w-full outline-none typo-caption-2 bg-transparent text-foreground placeholder:text-place-h",
+              "disabled:text-place-h",
             )}
           />
           {rightSection}
         </div>
       </div>
       {!errorMessage && !successMessage && description && (
-        <span className="typo-caption-3 text-slate-400 pl-1">
+        <span className="typo-caption-3 text-muted pl-1">
           {description}
         </span>
       )}
@@ -85,7 +85,7 @@ export function PasswordInput(props: InputProps) {
         <button
           type="button"
           onClick={() => setShow(!show)}
-          className="text-slate-400 hover:text-slate-200 transition flex items-center"
+          className="text-muted hover:text-secondary transition flex items-center"
         >
           {show ? <Eye size={18} /> : <EyeClosed size={18} />}
         </button>

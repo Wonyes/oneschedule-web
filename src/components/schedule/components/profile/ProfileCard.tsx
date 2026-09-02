@@ -68,9 +68,9 @@ export default function ProfileCard({ user }: { user: MyInfoResponse }) {
           />
         </div>
 
-        <h1 className="mt-4 typo-h4 text-slate-100">{user.nickname}</h1>
+        <h1 className="mt-4 typo-h4 text-foreground">{user.nickname}</h1>
 
-        <p className="mt-1 typo-sub-t-2 text-slate-400">{user.name}</p>
+        <p className="mt-1 typo-sub-t-2 text-muted">{user.name}</p>
       </Column>
     </BaseCard>
   );

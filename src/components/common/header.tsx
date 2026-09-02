@@ -5,6 +5,7 @@ import HeaderAuth from "./header/HeaderAuth";
 import AuthSkeleton from "./header/AuthSkeleton";
 import { getMyInfo } from "@/src/lib/member";
 import ViewModeToggle from "./header/ViewModeToggle";
+import ThemeToggle from "./header/ThemeToggle";
 
 async function HeaderAuthResolved() {
   const user = await getMyInfo();
@@ -27,6 +28,7 @@ export default function Header() {
         <Logo />
         <div className="flex items-center gap-1.5 sm:gap-3 justify-end lg:hidden">
           <ViewModeToggle />
+          <ThemeToggle />
           <Suspense fallback={<AuthSkeleton />}>
             <HeaderAuthResolved />
           </Suspense>
@@ -45,6 +47,7 @@ export default function Header() {
 
       <div className="hidden lg:flex items-center gap-3 lg:ml-auto">
         <ViewModeToggle />
+        <ThemeToggle />
         <Suspense fallback={<AuthSkeleton />}>
           <HeaderAuthResolved />
         </Suspense>

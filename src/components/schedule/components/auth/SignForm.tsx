@@ -110,10 +110,10 @@ export default function SignForm() {
   };
 
   return (
-    <div className="max-w-[420px] w-full mx-auto relative flex flex-col h-full text-slate-100">
+    <div className="max-w-[420px] w-full mx-auto relative flex flex-col h-full text-foreground">
       <header className="pt-2 pb-5 px-1 shrink-0">
-        <h1 className="text-xl font-bold text-slate-100">회원정보 입력</h1>
-        <p className="text-xs text-slate-400 mt-1">
+        <h1 className="text-xl font-bold text-foreground">회원정보 입력</h1>
+        <p className="text-xs text-muted mt-1">
           서비스 이용을 위한 정보를 입력해주세요.
         </p>
       </header>

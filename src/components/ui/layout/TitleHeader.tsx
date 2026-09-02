@@ -28,7 +28,7 @@ export default function TitleHeader({
         <button
           type="button"
           onClick={onClick}
-          className="typo-caption-2 text-muted transition-colors hover:text-gray-600"
+          className="typo-caption-2 text-muted transition-colors hover:text-foreground"
         >
           {subTitle}
         </button>

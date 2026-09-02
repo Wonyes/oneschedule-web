@@ -62,7 +62,7 @@ function ActionRow({
           flex
           items-center
           gap-3
-          ${danger ? "text-red-400" : "text-slate-300"}
+          ${danger ? "text-error-500" : "text-secondary"}
         `}
       >
         {icon}
@@ -70,7 +70,7 @@ function ActionRow({
         <span className="typo-caption-2">{title}</span>
       </div>
 
-      <ChevronRight size={16} className="text-slate-500" />
+      <ChevronRight size={16} className="text-place-h" />
     </button>
   );
 }

@@ -1,7 +1,17 @@
+import { AlertTriangle } from "lucide-react";
 import { ScheduleEvent } from "@/src/types/schedule";
 import { getTimes, isSameDate } from "@/src/utils/schedule";
 import { EVENT_STYLES } from "@/src/constant/schedule";
 import { Column, Row } from "../../ui/layout/flex";
+
+const ConflictBadge = () => (
+  <AlertTriangle
+    className="shrink-0 text-error-500"
+    size={11}
+    strokeWidth={2.5}
+    aria-label="다른 일정과 시간이 겹칩니다"
+  />
+);
 
 type EventCardProps = {
   event: ScheduleEvent;
@@ -40,6 +50,7 @@ export default function ScheduleCard({
   `;
 
   const connectionClass = variant === "week" && horizontalConnection;
+  const conflictRing = event.hasConflict ? "ring-1 ring-error-500/70" : "";
 
   if (variant === "month") {
     return (
@@ -52,15 +63,16 @@ export default function ScheduleCard({
           group px-2 py-1 rounded-md truncate flex items-center gap-1.5
           bg-surface/80  border border-white/5
           hover:border-white/15 hover:bg-surface-hover
-          cursor-pointer transition-all duration-150 ${connectionClass} ${className}
+          cursor-pointer transition-all duration-150 ${connectionClass} ${conflictRing} ${className}
         `}
       >
         <span
           className={`w-1.5 h-1.5 rounded-full shrink-0 ${style.dot || "bg-accent"}`}
         />
-        <span className="typo-caption-2 truncate font-medium text-slate-200 group-hover:text-white">
+        <span className="typo-caption-2 truncate font-medium text-secondary group-hover:text-foreground">
           {event.title}
         </span>
+        {event.hasConflict && <ConflictBadge />}
       </div>
     );
   }
@@ -73,16 +85,19 @@ export default function ScheduleCard({
           flex items-center gap-3 rounded-xl
           bg-surface/90 border border-white/10
           p-3 transition-all duration-150
-          cursor-pointer hover:border-accent/40 hover:bg-surface-hover ${className}
+          cursor-pointer hover:border-accent/40 hover:bg-surface-hover ${conflictRing} ${className}
         `}
       >
         <span
           className={`h-2 w-2 shrink-0 rounded-full ${style.dot || "bg-accent"}`}
         />
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-          <span className="typo-caption-1 font-semibold text-white truncate">
-            {event.title}
-          </span>
+          <Row className="min-w-0 items-center gap-1">
+            <span className="typo-caption-1 font-semibold text-foreground truncate">
+              {event.title}
+            </span>
+            {event.hasConflict && <ConflictBadge />}
+          </Row>
           <span className="text-[11px] font-medium text-accent/80 tracking-tight">
             {getTimes(event.startDate)} - {getTimes(event.endDate)}
           </span>
@@ -99,7 +114,7 @@ export default function ScheduleCard({
           absolute left-0 right-0 rounded-lg
           bg-surface/90  border border-white/10
           px-2 py-1.5 shadow-xl z-10 overflow-hidden transition-all duration-200
-          cursor-pointer hover:border-accent/40 hover:bg-surface-hover ${className}
+          cursor-pointer hover:border-accent/40 hover:bg-surface-hover ${conflictRing} ${className}
         `}
         style={{
           top: `${top}%`,
@@ -111,13 +126,14 @@ export default function ScheduleCard({
       >
         {(isStart || isEnd) && (
           <Column className="h-full min-w-0 justify-center gap-0.5">
-            <Row className="min-w-0 gap-1.5">
+            <Row className="min-w-0 items-center gap-1.5">
               <span
                 className={`h-1.5 w-1.5 shrink-0 rounded-full ${style.dot || "bg-accent"}`}
               />
-              <span className="typo-caption-1 truncate font-semibold text-white">
+              <span className="typo-caption-1 truncate font-semibold text-foreground">
                 {event.title}
               </span>
+              {event.hasConflict && <ConflictBadge />}
             </Row>
             <span className="shrink-0 whitespace-nowrap pl-3 text-[10px] font-medium text-accent/80 tracking-tight">
               {getTimes(event.startDate)}-{getTimes(event.endDate)}
@@ -137,7 +153,7 @@ export default function ScheduleCard({
         px-2 py-1.5 z-10 overflow-hidden
         cursor-pointer hover:z-50 hover:border-accent/50 hover:bg-surface-hover hover:shadow-2xl
         transition-all duration-200
-        ${connectionClass} ${className}
+        ${connectionClass} ${conflictRing} ${className}
       `}
       style={{
         top: `${top}%`,
@@ -150,10 +166,11 @@ export default function ScheduleCard({
       />
 
       {(isStart || isEnd) && (
-        <Row className="h-full min-w-0 gap-1.5 pl-1.5">
-          <span className="typo-caption-1 truncate font-semibold text-white">
+        <Row className="h-full min-w-0 items-center gap-1.5 pl-1.5">
+          <span className="typo-caption-1 truncate font-semibold text-foreground">
             {event.title}
           </span>
+          {event.hasConflict && <ConflictBadge />}
           <span className="shrink-0 whitespace-nowrap text-[10px] font-medium text-accent/80 tracking-tight">
             {getTimes(event.startDate)}-{getTimes(event.endDate)}
           </span>

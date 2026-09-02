@@ -9,6 +9,7 @@ import { Column, Row } from "@/src/components/ui/layout/flex";
 import { useSchedules } from "@/src/hooks/querys/useSchedule";
 import { useMyGroup } from "@/src/hooks/querys/useGroup";
 import { getWeekDates, toScheduleEvent } from "@/src/utils/schedule";
+import { MyGroupResponse } from "@/src/types/group";
 
 function StatTile({
   icon,
@@ -36,9 +37,18 @@ function StatTile({
   );
 }
 
-export default function HomeStats({ groupCode }: { groupCode?: string }) {
+export default function HomeStats({
+  groupCode,
+  initialGroup,
+}: {
+  groupCode?: string;
+  initialGroup?: MyGroupResponse;
+}) {
   const { data: schedules } = useSchedules("PERSONAL");
-  const { data: group } = useMyGroup(!!groupCode);
+  const { data: group } = useMyGroup(!!groupCode, initialGroup);
+  // react-query의 하이드레이션 타이밍과 무관하게, 서버가 내려준 값과
+  // 첫 클라이언트 렌더가 항상 같은 값을 그리도록 prop을 우선 사용한다.
+  const displayGroup = group ?? initialGroup;
 
   const { todayCount, weekCount } = useMemo(() => {
     const now = new Date();
@@ -78,7 +88,7 @@ export default function HomeStats({ groupCode }: { groupCode?: string }) {
       <StatTile
         icon={<Users size={17} strokeWidth={1.75} />}
         title="그룹 멤버"
-        value={group ? `${group.members.length}명` : "-"}
+        value={displayGroup ? `${displayGroup.members.length}명` : "-"}
       />
     </Row>
   );

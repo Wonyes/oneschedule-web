@@ -252,6 +252,29 @@ function getDayEvents(
   return applyLayout(processed);
 }
 
+// 개인/그룹 일정이 겹치는 경우를 표시하기 위해, 다른 뷰의 일정 목록과 시간이 겹치는
+// 이벤트에 hasConflict 플래그를 붙인다. 그리드 위치(top/height) 계산과는 무관하게
+// 순수 시간 구간 비교만 한다.
+const markConflicts = (
+  events: ScheduleEvent[],
+  otherEvents: ScheduleEvent[],
+): ScheduleEvent[] => {
+  if (otherEvents.length === 0) return events;
+
+  return events.map((event) => {
+    const start = new Date(event.startDate).getTime();
+    const end = new Date(event.endDate).getTime();
+
+    const hasConflict = otherEvents.some((other) => {
+      const otherStart = new Date(other.startDate).getTime();
+      const otherEnd = new Date(other.endDate).getTime();
+      return start < otherEnd && end > otherStart;
+    });
+
+    return { ...event, hasConflict };
+  });
+};
+
 const getSortedDayEvents = (events: ScheduleEvent[], date: Date) => {
   const dayEvents = events.filter((event) => {
     const start = new Date(event.startDate).setHours(0, 0, 0, 0);
@@ -287,6 +310,7 @@ export {
   getmonthTime,
   getEventPosition,
   getSortedDayEvents,
+  markConflicts,
   toScheduleEvent,
   toScheduleRequest,
 };

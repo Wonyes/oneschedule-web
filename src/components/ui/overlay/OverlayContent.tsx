@@ -25,16 +25,16 @@ export default function OverlayContent({
       <div className="fixed inset-0 z-[9990] bg-black/70  transition-opacity duration-300 opacity-100" />
 
       {/* Alert / Confirm Box */}
-      <div className="fixed left-1/2 top-1/2 z-[9999] flex w-[calc(100%-32px)] max-w-[360px] -translate-x-1/2 -translate-y-1/2 flex-col rounded-2xl bg-[#1e2538] border border-white/10 shadow-2xl transition-all duration-300 text-slate-100 overflow-hidden">
+      <div className="fixed left-1/2 top-1/2 z-[9999] flex w-[calc(100%-32px)] max-w-[360px] -translate-x-1/2 -translate-y-1/2 flex-col rounded-2xl bg-surface border border-divider shadow-2xl transition-all duration-300 text-foreground overflow-hidden">
         {/* 상단 타이틀 */}
         <div className="px-6 pt-6 pb-2">
-          <h3 className="text-base font-bold text-slate-100 tracking-tight">
+          <h3 className="text-base font-bold text-foreground tracking-tight">
             {title}
           </h3>
         </div>
 
         {/* 메시지 영역 */}
-        <div className="px-6 py-2 space-y-1 text-slate-300 text-sm">
+        <div className="px-6 py-2 space-y-1 text-secondary text-sm">
           {message && <p>{message}</p>}
           {message2 && <p>{message2}</p>}
           {message3 && <p>{message3}</p>}

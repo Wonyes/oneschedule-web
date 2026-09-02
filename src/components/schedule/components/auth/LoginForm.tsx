@@ -50,7 +50,7 @@ export default function LoginForm() {
       <div className="w-full">
         <h1 className="typo-h1 tracking-tight">Welcome 👋</h1>
 
-        <p className="typo-title-3 text-slate-400 mt-2">
+        <p className="typo-title-3 text-muted mt-2">
           로그인하고 일정을 관리하세요.
         </p>
       </div>
@@ -78,7 +78,7 @@ export default function LoginForm() {
       <Primary className="w-full py-4" text="로그인" onClick={handleLogin} />
 
       <Row className="flex justify-center w-full gap-2">
-        <p className="typo-sub-t-3 text-slate-500">계정이 없나요?</p>
+        <p className="typo-sub-t-3 text-place-h">계정이 없나요?</p>
 
         <span
           onClick={() => router.push("/sign")}

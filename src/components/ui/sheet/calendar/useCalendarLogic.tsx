@@ -26,7 +26,7 @@ const CalendarTD = ({
         text-center
         border-none
         cursor-pointer
-        text-slate-300
+        text-secondary
         select-none
         `,
 
@@ -97,7 +97,7 @@ const Day = ({
         transition-colors
         `,
 
-        !isSelected && !isRange && "hover:bg-white/10 hover:text-white",
+        !isSelected && !isRange && "hover:bg-white/10 hover:text-foreground",
 
         isRange &&
           `
@@ -304,23 +304,23 @@ export const useCalendarLogic = () => {
               일
             </CalendarTD>
 
-            <CalendarTD className="weekly text-slate-400 font-medium">
+            <CalendarTD className="weekly text-muted font-medium">
               월
             </CalendarTD>
 
-            <CalendarTD className="weekly text-slate-400 font-medium">
+            <CalendarTD className="weekly text-muted font-medium">
               화
             </CalendarTD>
 
-            <CalendarTD className="weekly text-slate-400 font-medium">
+            <CalendarTD className="weekly text-muted font-medium">
               수
             </CalendarTD>
 
-            <CalendarTD className="weekly text-slate-400 font-medium">
+            <CalendarTD className="weekly text-muted font-medium">
               목
             </CalendarTD>
 
-            <CalendarTD className="weekly text-slate-400 font-medium">
+            <CalendarTD className="weekly text-muted font-medium">
               금
             </CalendarTD>
 

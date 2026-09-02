@@ -36,11 +36,11 @@ export default function BaseCard({
               -top-20
               left-1/2
               -translate-x-1/2
-              w-64
-              h-64
+              w-(--card-glow-size)
+              h-(--card-glow-size)
               rounded-full
-              bg-[var(--accent-glow)]
-              blur-3xl
+              bg-[image:var(--card-glow)]
+              blur-2xl
             "
           />
         </div>

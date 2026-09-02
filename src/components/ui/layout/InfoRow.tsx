@@ -45,7 +45,7 @@ export function InfoRow({
       "
     >
       <div className="flex justify-between items-center">
-        <p className="typo-caption-2 text-slate-500">{label}</p>
+        <p className="typo-caption-2 text-place-h">{label}</p>
 
         {!editing && onEdit && (
           <button
@@ -82,7 +82,7 @@ export function InfoRow({
           className="
           mt-1
           typo-sub-t-3
-          text-slate-100
+          text-foreground
         "
         >
           {value}

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 
 import { MyInfoResponse } from "@/src/hooks/querys/useMembers";
+import { MyGroupResponse } from "@/src/types/group";
 import GroupQuickLink from "./GroupQuickLink";
 import HolidayBanner from "./HolidayBanner";
 import HomeHero from "./HomeHero";
@@ -12,7 +13,13 @@ import HomeStats from "./HomeStats";
 import QuickLink from "./QuickLink";
 import UpcomingSchedules from "./UpcomingSchedules";
 
-export default function HomeContent({ user }: { user: MyInfoResponse }) {
+export default function HomeContent({
+  user,
+  initialGroup,
+}: {
+  user: MyInfoResponse;
+  initialGroup?: MyGroupResponse;
+}) {
   const router = useRouter();
   const today = useMemo(() => new Date(), []);
 
@@ -25,7 +32,7 @@ export default function HomeContent({ user }: { user: MyInfoResponse }) {
 
       <HomeHero user={user} today={today} />
 
-      <HomeStats groupCode={user.groupCode} />
+      <HomeStats groupCode={user.groupCode} initialGroup={initialGroup} />
 
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:gap-6">
         <div className="flex min-w-0 flex-1 flex-col gap-4 lg:gap-6">
@@ -42,7 +49,10 @@ export default function HomeContent({ user }: { user: MyInfoResponse }) {
             onClick={() => router.push("/schedule")}
           />
 
-          <GroupQuickLink groupCode={user.groupCode} />
+          <GroupQuickLink
+            groupCode={user.groupCode}
+            initialGroup={initialGroup}
+          />
         </div>
       </div>
     </div>

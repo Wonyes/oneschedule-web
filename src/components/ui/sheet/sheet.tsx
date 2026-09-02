@@ -162,7 +162,7 @@ function SheetHeader({
 }) {
   return (
     <header className="flex items-center justify-between border-b border-white/10 px-4 sm:px-6 py-4">
-      <h2 className="typo-title-2 text-white">
+      <h2 className="typo-title-2 text-foreground">
         {isEditing ? "일정 수정" : "일정 추가"}
       </h2>
       <GhostBtn
@@ -312,7 +312,7 @@ export default function Sheet() {
       />
 
       <section
-        className={`fixed bottom-0 left-0 right-0 z-50 mx-auto flex h-[75vh] max-w-[800px] flex-col rounded-t-[32px] glass text-slate-100 transition-transform duration-300 ease-out ${
+        className={`fixed bottom-0 left-0 right-0 z-50 mx-auto flex h-[75vh] max-w-[800px] flex-col rounded-t-[32px] glass text-foreground transition-transform duration-300 ease-out ${
           open
             ? "translate-y-0 pointer-events-auto"
             : "translate-y-full pointer-events-none"
@@ -322,7 +322,7 @@ export default function Sheet() {
 
         <div className="flex-1 space-y-6 overflow-y-auto px-4 sm:px-6 py-6 scrollbar-thin">
           <Column className="space-y-2 gap-1.5">
-            <label className="typo-sub-t-2 text-slate-200">📝 제목</label>
+            <label className="typo-sub-t-2 text-secondary">📝 제목</label>
             <Input
               value={currentForm.title}
               onChange={(e) => updateForm({ title: e.target.value })}
@@ -331,7 +331,7 @@ export default function Sheet() {
           </Column>
 
           <Column className="space-y-2 gap-1.5">
-            <label className="typo-sub-t-2 text-slate-200">📅 날짜</label>
+            <label className="typo-sub-t-2 text-secondary">📅 날짜</label>
 
             <button
               type="button"
@@ -359,7 +359,7 @@ export default function Sheet() {
           </Column>
 
           <Column className="space-y-2 gap-1.5">
-            <label className="typo-sub-t-2 text-slate-200">⏰ 시간</label>
+            <label className="typo-sub-t-2 text-secondary">⏰ 시간</label>
 
             <div className="flex items-center gap-3">
               <Input
@@ -387,7 +387,7 @@ export default function Sheet() {
           </Column>
 
           <Column className="gap-2">
-            <label className="typo-sub-t-2 text-slate-200">🏷️ 카테고리</label>
+            <label className="typo-sub-t-2 text-secondary">🏷️ 카테고리</label>
 
             <div className="flex flex-wrap gap-2">
               {categories.map((item) => {
@@ -410,7 +410,7 @@ export default function Sheet() {
                       ${
                         active
                           ? `${style.label} ${style.border} scale-[1.03] shadow-md`
-                          : `border-white/10 neu-pressed text-slate-400 hover:text-slate-200`
+                          : `border-white/10 neu-pressed text-muted hover:text-secondary`
                       }
                     `}
                   >
@@ -423,7 +423,7 @@ export default function Sheet() {
 
           {viewType === "GROUP" && (
             <Column className="space-y-2  gap-1.5">
-              <label className="typo-sub-t-2 text-slate-200">👥 참여자</label>
+              <label className="typo-sub-t-2 text-secondary">👥 참여자</label>
               <ParticipantPicker
                 members={group?.members ?? []}
                 selected={currentForm.participantMemberNos}
@@ -433,7 +433,7 @@ export default function Sheet() {
           )}
 
           <Column className="space-y-2 gap-1.5">
-            <label className="typo-sub-t-2 text-slate-200">📌 메모</label>
+            <label className="typo-sub-t-2 text-secondary">📌 메모</label>
 
             <Input
               value={currentForm.content}

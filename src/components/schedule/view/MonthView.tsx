@@ -147,7 +147,7 @@ export default function MonthView({
                       })}
 
                       {hiddenEventsCount > 0 && (
-                        <div className="typo-caption-2 text-gray-500 pl-1 cursor-pointer hover:underline">
+                        <div className="typo-caption-2 text-muted pl-1 cursor-pointer hover:underline">
                           + {hiddenEventsCount}개 더보기
                         </div>
                       )}

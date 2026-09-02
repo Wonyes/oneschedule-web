@@ -60,7 +60,7 @@ export default function GroupScheduleSection() {
 
 function ScheduleItem({ time, title }: { time: string; title: string }) {
   return (
-    <Between className="rounded-lg px-3 py-2.5 w-full neu-pressed">
+    <Between className="rounded-lg px-3 py-2.5 w-full neu-flat">
       <span className="typo-caption-2 text-place-h tabular-nums shrink-0">
         {time}
       </span>

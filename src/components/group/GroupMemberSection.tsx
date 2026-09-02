@@ -148,7 +148,7 @@ export default function GroupMemberSection({
         {members.map((member: Member) => (
           <Between
             key={member.memberNo}
-            className="w-full rounded-xl px-4 py-3 neu-pressed"
+            className="w-full rounded-xl px-4 py-3 neu-flat"
           >
             <Row className="gap-3">
               <Row
