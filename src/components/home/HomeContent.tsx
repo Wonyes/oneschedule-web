@@ -10,6 +10,7 @@ import GroupQuickLink from "./GroupQuickLink";
 import HolidayBanner from "./HolidayBanner";
 import HomeHero from "./HomeHero";
 import HomeStats from "./HomeStats";
+import OnboardingChecklist from "./OnboardingChecklist";
 import QuickLink from "./QuickLink";
 import UpcomingSchedules from "./UpcomingSchedules";
 
@@ -31,6 +32,8 @@ export default function HomeContent({
       </div>
 
       <HomeHero user={user} today={today} />
+
+      <OnboardingChecklist user={user} today={today} />
 
       <HomeStats groupCode={user.groupCode} initialGroup={initialGroup} />
 

@@ -3,7 +3,7 @@ import axios, { AxiosResponse } from "axios";
 
 interface ApiProps {
   url: string;
-  body?: object;
+  body?: object | null;
   params?: object;
   headers?: object;
   responseFull?: boolean;
@@ -20,19 +20,9 @@ export const Get = async <T = unknown>({
   url,
   params,
 }: ApiProps): Promise<T> => {
-  try {
-    const response = await api.get(url, { params });
+  const response = await api.get(url, { params });
 
-    return (response.data.result ?? response.data) as T;
-  } catch (error) {
-    if (axios.isAxiosError<ApiErrorResponse>(error)) {
-      throw new Error(
-        error.response?.data.message ?? "요청 처리 중 오류가 발생했습니다.",
-      );
-    }
-
-    throw error;
-  }
+  return (response.data.result ?? response.data) as T;
 };
 
 export const Post = async <T>({

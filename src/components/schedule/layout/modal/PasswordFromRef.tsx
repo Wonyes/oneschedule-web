@@ -3,8 +3,13 @@ import { Column } from "@/src/components/ui/layout/flex";
 import { PasswordInput } from "@/src/components/ui/layout/input";
 import { useForm } from "@/src/hooks/useForm";
 
+export interface PasswordChangeValues {
+  currentPassword: string;
+  newPassword: string;
+}
+
 export interface PasswordFormRef {
-  submit: (onSuccess: (data) => void) => void;
+  submit: (onSuccess: (data: PasswordChangeValues) => void) => void;
 }
 
 export const PasswordChangeForm = forwardRef<PasswordFormRef>((_, ref) => {

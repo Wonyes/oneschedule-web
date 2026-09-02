@@ -164,22 +164,71 @@ const getmonthTime = (startStr: string, endStr: string, date: Date) => {
   return `진행 중`;
 };
 
-const applyLayout = (events: EventLayout[]): EventLayout[] => {
-  return events.map((event) => {
-    const overlaps = events.filter(
-      (other) =>
-        event.top < other.top + other.height &&
-        event.top + event.height > other.top,
-    );
+const isOverlapping = (a: EventLayout, b: EventLayout) =>
+  a.top < b.top + b.height && a.top + a.height > b.top;
 
-    return {
-      ...event,
-      width: 100 / overlaps.length,
-      left:
-        (100 / overlaps.length) *
-        overlaps.findIndex((o) => o.event.id === event.event.id),
-    };
+// 겹치는 일정들의 가로 배치.
+// 각 일정이 "자기와 겹치는 것"만 세면, A-B / B-C만 겹치고 A-C는 안 겹치는 체인에서
+// 일정마다 분모가 달라져 폭이 어긋나고 카드가 서로 침범한다.
+// 그래서 (1) 겹침으로 연결된 일정들을 하나의 그룹으로 묶고,
+// (2) 그룹 안에서 서로 겹치지 않는 일정끼리는 같은 열을 재사용하도록 열을 배정한 뒤,
+// (3) 그룹의 열 개수로 폭을 나눈다.
+const applyLayout = (events: EventLayout[]): EventLayout[] => {
+  if (events.length === 0) return events;
+
+  const sorted = [...events].sort((a, b) => a.top - b.top);
+
+  // (1) 겹침으로 연결된 덩어리(클러스터) 만들기
+  const clusters: EventLayout[][] = [];
+  let current: EventLayout[] = [];
+  let clusterEnd = -Infinity;
+
+  sorted.forEach((event) => {
+    if (current.length > 0 && event.top >= clusterEnd) {
+      clusters.push(current);
+      current = [];
+      clusterEnd = -Infinity;
+    }
+
+    current.push(event);
+    clusterEnd = Math.max(clusterEnd, event.top + event.height);
   });
+
+  if (current.length > 0) clusters.push(current);
+
+  const laidOut = new Map<EventLayout, { width: number; left: number }>();
+
+  clusters.forEach((cluster) => {
+    // (2) 열 배정: 기존 열의 마지막 일정과 겹치지 않으면 그 열을 재사용
+    const columns: EventLayout[][] = [];
+
+    cluster.forEach((event) => {
+      const column = columns.find(
+        (col) => !isOverlapping(col[col.length - 1], event),
+      );
+
+      if (column) {
+        column.push(event);
+      } else {
+        columns.push([event]);
+      }
+    });
+
+    // (3) 클러스터의 열 개수로 폭을 나눈다
+    const width = 100 / columns.length;
+
+    columns.forEach((column, columnIndex) => {
+      column.forEach((event) => {
+        laidOut.set(event, { width, left: width * columnIndex });
+      });
+    });
+  });
+
+  // 입력 순서를 유지해서 반환한다
+  return events.map((event) => ({
+    ...event,
+    ...(laidOut.get(event) ?? { width: 100, left: 0 }),
+  }));
 };
 
 // 하루를 벗어나는 일정은 시작/종료 시각을 그 날의 00:00~24:00으로 잘라서

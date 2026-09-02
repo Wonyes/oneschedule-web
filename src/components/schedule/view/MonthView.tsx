@@ -244,9 +244,18 @@ export default function MonthView({
           </div>
 
           {selectedDateEvents.length === 0 ? (
-            <p className="typo-caption-2 text-muted py-6 text-center">
-              일정이 없습니다.
-            </p>
+            <div className="flex flex-col items-center gap-3 py-6">
+              <p className="typo-caption-2 text-muted">이 날은 비어 있어요.</p>
+
+              <button
+                type="button"
+                onClick={() => openSheet({ date: selectedDate })}
+                className="btn-spring neu-btn text-secondary hover:text-foreground flex h-9 items-center gap-1.5 rounded-xl px-4 typo-caption-2 font-medium"
+              >
+                <Plus size={14} strokeWidth={2} />
+                일정 추가
+              </button>
+            </div>
           ) : (
             <div className="flex flex-col gap-2">
               {selectedDateEvents.map((event) => (

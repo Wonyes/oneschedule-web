@@ -39,8 +39,8 @@ export default function Schedule() {
     return (
       <DayView
         events={events}
-        holidays={holidays}
-        weathers={weathers}
+        holidays={holidays ?? []}
+        weathers={weathers ?? {}}
         isWeatherLoading={isWeatherLoading}
       />
     );
@@ -48,8 +48,8 @@ export default function Schedule() {
     return (
       <WeekView
         events={events}
-        holidays={holidays}
-        weathers={weathers}
+        holidays={holidays ?? []}
+        weathers={weathers ?? {}}
         isWeatherLoading={isWeatherLoading}
       />
     );
@@ -57,8 +57,8 @@ export default function Schedule() {
     return (
       <MonthView
         events={events}
-        holidays={holidays}
-        weathers={weathers}
+        holidays={holidays ?? []}
+        weathers={weathers ?? {}}
         isWeatherLoading={isWeatherLoading}
       />
     );

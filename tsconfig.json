@@ -20,8 +20,8 @@
     "noFallthroughCasesInSwitch": true,
     // 기본 내보내기 허용
     "allowSyntheticDefaultImports": true,
-    // 암시적인 any 타입 사용 허용
-    "noImplicitAny": false,
+    // 암시적인 any 타입 금지
+    "noImplicitAny": true,
     // 사용되지 않는 로컬 변수 경고
     "noUnusedLocals": true,
     // 사용되지 않는 매개변수 경고
@@ -29,7 +29,7 @@
     // TypeScript 확장자 허용
     "allowImportingTsExtensions": true,
     // 엄격한 타입 검사
-    "strict": false,
+    "strict": true,
     "plugins": [
       {
         "name": "next"

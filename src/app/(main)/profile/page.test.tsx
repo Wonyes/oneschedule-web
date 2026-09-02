@@ -39,7 +39,7 @@ describe("ProfilePage", () => {
       isLoading: false,
       isPending: false,
       status: "success",
-    } as UseQueryResult<MyInfoResponse, Error>);
+    } as unknown as UseQueryResult<MyInfoResponse, Error>);
 
     mockUseLogout.mockReturnValue({
       mutate: jest.fn(),

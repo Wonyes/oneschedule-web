@@ -8,6 +8,8 @@ type ButtonProps = {
   isDisabled?: boolean;
   onClick?: () => void;
   type?: "button" | "submit" | "reset";
+  /** 아이콘만 있는 버튼은 스크린리더용 레이블이 필요하다 */
+  ariaLabel?: string;
 };
 
 const BaseButton = ({
@@ -17,12 +19,14 @@ const BaseButton = ({
   isDisabled,
   onClick,
   type = "button",
+  ariaLabel,
 }: ButtonProps) => {
   return (
     <button
       type={type}
       disabled={isDisabled}
       onClick={onClick}
+      aria-label={ariaLabel ?? (text ? undefined : "버튼")}
       className={cn(
         `
         flex
@@ -37,6 +41,11 @@ const BaseButton = ({
         active:scale-[0.98]
         disabled:cursor-not-allowed
         disabled:opacity-40
+        focus-visible:outline-none
+        focus-visible:ring-2
+        focus-visible:ring-accent/60
+        focus-visible:ring-offset-2
+        focus-visible:ring-offset-[var(--main-bg)]
         `,
         className,
       )}

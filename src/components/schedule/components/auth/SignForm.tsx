@@ -45,7 +45,7 @@ export default function SignForm() {
       });
     },
     onSuccess: () => {
-      router.push("/login");
+      router.push("/login?welcome=1");
     },
     onError: (err) => {
       openAlert({
@@ -87,26 +87,36 @@ export default function SignForm() {
   };
 
   const duplicationCheck = async (name: "email" | "nickname") => {
-    const { data } =
-      name === "email" ? await checkEmail() : await checkNickname();
+    try {
+      const result =
+        name === "email" ? await checkEmail() : await checkNickname();
 
-    if (name === "email") {
-      setEmailChecked(data);
-    } else {
-      setNicknameChecked(data);
-    }
+      if (result.error) {
+        throw result.error;
+      }
 
-    if (!data) {
+      if (name === "email") {
+        setEmailChecked(true);
+      } else {
+        setNicknameChecked(true);
+      }
+
+      openAlert({
+        title: "사용 가능합니다.",
+        message: `사용 가능한 ${name === "email" ? "이메일" : "닉네임"}입니다.`,
+      });
+    } catch (err) {
+      if (name === "email") {
+        setEmailChecked(false);
+      } else {
+        setNicknameChecked(false);
+      }
+
       return openAlert({
         title: "중복 확인 실패",
-        message: `이미 사용 중인 ${name === "email" ? "이메일" : "닉네임"}입니다.`,
+        message: getErrorMessage(err),
       });
     }
-
-    openAlert({
-      title: "사용 가능합니다.",
-      message: `사용 가능한 ${name === "email" ? "이메일" : "닉네임"}입니다.`,
-    });
   };
 
   return (

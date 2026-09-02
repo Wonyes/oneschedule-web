@@ -7,6 +7,7 @@ import { ChevronDown, MapPin } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Row } from "../../ui/layout/flex";
+import ScheduleSearch from "../../schedule/components/ScheduleSearch";
 
 const LOCATIONS = [
   { name: "서울", nx: 60, ny: 127 },
@@ -84,6 +85,8 @@ export default function ViewModeToggle() {
 
   return (
     <Row className="gap-1.5 sm:gap-3">
+      <ScheduleSearch />
+
       {/* 위치 선택 */}
 
       <div className="relative">

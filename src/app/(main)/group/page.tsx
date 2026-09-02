@@ -16,7 +16,7 @@ export default function GroupPage() {
     return <GroupDashboardSkeleton />;
   }
 
-  if (!user?.groupCode) {
+  if (!user?.groupCode || !group) {
     return <GroupLanding />;
   }
 

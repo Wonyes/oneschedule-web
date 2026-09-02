@@ -36,7 +36,10 @@ export default function ScheduleCard({
   variant = "week",
   onClick,
 }: EventCardProps) {
-  const style = EVENT_STYLES[event.category];
+  // category에 "default"가 올 수 있는데 EVENT_STYLES에는 항목이 없다.
+  const style = EVENT_STYLES[event.category as keyof typeof EVENT_STYLES] as
+    | (typeof EVENT_STYLES)[keyof typeof EVENT_STYLES]
+    | undefined;
 
   const start = new Date(event.startDate);
   const end = new Date(event.endDate);
@@ -67,7 +70,7 @@ export default function ScheduleCard({
         `}
       >
         <span
-          className={`w-1.5 h-1.5 rounded-full shrink-0 ${style.dot || "bg-accent"}`}
+          className={`w-1.5 h-1.5 rounded-full shrink-0 ${style?.dot ?? "bg-accent"}`}
         />
         <span className="typo-caption-2 truncate font-medium text-secondary group-hover:text-foreground">
           {event.title}
@@ -89,7 +92,7 @@ export default function ScheduleCard({
         `}
       >
         <span
-          className={`h-2 w-2 shrink-0 rounded-full ${style.dot || "bg-accent"}`}
+          className={`h-2 w-2 shrink-0 rounded-full ${style?.dot ?? "bg-accent"}`}
         />
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <Row className="min-w-0 items-center gap-1">
@@ -128,7 +131,7 @@ export default function ScheduleCard({
           <Column className="h-full min-w-0 justify-center gap-0.5">
             <Row className="min-w-0 items-center gap-1.5">
               <span
-                className={`h-1.5 w-1.5 shrink-0 rounded-full ${style.dot || "bg-accent"}`}
+                className={`h-1.5 w-1.5 shrink-0 rounded-full ${style?.dot ?? "bg-accent"}`}
               />
               <span className="typo-caption-1 truncate font-semibold text-foreground">
                 {event.title}
@@ -162,7 +165,7 @@ export default function ScheduleCard({
       }}
     >
       <div
-        className={`absolute left-0 top-0 bottom-0 w-1 ${style.dot || "bg-accent"}`}
+        className={`absolute left-0 top-0 bottom-0 w-1 ${style?.dot ?? "bg-accent"}`}
       />
 
       {(isStart || isEnd) && (

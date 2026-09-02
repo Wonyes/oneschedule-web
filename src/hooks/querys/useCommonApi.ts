@@ -3,7 +3,7 @@ import { useScheduleStore } from "../stores/useScheduleStore";
 import { publicKeys } from "./key/publicKey";
 import { useWeatherStore } from "../stores/useWeatherStore";
 import { Get } from "./useMutations";
-import { holidayType, WeatherData } from "@/src/types/schedule";
+import { holidayType, ProcessedWeather } from "@/src/types/schedule";
 
 export function useHolidays() {
   const currentDate = useScheduleStore((s) => s.currentDate);
@@ -36,8 +36,9 @@ export function useWeathers() {
     refetchOnWindowFocus: false,
     refetchOnMount: false,
 
+    // 응답은 배열이 아니라 "yyyyMMdd" 키로 접근하는 객체다.
     queryFn: () =>
-      Get<WeatherData[]>({
+      Get<ProcessedWeather>({
         url: "/weather/info",
         params: {
           nx: nx,

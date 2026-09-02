@@ -20,8 +20,14 @@ const roleOptions = [
   },
 ];
 
+export interface GroupMemberEditValues {
+  memberNo: number;
+  groupRole: GroupRole;
+  position: string;
+}
+
 export interface GroupMemberEditRef {
-  submit: (onSuccess: (data) => void) => void;
+  submit: (onSuccess: (data: GroupMemberEditValues) => void) => void;
 }
 
 export const GroupMemberEditContent = forwardRef<

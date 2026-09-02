@@ -8,6 +8,7 @@ import {
   getMonthDates,
   getEventPosition,
   getWeekEvents,
+  markConflicts,
 } from "./schedule";
 import { ScheduleEvent, holidayType } from "../types/schedule";
 
@@ -246,5 +247,141 @@ describe("getWeekEvents (겹치는 일정 레이아웃)", () => {
       expect(layout.width).toBe(100);
       expect(layout.left).toBe(0);
     });
+  });
+
+  test("A-B, B-C만 겹치는 체인에서도 폭과 위치가 어긋나지 않는다", () => {
+    const weekDates = getWeekDates(new Date(2024, 0, 17));
+
+    // A(09:00~10:00) - B(09:30~11:00) - C(10:30~12:00)
+    // A와 C는 서로 겹치지 않지만 B를 통해 한 덩어리로 묶인다.
+    const events: ScheduleEvent[] = [
+      event({
+        id: 1,
+        startDate: "2024-01-17T09:00:00",
+        endDate: "2024-01-17T10:00:00",
+      }),
+      event({
+        id: 2,
+        startDate: "2024-01-17T09:30:00",
+        endDate: "2024-01-17T11:00:00",
+      }),
+      event({
+        id: 3,
+        startDate: "2024-01-17T10:30:00",
+        endDate: "2024-01-17T12:00:00",
+      }),
+    ];
+
+    const layouts = getWeekEvents(events, weekDates);
+
+    // 같은 덩어리이므로 모두 같은 폭(2열)을 갖는다
+    layouts.forEach((layout) => {
+      expect(layout.width).toBe(50);
+    });
+
+    const byId = (id: number) => layouts.find((l) => l.event.id === id)!;
+
+    // A와 C는 겹치지 않으므로 같은 열을 재사용하고, B만 다른 열로 밀린다
+    expect(byId(1).left).toBe(0);
+    expect(byId(2).left).toBe(50);
+    expect(byId(3).left).toBe(0);
+  });
+
+  test("겹치는 일정끼리는 서로 침범하지 않는다", () => {
+    const weekDates = getWeekDates(new Date(2024, 0, 17));
+
+    const events: ScheduleEvent[] = [
+      event({
+        id: 1,
+        startDate: "2024-01-17T09:00:00",
+        endDate: "2024-01-17T11:00:00",
+      }),
+      event({
+        id: 2,
+        startDate: "2024-01-17T09:30:00",
+        endDate: "2024-01-17T10:30:00",
+      }),
+      event({
+        id: 3,
+        startDate: "2024-01-17T10:00:00",
+        endDate: "2024-01-17T12:00:00",
+      }),
+    ];
+
+    const layouts = getWeekEvents(events, weekDates);
+
+    // 셋 다 서로 겹치므로 3열로 나뉘고, 가로 구간이 겹치면 안 된다
+    layouts.forEach((a) => {
+      layouts
+        .filter((b) => b.event.id !== a.event.id)
+        .forEach((b) => {
+          const verticallyOverlaps =
+            a.top < b.top + b.height && a.top + a.height > b.top;
+
+          if (!verticallyOverlaps) return;
+
+          const aRight = a.left! + a.width!;
+          const bRight = b.left! + b.width!;
+          const horizontallyOverlaps = a.left! < bRight && aRight > b.left!;
+
+          expect(horizontallyOverlaps).toBe(false);
+        });
+    });
+  });
+});
+
+describe("markConflicts (개인/그룹 일정 겹침 표시)", () => {
+  test("반대쪽 목록과 시간이 겹치면 hasConflict가 붙는다", () => {
+    const personal = [
+      event({
+        id: 1,
+        startDate: "2024-01-17T09:00:00",
+        endDate: "2024-01-17T10:00:00",
+      }),
+      event({
+        id: 2,
+        startDate: "2024-01-17T13:00:00",
+        endDate: "2024-01-17T14:00:00",
+      }),
+    ];
+
+    const group = [
+      event({
+        id: 10,
+        startDate: "2024-01-17T09:30:00",
+        endDate: "2024-01-17T10:30:00",
+      }),
+    ];
+
+    const marked = markConflicts(personal, group);
+
+    expect(marked.find((e) => e.id === 1)?.hasConflict).toBe(true);
+    expect(marked.find((e) => e.id === 2)?.hasConflict).toBe(false);
+  });
+
+  test("맞닿기만 한 일정은 겹침으로 보지 않는다", () => {
+    const personal = [
+      event({
+        id: 1,
+        startDate: "2024-01-17T09:00:00",
+        endDate: "2024-01-17T10:00:00",
+      }),
+    ];
+
+    const group = [
+      event({
+        id: 10,
+        startDate: "2024-01-17T10:00:00",
+        endDate: "2024-01-17T11:00:00",
+      }),
+    ];
+
+    expect(markConflicts(personal, group)[0].hasConflict).toBe(false);
+  });
+
+  test("비교할 목록이 비어 있으면 원본을 그대로 반환한다", () => {
+    const personal = [event({ id: 1 })];
+
+    expect(markConflicts(personal, [])).toBe(personal);
   });
 });

@@ -1,6 +1,7 @@
 "use client";
 
 import { startOfDay } from "date-fns";
+import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 
@@ -50,9 +51,19 @@ export default function UpcomingSchedules({ today }: { today: Date }) {
       </Between>
 
       {upcomingEvents.length === 0 ? (
-        <p className="py-6 text-center typo-caption-2 text-muted">
-          다가오는 일정이 없습니다.
-        </p>
+        <Column className="items-center gap-3 py-6">
+          <p className="typo-caption-2 text-muted text-center">
+            아직 등록된 일정이 없어요.
+          </p>
+
+          <button
+            type="button"
+            onClick={() => openSheet({ date: today })}
+            className="btn-spring neu-btn text-secondary hover:text-foreground flex h-9 items-center gap-1.5 rounded-xl px-4 typo-caption-2 font-medium"
+          >
+            <Plus size={14} strokeWidth={2} />첫 일정 등록하기
+          </button>
+        </Column>
       ) : (
         <Column className="gap-2">
           {upcomingEvents.map((event) => (

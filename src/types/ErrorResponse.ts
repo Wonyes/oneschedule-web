@@ -24,6 +24,7 @@ export function getErrorMessage(
   return (
     err.response?.data?.message ??
     err.response?.data?.result?.errorMessage ??
+    err.message ??
     fallback
   );
 }

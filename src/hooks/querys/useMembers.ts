@@ -33,6 +33,7 @@ export const useEmailCheck = (email: string) => {
           email: email,
         },
       }),
+    retry: false,
     enabled: false,
   });
 };
@@ -116,9 +117,8 @@ export const useProfileImageUpload = () => {
     },
 
     onSuccess: (data) => {
-      queryClient.setQueryData<MyInfoResponse>(
-        [memberskeys.myInfo],
-        (prev) => (prev ? { ...prev, imageUrl: data.imageUrl } : prev),
+      queryClient.setQueryData<MyInfoResponse>([memberskeys.myInfo], (prev) =>
+        prev ? { ...prev, imageUrl: data.imageUrl } : prev,
       );
     },
     retry: false,

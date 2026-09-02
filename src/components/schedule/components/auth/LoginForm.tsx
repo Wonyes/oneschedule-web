@@ -8,10 +8,13 @@ import { Post } from "@/src/hooks/querys/useMutations";
 import { useForm } from "@/src/hooks/useForm";
 import { useOverlay } from "@/src/hooks/useOverlay";
 import { getErrorMessage, useAppMutation } from "@/src/types/ErrorResponse";
-import { useRouter } from "next/navigation";
+import { CheckCircle2 } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function LoginForm() {
   const router = useRouter();
+  // 회원가입 직후 넘어온 경우 다음 단계를 안내한다
+  const isWelcome = useSearchParams().get("welcome") === "1";
 
   const { form, formChange } = useForm({
     email: "",
@@ -48,12 +51,29 @@ export default function LoginForm() {
       <BrandHero />
 
       <div className="w-full">
-        <h1 className="typo-h1 tracking-tight">Welcome 👋</h1>
+        <h1 className="typo-h1 tracking-tight">
+          {isWelcome ? "가입 완료 🎉" : "Welcome 👋"}
+        </h1>
 
         <p className="typo-title-3 text-muted mt-2">
-          로그인하고 일정을 관리하세요.
+          {isWelcome
+            ? "로그인하면 그룹 참여와 첫 일정 등록을 안내해드려요."
+            : "로그인하고 일정을 관리하세요."}
         </p>
       </div>
+
+      {isWelcome && (
+        <Row className="neu-flat w-full items-start gap-2.5 rounded-xl px-4 py-3">
+          <CheckCircle2
+            size={16}
+            strokeWidth={2}
+            className="text-success-500 mt-0.5 shrink-0"
+          />
+          <span className="typo-caption-2 text-secondary">
+            계정이 만들어졌어요. 방금 입력한 이메일과 비밀번호로 로그인해 주세요.
+          </span>
+        </Row>
+      )}
 
       <Column className="gap-4 w-full">
         <Input

@@ -76,7 +76,7 @@ export function useProfileEdit(user: MyInfoResponse) {
       const error = result.error as CustomError;
 
       setErrors({
-        nickname: error?.response.data?.message ?? "닉네임 확인 실패",
+        nickname: error?.response?.data?.message ?? "닉네임 확인 실패",
       });
 
       return;
@@ -119,7 +119,8 @@ export function useProfileEdit(user: MyInfoResponse) {
         onError: (error) => {
           if (editingField) {
             setErrors({
-              [editingField]: error.response.data.message,
+              [editingField]:
+                error.response?.data?.message ?? "수정에 실패했습니다.",
             });
           }
         },

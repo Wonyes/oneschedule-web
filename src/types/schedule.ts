@@ -100,6 +100,6 @@ export type ProcessedWeather = {
 export type ScheduleViewProps = {
   events: ScheduleEvent[];
   holidays: holidayType[];
-  weathers: WeatherData[];
+  weathers: ProcessedWeather;
   isWeatherLoading?: boolean;
 };

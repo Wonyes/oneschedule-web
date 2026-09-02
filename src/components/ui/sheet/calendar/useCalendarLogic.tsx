@@ -171,7 +171,7 @@ export const useCalendarLogic = () => {
     isInRange: boolean | null;
     isFuture: boolean;
   }) => {
-    const classes = [];
+    const classes: string[] = [];
 
     if (isStartDate) {
       classes.push("start-date");
@@ -197,7 +197,7 @@ export const useCalendarLogic = () => {
     startDateNumber: number,
     firstDayOfWeek: number,
   ) => {
-    const row = [];
+    const row: React.ReactElement[] = [];
 
     let datesAdded = 0;
 
@@ -284,7 +284,7 @@ export const useCalendarLogic = () => {
   const createCalendar = () => {
     let calendarDate = 1;
 
-    const calendarRows = [];
+    const calendarRows: React.ReactElement[] = [];
 
     const { daysInMonth, firstDayOfWeek } = getDateInfo();
 

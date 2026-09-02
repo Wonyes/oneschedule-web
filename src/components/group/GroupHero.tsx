@@ -138,6 +138,7 @@ export const GroupHero = ({ group }: { group: MyGroupResponse }) => {
                   {group.groupRole === "SUPER" && (
                     <GhostBtn
                       onClick={() => setGroupNameCorrection(true)}
+                      ariaLabel="그룹 이름 수정"
                       icon={
                         <Pencil size={16} strokeWidth={1.5} className="text-accent" />
                       }
@@ -167,7 +168,9 @@ export const GroupHero = ({ group }: { group: MyGroupResponse }) => {
                 </span>
 
                 <button
+                  type="button"
                   onClick={copyCode}
+                  aria-label="초대 코드 복사"
                   className="text-muted transition hover:text-foreground"
                 >
                   <Copy size={14} strokeWidth={1.75} />
