@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { startOfDay, endOfDay } from "date-fns";
 
 import BaseCard from "../ui/card/BaseCard";
-import { Between, Column, Row } from "../ui/layout/flex";
+import { Column, Row } from "../ui/layout/flex";
 import { useSchedules } from "@/src/hooks/querys/useSchedule";
 import { toScheduleEvent } from "@/src/utils/schedule";
 import { MyGroupResponse } from "@/src/types/group";

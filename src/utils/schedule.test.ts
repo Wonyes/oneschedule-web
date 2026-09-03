@@ -26,6 +26,8 @@ const event = (
   startDate: "2024-01-17T09:00:00",
   endDate: "2024-01-17T10:00:00",
   category: "personal",
+  createdAt: "2024-01-01T00:00:00",
+  author: { memberNo: 1, nickname: "테스터" },
   ...overrides,
 });
 
@@ -46,9 +48,7 @@ describe("isSameDate", () => {
   });
 
   test("같은 날짜면 true", () => {
-    expect(isSameDate("2024-01-01T15:00:00", new Date(2024, 0, 1))).toBe(
-      true,
-    );
+    expect(isSameDate("2024-01-01T15:00:00", new Date(2024, 0, 1))).toBe(true);
   });
 
   test("다른 날짜면 false", () => {
@@ -90,15 +90,11 @@ describe("getDayColor", () => {
   });
 
   test("일요일이면 text-red-600", () => {
-    expect(getDayColor(new Date(2024, 0, 7), undefined)).toBe(
-      "text-red-600",
-    );
+    expect(getDayColor(new Date(2024, 0, 7), undefined)).toBe("text-red-600");
   });
 
   test("토요일이면 text-blue-600", () => {
-    expect(getDayColor(new Date(2024, 0, 6), undefined)).toBe(
-      "text-blue-600",
-    );
+    expect(getDayColor(new Date(2024, 0, 6), undefined)).toBe("text-blue-600");
   });
 
   test("평일이면 text-muted", () => {
