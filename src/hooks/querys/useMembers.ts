@@ -8,7 +8,6 @@ export type MyInfoResponse = {
   /** 내 memberNo. 백엔드 추가 예정이며, 없으면 권한 판정을 건너뛴다. */
   memberNo?: number;
   email: string;
-  groupCode: string;
   name: string;
   nickname: string;
   phoneNumber: string;

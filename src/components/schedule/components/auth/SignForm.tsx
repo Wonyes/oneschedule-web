@@ -25,8 +25,12 @@ export default function SignForm() {
     phone: "",
   });
 
-  const [emailChecked, setEmailChecked] = useState(false);
-  const [nicknameChecked, setNicknameChecked] = useState(false);
+  // 값 자체가 아니라 "마지막으로 통과한 값"을 기억해서, 확인 후 입력을 바꾸면
+  // 자동으로 다시 확인하도록 만든다. (boolean 플래그로는 값이 바뀌어도 true로 남는 문제가 있었음)
+  const [checkedEmail, setCheckedEmail] = useState<string | null>(null);
+  const [checkedNickname, setCheckedNickname] = useState<string | null>(null);
+  const emailChecked = !!form.email && form.email === checkedEmail;
+  const nicknameChecked = !!form.nickname && form.nickname === checkedNickname;
 
   const { refetch: checkEmail } = useEmailCheck(form.email);
   const { refetch: checkNickname } = useNicknameCheck(form.nickname);
@@ -87,6 +91,8 @@ export default function SignForm() {
   };
 
   const duplicationCheck = async (name: "email" | "nickname") => {
+    const label = name === "email" ? "이메일" : "닉네임";
+
     try {
       const result =
         name === "email" ? await checkEmail() : await checkNickname();
@@ -95,23 +101,25 @@ export default function SignForm() {
         throw result.error;
       }
 
+      // true = 사용 가능, false = 이미 사용 중 (서버 응답값을 그대로 신뢰해야 한다)
+      if (!result.data) {
+        return openAlert({
+          title: "이미 사용 중입니다.",
+          message: `이미 사용 중인 ${label}입니다.`,
+        });
+      }
+
       if (name === "email") {
-        setEmailChecked(true);
+        setCheckedEmail(form.email);
       } else {
-        setNicknameChecked(true);
+        setCheckedNickname(form.nickname);
       }
 
       openAlert({
         title: "사용 가능합니다.",
-        message: `사용 가능한 ${name === "email" ? "이메일" : "닉네임"}입니다.`,
+        message: `사용 가능한 ${label}입니다.`,
       });
     } catch (err) {
-      if (name === "email") {
-        setEmailChecked(false);
-      } else {
-        setNicknameChecked(false);
-      }
-
       return openAlert({
         title: "중복 확인 실패",
         message: getErrorMessage(err),

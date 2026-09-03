@@ -37,7 +37,7 @@ export default async function HomePage() {
 
     queryClient.prefetchQuery({
       queryKey: [groupkeys.myGroup],
-      queryFn: () => serverGet<MyGroupResponse>("/group/my"),
+      queryFn: () => serverGet<MyGroupResponse[]>("/group/my/groups"),
     }),
   ]);
 

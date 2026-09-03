@@ -17,7 +17,8 @@ export default function Sidebar() {
   return (
     <aside
       className="
-        fixed bottom-4 inset-x-4 py-1 z-40 h-fit rounded-2xl max-w-md mx-auto
+        fixed inset-x-4 py-1 z-40 h-fit rounded-2xl max-w-md mx-auto
+        bottom-[calc(1rem+env(safe-area-inset-bottom))]
         sm:static sm:inset-x-auto sm:bottom-auto sm:w-16 sm:h-full sm:max-w-none sm:mx-0
         glass sm:neu-flat
         flex flex-row sm:flex-col items-center justify-around sm:justify-between

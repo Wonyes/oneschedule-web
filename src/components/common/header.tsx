@@ -7,6 +7,7 @@ import { getMyInfo } from "@/src/lib/member";
 import ViewModeToggle from "./header/ViewModeToggle";
 import LocationPicker from "./header/LocationPicker";
 import MobileGroupSwitcher from "./header/MobileGroupSwitcher";
+import GroupHeaderControls from "./header/GroupHeaderControls";
 import ThemeToggle from "./header/ThemeToggle";
 
 async function HeaderAuthResolved() {
@@ -30,6 +31,7 @@ export default function Header() {
         <Logo />
 
         <div className="flex justify-center lg:hidden">
+          <GroupHeaderControls />
           <ViewModeToggle />
         </div>
 
@@ -58,6 +60,7 @@ export default function Header() {
       <div className="hidden lg:flex items-center gap-3 lg:ml-auto">
         <LocationPicker />
         <ViewModeToggle />
+
         <ThemeToggle />
         <Suspense fallback={<AuthSkeleton />}>
           <HeaderAuthResolved />

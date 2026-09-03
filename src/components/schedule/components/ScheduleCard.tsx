@@ -1,4 +1,3 @@
-import { AlertTriangle } from "lucide-react";
 import { ScheduleEvent } from "@/src/types/schedule";
 import { isSameDate } from "@/src/utils/schedule";
 import { EVENT_STYLES } from "@/src/constant/schedule";
@@ -10,15 +9,6 @@ import { getTimes } from "@/src/utils/time";
  * 새 일정을 추가할 방법이 없어진다. 오른쪽을 이만큼 비워 클릭 영역을 남긴다.
  */
 const GRID_CLICK_GUTTER = 10;
-
-const ConflictBadge = () => (
-  <AlertTriangle
-    className="shrink-0 text-error-500"
-    size={11}
-    strokeWidth={2.5}
-    aria-label="다른 일정과 시간이 겹칩니다"
-  />
-);
 
 type EventCardProps = {
   event: ScheduleEvent;
@@ -82,7 +72,6 @@ export default function ScheduleCard({
         <span className="typo-caption-2 truncate font-medium text-secondary group-hover:text-foreground">
           {event.title}
         </span>
-        {event.hasConflict && <ConflictBadge />}
       </div>
     );
   }
@@ -106,7 +95,6 @@ export default function ScheduleCard({
             <span className="typo-caption-1 font-semibold text-foreground truncate">
               {event.title}
             </span>
-            {event.hasConflict && <ConflictBadge />}
           </Row>
           <span className="text-[11px] font-medium text-accent/80 tracking-tight">
             {getTimes(event.startDate)} - {getTimes(event.endDate)}
@@ -143,7 +131,6 @@ export default function ScheduleCard({
               <span className="typo-caption-1 truncate font-semibold text-foreground">
                 {event.title}
               </span>
-              {event.hasConflict && <ConflictBadge />}
             </Row>
             <span className="shrink-0 whitespace-nowrap pl-3 text-[10px] font-medium text-accent/80 tracking-tight">
               {getTimes(event.startDate)}-{getTimes(event.endDate)}
@@ -182,7 +169,6 @@ export default function ScheduleCard({
           <span className="typo-caption-1 truncate font-semibold text-foreground">
             {event.title}
           </span>
-          {event.hasConflict && <ConflictBadge />}
           <span className="shrink-0 whitespace-nowrap text-[10px] font-medium text-accent/80 tracking-tight">
             {getTimes(event.startDate)}-{getTimes(event.endDate)}
           </span>

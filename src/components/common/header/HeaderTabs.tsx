@@ -39,7 +39,7 @@ export default function HeaderTabs() {
         width: btnRect.width,
       });
     }
-  }, [viewType]);
+  }, [viewType, isSchedulePage]);
 
   if (!isSchedulePage) {
     return null;

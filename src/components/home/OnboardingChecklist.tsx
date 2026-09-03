@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import BaseCard from "@/src/components/ui/card/BaseCard";
 import { Column, Row } from "@/src/components/ui/layout/flex";
 import { MyInfoResponse } from "@/src/hooks/querys/useMembers";
+import { useActiveGroup } from "@/src/hooks/querys/useGroup";
 import { useSchedules } from "@/src/hooks/querys/useSchedule";
 import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
 
@@ -32,6 +33,7 @@ export default function OnboardingChecklist({
   const router = useRouter();
   const { openSheet } = useSheetStore();
   const { data: schedules } = useSchedules("PERSONAL");
+  const { groups } = useActiveGroup();
 
   const [dismissed, setDismissed] = useState(true);
 
@@ -55,7 +57,7 @@ export default function OnboardingChecklist({
       title: "그룹 만들거나 참여하기",
       description: "초대 코드로 가족·팀과 일정을 공유할 수 있어요.",
       icon: <Users size={16} strokeWidth={1.75} />,
-      done: !!user.groupCode,
+      done: groups.length > 0,
       action: () => router.push("/group"),
       actionLabel: "그룹으로",
     },

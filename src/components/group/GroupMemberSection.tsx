@@ -151,7 +151,7 @@ export default function GroupMemberSection({
             key={member.memberNo}
             className="w-full rounded-xl px-4 py-3 neu-flat"
           >
-            <Row className="gap-3">
+            <Row className="min-w-0 flex-1 gap-3">
               <IconBox
                 size="md"
                 shape="square"
@@ -161,9 +161,9 @@ export default function GroupMemberSection({
                 {member.nickname[0]}
               </IconBox>
 
-              <Column>
-                <Row className="gap-1.5">
-                  <span className="typo-caption-2 font-semibold text-foreground">
+              <Column className="min-w-0">
+                <Row className="min-w-0 gap-1.5">
+                  <span className="typo-caption-2 font-semibold text-foreground truncate">
                     {member.nickname}
                   </span>
 
@@ -171,18 +171,18 @@ export default function GroupMemberSection({
                     <Crown
                       size={12}
                       strokeWidth={1.75}
-                      className="text-pending-500"
+                      className="shrink-0 text-pending-500"
                     />
                   )}
                 </Row>
 
-                <span className="mt-0.5 typo-caption-3 text-place-h">
+                <span className="mt-0.5 typo-caption-3 text-place-h truncate">
                   {member.position}
                 </span>
               </Column>
             </Row>
 
-            <Row className="relative gap-2">
+            <Row className="relative shrink-0 gap-2">
               <span
                 className="
                 rounded-full

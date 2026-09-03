@@ -111,7 +111,7 @@ export const GroupHero = ({ group }: { group: MyGroupResponse }) => {
           <span className="eyebrow mb-1.5">GROUP</span>
 
           <Between className="w-full">
-            <Row className="gap-2 justify-center">
+            <Row className="min-w-0 gap-2 justify-center">
               {groupNameCorrection ? (
                 <>
                   <Input
@@ -134,7 +134,9 @@ export const GroupHero = ({ group }: { group: MyGroupResponse }) => {
                 </>
               ) : (
                 <>
-                  <h1 className="typo-title-1 text-foreground">{group.groupName}</h1>
+                  <h1 className="typo-title-1 text-foreground truncate">
+                    {group.groupName}
+                  </h1>
                   {group.groupRole === "SUPER" && (
                     <GhostBtn
                       onClick={() => setGroupNameCorrection(true)}
