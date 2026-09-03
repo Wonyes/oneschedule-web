@@ -5,6 +5,8 @@ import { useAppMutation } from "@/src/types/ErrorResponse";
 import { useRouter } from "next/navigation";
 
 export type MyInfoResponse = {
+  /** 내 memberNo. 백엔드 추가 예정이며, 없으면 권한 판정을 건너뛴다. */
+  memberNo?: number;
   email: string;
   groupCode: string;
   name: string;
@@ -53,7 +55,7 @@ export const useNicknameCheck = (nickname: string) => {
   });
 };
 
-export const useMyInfo = () => {
+export const useMyInfo = (enabled = true) => {
   return useQuery({
     queryKey: [memberskeys.myInfo],
 
@@ -62,6 +64,7 @@ export const useMyInfo = () => {
         url: "/members/info",
       }),
 
+    enabled,
     retry: false,
     staleTime: Infinity,
   });
@@ -117,8 +120,9 @@ export const useProfileImageUpload = () => {
     },
 
     onSuccess: (data) => {
-      queryClient.setQueryData<MyInfoResponse>([memberskeys.myInfo], (prev) =>
-        prev ? { ...prev, imageUrl: data.imageUrl } : prev,
+      queryClient.setQueriesData<MyInfoResponse>(
+        { queryKey: [memberskeys.myInfo] },
+        (prev) => (prev ? { ...prev, imageUrl: data.imageUrl } : prev),
       );
     },
     retry: false,

@@ -33,8 +33,6 @@ export default function OnboardingChecklist({
   const { openSheet } = useSheetStore();
   const { data: schedules } = useSchedules("PERSONAL");
 
-  // 서버 렌더링 결과와 첫 클라이언트 렌더가 어긋나지 않도록,
-  // localStorage 확인 전까지는 숨겨둔 상태로 시작한다.
   const [dismissed, setDismissed] = useState(true);
 
   useEffect(() => {
@@ -75,7 +73,6 @@ export default function OnboardingChecklist({
   const doneCount = steps.filter((step) => step.done).length;
   const allDone = doneCount === steps.length;
 
-  // 모두 마쳤거나 사용자가 닫았으면 더 이상 보여주지 않는다
   if (dismissed || allDone) return null;
 
   const handleDismiss = () => {
@@ -132,7 +129,7 @@ export default function OnboardingChecklist({
               className={`h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
                 step.done
                   ? "bg-success-500/15 text-success-500"
-                  : "bg-accent/10 text-accent"
+                  : "neu-flat text-accent"
               }`}
             >
               {step.done ? <Check size={16} strokeWidth={2.5} /> : step.icon}

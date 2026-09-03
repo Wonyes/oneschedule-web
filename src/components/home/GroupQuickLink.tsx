@@ -4,24 +4,23 @@ import { Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { Row } from "@/src/components/ui/layout/flex";
-import { useMyGroup } from "@/src/hooks/querys/useGroup";
+import { useActiveGroup } from "@/src/hooks/querys/useGroup";
 import { MyGroupResponse } from "@/src/types/group";
 import QuickLink from "./QuickLink";
 
 const MAX_AVATARS = 4;
 
 export default function GroupQuickLink({
-  groupCode,
-  initialGroup,
+  initialGroups,
+  activeGroup,
 }: {
-  groupCode?: string;
-  initialGroup?: MyGroupResponse;
+  initialGroups?: MyGroupResponse[];
+  activeGroup?: MyGroupResponse;
 }) {
   const router = useRouter();
-  const { data: group } = useMyGroup(!!groupCode, initialGroup);
-  // react-query의 하이드레이션 타이밍과 무관하게, 서버가 내려준 값과
-  // 첫 클라이언트 렌더가 항상 같은 값을 그리도록 prop을 우선 사용한다.
-  const displayGroup = group ?? initialGroup;
+  const { groups, group } = useActiveGroup(true, initialGroups);
+  const displayGroup = group ?? activeGroup;
+  const groupCount = groups.length || (activeGroup ? 1 : 0);
 
   return (
     <QuickLink
@@ -41,8 +40,9 @@ export default function GroupQuickLink({
                 </span>
               ))}
             </Row>
-            <span className="typo-caption-2 text-muted">
+            <span className="typo-caption-2 text-muted truncate">
               {displayGroup.groupName}
+              {groupCount > 1 && ` 외 ${groupCount - 1}개`}
             </span>
           </Row>
         ) : (

@@ -16,26 +16,28 @@ import UpcomingSchedules from "./UpcomingSchedules";
 
 export default function HomeContent({
   user,
-  initialGroup,
+  initialGroups,
+  activeGroup,
 }: {
   user: MyInfoResponse;
-  initialGroup?: MyGroupResponse;
+  initialGroups?: MyGroupResponse[];
+  activeGroup?: MyGroupResponse;
 }) {
   const router = useRouter();
   const today = useMemo(() => new Date(), []);
 
   return (
-    <div className="scroll-stable relative flex w-full flex-col gap-4 lg:gap-6">
+    <div className="relative flex w-full flex-col gap-4 lg:gap-6">
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute -top-24 left-1/4 h-72 w-72 rounded-full bg-accent/10 blur-3xl" />
-        <div className="absolute top-1/3 right-0 h-80 w-80 rounded-full bg-accent/[0.06] blur-3xl" />
+        <div className="absolute -top-24 left-1/4 h-72 w-72 rounded-full bg-accent/10" />
+        <div className="absolute top-1/3 right-0 h-80 w-80 rounded-full bg-accent/[0.06]" />
       </div>
 
       <HomeHero user={user} today={today} />
 
       <OnboardingChecklist user={user} today={today} />
 
-      <HomeStats groupCode={user.groupCode} initialGroup={initialGroup} />
+      <HomeStats initialGroups={initialGroups} activeGroup={activeGroup} />
 
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:gap-6">
         <div className="flex min-w-0 flex-1 flex-col gap-4 lg:gap-6">
@@ -53,8 +55,8 @@ export default function HomeContent({
           />
 
           <GroupQuickLink
-            groupCode={user.groupCode}
-            initialGroup={initialGroup}
+            initialGroups={initialGroups}
+            activeGroup={activeGroup}
           />
         </div>
       </div>

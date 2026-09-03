@@ -1,5 +1,5 @@
 import api from "@/src/lib/api";
-import axios, { AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 
 interface ApiProps {
   url: string;
@@ -7,13 +7,6 @@ interface ApiProps {
   params?: object;
   headers?: object;
   responseFull?: boolean;
-}
-
-interface ApiErrorResponse {
-  message: string;
-  code: number;
-  success: boolean;
-  result: null;
 }
 
 export const Get = async <T = unknown>({

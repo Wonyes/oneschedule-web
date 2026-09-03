@@ -2,12 +2,6 @@
 
 import { useEffect } from "react";
 
-/**
- * 루트 레이아웃 자체가 실패했을 때의 마지막 방어선.
- * app/error.tsx는 레이아웃 하위만 감싸기 때문에 layout.tsx에서 던진 에러는 여기서만 잡힌다.
- * 이 경우 레이아웃이 렌더링되지 않으므로 html/body를 직접 그려야 하고,
- * globals.css의 토큰도 못 쓰는 상황을 가정해 인라인 스타일로만 작성한다.
- */
 export default function GlobalError({
   error,
   reset,
@@ -28,8 +22,8 @@ export default function GlobalError({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#191c26",
-          color: "#f5f6fb",
+          background: "#dfe3ee",
+          color: "#161923",
           fontFamily: "Pretendard, system-ui, sans-serif",
         }}
       >
@@ -40,7 +34,7 @@ export default function GlobalError({
               fontSize: 11,
               fontWeight: 600,
               letterSpacing: "0.04em",
-              color: "#98a0b8",
+              color: "#6b7290",
             }}
           >
             ERROR
@@ -55,7 +49,7 @@ export default function GlobalError({
               margin: "8px 0 20px",
               fontSize: 13,
               lineHeight: 1.6,
-              color: "#98a0b8",
+              color: "#6b7290",
             }}
           >
             잠시 후 다시 시도해 주세요. 문제가 계속되면 새로고침해 주세요.

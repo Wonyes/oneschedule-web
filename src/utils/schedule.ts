@@ -164,6 +164,29 @@ const getmonthTime = (startStr: string, endStr: string, date: Date) => {
   return `진행 중`;
 };
 
+/**
+ * 일정을 수정·삭제할 수 있는지 판정한다. 작성자 본인이거나 그룹 관리자(SUPER)면 가능.
+ *
+ * 이건 어디까지나 화면 처리를 위한 것이고, 실제 차단은 서버가 해야 한다.
+ * 백엔드가 작성자(createdBy)나 내 memberNo를 아직 안 내려주는 동안에는
+ * 판정을 건너뛰고 허용한다 — 그러지 않으면 자기 일정도 못 고치게 된다.
+ */
+const canEditSchedule = ({
+  createdBy,
+  myMemberNo,
+  myGroupRole,
+}: {
+  createdBy?: number;
+  myMemberNo?: number;
+  myGroupRole?: "SUPER" | "SUB" | "MEMBER";
+}): boolean => {
+  if (myGroupRole === "SUPER") return true;
+
+  if (createdBy === undefined || myMemberNo === undefined) return true;
+
+  return createdBy === myMemberNo;
+};
+
 const isOverlapping = (a: EventLayout, b: EventLayout) =>
   a.top < b.top + b.height && a.top + a.height > b.top;
 
@@ -348,6 +371,7 @@ const getSortedDayEvents = (events: ScheduleEvent[], date: Date) => {
 };
 
 export {
+  canEditSchedule,
   getTimes,
   isSameDate,
   getDayColor,

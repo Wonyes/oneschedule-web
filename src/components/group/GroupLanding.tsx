@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Primary } from "../ui/layout/button";
-import { KeySquare, Users } from "lucide-react";
+import { GhostBtn, Primary } from "../ui/layout/button";
+import { ArrowLeft, KeySquare, Users } from "lucide-react";
 import CreateGroup from "./CreateGroup";
 import BaseCard from "../ui/card/BaseCard";
 import { Row } from "../ui/layout/flex";
@@ -15,23 +15,23 @@ import { useOverlay } from "@/src/hooks/useOverlay";
 import { useForm } from "@/src/hooks/useForm";
 import { memberskeys } from "@/src/hooks/querys/key/members";
 
-export default function GroupLanding() {
+export default function GroupLanding({ onCancel }: { onCancel?: () => void }) {
   const queryClient = useQueryClient();
   const { openToast } = useOverlay();
 
-  const { form, formChange } = useForm({
+  const { form, formChange, errors, setErrors } = useForm({
     groupCode: "",
   });
 
   const [createGroup, setCreateGroup] = useState(false);
 
-  const { mutate: joinGroup } = useAppMutation({
+  const { mutate: joinGroup, isPending } = useAppMutation({
     mutationFn: () =>
       Post({
         url: "/group/join",
         body: null,
         params: {
-          groupCode: form.groupCode,
+          groupCode: form.groupCode.trim(),
         },
       }),
 
@@ -47,16 +47,36 @@ export default function GroupLanding() {
       openToast({
         message: "그룹에 가입했습니다.",
       });
+
+      onCancel?.();
     },
     onError: (err) => {
-      openToast({
-        message: getErrorMessage(err),
+      setErrors({
+        groupCode: getErrorMessage(err, "그룹 가입에 실패했습니다."),
       });
     },
   });
 
+  const handleJoin = () => {
+    if (!form.groupCode.trim()) {
+      return setErrors({ groupCode: "초대코드를 입력해주세요." });
+    }
+
+    joinGroup();
+  };
+
   return (
-    <main className="max-w-[420px] w-full mx-auto">
+    <main className="max-w-[420px] w-full mx-auto flex flex-col gap-3">
+      {onCancel && (
+        <Row className="w-full">
+          <GhostBtn
+            text="돌아가기"
+            icon={<ArrowLeft size={14} />}
+            onClick={onCancel}
+          />
+        </Row>
+      )}
+
       {!createGroup ? (
         <BaseCard
           className="
@@ -100,13 +120,20 @@ export default function GroupLanding() {
 
           <div className="mt-8 flex flex-col w-full gap-3">
             <Primary
-              text={form.groupCode ? "그룹 가입하기" : "그룹 만들기"}
+              text={
+                isPending
+                  ? "가입하는 중…"
+                  : form.groupCode
+                    ? "그룹 가입하기"
+                    : "그룹 만들기"
+              }
               icon={
                 form.groupCode ? <KeySquare size={14} /> : <Users size={14} />
               }
+              isDisabled={isPending}
               onClick={() => {
                 if (form.groupCode) {
-                  joinGroup();
+                  handleJoin();
                   return;
                 }
 
@@ -118,6 +145,8 @@ export default function GroupLanding() {
               name="groupCode"
               value={form.groupCode}
               onChange={formChange}
+              onEnter={handleJoin}
+              errorMessage={errors.groupCode}
               type="text"
               placeholder="초대코드를 입력해 주세요."
               className="h-[44px]"

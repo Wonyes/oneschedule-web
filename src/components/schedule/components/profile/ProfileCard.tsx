@@ -1,7 +1,8 @@
 import { useRef } from "react";
-import { Camera, Loader2 } from "lucide-react";
+import { Camera, Crown, Loader2, Users } from "lucide-react";
 import BaseCard from "@/src/components/ui/card/BaseCard";
-import { Column } from "@/src/components/ui/layout/flex";
+import { Column, Row } from "@/src/components/ui/layout/flex";
+import { useActiveGroup } from "@/src/hooks/querys/useGroup";
 import {
   MyInfoResponse,
   useProfileImageUpload,
@@ -13,6 +14,9 @@ export default function ProfileCard({ user }: { user: MyInfoResponse }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { mutate: uploadImage, isPending } = useProfileImageUpload();
   const { openToast } = useOverlay();
+  const { groups } = useActiveGroup();
+
+  const adminCount = groups.filter((g) => g.groupRole === "SUPER").length;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -71,6 +75,30 @@ export default function ProfileCard({ user }: { user: MyInfoResponse }) {
         <h1 className="mt-4 typo-h4 text-foreground">{user.nickname}</h1>
 
         <p className="mt-1 typo-sub-t-2 text-muted">{user.name}</p>
+
+        <p className="typo-caption-3 text-place-h mt-0.5">{user.email}</p>
+
+        <Row className="mt-4 flex-wrap justify-center gap-1.5">
+          <Row className="neu-flat gap-1.5 rounded-full px-3 py-1.5">
+            <Users size={12} strokeWidth={1.75} className="text-accent" />
+            <span className="typo-caption-3 text-secondary">
+              그룹 {groups.length}개
+            </span>
+          </Row>
+
+          {adminCount > 0 && (
+            <Row className="neu-flat gap-1.5 rounded-full px-3 py-1.5">
+              <Crown
+                size={12}
+                strokeWidth={1.75}
+                className="text-pending-500"
+              />
+              <span className="typo-caption-3 text-secondary">
+                관리자 {adminCount}곳
+              </span>
+            </Row>
+          )}
+        </Row>
       </Column>
     </BaseCard>
   );

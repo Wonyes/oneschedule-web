@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 
 import BaseCard from "@/src/components/ui/card/BaseCard";
 import { Column, Row } from "@/src/components/ui/layout/flex";
+import IconBox from "@/src/components/ui/IconBox";
 
 export default function QuickLink({
   icon,
@@ -24,9 +25,7 @@ export default function QuickLink({
         className="group flex w-full items-center justify-between gap-4 text-left"
       >
         <Row className="gap-3">
-          <Row className="h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent">
-            {icon}
-          </Row>
+          <IconBox size="lg">{icon}</IconBox>
 
           <Column className="gap-0.5">
             <span className="typo-sub-t-2 text-foreground">{title}</span>

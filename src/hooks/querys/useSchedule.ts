@@ -10,15 +10,18 @@ import {
 export const useSchedules = (
   type: ScheduleViewType = "PERSONAL",
   enabled = true,
+  groupNo?: number,
 ) => {
+  const isGroup = type === "GROUP";
+
   return useQuery({
-    queryKey: [scheduleKeys.list, type],
+    queryKey: [scheduleKeys.list, type, isGroup ? (groupNo ?? null) : null],
     queryFn: () =>
       Get<ScheduleApiResponse[]>({
         url: "/schedules",
-        params: { type },
+        params: isGroup && groupNo ? { type, groupNo } : { type },
       }),
-    enabled,
+    enabled: enabled && (!isGroup || !!groupNo),
     retry: false,
   });
 };
@@ -26,8 +29,9 @@ export const useSchedules = (
 export const createSchedule = (body: ScheduleApiRequest) =>
   Post<ScheduleApiResponse>({ url: "/schedules", body });
 
-export const createGroupSchedule = (body: ScheduleApiRequest) =>
-  Post<ScheduleApiResponse>({ url: "/schedules/group", body });
+export const createGroupSchedule = (
+  body: ScheduleApiRequest & { groupNo: number },
+) => Post<ScheduleApiResponse>({ url: "/schedules/group", body });
 
 export const updateSchedule = (id: number, body: ScheduleApiRequest) =>
   Put<ScheduleApiResponse>({ url: `/schedules/${id}`, body });

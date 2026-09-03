@@ -4,6 +4,12 @@ import { getTimes, isSameDate } from "@/src/utils/schedule";
 import { EVENT_STYLES } from "@/src/constant/schedule";
 import { Column, Row } from "../../ui/layout/flex";
 
+/**
+ * 카드가 칸을 꽉 채우면 이미 일정이 있는 시간대에는 빈 곳을 누를 수 없어
+ * 새 일정을 추가할 방법이 없어진다. 오른쪽을 이만큼 비워 클릭 영역을 남긴다.
+ */
+const GRID_CLICK_GUTTER = 10;
+
 const ConflictBadge = () => (
   <AlertTriangle
     className="shrink-0 text-error-500"
@@ -114,7 +120,7 @@ export default function ScheduleCard({
       <div
         onClick={onClick}
         className={`
-          absolute left-0 right-0 rounded-lg
+          absolute rounded-lg
           bg-surface/90  border border-white/10
           px-2 py-1.5 shadow-xl z-10 overflow-hidden transition-all duration-200
           cursor-pointer hover:border-accent/40 hover:bg-surface-hover ${conflictRing} ${className}
@@ -123,8 +129,8 @@ export default function ScheduleCard({
           top: `${top}%`,
           height: `${height}%`,
           minHeight: 28,
-          width: `${width}%`,
-          left: `${left}%`,
+          left: `${left ?? 0}%`,
+          width: `calc(${width ?? 100}% - ${GRID_CLICK_GUTTER}px)`,
         }}
       >
         {(isStart || isEnd) && (
@@ -151,7 +157,7 @@ export default function ScheduleCard({
     <div
       onClick={onClick}
       className={`
-        absolute left-0 right-0 rounded-lg
+        absolute rounded-lg
         bg-surface/90 border border-white/10
         px-2 py-1.5 z-10 overflow-hidden
         cursor-pointer hover:z-50 hover:border-accent/50 hover:bg-surface-hover hover:shadow-2xl
@@ -162,6 +168,8 @@ export default function ScheduleCard({
         top: `${top}%`,
         height: `${height}%`,
         minHeight: 28,
+        left: `${left ?? 0}%`,
+        width: `calc(${width ?? 100}% - ${GRID_CLICK_GUTTER}px)`,
       }}
     >
       <div

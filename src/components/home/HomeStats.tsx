@@ -5,9 +5,10 @@ import { useMemo } from "react";
 import { startOfDay, endOfDay } from "date-fns";
 
 import BaseCard from "@/src/components/ui/card/BaseCard";
+import IconBox from "@/src/components/ui/IconBox";
 import { Column, Row } from "@/src/components/ui/layout/flex";
 import { useSchedules } from "@/src/hooks/querys/useSchedule";
-import { useMyGroup } from "@/src/hooks/querys/useGroup";
+import { useActiveGroup } from "@/src/hooks/querys/useGroup";
 import { getWeekDates, toScheduleEvent } from "@/src/utils/schedule";
 import { MyGroupResponse } from "@/src/types/group";
 
@@ -23,9 +24,7 @@ function StatTile({
   return (
     <BaseCard className="flex-1 px-4 py-3.5">
       <Row className="items-center gap-3">
-        <Row className="h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent">
-          {icon}
-        </Row>
+        <IconBox size="md">{icon}</IconBox>
         <Column className="gap-0.5">
           <span className="typo-caption-3 text-place-h">{title}</span>
           <span className="typo-sub-t-1 text-foreground tabular-nums">
@@ -38,17 +37,15 @@ function StatTile({
 }
 
 export default function HomeStats({
-  groupCode,
-  initialGroup,
+  initialGroups,
+  activeGroup,
 }: {
-  groupCode?: string;
-  initialGroup?: MyGroupResponse;
+  initialGroups?: MyGroupResponse[];
+  activeGroup?: MyGroupResponse;
 }) {
   const { data: schedules } = useSchedules("PERSONAL");
-  const { data: group } = useMyGroup(!!groupCode, initialGroup);
-  // react-query의 하이드레이션 타이밍과 무관하게, 서버가 내려준 값과
-  // 첫 클라이언트 렌더가 항상 같은 값을 그리도록 prop을 우선 사용한다.
-  const displayGroup = group ?? initialGroup;
+  const { group } = useActiveGroup(true, initialGroups);
+  const displayGroup = group ?? activeGroup;
 
   const { todayCount, weekCount } = useMemo(() => {
     const now = new Date();

@@ -21,7 +21,7 @@ export default async function MainLayout({
       <div className="relative flex-1 flex overflow-hidden sm:pt-4">
         <main className="flex w-full h-full p-3 gap-3 overflow-hidden sm:p-4 sm:gap-6">
           <Sidebar />
-          <div className="flex-1 min-w-0 min-h-0 h-full pb-18 sm:pb-0">
+          <div className="scroll-stable flex-1 min-w-0 min-h-0 h-full overflow-y-auto pb-18 sm:pb-0">
             {children}
           </div>
           <GlobalOverlays />

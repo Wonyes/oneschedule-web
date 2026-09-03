@@ -27,6 +27,8 @@ export type ScheduleEvent = {
   displayStart?: Date;
   displayEnd?: Date;
   hasConflict?: boolean;
+  /** 일정을 만든 사람의 memberNo. 백엔드가 내려주기 전까지는 undefined다. */
+  createdBy?: number;
 };
 
 export type ScheduleViewType = "PERSONAL" | "GROUP";
@@ -58,6 +60,8 @@ export type ScheduleApiResponse = {
   endTime: string;
   createdAt: string;
   participants: ScheduleParticipant[];
+  /** 작성자 memberNo. 백엔드 추가 예정이며, 없으면 권한 판정을 건너뛴다. */
+  createdBy?: number;
 };
 
 export type holidayType = {

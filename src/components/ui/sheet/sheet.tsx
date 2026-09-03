@@ -8,6 +8,7 @@ import { useScheduleViewStore } from "@/src/hooks/stores/useScheduleViewStore";
 import { format } from "date-fns";
 import { Input } from "../layout/input";
 import { Column } from "../layout/flex";
+import DropdownMenu from "../DropdownMenu";
 import { Primary, SecondaryBtn, GhostBtn, RedBtn } from "../layout/button";
 import CalendarBody from "./calendar/CalendarBody";
 import { useCalendarStore } from "@/src/hooks/stores/useCalendarStore";
@@ -23,7 +24,7 @@ import {
 import { scheduleKeys } from "@/src/hooks/querys/key/scheduleKey";
 import { useOverlay } from "@/src/hooks/useOverlay";
 import { getErrorMessage, useAppMutation } from "@/src/types/ErrorResponse";
-import { useMyGroup } from "@/src/hooks/querys/useGroup";
+import { useActiveGroup } from "@/src/hooks/querys/useGroup";
 import { GroupMember } from "@/src/types/group";
 
 const combineDateTime = (date: Date, time: string) => {
@@ -49,7 +50,6 @@ function ParticipantPicker({
   selected: number[];
   onChange: (ids: number[]) => void;
 }) {
-  const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
 
   const filtered = members.filter((m) =>
@@ -67,13 +67,13 @@ function ParticipantPicker({
   };
 
   return (
-    <div className="relative w-full">
-      <button
-        type="button"
-        onClick={() => setIsOpen((v) => !v)}
-        className="flex w-full items-center justify-between gap-2 rounded-xl neu-pressed px-4 py-3 text-left shadow-sm transition-all hover:ring-2 hover:ring-indigo-500/30"
-      >
-        {selectedMembers.length === 0 ? (
+    <DropdownMenu
+      label="참여자 선택"
+      align="stretch"
+      triggerClassName="w-full justify-between rounded-xl neu-pressed px-4 py-3 text-left shadow-sm hover:ring-2 hover:ring-indigo-500/30"
+      trigger={(isOpen) => (
+        <>
+          {selectedMembers.length === 0 ? (
           <span className="typo-caption-2 text-place-h">
             참여자를 선택하세요.
           </span>
@@ -95,16 +95,17 @@ function ParticipantPicker({
           </div>
         )}
 
-        <ChevronDown
-          size={14}
-          strokeWidth={1.75}
-          className={`shrink-0 text-muted transition-transform ${isOpen ? "rotate-180" : ""}`}
-        />
-      </button>
-
-      {isOpen && (
-        <div className="glass absolute left-0 right-0 top-full z-50 mt-2 rounded-2xl p-2">
-          <div className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2">
+          <ChevronDown
+            size={14}
+            strokeWidth={1.75}
+            className={`shrink-0 text-muted transition-transform ${isOpen ? "rotate-180" : ""}`}
+          />
+        </>
+      )}
+    >
+      {() => (
+        <>
+          <div className="neu-pressed flex items-center gap-2 rounded-xl px-3 py-2">
             <Search size={14} strokeWidth={1.75} className="text-muted" />
             <input
               value={query}
@@ -126,8 +127,10 @@ function ParticipantPicker({
                   <button
                     key={m.memberNo}
                     type="button"
+                    role="menuitemcheckbox"
+                    aria-checked={isSelected}
                     onClick={() => toggle(m.memberNo)}
-                    className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left transition-colors hover:bg-white/5"
+                    className="hover:bg-surface-hover flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left transition-colors"
                   >
                     <span className="typo-caption-3 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent/15 font-bold text-accent">
                       {m.nickname[0]}
@@ -136,20 +139,16 @@ function ParticipantPicker({
                       {m.nickname}
                     </span>
                     {isSelected && (
-                      <Check
-                        size={14}
-                        strokeWidth={2}
-                        className="text-accent"
-                      />
+                      <Check size={14} strokeWidth={2} className="text-accent" />
                     )}
                   </button>
                 );
               })
             )}
           </div>
-        </div>
+        </>
       )}
-    </div>
+    </DropdownMenu>
   );
 }
 
@@ -201,7 +200,7 @@ function SheetFooter({
 export default function Sheet() {
   const { form, updateForm, open, closeSheet, editingId } = useSheetStore();
   const { isCalendarOpen, toggleCalendar } = useCalendarStore();
-  const { data: group } = useMyGroup(open);
+  const { group } = useActiveGroup(open);
   const viewType = useScheduleViewStore((s) => s.viewType);
   const { openAlert } = useOverlay();
   const queryClient = useQueryClient();
@@ -224,7 +223,10 @@ export default function Sheet() {
   };
 
   const { mutate: create } = useAppMutation({
-    mutationFn: viewType === "GROUP" ? createGroupSchedule : createSchedule,
+    mutationFn: (body: ReturnType<typeof toScheduleRequest>) =>
+      viewType === "GROUP" && group
+        ? createGroupSchedule({ ...body, groupNo: group.groupNo })
+        : createSchedule(body),
     onSuccess: () => {
       invalidateSchedules();
       close();

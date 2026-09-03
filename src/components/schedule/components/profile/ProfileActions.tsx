@@ -45,18 +45,23 @@ export default function ProfileActions() {
   };
 
   return (
-    <BaseCard className="overflow-hidden" glow>
-      <ActionRow
-        onClick={changePassword}
-        icon={<Lock size={18} />}
-        title="비밀번호 변경"
-      />
-      <ActionRow
-        icon={<LogOut size={18} />}
-        title="로그아웃"
-        danger
-        onClick={() => logout()}
-      />
-    </BaseCard>
+    <div className="flex w-full flex-col gap-3">
+      <BaseCard className="overflow-hidden" glow>
+        <ActionRow
+          onClick={changePassword}
+          icon={<Lock size={18} />}
+          title="비밀번호 변경"
+        />
+      </BaseCard>
+
+      <BaseCard className="overflow-hidden">
+        <ActionRow
+          icon={<LogOut size={18} />}
+          title="로그아웃"
+          danger
+          onClick={() => logout()}
+        />
+      </BaseCard>
+    </div>
   );
 }

@@ -11,9 +11,25 @@ import {
 } from "@/src/hooks/querys/useMembers";
 
 import ProfilePage from "./page";
-import { UseQueryResult } from "@tanstack/react-query";
+import {
+  QueryClient,
+  QueryClientProvider,
+  UseQueryResult,
+} from "@tanstack/react-query";
 
 jest.mock("@/src/hooks/querys/useMembers");
+
+const renderProfilePage = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <ProfilePage />
+    </QueryClientProvider>,
+  );
+};
 
 const mockUseMyInfo = useMyInfo as jest.MockedFunction<typeof useMyInfo>;
 
@@ -64,7 +80,7 @@ describe("ProfilePage", () => {
   });
 
   test("닉네임 중복 확인 없이 저장하면 에러 메시지가 표시된다", () => {
-    render(<ProfilePage />);
+    renderProfilePage();
 
     const editButtons = screen.getAllByText("수정");
 

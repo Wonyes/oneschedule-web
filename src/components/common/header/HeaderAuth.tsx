@@ -1,6 +1,7 @@
 "use client";
 
 import { LogIn, LogOut } from "lucide-react";
+import IconBox from "../../ui/IconBox";
 import { useRouter } from "next/navigation";
 
 import { MyInfoResponse, useLogout } from "@/src/hooks/querys/useMembers";
@@ -28,21 +29,24 @@ export default function HeaderAuth({ user }: { user: MyInfoResponse | null }) {
 
   return (
     <div className="flex items-center gap-1.5">
-      <div
+      <button
+        type="button"
         onClick={() => router.push("/profile")}
-        className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg cursor-pointer btn-spring hover:bg-white/5"
+        aria-label="내 프로필"
+        className="btn-spring flex cursor-pointer items-center gap-2 rounded-lg p-1 hover:bg-white/5 lg:px-2.5 lg:py-1.5"
       >
-        <span className="h-6 w-6 shrink-0 rounded-full bg-accent/15 text-accent typo-caption-3 font-bold flex items-center justify-center">
+        <IconBox size="sm" shape="circle" className="typo-caption-3 font-bold">
           {user.nickname[0]}
-        </span>
-        <span className="typo-caption-2 text-secondary max-w-[40px] truncate lg:max-w-none">
+        </IconBox>
+        <span className="typo-caption-2 text-secondary hidden lg:inline">
           {user.nickname}
         </span>
-      </div>
+      </button>
 
       <button
         onClick={handleLogout}
-        className="p-1.5 rounded-lg text-muted btn-spring hover:bg-white/5 hover:text-foreground active:scale-95"
+        aria-label="로그아웃"
+        className="p-1.5 rounded-xl neu-flat text-muted btn-spring hover:bg-white/5 hover:text-foreground active:scale-95"
       >
         <LogOut size={15} strokeWidth={1.75} />
       </button>

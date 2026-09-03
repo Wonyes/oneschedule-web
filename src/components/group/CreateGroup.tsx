@@ -10,21 +10,24 @@ import { useQueryClient } from "@tanstack/react-query";
 import { groupkeys } from "@/src/hooks/querys/key/groupKey";
 import { memberskeys } from "@/src/hooks/querys/key/members";
 
+const MAX_GROUP_NAME = 20;
+const MAX_POSITION = 20;
+
 export default function CreateGroup({ onBack }: { onBack: () => void }) {
   const queryClient = useQueryClient();
   const { openToast } = useOverlay();
-  const { form, formChange } = useForm({
+  const { form, formChange, errors, setErrors } = useForm({
     groupName: "",
     position: "",
   });
 
-  const { mutate: createGroup } = useAppMutation({
+  const { mutate: createGroup, isPending } = useAppMutation({
     mutationFn: () => {
       return Post({
-        url: "group/create",
+        url: "/group/create",
         params: {
-          groupName: form.groupName,
-          position: form.position,
+          groupName: form.groupName.trim(),
+          position: form.position.trim(),
         },
       });
     },
@@ -40,19 +43,43 @@ export default function CreateGroup({ onBack }: { onBack: () => void }) {
       queryClient.invalidateQueries({
         queryKey: [groupkeys.myGroup],
       });
+
+      onBack();
     },
     onError: (err) => {
-      openToast({
-        message: getErrorMessage(err, "그룹 생성에 실패했습니다."),
-      });
+      const message = getErrorMessage(err, "그룹 생성에 실패했습니다.");
+
+      if (message.includes("이름")) {
+        setErrors({ groupName: message });
+        return;
+      }
+
+      openToast({ message });
     },
   });
 
   const handleCreateGroup = () => {
-    if (form.groupName.length < 0) {
-      return alert("그룹 이름을 입력해주세요.");
-    } else if (form.position.length < 0) {
-      return alert("내 직책을 입력해주세요.");
+    const groupName = form.groupName.trim();
+    const position = form.position.trim();
+
+    if (!groupName) {
+      return setErrors({ groupName: "그룹 이름을 입력해주세요." });
+    }
+
+    if (groupName.length > MAX_GROUP_NAME) {
+      return setErrors({
+        groupName: `그룹 이름은 ${MAX_GROUP_NAME}자 이내로 입력해주세요.`,
+      });
+    }
+
+    if (!position) {
+      return setErrors({ position: "내 직책을 입력해주세요." });
+    }
+
+    if (position.length > MAX_POSITION) {
+      return setErrors({
+        position: `직책은 ${MAX_POSITION}자 이내로 입력해주세요.`,
+      });
     }
 
     createGroup();
@@ -89,19 +116,23 @@ export default function CreateGroup({ onBack }: { onBack: () => void }) {
             name="groupName"
             value={form.groupName}
             onChange={formChange}
+            onEnter={handleCreateGroup}
+            errorMessage={errors.groupName}
+            maxLength={MAX_GROUP_NAME}
           />
         </div>
 
         <div>
-          <label className="block mb-2 typo-sub-t-3 text-muted">
-            내 직책
-          </label>
+          <label className="block mb-2 typo-sub-t-3 text-muted">내 직책</label>
 
           <Input
             placeholder="예) 프론트엔드"
             name="position"
             value={form.position}
             onChange={formChange}
+            onEnter={handleCreateGroup}
+            errorMessage={errors.position}
+            maxLength={MAX_POSITION}
           />
         </div>
 
@@ -112,9 +143,10 @@ export default function CreateGroup({ onBack }: { onBack: () => void }) {
         </div>
 
         <Primary
-          text="그룹 생성"
+          text={isPending ? "만드는 중…" : "그룹 생성"}
           className="w-full typo-sub-t-1"
           onClick={handleCreateGroup}
+          isDisabled={isPending}
         />
       </div>
     </BaseCard>
