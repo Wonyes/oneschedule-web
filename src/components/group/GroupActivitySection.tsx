@@ -10,11 +10,21 @@ import { Column, Row } from "../ui/layout/flex";
 import { EVENT_STYLES } from "@/src/constant/schedule";
 import { useSchedules } from "@/src/hooks/querys/useSchedule";
 import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
+import { MyGroupResponse } from "@/src/types/group";
+import { formatRelativeTime } from "@/src/utils/time";
 
 const MAX_ITEMS = 4;
 
-export default function GroupActivitySection() {
-  const { data: groupSchedules, isLoading } = useSchedules("GROUP");
+export default function GroupActivitySection({
+  group,
+}: {
+  group: MyGroupResponse;
+}) {
+  const { data: groupSchedules, isLoading } = useSchedules(
+    "GROUP",
+    true,
+    group.groupNo,
+  );
   const { openSheet } = useSheetStore();
 
   const recent = useMemo(() => {
@@ -66,6 +76,7 @@ export default function GroupActivitySection() {
               EVENT_STYLES[schedule.category as keyof typeof EVENT_STYLES];
 
             const participants = schedule.participants ?? [];
+            const author = schedule.author ?? { nickname: "알 수 없음" };
             const names = participants
               .slice(0, 2)
               .map((p) => p.nickname)
@@ -81,21 +92,23 @@ export default function GroupActivitySection() {
                 />
 
                 <Column className="min-w-0 flex-1 gap-0.5">
-                  <span className="typo-caption-1 text-foreground truncate font-medium">
-                    {schedule.title || "제목 없는 일정"}
-                  </span>
-                  <span className="typo-caption-3 text-muted truncate">
+                  <Row className="gap-1.5">
+                    <span className="typo-caption-1 text-foreground truncate font-medium">
+                      {schedule.title || "제목 없는 일정"}
+                    </span>
+                    <span className="typo-caption-1 text-muted truncate">
+                      등록 · {author.nickname}
+                    </span>
+                  </Row>
+                  <span className="typo-caption-2 text-muted truncate">
                     {participants.length > 0
-                      ? `${names}${participants.length > 2 ? ` 외 ${participants.length - 2}명` : ""} · 일정 등록`
+                      ? `참여자 · ${names}${participants.length > 2 ? ` 외 ${participants.length - 2}명` : ""}`
                       : "일정 등록"}
                   </span>
                 </Column>
 
                 <span className="typo-caption-3 text-place-h shrink-0 whitespace-nowrap">
-                  {formatDistanceToNow(new Date(schedule.createdAt), {
-                    addSuffix: true,
-                    locale: ko,
-                  })}
+                  {formatRelativeTime(schedule.createdAt)}
                 </span>
               </Row>
             );

@@ -7,11 +7,12 @@ import { useScheduleStore } from "@/src/hooks/stores/useScheduleStore";
 import { useScheduleViewStore } from "@/src/hooks/stores/useScheduleViewStore";
 import { useWeathers } from "@/src/hooks/querys/useCommonApi";
 import { useSchedules } from "@/src/hooks/querys/useSchedule";
-import { getTimes, toScheduleEvent } from "@/src/utils/schedule";
+import { toScheduleEvent } from "@/src/utils/schedule";
 import { ScheduleEvent, WeatherData } from "@/src/types/schedule";
 import WeatherBadge from "./components/WeatherBadge";
 import BaseCard from "../ui/card/BaseCard";
 import { Column } from "../ui/layout/flex";
+import { getTimes } from "@/src/utils/time";
 
 function getFormattedDateTitle(mode: string, date: Date) {
   if (!date || !(date instanceof Date)) return "";
@@ -41,7 +42,8 @@ function eventsOnDay(schedules: ScheduleEvent[], date: Date) {
       return s >= start && s <= end;
     })
     .sort(
-      (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
+      (a, b) =>
+        new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
     );
 }
 
@@ -63,7 +65,9 @@ function SummaryRow({
   return (
     <div className="flex items-center justify-between neu-flat px-4 py-3 rounded-xl text-xs text-secondary">
       <div className="flex items-center gap-2 shrink-0">
-        <span className={`w-1.5 h-1.5 rounded-full inline-block ${dotClassName}`} />
+        <span
+          className={`w-1.5 h-1.5 rounded-full inline-block ${dotClassName}`}
+        />
         <span>{label}</span>
       </div>
       <div className="flex items-center gap-2 min-w-0 text-foreground font-medium">
@@ -101,7 +105,10 @@ export default function ScheduleHeader() {
     [schedules],
   );
 
-  const todayEvents = useMemo(() => eventsOnDay(events, today), [events, today]);
+  const todayEvents = useMemo(
+    () => eventsOnDay(events, today),
+    [events, today],
+  );
   const tomorrowEvents = useMemo(
     () => eventsOnDay(events, tomorrow),
     [events, tomorrow],

@@ -14,6 +14,7 @@ import {
 import { getErrorMessage, useAppMutation } from "@/src/types/ErrorResponse";
 import { Patch, Delete } from "@/src/hooks/querys/useMutations";
 import { groupkeys } from "@/src/hooks/querys/key/groupKey";
+import IconBox from "../ui/IconBox";
 
 type GroupRole = "SUPER" | "SUB" | "MEMBER";
 
@@ -151,19 +152,14 @@ export default function GroupMemberSection({
             className="w-full rounded-xl px-4 py-3 neu-flat"
           >
             <Row className="gap-3">
-              <Row
-                className="
-                h-9 w-9
-                justify-center
-                rounded-xl
-                bg-accent/10
-                typo-caption-2
-                font-bold
-                text-accent
-              "
+              <IconBox
+                size="md"
+                shape="square"
+                tone="accent"
+                className="typo-caption-3 font-bold bg-accent/10"
               >
                 {member.nickname[0]}
-              </Row>
+              </IconBox>
 
               <Column>
                 <Row className="gap-1.5">
@@ -172,7 +168,11 @@ export default function GroupMemberSection({
                   </span>
 
                   {member.groupRole === "SUPER" && (
-                    <Crown size={12} strokeWidth={1.75} className="text-pending-500" />
+                    <Crown
+                      size={12}
+                      strokeWidth={1.75}
+                      className="text-pending-500"
+                    />
                   )}
                 </Row>
 

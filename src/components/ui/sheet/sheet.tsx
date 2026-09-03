@@ -74,26 +74,26 @@ function ParticipantPicker({
       trigger={(isOpen) => (
         <>
           {selectedMembers.length === 0 ? (
-          <span className="typo-caption-2 text-place-h">
-            참여자를 선택하세요.
-          </span>
-        ) : (
-          <div className="flex flex-wrap items-center gap-1.5">
-            {selectedMembers.map((m) => (
-              <span
-                key={m.memberNo}
-                className="flex items-center gap-1 rounded-full bg-accent/10 py-0.5 pl-1 pr-2"
-              >
-                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-accent/20 text-[9px] font-bold text-accent">
-                  {m.nickname[0]}
+            <span className="typo-caption-2 text-place-h">
+              참여자를 선택하세요.
+            </span>
+          ) : (
+            <div className="flex flex-wrap items-center gap-1.5">
+              {selectedMembers.map((m) => (
+                <span
+                  key={m.memberNo}
+                  className="flex items-center gap-1 rounded-full bg-accent/10 py-0.5 pl-1 pr-2"
+                >
+                  <span className="flex h-4 w-4 items-center justify-center rounded-full bg-accent/20 text-[9px] font-bold text-accent">
+                    {m.nickname[0]}
+                  </span>
+                  <span className="typo-caption-3 text-secondary">
+                    {m.nickname}
+                  </span>
                 </span>
-                <span className="typo-caption-3 text-secondary">
-                  {m.nickname}
-                </span>
-              </span>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
 
           <ChevronDown
             size={14}
@@ -139,7 +139,11 @@ function ParticipantPicker({
                       {m.nickname}
                     </span>
                     {isSelected && (
-                      <Check size={14} strokeWidth={2} className="text-accent" />
+                      <Check
+                        size={14}
+                        strokeWidth={2}
+                        className="text-accent"
+                      />
                     )}
                   </button>
                 );
@@ -205,6 +209,8 @@ export default function Sheet() {
   const { openAlert } = useOverlay();
   const queryClient = useQueryClient();
 
+  const groupNo = group?.groupNo;
+
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "unset";
 
@@ -225,7 +231,7 @@ export default function Sheet() {
   const { mutate: create } = useAppMutation({
     mutationFn: (body: ReturnType<typeof toScheduleRequest>) =>
       viewType === "GROUP" && group
-        ? createGroupSchedule({ ...body, groupNo: group.groupNo })
+        ? createGroupSchedule(groupNo!, body)
         : createSchedule(body),
     onSuccess: () => {
       invalidateSchedules();
@@ -241,11 +247,13 @@ export default function Sheet() {
   const { mutate: update } = useAppMutation({
     mutationFn: ({
       id,
+      groupNo,
       body,
     }: {
       id: number;
+      groupNo?: number;
       body: ReturnType<typeof toScheduleRequest>;
-    }) => updateSchedule(id, body),
+    }) => updateSchedule(id, groupNo!, body),
     onSuccess: () => {
       invalidateSchedules();
       close();

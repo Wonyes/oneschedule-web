@@ -1,3 +1,6 @@
+import { format, formatDistanceToNow } from "date-fns";
+import { ko } from "date-fns/locale";
+
 export const formatTime = (value: string) => {
   const numbers = value.replace(/\D/g, "").slice(0, 4);
 
@@ -22,4 +25,18 @@ export const formatTime = (value: string) => {
   }
 
   return `${hour}:${minute}`;
+};
+
+export const getTimes = (start: string, end?: string) => {
+  const startTime = format(new Date(start), "HH:mm");
+  if (!end) return startTime;
+  const endTime = format(new Date(end), "HH:mm");
+  return `${startTime} - ${endTime}`;
+};
+
+export const formatRelativeTime = (date: Date | string) => {
+  return formatDistanceToNow(new Date(date), {
+    addSuffix: true,
+    locale: ko,
+  });
 };

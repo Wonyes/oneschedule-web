@@ -19,7 +19,6 @@ export default function GroupDashboard({
   groups?: MyGroupResponse[];
   onAddGroup?: () => void;
 }) {
-  console.log("GroupDashboard rendered", group, groups);
   return (
     <Column className="w-full h-full px-4 py-4 gap-5 overflow-y-auto scroll-stable">
       <Row className="w-full items-center justify-end gap-1.5">
@@ -48,11 +47,11 @@ export default function GroupDashboard({
           members={group.members}
           groupNo={group.groupNo}
         />
-        <GroupScheduleSection />
+        <GroupScheduleSection group={group} />
       </Row>
 
       {/* Activity */}
-      <GroupActivitySection />
+      <GroupActivitySection group={group} />
     </Column>
   );
 }

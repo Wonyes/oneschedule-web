@@ -5,12 +5,17 @@ import { startOfDay, endOfDay } from "date-fns";
 
 import BaseCard from "../ui/card/BaseCard";
 import { Between, Column, Row } from "../ui/layout/flex";
-import { CalendarDays } from "lucide-react";
 import { useSchedules } from "@/src/hooks/querys/useSchedule";
-import { getTimes, toScheduleEvent } from "@/src/utils/schedule";
+import { toScheduleEvent } from "@/src/utils/schedule";
+import { MyGroupResponse } from "@/src/types/group";
+import { getTimes } from "@/src/utils/time";
 
-export default function GroupScheduleSection() {
-  const { data: schedules } = useSchedules("GROUP");
+export default function GroupScheduleSection({
+  group,
+}: {
+  group: MyGroupResponse;
+}) {
+  const { data: schedules } = useSchedules("GROUP", true, group.groupNo);
 
   const todayEvents = useMemo(() => {
     const now = new Date();
@@ -34,7 +39,6 @@ export default function GroupScheduleSection() {
       <Column className="mb-4 gap-1.5">
         <span className="eyebrow">TODAY</span>
         <Row className="gap-1.5">
-          <CalendarDays size={16} strokeWidth={1.5} className="text-muted" />
           <h2 className="typo-sub-t-1 text-foreground">오늘 일정</h2>
         </Row>
       </Column>
@@ -48,7 +52,8 @@ export default function GroupScheduleSection() {
           {todayEvents.map((event) => (
             <ScheduleItem
               key={event.id}
-              time={getTimes(event.startDate)}
+              time={getTimes(event.startDate, event.endDate)}
+              author={event.author.nickname}
               title={event.title}
             />
           ))}
@@ -58,14 +63,32 @@ export default function GroupScheduleSection() {
   );
 }
 
-function ScheduleItem({ time, title }: { time: string; title: string }) {
+function ScheduleItem({
+  time,
+  title,
+  author,
+}: {
+  time: string;
+  title: string;
+  author?: string;
+}) {
   return (
-    <Between className="rounded-lg px-3 py-2.5 w-full neu-flat">
-      <span className="typo-caption-2 text-place-h tabular-nums shrink-0">
+    <Row className="w-full min-w-0 gap-2 rounded-lg px-3 py-2.5 neu-flat">
+      <span className="w-[82px] shrink-0 typo-caption-2 tabular-nums text-place-h">
         {time}
       </span>
 
-      <span className="typo-caption-2 font-medium truncate">{title}</span>
-    </Between>
+      <Row className="min-w-0 flex-1 items-center gap-1.5">
+        <span className="min-w-0 flex-1 truncate typo-caption-2 font-medium">
+          {title}
+        </span>
+
+        {author && (
+          <span className="max-w-[60px] shrink-0 truncate typo-caption-3 text-place-h">
+            {author}
+          </span>
+        )}
+      </Row>
+    </Row>
   );
 }

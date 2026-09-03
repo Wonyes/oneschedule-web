@@ -1,8 +1,9 @@
 import { AlertTriangle } from "lucide-react";
 import { ScheduleEvent } from "@/src/types/schedule";
-import { getTimes, isSameDate } from "@/src/utils/schedule";
+import { isSameDate } from "@/src/utils/schedule";
 import { EVENT_STYLES } from "@/src/constant/schedule";
 import { Column, Row } from "../../ui/layout/flex";
+import { getTimes } from "@/src/utils/time";
 
 /**
  * 카드가 칸을 꽉 채우면 이미 일정이 있는 시간대에는 빈 곳을 누를 수 없어

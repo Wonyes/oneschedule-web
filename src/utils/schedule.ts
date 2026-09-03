@@ -20,6 +20,7 @@ import {
   ScheduleApiRequest,
   ScheduleApiResponse,
 } from "../types/schedule";
+import { getTimes } from "./time";
 
 const toScheduleEvent = (res: ScheduleApiResponse): ScheduleEvent => {
   const startTime = res.startTime ?? "00:00:00";
@@ -29,7 +30,9 @@ const toScheduleEvent = (res: ScheduleApiResponse): ScheduleEvent => {
   return {
     id: res.id,
     title: res.title,
+    author: res.author,
     content: res.content,
+    createdAt: res.createdAt,
     category: (res.category as EventCategory) || "personal",
     startDate: `${res.startDate}T${startTime}`,
     endDate: `${endDate}T${endTime}`,
@@ -60,10 +63,6 @@ const toScheduleRequest = (payload: {
   };
 };
 
-const getTimes = (date: string) => {
-  return format(new Date(date), "HH:mm");
-};
-
 const getWeekDates = (currentDate: Date) => {
   const start = startOfWeek(currentDate, { weekStartsOn: 1 });
   return Array.from({ length: 7 }, (_, i) => addDays(start, i));
@@ -89,7 +88,10 @@ const getEventPosition = (
   const top = Math.min(Math.max((totalMinutes / 1440) * 100, 0), 100);
   // 종료 시각이 비었거나 시작과 같은 일정도 시간 칸 하나(60분)는 꽉 채워서 보여준다.
   const MIN_DURATION_MINUTES = 60;
-  const height = Math.max((duration / 1440) * 100, (MIN_DURATION_MINUTES / 1440) * 100);
+  const height = Math.max(
+    (duration / 1440) * 100,
+    (MIN_DURATION_MINUTES / 1440) * 100,
+  );
 
   return { top, height };
 };
@@ -372,7 +374,6 @@ const getSortedDayEvents = (events: ScheduleEvent[], date: Date) => {
 
 export {
   canEditSchedule,
-  getTimes,
   isSameDate,
   getDayColor,
   findHoliday,

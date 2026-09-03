@@ -30,11 +30,25 @@ export const createSchedule = (body: ScheduleApiRequest) =>
   Post<ScheduleApiResponse>({ url: "/schedules", body });
 
 export const createGroupSchedule = (
-  body: ScheduleApiRequest & { groupNo: number },
-) => Post<ScheduleApiResponse>({ url: "/schedules/group", body });
+  groupNo: number,
+  body: ScheduleApiRequest,
+) =>
+  Post<ScheduleApiResponse>({
+    url: `/schedules/group`,
+    params: { groupNo },
+    body,
+  });
 
-export const updateSchedule = (id: number, body: ScheduleApiRequest) =>
-  Put<ScheduleApiResponse>({ url: `/schedules/${id}`, body });
+export const updateSchedule = (
+  id: number,
+  groupNo: number,
+  body: ScheduleApiRequest,
+) =>
+  Put<ScheduleApiResponse>({
+    url: `/schedules/${id}`,
+    params: { groupNo },
+    body,
+  });
 
 export const deleteSchedule = (id: number) =>
   Delete<void>({ url: `/schedules/${id}` });

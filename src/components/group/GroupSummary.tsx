@@ -8,12 +8,13 @@ import { MyGroupResponse } from "@/src/types/group";
 import { CalendarDays, Clock, Users } from "lucide-react";
 import { useSchedules } from "@/src/hooks/querys/useSchedule";
 import { toScheduleEvent } from "@/src/utils/schedule";
+import IconBox from "../ui/IconBox";
 
 // "다가오는 일정"은 오늘부터 7일 이내(오늘 포함) 시작하는 일정 수를 센다.
 const UPCOMING_RANGE_DAYS = 7;
 
 export default function GroupSummary({ group }: { group: MyGroupResponse }) {
-  const { data: schedules } = useSchedules("GROUP");
+  const { data: schedules } = useSchedules("GROUP", true, group.groupNo);
 
   const { todayCount, upcomingCount } = useMemo(() => {
     const now = new Date();
@@ -51,9 +52,13 @@ export default function GroupSummary({ group }: { group: MyGroupResponse }) {
             </Row>
           </Column>
 
-          <Row className="h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-surface-hover text-secondary">
+          <IconBox
+            size="md"
+            shape="square"
+            className="typo-caption-3 font-bold"
+          >
             <Users size={16} strokeWidth={1.5} />
-          </Row>
+          </IconBox>
         </Row>
       </BaseCard>
 
@@ -86,9 +91,13 @@ function Compact({
     <BaseCard className="flex-1 px-4 py-3">
       <Row className="items-center justify-between">
         <Row className="gap-2">
-          <Row className="h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-surface-hover text-secondary">
+          <IconBox
+            size="md"
+            shape="circle"
+            className="typo-caption-3 font-bold"
+          >
             {icon}
-          </Row>
+          </IconBox>
           <span className="typo-caption-2 text-place-h">{title}</span>
         </Row>
 
