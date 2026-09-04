@@ -105,9 +105,6 @@ export const useMyinfoChange = () => {
         queryKey: [memberskeys.myInfo],
       });
 
-      // 헤더의 닉네임은 (main) 레이아웃이 서버에서 한 번 조회해 내려준 값이라
-      // react-query 캐시 갱신만으로는 반영되지 않는다. 로그인/로그아웃과 같은
-      // 이유로 라우트 캐시를 강제로 갱신한다.
       router.refresh();
     },
     retry: false,
@@ -143,7 +140,6 @@ export const useProfileImageUpload = () => {
         queryKey: [groupkeys.myGroup],
       });
 
-      // 헤더 아바타도 서버 컴포넌트가 내려준 값이라 위와 같은 이유로 강제 갱신한다.
       router.refresh();
     },
     retry: false,

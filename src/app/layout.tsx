@@ -38,8 +38,6 @@ export default async function RootLayout({
 }) {
   const cookieStore = await cookies();
   const themeCookie = cookieStore.get("theme")?.value;
-  // 쿠키가 없으면(사용자가 아직 고른 적 없음) data-theme을 비워두고 CSS의
-  // prefers-color-scheme 미디어쿼리가 기기 설정을 따르게 한다.
   const theme =
     themeCookie === "dark" || themeCookie === "light" ? themeCookie : undefined;
 

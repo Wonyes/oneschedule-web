@@ -32,11 +32,9 @@ describe("useSheetStore", () => {
   });
 
   test("연속으로 다른 곳에서 열면 이전 createType이 남지 않는다", () => {
-    // 그룹 페이지에서 그룹 일정 추가로 열었다가
     useSheetStore.getState().openSheet({ date: new Date(), type: "GROUP" });
     expect(useSheetStore.getState().createType).toBe("GROUP");
 
-    // 닫고 홈에서 개인 일정 추가로 다시 열면 GROUP이 남아있으면 안 된다
     useSheetStore.getState().closeSheet();
     useSheetStore.getState().openSheet({ date: new Date(), type: "PERSONAL" });
 

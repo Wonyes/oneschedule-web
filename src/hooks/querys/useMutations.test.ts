@@ -1,8 +1,3 @@
-/**
- * Get/Post/Patch/Put/Delete 헬퍼가 params/body를 실제 요청에 그대로 실어 보내는지 검증한다.
- * Put이 params를 무시하고 있던 실제 버그(그룹명 변경 500)가 있었어서, 각 메서드가
- * params를 빠뜨리지 않는지가 핵심이다.
- */
 import MockAdapter from "axios-mock-adapter";
 import api from "@/src/lib/api";
 import { Get, Post, Patch, Put, Delete } from "./useMutations";

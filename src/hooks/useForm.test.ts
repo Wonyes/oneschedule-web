@@ -33,7 +33,6 @@ describe("useForm", () => {
       phone: "",
     });
     expect(result.current.errors.nickname).toBe("");
-    // 다른 필드의 success는 건드리지 않는다
     expect(result.current.success.phone).toBe("확인되었습니다.");
   });
 

@@ -167,8 +167,7 @@
 }
 
 /* =========================================================
-   DARK PALETTE — <html data-theme="dark">이거나, 테마를 명시적으로
-   고른 적 없는 상태에서 기기가 다크 모드일 때 적용된다.
+   DARK PALETTE — <html data-theme="dark">일 때만 적용된다.
    기본값은 아래 :root(라이트)이고, 이 블록이 그 위를 덮는다.
 ========================================================= */
 
@@ -248,9 +247,6 @@
   );
 }
 
-/* 사용자가 라이트/다크를 직접 고른 적 없으면(쿠키 없음 = data-theme 속성 없음)
-   기기의 다크 모드 설정을 따른다. 명시적으로 "라이트"를 고른 경우(data-theme="light")는
-   기기 설정과 무관하게 라이트를 유지해야 하므로 :not([data-theme="light"])로 제외한다. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --main-bg: #191c26;
@@ -437,7 +433,6 @@
     scrollbar-gutter: stable;
   }
 
-  /* 스크롤은 되지만 막대는 안 보이게. 휠/터치/드래그 스크롤은 그대로 동작한다. */
   .scroll-hidden {
     scrollbar-width: none;
     -ms-overflow-style: none;

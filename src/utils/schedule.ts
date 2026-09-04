@@ -224,12 +224,6 @@ const applyLayout = (
 
   if (current.length > 0) clusters.push(current);
 
-  // 긴 일정 하나가 여러 시간대의 짧은 일정 묶음을 체인으로 이어버리면 클러스터가
-  // 하루 전체로 부풀어서 열이 수십 개가 되고 카드가 실선처럼 얇아진다. 카드로
-  // 보여줄 열 수를 여기서 상한을 두고, 넘치는 일정은 카드 대신 "+N개" 배지 하나로
-  // 묶는다(월간뷰의 "+N개 더보기"와 같은 패턴) — 클릭하면 그 날의 일간뷰로 이동.
-  // 호출하는 뷰의 칸 너비에 맞게 maxVisibleColumns를 다르게 넘긴다
-  // (하루 전체 폭을 쓰는 일간뷰는 넉넉히, 요일이 7~3칸으로 쪼개지는 주간뷰는 좁게).
   const MAX_VISIBLE_COLUMNS = maxVisibleColumns;
 
   const result: EventLayout[] = [];
@@ -262,8 +256,6 @@ const applyLayout = (
       return;
     }
 
-    // 열이 상한을 넘으면 앞의 (상한 - 1)개 열만 카드로 보여주고, 나머지 열은
-    // 전부 마지막 칸의 "+N개" 배지 하나로 합친다.
     const width = 100 / MAX_VISIBLE_COLUMNS;
     const visibleColumns = columns.slice(0, MAX_VISIBLE_COLUMNS - 1);
     const overflowEvents = columns.slice(MAX_VISIBLE_COLUMNS - 1).flat();

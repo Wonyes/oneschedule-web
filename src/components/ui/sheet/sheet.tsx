@@ -240,8 +240,6 @@ export default function Sheet() {
     };
   }, [open]);
 
-  // 시트는 전역 store 상태라 라우트를 옮겨도 열린 채로 남는다.
-  // 페이지가 바뀌면 무조건 닫아서 다른 화면 위에 겹쳐 보이는 걸 막는다.
   useEffect(() => {
     closeSheet();
     // eslint-disable-next-line react-hooks/exhaustive-deps

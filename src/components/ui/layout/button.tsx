@@ -11,7 +11,6 @@ type ButtonProps = {
   type?: "button" | "submit" | "reset";
   /** 아이콘만 있는 버튼은 스크린리더용 레이블이 필요하다 */
   ariaLabel?: string;
-  /** 페이지 이동이 목적이면 href를 넘긴다 — 내부적으로 Link(prefetch)로 렌더링된다 */
   href?: string;
 };
 

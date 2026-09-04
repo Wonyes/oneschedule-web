@@ -33,8 +33,6 @@ export default function DayView({
   const dateKey = format(currentDate, "yyyyMMdd");
   const targetWeather = weathers?.[dateKey];
 
-  // "+N개" 배지를 누르면 그 날만 상한 없이 전부 펼쳐 보여준다. 날짜를 넘기면
-  // 다시 접힌 상태로 시작한다.
   const [showAllOverlaps, setShowAllOverlaps] = useState(false);
   const [expandedDate, setExpandedDate] = useState(currentDate);
 

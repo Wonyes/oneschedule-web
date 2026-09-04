@@ -20,7 +20,6 @@ type EventCardProps = {
   date?: Date;
   className?: string;
   onClick?: () => void;
-  /** 겹치는 일정이 너무 많아 카드 대신 "+N개" 배지로 보여줄 때 */
   isOverflow?: boolean;
   overflowCount?: number;
 };

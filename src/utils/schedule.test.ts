@@ -329,8 +329,6 @@ describe("getWeekEvents (겹치는 일정 레이아웃)", () => {
   test("동시에 겹치는 일정이 많으면 카드 대신 +N개 배지로 묶는다", () => {
     const weekDates = getWeekDates(new Date(2024, 0, 17));
 
-    // 같은 시간대에 8개가 한꺼번에 겹친다. 주간뷰는 요일 칸이 좁아서 카드는
-    // 1개(2열 중 마지막 열은 배지)만 보이고, 나머지 7개는 오버플로 배지로 묶인다.
     const events: ScheduleEvent[] = Array.from({ length: 8 }, (_, i) =>
       event({
         id: i + 1,
@@ -355,8 +353,6 @@ describe("getWeekEvents (겹치는 일정 레이아웃)", () => {
   });
 
   test("일간뷰는 칸이 넓어서 더 많은 카드를 그대로 보여준다", () => {
-    // 같은 시간대에 5개가 겹친다 — 일간뷰 기본 상한(4)보다 많으므로
-    // 3개는 카드로, 나머지 2개는 배지로 묶인다.
     const events: ScheduleEvent[] = Array.from({ length: 5 }, (_, i) =>
       event({
         id: i + 1,

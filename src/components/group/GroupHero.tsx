@@ -1,6 +1,7 @@
 "use client";
 
 import { Copy, Crown, Pencil } from "lucide-react";
+import { useRouter } from "next/navigation";
 import BaseCard from "../ui/card/BaseCard";
 import { Row, Column, Between } from "../ui/layout/flex";
 import { GhostBtn, Primary } from "../ui/layout/button";
@@ -14,9 +15,12 @@ import { useQueryClient } from "@tanstack/react-query";
 import { groupkeys } from "@/src/hooks/querys/key/groupKey";
 import { memberskeys } from "@/src/hooks/querys/key/members";
 import { MyGroupResponse } from "@/src/types/group";
+import { useActiveGroupStore } from "@/src/hooks/stores/useActiveGroupStore";
 
 export const GroupHero = ({ group }: { group: MyGroupResponse }) => {
   const queryClient = useQueryClient();
+  const router = useRouter();
+  const clearActiveGroup = useActiveGroupStore((s) => s.clearActiveGroup);
 
   const { openToast, openConfirm } = useOverlay();
   const { form, formChange } = useForm({
@@ -67,6 +71,8 @@ export const GroupHero = ({ group }: { group: MyGroupResponse }) => {
             params: { groupNo: group.groupNo },
           }),
     onSuccess: async () => {
+      clearActiveGroup();
+
       await queryClient.removeQueries({
         queryKey: [groupkeys.myGroup],
       });
@@ -74,6 +80,8 @@ export const GroupHero = ({ group }: { group: MyGroupResponse }) => {
       await queryClient.invalidateQueries({
         queryKey: [memberskeys.myInfo],
       });
+
+      router.refresh();
 
       openToast({
         message:

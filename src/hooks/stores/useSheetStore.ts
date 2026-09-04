@@ -12,9 +12,6 @@ type OpenSheetParams = {
   startTime?: string;
   endTime?: string;
   event?: ScheduleEvent;
-  /** 새 일정을 개인/그룹 중 어디로 만들지. 시트를 연 곳(홈/그룹/스케줄 탭)의
-   * 맥락으로 명시적으로 넘긴다 — 안 넘기면 전역 뷰 상태에 기대게 되어, 마지막으로
-   * 봤던 탭이 엉뚱한 곳에서 열린 시트에도 남아 잘못된 곳에 등록되는 문제가 있었다. */
   type?: ScheduleViewType;
 };
 
@@ -50,7 +47,6 @@ type SheetStore = {
 
   form: SheetForm;
   editingId: number | null;
-  /** 새 일정 생성 시에만 쓰인다. 어디를 편집 중인지와는 무관. */
   createType: ScheduleViewType;
 
   updateForm: (values: Partial<SheetForm>) => void;
