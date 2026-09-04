@@ -75,6 +75,7 @@ interface DayColumnProps {
   layouts: ReturnType<typeof getWeekEvents>;
   onClickTime: (date: Date, startTime: string) => void;
   onClickEvent: (event: ScheduleEvent) => void;
+  onClickOverflow: (date: Date) => void;
 }
 
 const DayColumn = ({
@@ -82,6 +83,7 @@ const DayColumn = ({
   layouts,
   onClickTime,
   onClickEvent,
+  onClickOverflow,
 }: DayColumnProps) => {
   const dayLayouts = layouts.filter((layout) => isSameDay(layout.date, date));
 
@@ -91,15 +93,21 @@ const DayColumn = ({
 
       {dayLayouts.map((layout) => (
         <ScheduleCard
-          key={`${layout.event.id}-${layout.date.toISOString()}`}
+          key={`${layout.event.id}-${layout.date.toISOString()}-${layout.isOverflow ? "overflow" : ""}`}
           event={layout.event}
           top={layout.top}
           height={layout.height}
           date={layout.date}
           width={layout.width}
           left={layout.left}
+          isOverflow={layout.isOverflow}
+          overflowCount={layout.overflowCount}
           variant="week"
-          onClick={() => onClickEvent(layout.event)}
+          onClick={() =>
+            layout.isOverflow
+              ? onClickOverflow(date)
+              : onClickEvent(layout.event)
+          }
         />
       ))}
     </div>
@@ -173,6 +181,7 @@ export default function WeekView({
   const currentDate = useScheduleStore((state) => state.currentDate);
 
   const setCurrentDate = useScheduleStore((state) => state.setCurrentDate);
+  const setMode = useScheduleStore((state) => state.setMode);
 
   const viewType = useScheduleViewStore((s) => s.viewType);
   const { openSheet } = useSheetStore();
@@ -208,6 +217,11 @@ export default function WeekView({
 
   const handleClickEvent = (event: ScheduleEvent) => {
     openSheet({ event });
+  };
+
+  const handleClickOverflow = (date: Date) => {
+    setCurrentDate(date);
+    setMode("day");
   };
 
   const handleMobilePrevious = () => setCurrentDate(addDays(currentDate, -3));
@@ -253,7 +267,6 @@ export default function WeekView({
             className="
               grid min-h-full
               grid-cols-[60px_repeat(7,minmax(0,1fr))]
-              overflow-hidden
               rounded-2xl
               neu-pressed
             "
@@ -267,6 +280,7 @@ export default function WeekView({
                 layouts={allWeekLayouts}
                 onClickTime={handleClickTime}
                 onClickEvent={handleClickEvent}
+                onClickOverflow={handleClickOverflow}
               />
             ))}
           </div>
@@ -292,7 +306,6 @@ export default function WeekView({
             className="
               grid min-h-full
               grid-cols-[36px_repeat(3,minmax(0,1fr))]
-              overflow-hidden
               rounded-2xl
               neu-pressed
             "
@@ -306,6 +319,7 @@ export default function WeekView({
                 layouts={allWeekLayouts}
                 onClickTime={handleClickTime}
                 onClickEvent={handleClickEvent}
+                onClickOverflow={handleClickOverflow}
               />
             ))}
           </div>

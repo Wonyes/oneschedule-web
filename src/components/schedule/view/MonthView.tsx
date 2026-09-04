@@ -84,7 +84,7 @@ export default function MonthView({
           </BaseCard>
 
           <div className="flex-1 overflow-y-auto min-h-0 p-2">
-            <div className="grid grid-cols-7 grid-rows-6 min-h-full neu-pressed rounded-2xl overflow-hidden">
+            <div className="grid grid-cols-7 grid-rows-6 min-h-full neu-pressed rounded-2xl">
               {monthDates.map((date) => {
                 const inCurrentMonth = isSameMonth(date, currentDate);
                 const isHoliday = findHoliday(date, holidays);

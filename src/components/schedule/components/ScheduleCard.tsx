@@ -20,6 +20,9 @@ type EventCardProps = {
   date?: Date;
   className?: string;
   onClick?: () => void;
+  /** 겹치는 일정이 너무 많아 카드 대신 "+N개" 배지로 보여줄 때 */
+  isOverflow?: boolean;
+  overflowCount?: number;
 };
 
 export default function ScheduleCard({
@@ -32,7 +35,35 @@ export default function ScheduleCard({
   className = "",
   variant = "week",
   onClick,
+  isOverflow = false,
+  overflowCount = 0,
 }: EventCardProps) {
+  if (isOverflow && (variant === "week" || variant === "day")) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        aria-label={`숨겨진 일정 ${overflowCount}개 보기`}
+        className={`
+          absolute rounded-lg z-10
+          bg-surface-hover border border-divider
+          typo-caption-2 font-medium text-muted
+          flex items-center justify-center
+          hover:bg-surface hover:text-foreground hover:z-50
+          transition-colors ${className}
+        `}
+        style={{
+          top: `${top}%`,
+          height: `${height}%`,
+          minHeight: 28,
+          left: `${left ?? 0}%`,
+          width: `calc(${width ?? 100}% - ${GRID_CLICK_GUTTER}px)`,
+        }}
+      >
+        +{overflowCount}
+      </button>
+    );
+  }
   // category에 "default"가 올 수 있는데 EVENT_STYLES에는 항목이 없다.
   const style = EVENT_STYLES[event.category as keyof typeof EVENT_STYLES] as
     | (typeof EVENT_STYLES)[keyof typeof EVENT_STYLES]

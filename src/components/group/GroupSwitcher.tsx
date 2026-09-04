@@ -10,8 +10,12 @@ import { useActiveGroupStore } from "@/src/hooks/stores/useActiveGroupStore";
 
 export default function GroupSwitcher({
   enabled = true,
+  align = "right",
 }: {
   enabled?: boolean;
+  /** 패널이 트리거의 왼쪽/오른쪽 중 어느 쪽에 붙을지. 트리거가 화면 왼쪽/가운데에
+   * 있으면 "right"(오른쪽 정렬 → 왼쪽으로 넓게 펼침)는 뷰포트 밖으로 잘릴 수 있다. */
+  align?: "left" | "right";
 }) {
   const { groups, group } = useActiveGroup(enabled);
   const setActiveGroup = useActiveGroupStore((s) => s.setActiveGroup);
@@ -24,6 +28,7 @@ export default function GroupSwitcher({
     <DropdownMenu
       label="그룹 전환"
       disabled={isSingle}
+      align={align}
       panelClassName="w-56"
       triggerClassName={`text-secondary px-2 py-1.5 typo-caption-2 lg:px-2.5 ${
         isSingle ? "" : "hover:text-foreground"

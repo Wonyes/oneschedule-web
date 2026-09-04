@@ -9,7 +9,7 @@ import GroupActivitySection from "./GroupActivitySection";
 
 export default function GroupDashboard({ group }: { group: MyGroupResponse }) {
   return (
-    <Column className="w-full h-full px-4 py-4 gap-5 overflow-y-auto scroll-stable">
+    <Column className="w-full h-full gap-5 overflow-y-auto scroll-stable">
       {/* Hero */}
       <GroupHero group={group} />
 

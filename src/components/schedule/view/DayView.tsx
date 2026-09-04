@@ -1,6 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
+import { useState } from "react";
 import { getDayColor, getDayEvents } from "@/src/utils/schedule";
 import { useScheduleStore } from "@/src/hooks/stores/useScheduleStore";
 import { useScheduleViewStore } from "@/src/hooks/stores/useScheduleViewStore";
@@ -32,7 +33,21 @@ export default function DayView({
   const dateKey = format(currentDate, "yyyyMMdd");
   const targetWeather = weathers?.[dateKey];
 
-  const getDayLayouts = getDayEvents(events, currentDate);
+  // "+N개" 배지를 누르면 그 날만 상한 없이 전부 펼쳐 보여준다. 날짜를 넘기면
+  // 다시 접힌 상태로 시작한다.
+  const [showAllOverlaps, setShowAllOverlaps] = useState(false);
+  const [expandedDate, setExpandedDate] = useState(currentDate);
+
+  if (currentDate !== expandedDate) {
+    setExpandedDate(currentDate);
+    setShowAllOverlaps(false);
+  }
+
+  const getDayLayouts = getDayEvents(
+    events,
+    currentDate,
+    showAllOverlaps ? Infinity : undefined,
+  );
 
   const swipeHandlers = useSwipe(next, prev);
 
@@ -90,15 +105,21 @@ export default function DayView({
             ))}
             {getDayLayouts.map((layout) => (
               <ScheduleCard
-                key={`${layout.event.id}-${layout.date.getTime()}`}
+                key={`${layout.event.id}-${layout.date.getTime()}-${layout.isOverflow ? "overflow" : ""}`}
                 event={layout.event}
                 date={layout.date}
                 top={layout.top}
                 height={layout.height}
                 width={layout.width}
                 left={layout.left}
+                isOverflow={layout.isOverflow}
+                overflowCount={layout.overflowCount}
                 variant="day"
-                onClick={() => openSheet({ event: layout.event })}
+                onClick={
+                  layout.isOverflow
+                    ? () => setShowAllOverlaps(true)
+                    : () => openSheet({ event: layout.event })
+                }
               />
             ))}
           </div>

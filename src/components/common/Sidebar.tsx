@@ -19,7 +19,7 @@ export default function Sidebar() {
       className="
         fixed inset-x-4 py-1 z-40 h-fit rounded-2xl max-w-md mx-auto
         bottom-[calc(1rem+env(safe-area-inset-bottom))]
-        sm:static sm:inset-x-auto sm:bottom-auto sm:w-16 sm:h-full sm:max-w-none sm:mx-0
+        sm:static sm:inset-x-auto sm:bottom-auto sm:mt-4 sm:w-16 sm:h-[calc(100%-1rem)] sm:max-w-none sm:mx-0
         glass sm:neu-flat
         flex flex-row sm:flex-col items-center justify-around sm:justify-between
         py-0 sm:py-5 shrink-0

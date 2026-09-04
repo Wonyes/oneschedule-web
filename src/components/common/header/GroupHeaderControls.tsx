@@ -17,7 +17,7 @@ export default function GroupHeaderControls() {
 
   return (
     <div className="flex items-center gap-1.5">
-      {groups.length > 1 && <GroupSwitcher />}
+      {groups.length > 1 && <GroupSwitcher align="left" />}
 
       <Link
         href="/group?add=1"

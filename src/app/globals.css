@@ -437,6 +437,16 @@
     scrollbar-gutter: stable;
   }
 
+  /* 스크롤은 되지만 막대는 안 보이게. 휠/터치/드래그 스크롤은 그대로 동작한다. */
+  .scroll-hidden {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .scroll-hidden::-webkit-scrollbar {
+    display: none;
+  }
+
   ::-webkit-scrollbar-track {
     background: transparent;
   }

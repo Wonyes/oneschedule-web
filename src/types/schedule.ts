@@ -86,6 +86,9 @@ export interface EventLayout {
   height: number;
   width?: number;
   left?: number;
+  /** true면 겹침이 너무 많아 카드 대신 "+N개" 배지로 표시된다. */
+  isOverflow?: boolean;
+  overflowCount?: number;
 }
 
 export type WeatherData = {

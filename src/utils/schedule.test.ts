@@ -8,6 +8,7 @@ import {
   getMonthDates,
   getEventPosition,
   getWeekEvents,
+  getDayEvents,
   markConflicts,
 } from "./schedule";
 import { ScheduleEvent, holidayType } from "../types/schedule";
@@ -325,10 +326,11 @@ describe("getWeekEvents (겹치는 일정 레이아웃)", () => {
     });
   });
 
-  test("동시에 겹치는 일정이 많아도 카드 폭이 25% 밑으로 줄지 않는다", () => {
+  test("동시에 겹치는 일정이 많으면 카드 대신 +N개 배지로 묶는다", () => {
     const weekDates = getWeekDates(new Date(2024, 0, 17));
 
-    // 같은 시간대에 8개가 한꺼번에 겹친다 — 열이 4개를 넘지 않아야 한다.
+    // 같은 시간대에 8개가 한꺼번에 겹친다. 주간뷰는 요일 칸이 좁아서 카드는
+    // 1개(2열 중 마지막 열은 배지)만 보이고, 나머지 7개는 오버플로 배지로 묶인다.
     const events: ScheduleEvent[] = Array.from({ length: 8 }, (_, i) =>
       event({
         id: i + 1,
@@ -339,10 +341,38 @@ describe("getWeekEvents (겹치는 일정 레이아웃)", () => {
 
     const layouts = getWeekEvents(events, weekDates);
 
-    expect(layouts).toHaveLength(8);
-    layouts.forEach((layout) => {
-      expect(layout.width).toBeGreaterThanOrEqual(25);
-    });
+    expect(layouts).toHaveLength(2);
+
+    const visible = layouts.filter((l) => !l.isOverflow);
+    const overflow = layouts.filter((l) => l.isOverflow);
+
+    expect(visible).toHaveLength(1);
+    expect(visible[0].width).toBeCloseTo(50);
+
+    expect(overflow).toHaveLength(1);
+    expect(overflow[0].overflowCount).toBe(7);
+    expect(overflow[0].width).toBeCloseTo(50);
+  });
+
+  test("일간뷰는 칸이 넓어서 더 많은 카드를 그대로 보여준다", () => {
+    // 같은 시간대에 5개가 겹친다 — 일간뷰 기본 상한(4)보다 많으므로
+    // 3개는 카드로, 나머지 2개는 배지로 묶인다.
+    const events: ScheduleEvent[] = Array.from({ length: 5 }, (_, i) =>
+      event({
+        id: i + 1,
+        startDate: "2024-01-17T09:00:00",
+        endDate: "2024-01-17T10:00:00",
+      }),
+    );
+
+    const layouts = getDayEvents(events, new Date(2024, 0, 17));
+
+    const visible = layouts.filter((l) => !l.isOverflow);
+    const overflow = layouts.filter((l) => l.isOverflow);
+
+    expect(visible).toHaveLength(3);
+    expect(overflow).toHaveLength(1);
+    expect(overflow[0].overflowCount).toBe(2);
   });
 });
 
