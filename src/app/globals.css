@@ -167,7 +167,8 @@
 }
 
 /* =========================================================
-   DARK PALETTE — <html data-theme="dark">일 때만 적용된다.
+   DARK PALETTE — <html data-theme="dark">이거나, 테마를 명시적으로
+   고른 적 없는 상태에서 기기가 다크 모드일 때 적용된다.
    기본값은 아래 :root(라이트)이고, 이 블록이 그 위를 덮는다.
 ========================================================= */
 
@@ -245,6 +246,80 @@
     rgba(124, 108, 246, 0.12) 45%,
     transparent 70%
   );
+}
+
+/* 사용자가 라이트/다크를 직접 고른 적 없으면(쿠키 없음 = data-theme 속성 없음)
+   기기의 다크 모드 설정을 따른다. 명시적으로 "라이트"를 고른 경우(data-theme="light")는
+   기기 설정과 무관하게 라이트를 유지해야 하므로 :not([data-theme="light"])로 제외한다. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --main-bg: #191c26;
+
+    --surface: #1f2330;
+    --surface-hover: #262b3b;
+    --back: #14161e;
+
+    --neu-light: #2c3142;
+    --neu-dark: #0d0e13;
+
+    --foreground: #f5f6fb;
+    --primary: #7c6cf6;
+
+    --t-title: #ffffff;
+    --text: #e4e6f0;
+    --muted: #98a0b8;
+    --secondary: #ccd0e0;
+    --place-h: #6b7290;
+
+    --divider: rgba(255, 255, 255, 0.1);
+    --disable: #1e2233;
+    --b-color: rgba(124, 108, 246, 0.32);
+    --table-header: #1e2233;
+
+    --primary-500: #6d5bf2;
+    --success-500: #34d399;
+    --error-500: #f87171;
+    --pending-500: #fbbf24;
+
+    --accent: #7c6cf6;
+    --accent-soft: rgba(124, 108, 246, 0.15);
+    --accent-glow: rgba(124, 108, 246, 0.18);
+    --on-primary: #ffffff;
+
+    --blue: #38bdf8;
+    --input: #151824;
+    --line: rgba(255, 255, 255, 0.12);
+    --red: #f87171;
+
+    --soft: 0 10px 30px rgba(0, 0, 0, 0.4);
+
+    --glass-bg: rgba(30, 34, 51, 0.94);
+    --glass-border: rgba(255, 255, 255, 0.1);
+
+    --elevation-1:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      3px 4px 10px var(--neu-dark),
+      -2px -2px 7px var(--neu-light);
+    --elevation-2:
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      5px 7px 18px var(--neu-dark),
+      -4px -4px 12px var(--neu-light);
+    --elevation-btn:
+      inset 0 1px 0 rgba(255, 255, 255, 0.07),
+      2px 3px 7px var(--neu-dark),
+      -2px -2px 5px var(--neu-light);
+    --inset-1:
+      inset 0 2px 4px rgba(0, 0, 0, 0.45),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+
+    --card-glow-size: 16rem;
+    --card-glow: radial-gradient(
+      circle at center,
+      rgba(124, 108, 246, 0.3) 0%,
+      rgba(124, 108, 246, 0.12) 45%,
+      transparent 70%
+    );
+  }
 }
 
 /* =========================================================

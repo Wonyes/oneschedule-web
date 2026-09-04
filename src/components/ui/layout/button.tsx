@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import { cn } from "@/src/utils/cn";
 
 type ButtonProps = {
@@ -10,6 +11,8 @@ type ButtonProps = {
   type?: "button" | "submit" | "reset";
   /** 아이콘만 있는 버튼은 스크린리더용 레이블이 필요하다 */
   ariaLabel?: string;
+  /** 페이지 이동이 목적이면 href를 넘긴다 — 내부적으로 Link(prefetch)로 렌더링된다 */
+  href?: string;
 };
 
 const BaseButton = ({
@@ -20,35 +23,52 @@ const BaseButton = ({
   onClick,
   type = "button",
   ariaLabel,
+  href,
 }: ButtonProps) => {
+  const sharedClassName = cn(
+    `
+    flex
+    items-center
+    justify-center
+    gap-2
+    rounded-xl
+    font-medium
+    text-sm
+    whitespace-nowrap
+    btn-spring
+    active:scale-[0.98]
+    disabled:cursor-not-allowed
+    disabled:opacity-40
+    focus-visible:outline-none
+    focus-visible:ring-2
+    focus-visible:ring-accent/60
+    focus-visible:ring-offset-2
+    focus-visible:ring-offset-[var(--main-bg)]
+    `,
+    className,
+  );
+
+  if (href) {
+    return (
+      <Link
+        href={href}
+        prefetch
+        aria-label={ariaLabel ?? (text ? undefined : "버튼")}
+        className={sharedClassName}
+      >
+        {icon}
+        {text}
+      </Link>
+    );
+  }
+
   return (
     <button
       type={type}
       disabled={isDisabled}
       onClick={onClick}
       aria-label={ariaLabel ?? (text ? undefined : "버튼")}
-      className={cn(
-        `
-        flex
-        items-center
-        justify-center
-        gap-2
-        rounded-xl
-        font-medium
-        text-sm
-        whitespace-nowrap
-        btn-spring
-        active:scale-[0.98]
-        disabled:cursor-not-allowed
-        disabled:opacity-40
-        focus-visible:outline-none
-        focus-visible:ring-2
-        focus-visible:ring-accent/60
-        focus-visible:ring-offset-2
-        focus-visible:ring-offset-[var(--main-bg)]
-        `,
-        className,
-      )}
+      className={sharedClassName}
     >
       {icon}
       {text}

@@ -2,18 +2,16 @@
 
 import { CalendarClock } from "lucide-react";
 import IconBox from "../../ui/IconBox";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import LocationPicker from "./LocationPicker";
 import { Row } from "../../ui/layout/flex";
 
 export default function Logo() {
-  const router = useRouter();
-
   return (
     <Row className="gap-2">
-      <button
-        type="button"
-        onClick={() => router.push("/")}
+      <Link
+        href="/"
+        prefetch
         className="flex items-center gap-2 shrink-0"
         aria-label="홈으로 이동"
       >
@@ -29,7 +27,7 @@ export default function Logo() {
             Scheduler
           </span>
         </span>
-      </button>
+      </Link>
 
       <div className="lg:hidden">
         <LocationPicker />

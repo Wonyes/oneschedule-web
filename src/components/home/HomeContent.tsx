@@ -1,7 +1,6 @@
 "use client";
 
 import { CalendarDays } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 
 import { MyInfoResponse } from "@/src/hooks/querys/useMembers";
@@ -23,7 +22,6 @@ export default function HomeContent({
   initialGroups?: MyGroupResponse[];
   activeGroup?: MyGroupResponse;
 }) {
-  const router = useRouter();
   const today = useMemo(() => new Date(), []);
 
   return (
@@ -51,7 +49,7 @@ export default function HomeContent({
             icon={<CalendarDays size={18} strokeWidth={1.5} />}
             title="캘린더"
             description="내 일정과 그룹 일정을 확인하세요"
-            onClick={() => router.push("/schedule")}
+            href="/schedule"
           />
 
           <GroupQuickLink

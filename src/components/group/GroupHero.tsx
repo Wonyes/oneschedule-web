@@ -34,7 +34,8 @@ export const GroupHero = ({ group }: { group: MyGroupResponse }) => {
     mutationFn: () =>
       Put({
         url: `/group/group-name/${group.groupNo}`,
-        body: {
+        body: null,
+        params: {
           groupName: form.groupName,
         },
       }),
@@ -59,12 +60,12 @@ export const GroupHero = ({ group }: { group: MyGroupResponse }) => {
 
   const { mutate: deleteGroup } = useAppMutation({
     mutationFn: () =>
-      Delete({
-        url:
-          group.groupRole === "SUPER"
-            ? `/group/${group.groupNo}/disband`
-            : "/group/leave",
-      }),
+      group.groupRole === "SUPER"
+        ? Delete({ url: `/group/${group.groupNo}/disband` })
+        : Delete({
+            url: "/group/leave",
+            params: { groupNo: group.groupNo },
+          }),
     onSuccess: async () => {
       await queryClient.removeQueries({
         queryKey: [groupkeys.myGroup],
@@ -82,7 +83,6 @@ export const GroupHero = ({ group }: { group: MyGroupResponse }) => {
       });
     },
     onError: (err) => {
-      console.log(err);
       openToast({
         message: getErrorMessage(err),
       });

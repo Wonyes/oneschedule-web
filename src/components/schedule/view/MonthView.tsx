@@ -12,6 +12,7 @@ import {
 } from "@/src/utils/schedule";
 import ScheduleCard from "../components/ScheduleCard";
 import { useScheduleStore } from "@/src/hooks/stores/useScheduleStore";
+import { useScheduleViewStore } from "@/src/hooks/stores/useScheduleViewStore";
 import { ScheduleViewProps } from "@/src/types/schedule";
 import WeatherBadge from "../components/WeatherBadge";
 import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
@@ -33,6 +34,7 @@ export default function MonthView({
   const setMode = useScheduleStore((s) => s.setMode);
   const setCurrentDate = useScheduleStore((s) => s.setCurrentDate);
   const monthDates = getMonthDates(currentDate);
+  const viewType = useScheduleViewStore((s) => s.viewType);
   const { openSheet } = useSheetStore();
 
   const [selectedDate, setSelectedDate] = useState(currentDate);
@@ -103,7 +105,7 @@ export default function MonthView({
                 return (
                   <div
                     key={date.toISOString()}
-                    onClick={() => openSheet({ date })}
+                    onClick={() => openSheet({ date, type: viewType })}
                     className={`border-r border-b border-divider/40 p-1 cursor-pointer hover:bg-surface/40 transition-colors ${
                       inCurrentMonth ? "" : "opacity-40"
                     }`}
@@ -244,7 +246,7 @@ export default function MonthView({
 
             <button
               type="button"
-              onClick={() => openSheet({ date: selectedDate })}
+              onClick={() => openSheet({ date: selectedDate, type: viewType })}
               className="flex h-8 w-8 items-center justify-center rounded-full text-muted transition hover:bg-muted/10 active:scale-95"
               aria-label="일정 추가"
             >
@@ -258,7 +260,7 @@ export default function MonthView({
 
               <button
                 type="button"
-                onClick={() => openSheet({ date: selectedDate })}
+                onClick={() => openSheet({ date: selectedDate, type: viewType })}
                 className="btn-spring neu-btn text-secondary hover:text-foreground flex h-9 items-center gap-1.5 rounded-xl px-4 typo-caption-2 font-medium"
               >
                 <Plus size={14} strokeWidth={2} />

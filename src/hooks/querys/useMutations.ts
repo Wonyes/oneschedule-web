@@ -42,7 +42,7 @@ export const Patch = async <T>({ url, body, params }: ApiProps): Promise<T> => {
   return (response.data.result ?? response.data) as T;
 };
 
-export const Put = async <T>({ url, body }: ApiProps): Promise<T> => {
-  const response = await api.put(url, body);
+export const Put = async <T>({ url, body, params }: ApiProps): Promise<T> => {
+  const response = await api.put(url, body, { params });
   return (response.data.result ?? response.data) as T;
 };

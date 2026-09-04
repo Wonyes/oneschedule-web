@@ -3,6 +3,7 @@
 import { format } from "date-fns";
 import { getDayColor, getDayEvents } from "@/src/utils/schedule";
 import { useScheduleStore } from "@/src/hooks/stores/useScheduleStore";
+import { useScheduleViewStore } from "@/src/hooks/stores/useScheduleViewStore";
 import ScheduleCard from "../components/ScheduleCard";
 import { ScheduleViewProps } from "@/src/types/schedule";
 import { useIsHoliday } from "@/src/hooks/useIsHoliday";
@@ -25,6 +26,7 @@ export default function DayView({
   const next = useScheduleStore((s) => s.next);
   const prev = useScheduleStore((s) => s.prev);
   const holiday = useIsHoliday(currentDate, holidays);
+  const viewType = useScheduleViewStore((s) => s.viewType);
   const { openSheet } = useSheetStore();
 
   const dateKey = format(currentDate, "yyyyMMdd");
@@ -80,6 +82,7 @@ export default function DayView({
                   openSheet({
                     date: currentDate,
                     startTime: hour,
+                    type: viewType,
                   })
                 }
                 className="h-11 sm:h-14 border-b border-divider/40 box-border hover:bg-surface/40 transition-colors cursor-pointer"

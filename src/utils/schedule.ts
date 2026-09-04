@@ -223,6 +223,12 @@ const applyLayout = (events: EventLayout[]): EventLayout[] => {
 
   const laidOut = new Map<EventLayout, { width: number; left: number }>();
 
+  // 긴 일정 하나가 여러 시간대의 짧은 일정 묶음을 체인으로 이어버리면 클러스터가
+  // 하루 전체로 부풀어서 열이 수십 개가 되고 카드가 실선처럼 얇아진다. 열 개수를
+  // 여기서 상한을 둬서 카드 최소 폭을 보장하고, 넘치는 일정은 가장 먼저 끝나는
+  // 열에 겹쳐 넣는다(호버 시 z-index로 앞에 오니 여전히 클릭은 가능하다).
+  const MAX_COLUMNS = 4;
+
   clusters.forEach((cluster) => {
     // (2) 열 배정: 기존 열의 마지막 일정과 겹치지 않으면 그 열을 재사용
     const columns: EventLayout[][] = [];
@@ -234,8 +240,16 @@ const applyLayout = (events: EventLayout[]): EventLayout[] => {
 
       if (column) {
         column.push(event);
-      } else {
+      } else if (columns.length < MAX_COLUMNS) {
         columns.push([event]);
+      } else {
+        const earliestEndingColumn = columns.reduce((a, b) => {
+          const aEnd = a[a.length - 1].top + a[a.length - 1].height;
+          const bEnd = b[b.length - 1].top + b[b.length - 1].height;
+          return aEnd <= bEnd ? a : b;
+        });
+
+        earliestEndingColumn.push(event);
       }
     });
 

@@ -2,6 +2,7 @@
 
 import React from "react";
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 import BaseCard from "@/src/components/ui/card/BaseCard";
 import { Column, Row } from "@/src/components/ui/layout/flex";
@@ -11,17 +12,18 @@ export default function QuickLink({
   icon,
   title,
   description,
-  onClick,
+  href,
 }: {
   icon: React.ReactNode;
   title: string;
   description: React.ReactNode;
-  onClick: () => void;
+  href: string;
 }) {
   return (
     <BaseCard glow className="p-5">
-      <button
-        onClick={onClick}
+      <Link
+        href={href}
+        prefetch
         className="group flex w-full items-center justify-between gap-4 text-left"
       >
         <Row className="gap-3">
@@ -42,7 +44,7 @@ export default function QuickLink({
           strokeWidth={1.75}
           className="shrink-0 text-muted transition-transform group-hover:translate-x-0.5"
         />
-      </button>
+      </Link>
     </BaseCard>
   );
 }

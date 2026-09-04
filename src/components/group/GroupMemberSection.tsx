@@ -113,7 +113,6 @@ export default function GroupMemberSection({
       onFunc: () => {
         memberEditRef.current?.submit((data) => {
           updateMember(data);
-          console.log(data, "#@#@");
         });
       },
     });
@@ -140,7 +139,7 @@ export default function GroupMemberSection({
         <h2 className="typo-sub-t-1 text-foreground">그룹 멤버</h2>
       </div>
 
-      <Column className="h-[340px] lg:h-[440px] gap-2.5 overflow-y-auto pr-2">
+      <Column className="h-[340px] lg:h-[440px] gap-2.5 overflow-y-auto px-0.5 py-1 pr-2.5">
         {members.map((member: GroupMember) => (
           <Between
             key={member.memberNo}

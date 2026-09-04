@@ -1,10 +1,10 @@
 "use client";
 
 import { Calendar, Home, Users, Settings } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Sidebar() {
-  const router = useRouter();
   const pathname = usePathname();
 
   const menuItems = [
@@ -36,9 +36,10 @@ export default function Sidebar() {
                 : pathname.startsWith(item.path);
 
             return (
-              <button
+              <Link
                 key={item.id}
-                onClick={() => router.push(item.path)}
+                href={item.path}
+                prefetch
                 title={item.label}
                 aria-current={isActive ? "page" : undefined}
                 className={`
@@ -72,7 +73,7 @@ export default function Sidebar() {
                     "
                   />
                 )}
-              </button>
+              </Link>
             );
           })}
         </nav>

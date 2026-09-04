@@ -9,6 +9,7 @@ import { useForm } from "@/src/hooks/useForm";
 import { useOverlay } from "@/src/hooks/useOverlay";
 import { getErrorMessage, useAppMutation } from "@/src/types/ErrorResponse";
 import { CheckCircle2 } from "lucide-react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export default function LoginForm() {
@@ -51,7 +52,10 @@ export default function LoginForm() {
   };
 
   return (
-    <Column className="max-w-[420px] w-full gap-6">
+    <form
+      onSubmit={handleLogin}
+      className="flex max-w-[420px] w-full flex-col items-start gap-6"
+    >
       <BrandHero />
 
       <div className="w-full">
@@ -74,7 +78,8 @@ export default function LoginForm() {
             className="text-success-500 mt-0.5 shrink-0"
           />
           <span className="typo-caption-2 text-secondary">
-            계정이 만들어졌어요. 방금 입력한 이메일과 비밀번호로 로그인해 주세요.
+            계정이 만들어졌어요. 방금 입력한 이메일과 비밀번호로 로그인해
+            주세요.
           </span>
         </Row>
       )}
@@ -82,35 +87,40 @@ export default function LoginForm() {
       <Column className="gap-4 w-full">
         <Input
           name="email"
+          type="email"
+          autoComplete="email"
           value={form.email}
           className="w-full"
           placeholder="이메일"
-          onEnter={handleLogin}
           onChange={formChange}
-          autoFocus
         />
         <PasswordInput
           name="password"
+          autoComplete="current-password"
           value={form.password}
           className="w-full"
           placeholder="비밀번호"
-          onEnter={handleLogin}
           onChange={formChange}
         />
       </Column>
 
-      <Primary className="w-full py-4" text="로그인" onClick={handleLogin} />
+      <Primary
+        type="submit"
+        className="w-full py-4"
+        text="로그인"
+      />
 
       <Row className="flex justify-center w-full gap-2">
         <p className="typo-sub-t-3 text-place-h">계정이 없나요?</p>
 
-        <span
-          onClick={() => router.push("/sign")}
-          className="typo-sub-t-1 cursor-pointer text-indigo-600 hover:underline"
+        <Link
+          href="/sign"
+          prefetch
+          className="typo-sub-t-1 text-indigo-600 hover:underline"
         >
           회원가입
-        </span>
+        </Link>
       </Row>
-    </Column>
+    </form>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { CalendarPlus, Check, UserRound, Users, X } from "lucide-react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import BaseCard from "@/src/components/ui/card/BaseCard";
@@ -19,7 +19,8 @@ type Step = {
   description: string;
   icon: React.ReactNode;
   done: boolean;
-  action: () => void;
+  href?: string;
+  action?: () => void;
   actionLabel: string;
 };
 
@@ -30,7 +31,6 @@ export default function OnboardingChecklist({
   user: MyInfoResponse;
   today: Date;
 }) {
-  const router = useRouter();
   const { openSheet } = useSheetStore();
   const { data: schedules } = useSchedules("PERSONAL");
   const { groups } = useActiveGroup();
@@ -49,7 +49,7 @@ export default function OnboardingChecklist({
       description: "오늘 할 일이나 약속을 하나 추가해보세요.",
       icon: <CalendarPlus size={16} strokeWidth={1.75} />,
       done: (schedules ?? []).length > 0,
-      action: () => openSheet({ date: today }),
+      action: () => openSheet({ date: today, type: "PERSONAL" }),
       actionLabel: "일정 추가",
     },
     {
@@ -58,7 +58,7 @@ export default function OnboardingChecklist({
       description: "초대 코드로 가족·팀과 일정을 공유할 수 있어요.",
       icon: <Users size={16} strokeWidth={1.75} />,
       done: groups.length > 0,
-      action: () => router.push("/group"),
+      href: "/group",
       actionLabel: "그룹으로",
     },
     {
@@ -67,7 +67,7 @@ export default function OnboardingChecklist({
       description: "그룹 멤버가 나를 알아보기 쉬워져요.",
       icon: <UserRound size={16} strokeWidth={1.75} />,
       done: !!user.profileImageUrl,
-      action: () => router.push("/profile"),
+      href: "/profile",
       actionLabel: "프로필로",
     },
   ];
@@ -152,7 +152,17 @@ export default function OnboardingChecklist({
               </span>
             </Column>
 
-            {!step.done && (
+            {!step.done && step.href && (
+              <Link
+                href={step.href}
+                prefetch
+                className="btn-spring text-accent hover:bg-accent/10 shrink-0 rounded-lg px-3 py-1.5 typo-caption-2 font-medium"
+              >
+                {step.actionLabel}
+              </Link>
+            )}
+
+            {!step.done && step.action && (
               <button
                 type="button"
                 onClick={step.action}

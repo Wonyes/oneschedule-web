@@ -59,7 +59,7 @@ export default function HomeHero({
         <Primary
           text="일정 추가"
           icon={<Plus size={15} strokeWidth={2} />}
-          onClick={() => openSheet({ date: today })}
+          onClick={() => openSheet({ date: today, type: "PERSONAL" })}
           className="h-10 shrink-0 px-4"
         />
       </Between>

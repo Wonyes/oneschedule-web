@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, ChevronDown, Plus, Users } from "lucide-react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 import DropdownMenu from "../ui/DropdownMenu";
 import { Column } from "../ui/layout/flex";
@@ -13,8 +13,6 @@ export default function GroupSwitcher({
 }: {
   enabled?: boolean;
 }) {
-  const router = useRouter();
-
   const { groups, group } = useActiveGroup(enabled);
   const setActiveGroup = useActiveGroupStore((s) => s.setActiveGroup);
 
@@ -93,18 +91,16 @@ export default function GroupSwitcher({
 
           <div className="border-divider my-1.5 border-t" />
 
-          <button
-            type="button"
+          <Link
+            href="/group?add=1"
+            prefetch
             role="menuitem"
-            onClick={() => {
-              close();
-              router.push("/group?add=1");
-            }}
+            onClick={close}
             className="text-accent hover:bg-accent/10 flex w-full items-center gap-2 rounded-xl px-3 py-2 typo-caption-2 transition-colors"
           >
             <Plus size={14} strokeWidth={2} />
             그룹 만들기 · 참여하기
-          </button>
+          </Link>
         </>
       )}
     </DropdownMenu>

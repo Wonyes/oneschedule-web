@@ -52,6 +52,10 @@ export default function Header() {
       >
         <HeaderTabs />
 
+        <div className="hidden lg:block">
+          <GroupHeaderControls />
+        </div>
+
         <div className="absolute right-0 top-1/2 -translate-y-1/2 lg:hidden">
           <MobileGroupSwitcher />
         </div>

@@ -30,8 +30,6 @@ export default function ProfileCard({ user }: { user: MyInfoResponse }) {
     });
   };
 
-  console.log(user);
-
   return (
     <BaseCard className="p-8" glow>
       <Column className="items-center text-center">

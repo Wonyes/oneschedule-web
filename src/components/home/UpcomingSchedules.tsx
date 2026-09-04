@@ -2,7 +2,7 @@
 
 import { startOfDay } from "date-fns";
 import { Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useMemo } from "react";
 
 import BaseCard from "@/src/components/ui/card/BaseCard";
@@ -15,7 +15,6 @@ import { toScheduleEvent } from "@/src/utils/schedule";
 const MAX_ITEMS = 3;
 
 export default function UpcomingSchedules({ today }: { today: Date }) {
-  const router = useRouter();
   const { openSheet } = useSheetStore();
   const { data: personalSchedules } = useSchedules("PERSONAL", true);
   const { data: groupSchedules } = useSchedules("GROUP", true);
@@ -42,12 +41,13 @@ export default function UpcomingSchedules({ today }: { today: Date }) {
           <span className="typo-sub-t-1 text-foreground">다가오는 일정</span>
         </Column>
 
-        <button
-          onClick={() => router.push("/schedule")}
+        <Link
+          href="/schedule"
+          prefetch
           className="typo-caption-2 text-accent hover:underline"
         >
           전체 보기
-        </button>
+        </Link>
       </Between>
 
       {upcomingEvents.length === 0 ? (
@@ -58,7 +58,7 @@ export default function UpcomingSchedules({ today }: { today: Date }) {
 
           <button
             type="button"
-            onClick={() => openSheet({ date: today })}
+            onClick={() => openSheet({ date: today, type: "PERSONAL" })}
             className="btn-spring neu-btn text-secondary hover:text-foreground flex h-9 items-center gap-1.5 rounded-xl px-4 typo-caption-2 font-medium"
           >
             <Plus size={14} strokeWidth={2} />첫 일정 등록하기

@@ -324,6 +324,26 @@ describe("getWeekEvents (겹치는 일정 레이아웃)", () => {
         });
     });
   });
+
+  test("동시에 겹치는 일정이 많아도 카드 폭이 25% 밑으로 줄지 않는다", () => {
+    const weekDates = getWeekDates(new Date(2024, 0, 17));
+
+    // 같은 시간대에 8개가 한꺼번에 겹친다 — 열이 4개를 넘지 않아야 한다.
+    const events: ScheduleEvent[] = Array.from({ length: 8 }, (_, i) =>
+      event({
+        id: i + 1,
+        startDate: "2024-01-17T09:00:00",
+        endDate: "2024-01-17T10:00:00",
+      }),
+    );
+
+    const layouts = getWeekEvents(events, weekDates);
+
+    expect(layouts).toHaveLength(8);
+    layouts.forEach((layout) => {
+      expect(layout.width).toBeGreaterThanOrEqual(25);
+    });
+  });
 });
 
 describe("markConflicts (개인/그룹 일정 겹침 표시)", () => {

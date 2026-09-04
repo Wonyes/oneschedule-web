@@ -38,7 +38,6 @@ export default function EditArea({
         onChange={onChange}
         errorMessage={error}
         successMessage={success}
-        autoFocus
         rightSection={
           showCheck && (
             <Primary

@@ -9,9 +9,19 @@ export default function ThemeToggle() {
   useEffect(() => {
     // 서버가 쿠키를 읽어 <html>에 data-theme을 이미 렌더링해두므로,
     // 마운트 시 그 값을 읽어 버튼 아이콘만 맞춘다(SSR 시점엔 document가 없다).
+    // 쿠키가 없으면(명시적으로 고른 적 없음) 기기의 다크 모드 설정을 따른다.
+    const explicit = document.documentElement.dataset.theme;
+    const systemDark = window.matchMedia(
+      "(prefers-color-scheme: dark)",
+    ).matches;
+
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setTheme(
-      document.documentElement.dataset.theme === "dark" ? "dark" : "light",
+      explicit === "dark" || explicit === "light"
+        ? explicit
+        : systemDark
+          ? "dark"
+          : "light",
     );
   }, []);
 
@@ -20,12 +30,7 @@ export default function ThemeToggle() {
     setTheme(next);
 
     document.cookie = `theme=${next}; path=/; max-age=31536000; samesite=lax`;
-
-    if (next === "dark") {
-      document.documentElement.setAttribute("data-theme", "dark");
-    } else {
-      document.documentElement.removeAttribute("data-theme");
-    }
+    document.documentElement.setAttribute("data-theme", next);
   };
 
   return (

@@ -1,7 +1,6 @@
 "use client";
 
 import { Users } from "lucide-react";
-import { useRouter } from "next/navigation";
 
 import { Row } from "@/src/components/ui/layout/flex";
 import { useActiveGroup } from "@/src/hooks/querys/useGroup";
@@ -17,7 +16,6 @@ export default function GroupQuickLink({
   initialGroups?: MyGroupResponse[];
   activeGroup?: MyGroupResponse;
 }) {
-  const router = useRouter();
   const { groups, group } = useActiveGroup(true, initialGroups);
   const displayGroup = group ?? activeGroup;
   const groupCount = groups.length || (activeGroup ? 1 : 0);
@@ -26,7 +24,7 @@ export default function GroupQuickLink({
     <QuickLink
       icon={<Users size={18} strokeWidth={1.5} />}
       title="그룹"
-      onClick={() => router.push("/group")}
+      href="/group"
       description={
         displayGroup ? (
           <Row className="items-center gap-2">

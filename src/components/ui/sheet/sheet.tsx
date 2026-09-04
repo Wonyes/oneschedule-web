@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Check, ChevronDown, Search, X } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
@@ -207,7 +208,7 @@ function SheetFooter({
   isEditing: boolean;
 }) {
   return (
-    <footer className="border-t border-white/10 px-4 sm:px-6 py-4 bg-surface/90  rounded-b-[32px]">
+    <footer className="border-t border-white/10 px-4 sm:px-6 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom))] bg-surface/90 rounded-b-[32px]">
       <div className="flex gap-3">
         {isEditing && (
           <RedBtn text="삭제" onClick={onDelete} className="flex-1" />
@@ -220,12 +221,14 @@ function SheetFooter({
 }
 
 export default function Sheet() {
-  const { form, updateForm, open, closeSheet, editingId } = useSheetStore();
+  const { form, updateForm, open, closeSheet, editingId, createType } =
+    useSheetStore();
   const { isCalendarOpen, toggleCalendar } = useCalendarStore();
   const { group } = useActiveGroup(open);
   const viewType = useScheduleViewStore((s) => s.viewType);
   const { openAlert } = useOverlay();
   const queryClient = useQueryClient();
+  const pathname = usePathname();
 
   const groupNo = group?.groupNo;
 
@@ -236,6 +239,13 @@ export default function Sheet() {
       document.body.style.overflow = "unset";
     };
   }, [open]);
+
+  // 시트는 전역 store 상태라 라우트를 옮겨도 열린 채로 남는다.
+  // 페이지가 바뀌면 무조건 닫아서 다른 화면 위에 겹쳐 보이는 걸 막는다.
+  useEffect(() => {
+    closeSheet();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
   const close = () => {
     closeSheet();
@@ -248,7 +258,7 @@ export default function Sheet() {
 
   const { mutate: create } = useAppMutation({
     mutationFn: (body: ReturnType<typeof toScheduleRequest>) =>
-      viewType === "GROUP" && group
+      createType === "GROUP" && group
         ? createGroupSchedule(groupNo!, body)
         : createSchedule(body),
     onSuccess: () => {
@@ -314,7 +324,9 @@ export default function Sheet() {
       startDate: combineDateTime(startDate, startTime),
       endDate: combineDateTime(endDate, endTime),
       participantMemberNos:
-        viewType === "GROUP" ? currentForm.participantMemberNos : undefined,
+        (editingId ? viewType : createType) === "GROUP"
+          ? currentForm.participantMemberNos
+          : undefined,
     });
 
     if (editingId) {
@@ -340,7 +352,7 @@ export default function Sheet() {
       />
 
       <section
-        className={`fixed bottom-0 left-0 right-0 z-50 mx-auto flex h-[75vh] max-w-[800px] flex-col rounded-t-[32px] glass text-foreground transition-transform duration-300 ease-out ${
+        className={`fixed bottom-0 left-0 right-0 z-50 mx-auto flex h-[75dvh] max-w-[800px] flex-col rounded-t-[32px] glass text-foreground transition-transform duration-300 ease-out ${
           open
             ? "translate-y-0 pointer-events-auto"
             : "translate-y-full pointer-events-none"
@@ -449,7 +461,7 @@ export default function Sheet() {
             </div>
           </Column>
 
-          {viewType === "GROUP" && (
+          {(editingId ? viewType : createType) === "GROUP" && (
             <Column className="space-y-2  gap-1.5">
               <label className="typo-sub-t-2 text-secondary">👥 참여자</label>
               <ParticipantPicker
