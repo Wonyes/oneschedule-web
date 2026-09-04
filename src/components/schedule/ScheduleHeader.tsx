@@ -7,6 +7,7 @@ import { useScheduleStore } from "@/src/hooks/stores/useScheduleStore";
 import { useScheduleViewStore } from "@/src/hooks/stores/useScheduleViewStore";
 import { useWeathers } from "@/src/hooks/querys/useCommonApi";
 import { useSchedules } from "@/src/hooks/querys/useSchedule";
+import { useActiveGroup } from "@/src/hooks/querys/useGroup";
 import { toScheduleEvent } from "@/src/utils/schedule";
 import { ScheduleEvent, WeatherData } from "@/src/types/schedule";
 import WeatherBadge from "./components/WeatherBadge";
@@ -88,8 +89,9 @@ function SummaryRow({
 export default function ScheduleHeader() {
   const { mode, currentDate, next, prev } = useScheduleStore();
   const viewType = useScheduleViewStore((s) => s.viewType);
+  const { group } = useActiveGroup();
   const { data: weathers, isLoading: isWeatherLoading } = useWeathers();
-  const { data: schedules } = useSchedules(viewType);
+  const { data: schedules } = useSchedules(viewType, true, group?.groupNo);
 
   const today = useMemo(() => new Date(), []);
   const tomorrow = useMemo(() => addDays(today, 1), [today]);

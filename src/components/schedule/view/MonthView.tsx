@@ -30,6 +30,8 @@ export default function MonthView({
   const currentDate = useScheduleStore((s) => s.currentDate);
   const next = useScheduleStore((s) => s.next);
   const prev = useScheduleStore((s) => s.prev);
+  const setMode = useScheduleStore((s) => s.setMode);
+  const setCurrentDate = useScheduleStore((s) => s.setCurrentDate);
   const monthDates = getMonthDates(currentDate);
   const { openSheet } = useSheetStore();
 
@@ -147,7 +149,14 @@ export default function MonthView({
                       })}
 
                       {hiddenEventsCount > 0 && (
-                        <div className="typo-caption-2 text-muted pl-1 cursor-pointer hover:underline">
+                        <div
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setCurrentDate(date);
+                            setMode("day");
+                          }}
+                          className="typo-caption-2 text-muted pl-1 cursor-pointer hover:underline"
+                        >
                           + {hiddenEventsCount}개 더보기
                         </div>
                       )}

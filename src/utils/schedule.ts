@@ -326,6 +326,18 @@ function getDayEvents(
   return applyLayout(processed);
 }
 
+// 하루 대부분(12시간 이상)을 차지하는 일정은 마감형 할 일에 가까워서, 그 시간대에
+// 걸리는 모든 일정을 전부 "충돌"로 띄우면 오히려 신호가 무의미해진다.
+// 그래서 이런 일정은 충돌 비교 자체에서 제외한다(본인도, 상대도 충돌로 표시하지 않음).
+const CONFLICT_IGNORE_DURATION_MS = 12 * 60 * 60 * 1000;
+
+const isConflictCandidate = (event: ScheduleEvent) => {
+  const duration =
+    new Date(event.endDate).getTime() - new Date(event.startDate).getTime();
+
+  return duration < CONFLICT_IGNORE_DURATION_MS;
+};
+
 // 개인/그룹 일정이 겹치는 경우를 표시하기 위해, 다른 뷰의 일정 목록과 시간이 겹치는
 // 이벤트에 hasConflict 플래그를 붙인다. 그리드 위치(top/height) 계산과는 무관하게
 // 순수 시간 구간 비교만 한다.
@@ -335,11 +347,17 @@ const markConflicts = (
 ): ScheduleEvent[] => {
   if (otherEvents.length === 0) return events;
 
+  const comparableOthers = otherEvents.filter(isConflictCandidate);
+
   return events.map((event) => {
+    if (!isConflictCandidate(event)) {
+      return { ...event, hasConflict: false };
+    }
+
     const start = new Date(event.startDate).getTime();
     const end = new Date(event.endDate).getTime();
 
-    const hasConflict = otherEvents.some((other) => {
+    const hasConflict = comparableOthers.some((other) => {
       const otherStart = new Date(other.startDate).getTime();
       const otherEnd = new Date(other.endDate).getTime();
       return start < otherEnd && end > otherStart;

@@ -4,6 +4,7 @@ export interface GroupMember {
   email: string;
   groupRole: "SUPER" | "SUB" | "MEMBER";
   position: string;
+  profileImageUrl?: string;
 }
 
 export interface MyGroupResponse {

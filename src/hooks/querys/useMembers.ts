@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Get, Patch, Post, Put } from "./useMutations";
 import { memberskeys } from "./key/members";
+import { groupkeys } from "./key/groupKey";
 import { useAppMutation } from "@/src/types/ErrorResponse";
 import { useRouter } from "next/navigation";
 
@@ -11,7 +12,7 @@ export type MyInfoResponse = {
   name: string;
   nickname: string;
   phoneNumber: string;
-  imageUrl?: string;
+  profileImageUrl?: string;
 };
 
 type MyInfoChangeRequest = {
@@ -81,6 +82,9 @@ export const useLogout = () => {
     onSuccess: () => {
       queryClient.clear();
       router.push("/");
+      // (main) 레이아웃이 쿠키를 읽는 서버 컴포넌트라 push만으로는 헤더가
+      // 로그아웃 상태를 즉시 반영하지 못해서, 라우트 캐시를 강제로 갱신한다.
+      router.refresh();
     },
   });
 };
@@ -110,19 +114,27 @@ export const useProfileImageUpload = () => {
   return useAppMutation({
     mutationFn: async (file: File) => {
       const formData = new FormData();
-      formData.append("image", file);
+      formData.append("file", file);
 
-      return (await Post<{ imageUrl: string }>({
+      return (await Post<{ profileImageUrl: string }>({
         url: "/members/profile-image",
         body: formData,
-      })) as { imageUrl: string };
+        headers: { "Content-Type": undefined },
+      })) as { profileImageUrl: string };
     },
 
     onSuccess: (data) => {
       queryClient.setQueriesData<MyInfoResponse>(
         { queryKey: [memberskeys.myInfo] },
-        (prev) => (prev ? { ...prev, imageUrl: data.imageUrl } : prev),
+        (prev) =>
+          prev ? { ...prev, profileImageUrl: data.profileImageUrl } : prev,
       );
+
+      // 그룹 멤버 목록(GroupMemberSection, GroupQuickLink, 참여자 선택 등)에도
+      // 내 프로필 사진이 들어있으니 같이 갱신한다.
+      queryClient.invalidateQueries({
+        queryKey: [groupkeys.myGroup],
+      });
     },
     retry: false,
   });

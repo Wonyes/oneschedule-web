@@ -19,7 +19,9 @@ export default function GroupDashboard({ group }: { group: MyGroupResponse }) {
       {/* Main */}
       <Row className="w-full gap-5 flex-col lg:flex-row">
         <GroupMemberSection
-          isAdmin={group?.groupRole === "SUPER"}
+          // SUPER/SUB 모두 멤버를 관리할 수 있다. SUPER 본인은 GroupMemberSection의
+          // "member.groupRole !== SUPER" 조건으로 건드릴 수 없게 막혀 있다.
+          isAdmin={group?.groupRole === "SUPER" || group?.groupRole === "SUB"}
           members={group.members}
           groupNo={group.groupNo}
         />

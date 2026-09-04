@@ -380,4 +380,26 @@ describe("markConflicts (개인/그룹 일정 겹침 표시)", () => {
 
     expect(markConflicts(personal, [])).toBe(personal);
   });
+
+  test("12시간 이상인 종일형 일정은 충돌 비교에서 제외한다", () => {
+    const personal = [
+      event({
+        id: 1,
+        startDate: "2024-01-17T01:00:00",
+        endDate: "2024-01-17T23:59:00",
+      }),
+    ];
+
+    const group = [
+      event({
+        id: 10,
+        startDate: "2024-01-17T13:00:00",
+        endDate: "2024-01-17T14:00:00",
+      }),
+    ];
+
+    const marked = markConflicts(personal, group);
+
+    expect(marked.find((e) => e.id === 1)?.hasConflict).toBe(false);
+  });
 });

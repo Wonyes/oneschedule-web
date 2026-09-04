@@ -69,7 +69,7 @@ export default function ScheduleCard({
         <span
           className={`w-1.5 h-1.5 rounded-full shrink-0 ${style?.dot ?? "bg-accent"}`}
         />
-        <span className="typo-caption-2 truncate font-medium text-secondary group-hover:text-foreground">
+        <span className="min-w-0 flex-1 truncate typo-caption-2 font-medium text-secondary group-hover:text-foreground">
           {event.title}
         </span>
       </div>
@@ -128,7 +128,7 @@ export default function ScheduleCard({
               <span
                 className={`h-1.5 w-1.5 shrink-0 rounded-full ${style?.dot ?? "bg-accent"}`}
               />
-              <span className="typo-caption-1 truncate font-semibold text-foreground">
+              <span className="min-w-0 flex-1 truncate typo-caption-1 font-semibold text-foreground">
                 {event.title}
               </span>
             </Row>
@@ -165,14 +165,14 @@ export default function ScheduleCard({
       />
 
       {(isStart || isEnd) && (
-        <Row className="h-full min-w-0 items-center gap-1.5 pl-1.5">
-          <span className="typo-caption-1 truncate font-semibold text-foreground">
+        <Column className="h-full min-w-0 justify-center gap-0.5 pl-1.5">
+          <span className="w-full truncate typo-caption-1 font-semibold text-foreground">
             {event.title}
           </span>
           <span className="shrink-0 whitespace-nowrap text-[10px] font-medium text-accent/80 tracking-tight">
             {getTimes(event.startDate)}-{getTimes(event.endDate)}
           </span>
-        </Row>
+        </Column>
       )}
     </div>
   );

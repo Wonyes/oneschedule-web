@@ -84,8 +84,17 @@ function ParticipantPicker({
                   key={m.memberNo}
                   className="flex items-center gap-1 rounded-full bg-accent/10 py-0.5 pl-1 pr-2"
                 >
-                  <span className="flex h-4 w-4 items-center justify-center rounded-full bg-accent/20 text-[9px] font-bold text-accent">
-                    {m.nickname[0]}
+                  <span className="flex h-4 w-4 items-center justify-center overflow-hidden rounded-full bg-accent/20 text-[9px] font-bold text-accent">
+                    {m.profileImageUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={m.profileImageUrl}
+                        alt={m.nickname}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      m.nickname[0]
+                    )}
                   </span>
                   <span className="typo-caption-3 text-secondary">
                     {m.nickname}
@@ -132,8 +141,17 @@ function ParticipantPicker({
                     onClick={() => toggle(m.memberNo)}
                     className="hover:bg-surface-hover flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left transition-colors"
                   >
-                    <span className="typo-caption-3 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent/15 font-bold text-accent">
-                      {m.nickname[0]}
+                    <span className="typo-caption-3 flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded-full bg-accent/15 font-bold text-accent">
+                      {m.profileImageUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={m.profileImageUrl}
+                          alt={m.nickname}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        m.nickname[0]
+                      )}
                     </span>
                     <span className="typo-caption-2 flex-1 text-secondary">
                       {m.nickname}

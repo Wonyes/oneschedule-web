@@ -4,6 +4,7 @@ import { Activity, CalendarPlus } from "lucide-react";
 import { useMemo } from "react";
 
 import BaseCard from "../ui/card/BaseCard";
+import Skeleton from "../ui/Skeleton";
 import { Column, Row } from "../ui/layout/flex";
 import { EVENT_STYLES } from "@/src/constant/schedule";
 import { useSchedules } from "@/src/hooks/querys/useSchedule";
@@ -48,10 +49,7 @@ export default function GroupActivitySection({
       {isLoading ? (
         <Column className="w-full gap-2">
           {Array.from({ length: 2 }).map((_, i) => (
-            <div
-              key={i}
-              className="neu-flat h-14 w-full animate-pulse rounded-lg"
-            />
+            <Skeleton key={i} className="h-14 w-full rounded-lg" />
           ))}
         </Column>
       ) : recent.length === 0 ? (

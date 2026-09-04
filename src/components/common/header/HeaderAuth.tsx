@@ -35,8 +35,21 @@ export default function HeaderAuth({ user }: { user: MyInfoResponse | null }) {
         aria-label="내 프로필"
         className="btn-spring flex cursor-pointer items-center gap-2 rounded-lg p-1 hover:bg-white/5 lg:px-2.5 lg:py-1.5"
       >
-        <IconBox size="sm" shape="circle" className="typo-caption-3 font-bold">
-          {user.nickname[0]}
+        <IconBox
+          size="sm"
+          shape="circle"
+          className="overflow-hidden typo-caption-3 font-bold"
+        >
+          {user.profileImageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={user.profileImageUrl}
+              alt={user.nickname}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            user.nickname[0]
+          )}
         </IconBox>
         <span className="typo-caption-2 text-secondary hidden lg:inline">
           {user.nickname}

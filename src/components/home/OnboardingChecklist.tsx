@@ -66,7 +66,7 @@ export default function OnboardingChecklist({
       title: "프로필 사진 설정하기",
       description: "그룹 멤버가 나를 알아보기 쉬워져요.",
       icon: <UserRound size={16} strokeWidth={1.75} />,
-      done: !!user.imageUrl,
+      done: !!user.profileImageUrl,
       action: () => router.push("/profile"),
       actionLabel: "프로필로",
     },

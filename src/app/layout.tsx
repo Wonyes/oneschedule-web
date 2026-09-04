@@ -42,7 +42,7 @@ export default async function RootLayout({
       <head>
         <meta
           name="viewport"
-          content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover"
+          content="width=device-width, initial-scale=1.0, viewport-fit=cover"
         />
       </head>
       <body className="bg-main-bg w-full h-dvh flex justify-center">

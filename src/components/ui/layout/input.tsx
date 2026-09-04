@@ -85,6 +85,7 @@ export function PasswordInput(props: InputProps) {
         <button
           type="button"
           onClick={() => setShow(!show)}
+          aria-label={show ? "비밀번호 숨기기" : "비밀번호 표시"}
           className="text-muted hover:text-secondary transition flex items-center"
         >
           {show ? <Eye size={18} /> : <EyeClosed size={18} />}

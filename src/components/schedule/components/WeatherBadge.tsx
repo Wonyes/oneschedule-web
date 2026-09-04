@@ -1,5 +1,6 @@
 import { ProcessedWeather } from "@/src/types/schedule";
 import { getWeatherIcon } from "@/src/utils/schedule";
+import Skeleton from "../../ui/Skeleton";
 
 type WeatherProps = {
   targetWeather?: ProcessedWeather[string];
@@ -16,11 +17,8 @@ export default function WeatherBadge({
     if (!isLoading) return null;
 
     return (
-      <span
-        className={`inline-block animate-pulse rounded-full bg-muted/30 ${
-          iconOnly ? "h-2.5 w-2.5" : "h-3.5 w-9"
-        }`}
-        aria-hidden="true"
+      <Skeleton
+        className={`inline-block rounded-full ${iconOnly ? "h-2.5 w-2.5" : "h-3.5 w-9"}`}
       />
     );
   }

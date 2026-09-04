@@ -30,8 +30,12 @@ export default function LoginForm() {
       });
     },
     onSuccess: () => {
-      // 홈에서 서버가 유저 정보를 직접 조회하므로 여기서 미리 받을 필요가 없다
+      // 홈에서 서버가 유저 정보를 직접 조회하므로 여기서 미리 받을 필요가 없다.
+      // 다만 (main) 레이아웃은 쿠키를 읽는 서버 컴포넌트라, 이전에 방문한 적이
+      // 있으면 캐시된 채로 넘어가 헤더가 로그인 상태를 즉시 반영하지 못한다.
+      // refresh()로 라우트 캐시를 무효화해 헤더가 바로 갱신되게 한다.
       router.replace("/");
+      router.refresh();
     },
     onError: (err) => {
       openAlert({
@@ -102,7 +106,7 @@ export default function LoginForm() {
 
         <span
           onClick={() => router.push("/sign")}
-          className="typo-sub-t-1 cursor-pointer text-indigo-400 hover:underline"
+          className="typo-sub-t-1 cursor-pointer text-indigo-600 hover:underline"
         >
           회원가입
         </span>

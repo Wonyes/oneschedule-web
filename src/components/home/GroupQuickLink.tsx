@@ -34,9 +34,18 @@ export default function GroupQuickLink({
               {displayGroup.members.slice(0, MAX_AVATARS).map((m) => (
                 <span
                   key={m.memberNo}
-                  className="ring-surface flex h-5 w-5 items-center justify-center rounded-full bg-accent/20 text-[9px] font-bold text-accent ring-2"
+                  className="ring-surface flex h-5 w-5 items-center justify-center overflow-hidden rounded-full bg-accent/20 text-[9px] font-bold text-accent ring-2"
                 >
-                  {m.nickname[0]}
+                  {m.profileImageUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={m.profileImageUrl}
+                      alt={m.nickname}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    m.nickname[0]
+                  )}
                 </span>
               ))}
             </Row>

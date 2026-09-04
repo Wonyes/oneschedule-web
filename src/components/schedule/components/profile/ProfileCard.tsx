@@ -30,15 +30,17 @@ export default function ProfileCard({ user }: { user: MyInfoResponse }) {
     });
   };
 
+  console.log(user);
+
   return (
     <BaseCard className="p-8" glow>
       <Column className="items-center text-center">
         <div className="relative">
           <div className="h-20 w-20 overflow-hidden rounded-full neu-flat">
-            {user.imageUrl ? (
+            {user.profileImageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={user.imageUrl}
+                src={user.profileImageUrl}
                 alt={user.nickname}
                 className="h-full w-full object-cover"
               />

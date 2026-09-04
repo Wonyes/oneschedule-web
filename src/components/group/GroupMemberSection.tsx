@@ -15,28 +15,23 @@ import { getErrorMessage, useAppMutation } from "@/src/types/ErrorResponse";
 import { Patch, Delete } from "@/src/hooks/querys/useMutations";
 import { groupkeys } from "@/src/hooks/querys/key/groupKey";
 import IconBox from "../ui/IconBox";
+import { GroupMember } from "@/src/types/group";
+import { useMyInfo } from "@/src/hooks/querys/useMembers";
 
 type GroupRole = "SUPER" | "SUB" | "MEMBER";
-
-interface Member {
-  email: string;
-  memberNo: number;
-  nickname: string;
-  position: string;
-  groupRole: GroupRole;
-}
 
 export default function GroupMemberSection({
   members,
   isAdmin,
   groupNo,
 }: {
-  members: Member[];
+  members: GroupMember[];
   isAdmin: boolean;
   groupNo: number;
 }) {
   const [openMenu, setOpenMenu] = useState<number | null>(null);
 
+  const { data: myInfo } = useMyInfo();
   const { openModal, openToast, openConfirm, closeModal } = useOverlay();
 
   const queryClient = useQueryClient();
@@ -102,7 +97,7 @@ export default function GroupMemberSection({
 
   const memberEditRef = useRef<GroupMemberEditRef>(null);
 
-  const memberChanges = (member: Member) => {
+  const memberChanges = (member: GroupMember) => {
     setOpenMenu(null);
 
     openModal({
@@ -124,7 +119,7 @@ export default function GroupMemberSection({
     });
   };
 
-  const memberDelete = (member: Member) => {
+  const memberDelete = (member: GroupMember) => {
     setOpenMenu(null);
 
     openConfirm({
@@ -146,7 +141,7 @@ export default function GroupMemberSection({
       </div>
 
       <Column className="h-[340px] lg:h-[440px] gap-2.5 overflow-y-auto pr-2">
-        {members.map((member: Member) => (
+        {members.map((member: GroupMember) => (
           <Between
             key={member.memberNo}
             className="w-full rounded-xl px-4 py-3 neu-flat"
@@ -154,11 +149,20 @@ export default function GroupMemberSection({
             <Row className="min-w-0 flex-1 gap-3">
               <IconBox
                 size="md"
-                shape="square"
+                shape="circle"
                 tone="accent"
-                className="typo-caption-3 font-bold bg-accent/10"
+                className="overflow-hidden typo-caption-3 font-bold bg-accent/10"
               >
-                {member.nickname[0]}
+                {member.profileImageUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={member.profileImageUrl}
+                    alt={member.nickname}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  member.nickname[0]
+                )}
               </IconBox>
 
               <Column className="min-w-0">
@@ -196,15 +200,17 @@ export default function GroupMemberSection({
                 {member.groupRole}
               </span>
 
-              {isAdmin && member.groupRole !== "SUPER" && (
-                <div className="relative">
-                  <button
-                    onClick={() =>
-                      setOpenMenu(
-                        openMenu === member.memberNo ? null : member.memberNo,
-                      )
-                    }
-                    className="
+              {isAdmin &&
+                member.groupRole !== "SUPER" &&
+                member.memberNo !== myInfo?.memberNo && (
+                  <div className="relative">
+                    <button
+                      onClick={() =>
+                        setOpenMenu(
+                          openMenu === member.memberNo ? null : member.memberNo,
+                        )
+                      }
+                      className="
                       flex h-7 w-7
                       items-center justify-center
                       rounded-lg
@@ -213,22 +219,22 @@ export default function GroupMemberSection({
                       hover:bg-surface-hover
                       hover:text-foreground
                     "
-                  >
-                    <MoreVertical size={15} strokeWidth={1.75} />
-                  </button>
+                    >
+                      <MoreVertical size={15} strokeWidth={1.75} />
+                    </button>
 
-                  {openMenu === member.memberNo && (
-                    <div
-                      className="
+                    {openMenu === member.memberNo && (
+                      <div
+                        className="
                       absolute right-0 top-10 z-30
                       w-40 rounded-xl
                       glass
                       p-2
                     "
-                    >
-                      <button
-                        onClick={() => memberChanges(member)}
-                        className="
+                      >
+                        <button
+                          onClick={() => memberChanges(member)}
+                          className="
                           w-full rounded-lg
                           px-3 py-2
                           text-left
@@ -236,13 +242,13 @@ export default function GroupMemberSection({
                           text-secondary
                           hover:bg-white/5
                         "
-                      >
-                        멤버 수정
-                      </button>
+                        >
+                          멤버 수정
+                        </button>
 
-                      <button
-                        onClick={() => memberDelete(member)}
-                        className="
+                        <button
+                          onClick={() => memberDelete(member)}
+                          className="
                           mt-1 w-full rounded-lg
                           px-3 py-2
                           text-left
@@ -250,13 +256,13 @@ export default function GroupMemberSection({
                           text-error-500
                           hover:bg-white/5
                         "
-                      >
-                        그룹 내보내기
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
+                        >
+                          그룹 내보내기
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
             </Row>
           </Between>
         ))}
