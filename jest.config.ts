@@ -1,5 +1,6 @@
 import type { Config } from "jest";
-import nextJest from "next/jest";
+// Node의 ESM 해석에서는 확장자가 필수라 next/jest 로는 찾지 못한다
+import nextJest from "next/jest.js";
 
 const createJestConfig = nextJest({
   dir: "./",
