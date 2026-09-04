@@ -69,10 +69,12 @@ export default defineConfig({
     // },
   ],
 
-  /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://localhost:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
+  /* 테스트 전에 앱 서버를 직접 띄운다.
+   * CI에는 띄워둔 서버가 없으므로 이 설정이 없으면 모든 goto가 연결 거부로 실패한다. */
+  webServer: {
+    command: 'npm run build && npm run start',
+    url: 'http://localhost:3000',
+    reuseExistingServer: !process.env.CI,
+    timeout: 180 * 1000,
+  },
 });

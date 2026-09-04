@@ -28,6 +28,9 @@ test.describe("회원가입 후 안내", () => {
     await page.getByText("회원가입").click();
 
     await expect(page).toHaveURL(/\/sign/);
-    await expect(page.getByText("회원정보 입력")).toBeVisible();
+    // getByText는 Next의 라우트 안내용 요소(#__next-route-announcer__)까지 잡는다
+    await expect(
+      page.getByRole("heading", { name: "회원정보 입력" }),
+    ).toBeVisible();
   });
 });

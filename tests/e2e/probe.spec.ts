@@ -1,7 +1,14 @@
 import { test } from "@playwright/test";
 
+// 레이아웃 좌표를 눈으로 확인하려고 만든 디버그용 스크립트다.
+// 단언이 없고 로그인된 계정이 필요하므로, 자격증명이 없으면 건너뛴다.
+const EMAIL = process.env.E2E_EMAIL ?? "";
+const PASSWORD = process.env.E2E_PASSWORD ?? "";
+
 for (const width of [320, 390]) {
   test(`${width}px에서 그룹 스위처 위치`, async ({ page }) => {
+    test.skip(!EMAIL || !PASSWORD, "E2E_EMAIL / E2E_PASSWORD 환경변수가 필요합니다.");
+
     await page.setViewportSize({ width, height: 800 });
     await page.goto("/login");
     await page.getByPlaceholder("이메일").fill(process.env.E2E_EMAIL ?? "");
