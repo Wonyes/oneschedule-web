@@ -150,23 +150,6 @@ export function resolveActiveGroup(groups: MyGroupResponse[], activeGroupNo: num
 expect(overflow.scrollWidth).toBeLessThanOrEqual(overflow.clientWidth + 1);
 ```
 
-<br>
-
-## 🧩 그 외
-
-| 문제 | 원인 · 해결 |
-| --- | --- |
-| 페이지 이동이 느림 | `router.push`로 이동해 프리페치가 동작하지 않았음 → 전부 `<Link>`로 교체 |
-| 카드 그림자가 잘림 | 내부 스크롤 컨테이너의 `overflow`가 뉴모피즘 그림자를 클리핑 → 콘텐츠 영역 여백 통일 |
-| 프로필 변경이 헤더에 미반영 | 업로드 성공 후 `setQueriesData`로 `myInfo` 캐시 즉시 갱신 |
-| 그룹 일정이 개인 일정으로 등록 | 시트의 개인/그룹 판정 로직 버그 → `useSheetStore.test.ts`로 고정 |
-| 수정 요청의 파라미터 누락 | `Put` 래퍼가 `params`를 넘기지 않음 → `useMutations.test.ts`로 고정 |
-| `useWeathers` 타입 오류 | `strict` 적용 중 발견. 응답은 날짜 키 객체인데 배열로 선언돼 있었음 |
-
-<br>
-
----
-
 ## 🎨 디자인 시스템
 
 표면 처리 규칙이 없으면 컴포넌트를 아무리 다듬어도 화면 전체가 따로 놉니다. 규칙을 **셋**으로 줄이고 색은 전부 CSS 변수로만 정의했습니다.
