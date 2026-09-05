@@ -10,8 +10,14 @@ import {
   getWeekEvents,
   getDayEvents,
   markConflicts,
+  toScheduleEvent,
+  canEditSchedule,
 } from "./schedule";
-import { ScheduleEvent, holidayType } from "../types/schedule";
+import {
+  ScheduleApiResponse,
+  ScheduleEvent,
+  holidayType,
+} from "../types/schedule";
 
 const holiday = (locdate: string, dateName = "테스트 공휴일"): holidayType => ({
   id: 1,
@@ -447,5 +453,71 @@ describe("markConflicts (개인/그룹 일정 겹침 표시)", () => {
     const marked = markConflicts(personal, group);
 
     expect(marked.find((e) => e.id === 1)?.hasConflict).toBe(false);
+  });
+});
+
+describe("toScheduleEvent (서버 응답 → 화면 이벤트)", () => {
+  const apiResponse = (
+    overrides: Partial<ScheduleApiResponse> = {},
+  ): ScheduleApiResponse => ({
+    id: 1,
+    title: "회의",
+    content: "주간 회의",
+    category: "meeting",
+    startDate: "2024-01-17",
+    endDate: "2024-01-17",
+    startTime: "10:00:00",
+    endTime: "11:00:00",
+    createdAt: "2024-01-16T09:00:00",
+    author: { memberNo: 7, nickname: "원예" },
+    participants: [],
+    ...overrides,
+  });
+
+  // 서버는 작성자를 author.memberNo로만 내려준다. 이 매핑이 빠지면
+  // canEditSchedule의 createdBy가 undefined가 되어 권한 판정이 통째로 무력화된다.
+  test("author.memberNo를 createdBy로 옮겨 담는다", () => {
+    expect(toScheduleEvent(apiResponse()).createdBy).toBe(7);
+  });
+
+  test("createdBy가 직접 내려오면 그 값을 우선한다", () => {
+    const event = toScheduleEvent(apiResponse({ createdBy: 99 }));
+
+    expect(event.createdBy).toBe(99);
+  });
+
+  test("participants를 participantMemberNos로 펴서 담는다", () => {
+    const event = toScheduleEvent(
+      apiResponse({
+        participants: [
+          { memberNo: 3, nickname: "가" },
+          { memberNo: 5, nickname: "나" },
+        ],
+      }),
+    );
+
+    expect(event.participantMemberNos).toEqual([3, 5]);
+  });
+});
+
+describe("canEditSchedule (수정·삭제 권한)", () => {
+  test("작성자 본인이면 허용한다", () => {
+    expect(canEditSchedule({ createdBy: 7, myMemberNo: 7 })).toBe(true);
+  });
+
+  test("남의 일정이면 막는다", () => {
+    expect(canEditSchedule({ createdBy: 7, myMemberNo: 8 })).toBe(false);
+  });
+
+  test("그룹장(SUPER)은 남의 일정도 수정할 수 있다", () => {
+    expect(
+      canEditSchedule({ createdBy: 7, myMemberNo: 8, myGroupRole: "SUPER" }),
+    ).toBe(true);
+  });
+
+  // 값이 없으면 판정을 건너뛰고 허용한다. 그러지 않으면 자기 일정도 못 고친다.
+  test("작성자나 내 memberNo를 모르면 허용한다", () => {
+    expect(canEditSchedule({ createdBy: undefined, myMemberNo: 7 })).toBe(true);
+    expect(canEditSchedule({ createdBy: 7, myMemberNo: undefined })).toBe(true);
   });
 });

@@ -33,6 +33,9 @@ const toScheduleEvent = (res: ScheduleApiResponse): ScheduleEvent => {
     author: res.author,
     content: res.content,
     createdAt: res.createdAt,
+    // 서버는 작성자를 author.memberNo로 내려준다. 권한 판정(canEditSchedule)이
+    // 보는 필드는 createdBy이므로 여기서 옮겨 담는다.
+    createdBy: res.createdBy ?? res.author?.memberNo,
     category: (res.category as EventCategory) || "personal",
     startDate: `${res.startDate}T${startTime}`,
     endDate: `${endDate}T${endTime}`,
@@ -169,9 +172,9 @@ const getmonthTime = (startStr: string, endStr: string, date: Date) => {
 /**
  * 일정을 수정·삭제할 수 있는지 판정한다. 작성자 본인이거나 그룹 관리자(SUPER)면 가능.
  *
- * 이건 어디까지나 화면 처리를 위한 것이고, 실제 차단은 서버가 해야 한다.
- * 백엔드가 작성자(createdBy)나 내 memberNo를 아직 안 내려주는 동안에는
- * 판정을 건너뛰고 허용한다 — 그러지 않으면 자기 일정도 못 고치게 된다.
+ * 이건 어디까지나 화면 처리를 위한 것이고, 실제 차단은 서버가 한다.
+ * 두 값 중 하나라도 없으면(구버전 서버 응답 등) 판정을 건너뛰고 허용한다 —
+ * 그러지 않으면 자기 일정도 못 고치게 된다.
  */
 const canEditSchedule = ({
   createdBy,

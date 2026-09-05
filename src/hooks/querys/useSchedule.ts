@@ -39,14 +39,10 @@ export const createGroupSchedule = (
     body,
   });
 
-export const updateSchedule = (
-  id: number,
-  groupNo: number,
-  body: ScheduleApiRequest,
-) =>
+// 서버는 일정 소유/권한을 id와 로그인 정보만으로 판단한다. groupNo는 받지 않는다.
+export const updateSchedule = (id: number, body: ScheduleApiRequest) =>
   Put<ScheduleApiResponse>({
     url: `/schedules/${id}`,
-    params: { groupNo },
     body,
   });
 

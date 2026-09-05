@@ -1,7 +1,8 @@
 /**
  * axios 인터셉터의 토큰 재발급 흐름 테스트.
- * 401/403 → /token-refresh 1회 호출 → 원요청 재시도가 핵심이고,
+ * 401 → /token-refresh 1회 호출 → 원요청 재시도가 핵심이고,
  * 동시에 여러 요청이 실패해도 재발급은 한 번만 나가야 한다.
+ * 403은 진짜 권한 거부라 재발급을 타면 안 된다.
  */
 import MockAdapter from "axios-mock-adapter";
 import api from "./api";
@@ -68,11 +69,30 @@ describe("api 인터셉터 (토큰 재발급)", () => {
     await expect(api.get("/schedules")).rejects.toBeDefined();
   });
 
-  test("401/403이 아닌 에러는 재발급 없이 그대로 전달된다", async () => {
+  test("401이 아닌 에러는 재발급 없이 그대로 전달된다", async () => {
     mock.onGet("/schedules").reply(500);
     mock.onPost("/token-refresh").reply(200);
 
     await expect(api.get("/schedules")).rejects.toBeDefined();
+    expect(mock.history.post.filter((r) => r.url === "/token-refresh")).toHaveLength(0);
+  });
+
+  // 서버는 인증 실패를 전부 401로 내려준다. 403은 "그룹 관리 권한 없음" 같은
+  // 진짜 권한 거부라, 재발급/재시도로 삼켜버리면 오류 메시지가 사라진다.
+  test("403은 재발급을 타지 않고 권한 오류를 그대로 올려보낸다", async () => {
+    let scheduleCallCount = 0;
+
+    mock.onGet("/schedules").reply(() => {
+      scheduleCallCount += 1;
+      return [403, { success: false, code: -501, message: "일정에 접근할 권한이 없습니다.", result: null }];
+    });
+    mock.onPost("/token-refresh").reply(200);
+
+    await expect(api.get("/schedules")).rejects.toMatchObject({
+      response: { status: 403 },
+    });
+
+    expect(scheduleCallCount).toBe(1);
     expect(mock.history.post.filter((r) => r.url === "/token-refresh")).toHaveLength(0);
   });
 });

@@ -68,7 +68,9 @@ export type ScheduleApiResponse = {
     nickname: string;
   };
   participants: ScheduleParticipant[];
-  /** 작성자 memberNo. 백엔드 추가 예정이며, 없으면 권한 판정을 건너뛴다. */
+  /** 개인/그룹 구분. 서버가 내려주는 값이다. */
+  type?: ScheduleViewType;
+  /** 작성자 memberNo. 서버는 author.memberNo로 내려주므로 보통 비어 있다. */
   createdBy?: number;
 };
 

@@ -34,7 +34,8 @@ export default function OverlayContent({
         </div>
 
         {/* 메시지 영역 */}
-        <div className="px-6 py-2 space-y-1 text-secondary text-sm">
+        {/* 검증 실패는 사유가 여러 줄로 합쳐져 오므로 줄바꿈을 살린다 */}
+        <div className="px-6 py-2 space-y-1 text-secondary text-sm whitespace-pre-line break-words">
           {message && <p>{message}</p>}
           {message2 && <p>{message2}</p>}
           {message3 && <p>{message3}</p>}

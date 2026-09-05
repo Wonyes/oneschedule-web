@@ -6,7 +6,7 @@ import { useAppMutation } from "@/src/types/ErrorResponse";
 import { useRouter } from "next/navigation";
 
 export type MyInfoResponse = {
-  /** 내 memberNo. 백엔드 추가 예정이며, 없으면 권한 판정을 건너뛴다. */
+  /** 내 memberNo. 구버전 서버 응답에는 없을 수 있어 옵셔널로 둔다. */
   memberNo?: number;
   email: string;
   name: string;

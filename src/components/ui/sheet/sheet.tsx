@@ -273,13 +273,11 @@ export default function Sheet() {
   const { mutate: update } = useAppMutation({
     mutationFn: ({
       id,
-      groupNo,
       body,
     }: {
       id: number;
-      groupNo?: number;
       body: ReturnType<typeof toScheduleRequest>;
-    }) => updateSchedule(id, groupNo!, body),
+    }) => updateSchedule(id, body),
     onSuccess: () => {
       invalidateSchedules();
       close();

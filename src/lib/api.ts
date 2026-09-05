@@ -31,7 +31,7 @@ api.interceptors.response.use(
     const status = error.response.status;
 
     if (
-      (status === 401 || status === 403) &&
+      status === 401 &&
       (originalRequest.url?.includes("/members/login") ||
         originalRequest.url?.includes("/token-refresh") ||
         originalRequest._skipAuthRefresh)
@@ -40,9 +40,11 @@ api.interceptors.response.use(
     }
 
     switch (status) {
-      // 액세스 토큰 만료(401) / 재발급 필요(403) 둘 다 같은 리프레시 흐름을 탄다
-      case 401:
-      case 403: {
+      // 401만 재발급 흐름을 탄다.
+      // 서버는 인증 실패(만료/위조/미로그인)를 전부 401로 내려주고,
+      // 403은 "그룹 관리 권한 없음", "일정 접근 권한 없음" 같은 진짜 권한 거부다.
+      // 403까지 재발급을 태우면 권한 오류 메시지가 재시도에 묻혀 사라진다.
+      case 401: {
         if (originalRequest._retry) {
           return Promise.reject(error);
         }
