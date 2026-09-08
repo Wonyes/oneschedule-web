@@ -19,6 +19,12 @@ import IconBox from "../ui/IconBox";
 import { GroupMember } from "@/src/types/group";
 import { useMyInfo } from "@/src/hooks/querys/useMembers";
 import { useIncrementalList } from "@/src/hooks/useIncrementalList";
+import { useMemberPresence } from "@/src/hooks/querys/useGroup";
+import { cn } from "@/src/utils/cn";
+import { PAGE_SIZE } from "@/src/lib/paging";
+import ScrollListArea, { ScrollSentinel } from "../ui/ScrollListArea";
+import { formatDistanceToNowStrict } from "date-fns";
+import { ko } from "date-fns/locale";
 
 type GroupRole = "SUPER" | "SUB" | "MEMBER";
 
@@ -34,6 +40,7 @@ export default function GroupMemberSection({
   const [openMenu, setOpenMenu] = useState<number | null>(null);
 
   const { data: myInfo } = useMyInfo();
+  const { data: presence } = useMemberPresence(groupNo);
   const { openModal, openToast, openConfirm, closeModal } = useOverlay();
 
   const queryClient = useQueryClient();
@@ -99,13 +106,12 @@ export default function GroupMemberSection({
 
   const memberEditRef = useRef<GroupMemberEditRef>(null);
 
-  // 한 번에 5명씩. 스크롤이 끝에 닿으면 이어서 더 보여준다.
   const {
     visible: visibleMembers,
     hasMore,
     rootRef,
     sentinelRef,
-  } = useIncrementalList(members, 5);
+  } = useIncrementalList(members, PAGE_SIZE.groupMembers);
 
   const memberChanges = (member: GroupMember) => {
     setOpenMenu(null);
@@ -143,80 +149,127 @@ export default function GroupMemberSection({
   };
 
   return (
-    <BaseCard glow className="flex-1 p-5 lg:min-h-[380px]">
-      <div className="mb-4 flex flex-col gap-1.5">
+    <BaseCard glow className="flex flex-1 flex-col p-5">
+      <div className="mb-4 flex shrink-0 flex-col gap-1.5">
         <span className="eyebrow">TEAM</span>
         <h2 className="typo-sub-t-1 text-foreground">그룹 멤버</h2>
       </div>
 
-      <div
-        ref={rootRef}
-        className="scroll-hidden flex flex-col gap-2.5 px-1 py-1 lg:-mx-4 lg:max-h-[304px] lg:overflow-y-auto lg:px-4 lg:pt-3 lg:pb-4"
+      <ScrollListArea
+        rootRef={rootRef}
+        showFade={hasMore}
+        className="scroll-hidden flex flex-col gap-2.5 px-1 py-1 lg:max-h-[304px] lg:overflow-y-auto lg:pt-3 lg:pb-4"
       >
-        {visibleMembers.map((member: GroupMember) => (
-          <Between
-            key={member.memberNo}
-            className="w-full rounded-xl px-4 py-3 neu-flat"
-          >
-            <Row className="min-w-0 flex-1 gap-3">
-              <IconBox
-                size="md"
-                shape="circle"
-                tone="accent"
-                className="overflow-hidden typo-caption-3 font-bold bg-accent/10"
-              >
-                <AvatarImage
-                  src={member.profileImageUrl}
-                  nickname={member.nickname}
-                />
-              </IconBox>
+        {visibleMembers.map((member: GroupMember) => {
+          const status = presence?.get(member.memberNo);
+          const isOnline = status?.online ?? false;
 
-              <Column className="min-w-0">
-                <Row className="min-w-0 gap-1.5">
-                  <span className="typo-caption-2 font-semibold text-foreground truncate">
-                    {member.nickname}
+          const statusLabel = isOnline
+            ? "온라인"
+            : status?.lastSeenAt
+              ? formatDistanceToNowStrict(new Date(status.lastSeenAt), {
+                  addSuffix: true,
+                  locale: ko,
+                })
+              : "오프라인";
+
+          return (
+            <Between
+              key={member.memberNo}
+              className="w-full rounded-xl px-4 py-3 neu-flat"
+            >
+              <Row className="min-w-0 flex-1 gap-3">
+                <IconBox
+                  size="md"
+                  shape="circle"
+                  tone="accent"
+                  className="overflow-hidden typo-caption-3 font-bold bg-accent/10 shrink-0"
+                >
+                  <AvatarImage
+                    src={member.profileImageUrl}
+                    nickname={member.nickname}
+                  />
+                </IconBox>
+
+                <Column className="min-w-0">
+                  <Row className="min-w-0 gap-1.5">
+                    <span className="typo-caption-2 font-semibold text-foreground truncate">
+                      {member.nickname}
+                    </span>
+
+                    {member.groupRole === "SUPER" && (
+                      <Crown
+                        size={12}
+                        strokeWidth={1.75}
+                        className="shrink-0 text-pending-500"
+                      />
+                    )}
+                  </Row>
+
+                  <span className="mt-0.5 typo-caption-3 text-place-h truncate">
+                    {member.position}
+                  </span>
+                </Column>
+              </Row>
+
+              <Row className="relative shrink-0 items-center gap-2">
+                <Column className="items-end gap-1">
+                  <span
+                    className="
+                    rounded-full
+                    bg-surface-hover
+                    px-2.5 py-1
+                    typo-caption-3
+                    font-medium
+                    text-secondary
+                  "
+                  >
+                    {member.groupRole}
                   </span>
 
-                  {member.groupRole === "SUPER" && (
-                    <Crown
-                      size={12}
-                      strokeWidth={1.75}
-                      className="shrink-0 text-pending-500"
+                  {/*
+                  오프라인도 같은 자리에 그린다. 온라인일 때만 보이면 줄마다
+                  높이가 달라져 목록이 들쭉날쭉해지고, 점이 없는 게 "오프라인"인지
+                  "아직 안 불러온 것"인지 구분이 안 된다.
+                */}
+                  <Row
+                    className={cn(
+                      "items-center gap-1.5 rounded-full px-2 py-0.5",
+                      isOnline ? "bg-success-500/12" : "bg-surface-hover",
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "size-2 shrink-0 rounded-full",
+                        isOnline
+                          ? "bg-success-500 ring-2 ring-success-500/30"
+                          : "bg-place-h",
+                      )}
                     />
-                  )}
-                </Row>
+                    <span
+                      className={cn(
+                        "typo-caption-3 font-medium whitespace-nowrap",
+                        isOnline ? "text-success-500" : "text-muted",
+                      )}
+                    >
+                      {statusLabel}
+                    </span>
+                  </Row>
+                </Column>
 
-                <span className="mt-0.5 typo-caption-3 text-place-h truncate">
-                  {member.position}
-                </span>
-              </Column>
-            </Row>
-
-            <Row className="relative shrink-0 gap-2">
-              <span
-                className="
-                rounded-full
-                bg-surface-hover
-                px-2.5 py-1
-                typo-caption-3
-                font-medium
-                text-secondary
-              "
-              >
-                {member.groupRole}
-              </span>
-
-              {isAdmin &&
-                member.groupRole !== "SUPER" &&
-                member.memberNo !== myInfo?.memberNo && (
-                  <div className="relative">
-                    <button
-                      onClick={() =>
-                        setOpenMenu(
-                          openMenu === member.memberNo ? null : member.memberNo,
-                        )
-                      }
-                      className="
+                {isAdmin &&
+                  member.groupRole !== "SUPER" &&
+                  member.memberNo !== myInfo?.memberNo && (
+                    <div className="relative">
+                      <button
+                        onClick={() =>
+                          setOpenMenu(
+                            openMenu === member.memberNo
+                              ? null
+                              : member.memberNo,
+                          )
+                        }
+                        className="
                       flex h-7 w-7
                       items-center justify-center
                       rounded-lg
@@ -225,22 +278,22 @@ export default function GroupMemberSection({
                       hover:bg-surface-hover
                       hover:text-foreground
                     "
-                    >
-                      <MoreVertical size={15} strokeWidth={1.75} />
-                    </button>
+                      >
+                        <MoreVertical size={15} strokeWidth={1.75} />
+                      </button>
 
-                    {openMenu === member.memberNo && (
-                      <div
-                        className="
+                      {openMenu === member.memberNo && (
+                        <div
+                          className="
                       absolute right-0 top-10 z-30
                       w-40 rounded-xl
                       glass
                       p-2
                     "
-                      >
-                        <button
-                          onClick={() => memberChanges(member)}
-                          className="
+                        >
+                          <button
+                            onClick={() => memberChanges(member)}
+                            className="
                           w-full rounded-lg
                           px-3 py-2
                           text-left
@@ -248,13 +301,13 @@ export default function GroupMemberSection({
                           text-secondary
                           hover:bg-white/5
                         "
-                        >
-                          멤버 수정
-                        </button>
+                          >
+                            멤버 수정
+                          </button>
 
-                        <button
-                          onClick={() => memberDelete(member)}
-                          className="
+                          <button
+                            onClick={() => memberDelete(member)}
+                            className="
                           mt-1 w-full rounded-lg
                           px-3 py-2
                           text-left
@@ -262,19 +315,20 @@ export default function GroupMemberSection({
                           text-error-500
                           hover:bg-white/5
                         "
-                        >
-                          그룹 내보내기
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                )}
-            </Row>
-          </Between>
-        ))}
+                          >
+                            그룹 내보내기
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+              </Row>
+            </Between>
+          );
+        })}
 
-        {hasMore && <div ref={sentinelRef} className="h-1 shrink-0" />}
-      </div>
+        {hasMore && <ScrollSentinel sentinelRef={sentinelRef} />}
+      </ScrollListArea>
     </BaseCard>
   );
 }

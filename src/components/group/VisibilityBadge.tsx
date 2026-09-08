@@ -39,7 +39,6 @@ export function visibilityIcon(
   return <Lock {...props} />;
 }
 
-/** 현재 공개 상태 표시. 변경은 GroupSettingBody에서 한다. */
 export default function VisibilityBadge({
   visibility,
   className,
@@ -47,7 +46,6 @@ export default function VisibilityBadge({
   visibility?: GroupVisibility;
   className?: string;
 }) {
-  // 서버가 값을 안 내려주는 경우가 있어 비공개로 떨어뜨린다
   const current = visibility ?? "PRIVATE";
   const { label, tone } = VISIBILITY_META[current] ?? VISIBILITY_META.PRIVATE;
 

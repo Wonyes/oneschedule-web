@@ -47,6 +47,8 @@ type SheetStore = {
 
   form: SheetForm;
   editingId: number | null;
+  /** 수정 중인 일정의 작성자. 수정·삭제 권한 판단에 쓴다. */
+  editingAuthorNo: number | null;
   createType: ScheduleViewType;
 
   updateForm: (values: Partial<SheetForm>) => void;
@@ -59,6 +61,7 @@ export const useSheetStore = create<SheetStore>((set) => ({
   open: false,
   form: initialForm,
   editingId: null,
+  editingAuthorNo: null,
   createType: "PERSONAL",
 
   updateForm: (values) =>
@@ -77,6 +80,7 @@ export const useSheetStore = create<SheetStore>((set) => ({
       set({
         open: true,
         editingId: event.id,
+        editingAuthorNo: event.author?.memberNo ?? event.createdBy ?? null,
         form: {
           title: event.title,
           startDate: start,
@@ -94,6 +98,7 @@ export const useSheetStore = create<SheetStore>((set) => ({
     set({
       open: true,
       editingId: null,
+      editingAuthorNo: null,
       createType: type ?? "PERSONAL",
       form: {
         ...initialForm,
@@ -112,5 +117,6 @@ export const useSheetStore = create<SheetStore>((set) => ({
       open: false,
       form: initialForm,
       editingId: null,
+      editingAuthorNo: null,
     }),
 }));

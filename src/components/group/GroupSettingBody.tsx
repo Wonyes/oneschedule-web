@@ -92,68 +92,67 @@ export default function GroupSettingBody({
   };
 
   return (
-      <Column className="w-full gap-2">
-          <DropdownMenu
-            label="그룹 공개 설정 변경"
-            align="stretch"
-            disabled={isPending}
-            className="w-full"
-            triggerClassName="neu-btn w-full rounded-xl px-4 py-3"
-            panelClassName="p-2"
-            trigger={(isOpen) => (
-              <OptionRow
-                option={current}
-                selected
-                trailing={
-                  <ChevronDown
-                    size={14}
-                    strokeWidth={2}
-                    className={cn(
-                      "mt-0.5 shrink-0 text-place-h transition-transform duration-200",
-                      isOpen && "rotate-180",
-                    )}
-                  />
-                }
+    <Column className="w-full gap-2">
+      <DropdownMenu
+        label="그룹 공개 설정 변경"
+        align="stretch"
+        disabled={isPending}
+        className="w-full"
+        triggerClassName="neu-btn w-full rounded-xl px-4 py-3"
+        panelClassName="p-2"
+        trigger={(isOpen) => (
+          <OptionRow
+            option={current}
+            selected
+            trailing={
+              <ChevronDown
+                size={14}
+                strokeWidth={2}
+                className={cn(
+                  "mt-0.5 shrink-0 text-place-h transition-transform duration-200",
+                  isOpen && "rotate-180",
+                )}
               />
-            )}
-          >
-            {(close) => (
-              <Column className="w-full gap-1">
-                {OPTIONS.map((option) => {
-                  const selected = option === current;
+            }
+          />
+        )}
+      >
+        {(close) => (
+          <Column className="w-full gap-1">
+            {OPTIONS.map((option) => {
+              const selected = option === current;
 
-                  return (
-                    <button
-                      key={option}
-                      type="button"
-                      role="menuitemradio"
-                      aria-checked={selected}
-                      onClick={() => selectVisibility(option, close)}
-                      className={cn(
-                        "w-full rounded-xl px-3 py-2.5 focus-visible:outline-none",
-                        // neu-flat과 neu-pressed는 둘 다 box-shadow라 같이 주면 안 된다
-                        selected ? "neu-flat" : "neu-pressed hover:bg-white/5",
-                      )}
-                    >
-                      <OptionRow
-                        option={option}
-                        selected={selected}
-                        trailing={
-                          selected ? (
-                            <Check
-                              size={14}
-                              strokeWidth={2.5}
-                              className="mt-0.5 shrink-0 text-accent"
-                            />
-                          ) : undefined
-                        }
-                      />
-                    </button>
-                  );
-                })}
-              </Column>
-            )}
-          </DropdownMenu>
-        </Column>
+              return (
+                <button
+                  key={option}
+                  type="button"
+                  role="menuitemradio"
+                  aria-checked={selected}
+                  onClick={() => selectVisibility(option, close)}
+                  className={cn(
+                    "w-full rounded-xl px-3 py-2.5 focus-visible:outline-none",
+                    selected ? "neu-flat" : "neu-pressed hover:bg-white/5",
+                  )}
+                >
+                  <OptionRow
+                    option={option}
+                    selected={selected}
+                    trailing={
+                      selected ? (
+                        <Check
+                          size={14}
+                          strokeWidth={2.5}
+                          className="mt-0.5 shrink-0 text-accent"
+                        />
+                      ) : undefined
+                    }
+                  />
+                </button>
+              );
+            })}
+          </Column>
+        )}
+      </DropdownMenu>
+    </Column>
   );
 }

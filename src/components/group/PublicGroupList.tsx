@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Search, Users } from "lucide-react";
+import { Check, Hourglass, Search, Users } from "lucide-react";
 import { useRef, useState } from "react";
 
 import BaseCard from "@/src/components/ui/card/BaseCard";
@@ -22,7 +22,7 @@ import {
 } from "@/src/components/ui/overlay/modal/JoinRequestMessageContent";
 
 function GroupRow({ group }: { group: PublicGroup }) {
-  const { openToast, openAlert, openModal } = useOverlay();
+  const { openToast, openAlert, openModal, closeModal } = useOverlay();
 
   const messageRef = useRef<JoinRequestMessageRef>(null);
 
@@ -40,11 +40,13 @@ function GroupRow({ group }: { group: PublicGroup }) {
 
   const handleClick = () => {
     if (needsApproval) {
-      // 승인제는 관리자가 판단할 근거가 필요하다. 한마디를 받아서 같이 보낸다.
       openModal({
         title: "가입 신청",
         content: () => (
-          <JoinRequestMessageContent ref={messageRef} groupName={group.groupName} />
+          <JoinRequestMessageContent
+            ref={messageRef}
+            groupName={group.groupName}
+          />
         ),
         mainBtn: "신청하기",
         subBtn: "취소",
@@ -53,7 +55,10 @@ function GroupRow({ group }: { group: PublicGroup }) {
             request(
               { groupNo: group.groupNo, message },
               {
-                onSuccess: () => openToast({ message: "가입을 신청했습니다." }),
+                onSuccess: () => {
+                  closeModal();
+                  openToast({ message: "가입을 신청했습니다." });
+                },
                 onError: handleError,
               },
             ),
@@ -102,6 +107,15 @@ function GroupRow({ group }: { group: PublicGroup }) {
         <Row className="shrink-0 items-center gap-1 px-3 text-success-500">
           <Check size={13} strokeWidth={2} />
           <span className="typo-caption-2">가입됨</span>
+        </Row>
+      ) : group.pending ? (
+        /*
+          이미 신청해둔 그룹. 버튼을 남겨두면 다시 눌러도
+          JOIN_REQUEST_ALREADY_PENDING만 돌아와서 아무 일도 안 일어난 것처럼 보인다.
+        */
+        <Row className="shrink-0 items-center gap-1 px-3 text-pending-500">
+          <Hourglass size={13} strokeWidth={2} />
+          <span className="typo-caption-2 whitespace-nowrap">가입 대기 중</span>
         </Row>
       ) : (
         <SecondaryBtn
@@ -163,9 +177,7 @@ export default function PublicGroupList() {
               : "아직 공개된 그룹이 없습니다."}
           </p>
         ) : (
-          groups.map((group) => (
-            <GroupRow key={group.groupNo} group={group} />
-          ))
+          groups.map((group) => <GroupRow key={group.groupNo} group={group} />)
         )}
       </Column>
 

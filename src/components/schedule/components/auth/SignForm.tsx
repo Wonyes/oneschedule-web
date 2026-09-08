@@ -25,8 +25,6 @@ export default function SignForm() {
     phone: "",
   });
 
-  // 값 자체가 아니라 "마지막으로 통과한 값"을 기억해서, 확인 후 입력을 바꾸면
-  // 자동으로 다시 확인하도록 만든다. (boolean 플래그로는 값이 바뀌어도 true로 남는 문제가 있었음)
   const [checkedEmail, setCheckedEmail] = useState<string | null>(null);
   const [checkedNickname, setCheckedNickname] = useState<string | null>(null);
   const emailChecked = !!form.email && form.email === checkedEmail;
@@ -101,7 +99,7 @@ export default function SignForm() {
         throw result.error;
       }
 
-      // true = 사용 가능, false = 이미 사용 중 (서버 응답값을 그대로 신뢰해야 한다)
+      // true = 사용 가능, false = 이미 사용 중
       if (!result.data) {
         return openAlert({
           title: "이미 사용 중입니다.",

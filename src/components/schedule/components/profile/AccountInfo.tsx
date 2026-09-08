@@ -31,8 +31,6 @@ export default function AccountInfo({ user }: { user: MyInfoResponse }) {
   const nicknameDes = "한글 2~5자 또는 영문·숫자 4~10자까지 입력 가능합니다.";
   const phoneDes = "'-'를 제외한 숫자만 입력해주세요.";
 
-  // 서버에는 숫자만 저장하므로, 보여줄 때만 하이픈을 넣는다.
-  // 형식이 어긋나면 원본을 그대로 둔다.
   const formatPhone = (phoneNumber: string) =>
     phoneNumber.replace(/^(\d{3})(\d{4})(\d{4})$/, "$1-$2-$3");
 

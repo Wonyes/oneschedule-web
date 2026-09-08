@@ -16,7 +16,7 @@ import CalendarBody from "./calendar/CalendarBody";
 import { useCalendarStore } from "@/src/hooks/stores/useCalendarStore";
 import { formatTime } from "@/src/utils/time";
 import { EVENT_STYLES } from "@/src/constant/schedule";
-import { toScheduleRequest } from "@/src/utils/schedule";
+import { canEditSchedule, toScheduleRequest } from "@/src/utils/schedule";
 import {
   createSchedule,
   createGroupSchedule,
@@ -28,6 +28,7 @@ import { useOverlay } from "@/src/hooks/useOverlay";
 import { getErrorMessage, useAppMutation } from "@/src/types/ErrorResponse";
 import { useActiveGroup } from "@/src/hooks/querys/useGroup";
 import { GroupMember } from "@/src/types/group";
+import { useMyInfo } from "@/src/hooks/querys/useMembers";
 
 const combineDateTime = (date: Date, time: string) => {
   const [hour, minute] = time.split(":").map(Number);
@@ -47,10 +48,13 @@ function ParticipantPicker({
   members,
   selected,
   onChange,
+  readOnly = false,
 }: {
   members: GroupMember[];
   selected: number[];
   onChange: (ids: number[]) => void;
+  /** 권한이 없으면 누가 참여하는지만 보여주고 고치지 못하게 한다 */
+  readOnly?: boolean;
 }) {
   const [query, setQuery] = useState("");
 
@@ -72,7 +76,10 @@ function ParticipantPicker({
     <DropdownMenu
       label="참여자 선택"
       align="stretch"
-      triggerClassName="w-full justify-between rounded-xl neu-pressed px-4 py-3 text-left shadow-sm hover:ring-2 hover:ring-indigo-500/30"
+      disabled={readOnly}
+      triggerClassName={`w-full justify-between rounded-xl neu-pressed px-4 py-3 text-left shadow-sm ${
+        readOnly ? "opacity-70" : "hover:ring-2 hover:ring-indigo-500/30"
+      }`}
       trigger={(isOpen) => (
         <>
           {selectedMembers.length === 0 ? (
@@ -87,7 +94,10 @@ function ParticipantPicker({
                   className="flex items-center gap-1 rounded-full bg-accent/10 py-0.5 pl-1 pr-2"
                 >
                   <span className="flex h-4 w-4 items-center justify-center overflow-hidden rounded-full bg-accent/20 text-[9px] font-bold text-accent">
-                    <AvatarImage src={m.profileImageUrl} nickname={m.nickname} />
+                    <AvatarImage
+                      src={m.profileImageUrl}
+                      nickname={m.nickname}
+                    />
                   </span>
                   <span className="typo-caption-3 text-secondary">
                     {m.nickname}
@@ -187,32 +197,50 @@ function SheetFooter({
   onSave,
   onDelete,
   isEditing,
+  canEdit,
 }: {
   onClose: () => void;
   onSave: () => void;
   onDelete: () => void;
   isEditing: boolean;
+  /** 그룹 일정을 고칠 권한. 없으면 읽기 전용으로 보여준다. */
+  canEdit: boolean;
 }) {
   return (
     <footer className="border-t border-white/10 px-4 sm:px-6 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom))] bg-surface/90 rounded-b-[32px]">
       <div className="flex gap-3">
-        {isEditing && (
+        {/* 삭제는 이미 있는 일정에만. 추가 화면에는 지울 대상이 없다. */}
+        {isEditing && canEdit && (
           <RedBtn text="삭제" onClick={onDelete} className="flex-1" />
         )}
-        <SecondaryBtn text="취소" onClick={onClose} className="flex-1" />
-        <Primary text="저장" onClick={onSave} className="flex-1" />
+
+        <SecondaryBtn
+          text={canEdit ? "취소" : "닫기"}
+          onClick={onClose}
+          className="flex-1"
+        />
+
+        {canEdit && <Primary text="저장" onClick={onSave} className="flex-1" />}
       </div>
     </footer>
   );
 }
 
 export default function Sheet() {
-  const { form, updateForm, open, closeSheet, editingId, createType } =
-    useSheetStore();
+  const {
+    form,
+    updateForm,
+    open,
+    closeSheet,
+    editingId,
+    createType,
+    editingAuthorNo,
+  } = useSheetStore();
   const { isCalendarOpen, toggleCalendar } = useCalendarStore();
   const { group } = useActiveGroup(open);
   const viewType = useScheduleViewStore((s) => s.viewType);
   const { openAlert } = useOverlay();
+  const { data: myInfo } = useMyInfo(open);
   const queryClient = useQueryClient();
   const pathname = usePathname();
 
@@ -228,7 +256,6 @@ export default function Sheet() {
 
   useEffect(() => {
     closeSheet();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
   const close = () => {
@@ -291,6 +318,23 @@ export default function Sheet() {
   const currentForm = form;
   if (!currentForm) return null;
 
+  const isEditing = !!editingId;
+
+  /**
+   * 남의 그룹 일정은 고치지 못한다. 작성자 본인이거나 그룹 관리자여야 한다.
+   * 새로 만드는 중이면 판정할 대상이 없으므로 그냥 허용한다.
+   *
+   * 서버도 같은 범위를 검사한다. 여기서 막는 건 되지도 않을 요청을 보내
+   * 실패 알럿을 띄우지 않기 위해서다.
+   */
+  const canEdit =
+    !isEditing ||
+    canEditSchedule({
+      createdBy: editingAuthorNo ?? undefined,
+      myMemberNo: myInfo?.memberNo,
+      myGroupRole: group?.groupRole,
+    });
+
   const handleSave = () => {
     if (!currentForm.title.trim()) return;
 
@@ -340,7 +384,7 @@ export default function Sheet() {
             : "translate-y-full pointer-events-none"
         }`}
       >
-        <SheetHeader onClose={close} isEditing={!!editingId} />
+        <SheetHeader onClose={close} isEditing={isEditing} />
 
         <div className="flex-1 space-y-6 overflow-y-auto px-4 sm:px-6 py-6 scrollbar-thin">
           <Column className="space-y-2 gap-1.5">
@@ -449,6 +493,7 @@ export default function Sheet() {
               <ParticipantPicker
                 members={group?.members ?? []}
                 selected={currentForm.participantMemberNos}
+                readOnly={!canEdit}
                 onChange={(ids) => updateForm({ participantMemberNos: ids })}
               />
             </Column>
@@ -469,7 +514,8 @@ export default function Sheet() {
           onClose={close}
           onSave={handleSave}
           onDelete={handleDelete}
-          isEditing={!!editingId}
+          isEditing={isEditing}
+          canEdit={canEdit}
         />
       </section>
     </>

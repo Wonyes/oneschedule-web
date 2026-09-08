@@ -84,7 +84,8 @@ describe("ProfilePage", () => {
 
     const editButtons = screen.getAllByText("수정");
 
-    fireEvent.click(editButtons[0]);
+    // 행 순서는 이름 → 닉네임 → 전화번호. 중복 확인은 닉네임에만 있다.
+    fireEvent.click(editButtons[1]);
 
     const saveButton = screen.getByText("완료");
 

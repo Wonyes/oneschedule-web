@@ -15,24 +15,33 @@ function GroupPageContent() {
   const mounted = useMounted();
   const { groups, group, isPending, needsSelection } = useActiveGroup();
 
-  // add=1 여부를 그대로 화면 상태로 쓴다(로컬 state로 따로 안 들고 있음).
-  // 헤더의 "그룹 추가"는 이 쿼리로 이동만 시키고, "돌아가기"도 이 쿼리를
-  // 지우는 방식으로 맞춰야 URL과 화면이 안 어긋난다.
   const wantsAdd = useSearchParams().get("add") === "1";
 
-  // 마운트 전에는 서버와 같은 화면을 그려야 하이드레이션이 어긋나지 않는다
+  /*
+    ?add=1은 대시보드가 아니라 탐색 화면으로 간다. 그룹을 기다리는 동안
+    대시보드 스켈레톤을 깔면 전혀 다른 모양이 떴다가 바뀐다.
+
+    안쪽 목록은 각자 로딩을 처리하므로 바로 그려도 된다. 취소 버튼만
+    "돌아갈 그룹이 있는지"를 알아야 해서 데이터가 온 뒤에 붙인다.
+  */
+  if (wantsAdd) {
+    return (
+      <GroupLanding
+        onCancel={
+          !isPending && groups.length > 0
+            ? () => router.replace("/group")
+            : undefined
+        }
+      />
+    );
+  }
+
   if (!mounted || isPending) {
     return <GroupDashboardSkeleton />;
   }
 
-  if (groups.length === 0 || wantsAdd) {
-    return (
-      <GroupLanding
-        onCancel={
-          groups.length > 0 ? () => router.replace("/group") : undefined
-        }
-      />
-    );
+  if (groups.length === 0) {
+    return <GroupLanding />;
   }
 
   if (needsSelection) {

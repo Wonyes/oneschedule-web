@@ -5,10 +5,11 @@ import { useMemo } from "react";
 
 import BaseCard from "@/src/components/ui/card/BaseCard";
 import { Row, Between } from "@/src/components/ui/layout/flex";
+import Skeleton from "@/src/components/ui/Skeleton";
 import { useHolidays } from "@/src/hooks/querys/useCommonApi";
 
 export default function HolidayBanner({ today }: { today: Date }) {
-  const { data: holidays } = useHolidays();
+  const { data: holidays, isPending } = useHolidays();
 
   const upcomingHoliday = useMemo(() => {
     if (!holidays?.length) return null;
@@ -29,6 +30,25 @@ export default function HolidayBanner({ today }: { today: Date }) {
       .sort((a, b) => a.date.getTime() - b.date.getTime())[0];
   }, [holidays, today]);
 
+  /*
+    공휴일이 오기 전에는 자리만 잡아둔다.
+    바로 null을 돌려주면 배너가 없다가 갑자기 끼어들면서 아래 카드들이 밀린다.
+  */
+  if (isPending) {
+    return (
+      <BaseCard className="p-4">
+        <Between>
+          <Row className="gap-2">
+            <Skeleton className="h-3.5 w-24 rounded" />
+            <Skeleton className="h-3.5 w-16 rounded" />
+          </Row>
+          <Skeleton className="h-3.5 w-10 rounded" />
+        </Between>
+      </BaseCard>
+    );
+  }
+
+  // 다가오는 공휴일이 정말 없을 때만 자리를 비운다
   if (!upcomingHoliday) return null;
 
   const dDay = differenceInCalendarDays(upcomingHoliday.date, today);

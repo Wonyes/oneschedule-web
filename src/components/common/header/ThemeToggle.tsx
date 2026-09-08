@@ -7,8 +7,6 @@ export default function ThemeToggle() {
   const [theme, setTheme] = useState<"dark" | "light">("light");
 
   useEffect(() => {
-    // 서버가 쿠키를 읽어 <html>에 data-theme을 이미 렌더링해두므로,
-    // 마운트 시 그 값을 읽어 버튼 아이콘만 맞춘다(SSR 시점엔 document가 없다).
     const explicit = document.documentElement.dataset.theme;
     const systemDark = window.matchMedia(
       "(prefers-color-scheme: dark)",

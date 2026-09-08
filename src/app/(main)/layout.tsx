@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import Header from "@/src/components/common/header";
 import Sidebar from "@/src/components/common/Sidebar";
 import AuthRefreshListener from "@/src/components/schedule/components/auth/AuthRefreshListener";
+import EventStreamListener from "@/src/components/common/EventStreamListener";
 import GlobalOverlays from "@/src/components/ui/GlobalOverlay";
 import Sheet from "@/src/components/ui/sheet/sheet";
 
@@ -17,6 +18,7 @@ export default async function MainLayout({
   return (
     <div className="flex flex-col w-full h-full overflow-hidden">
       <AuthRefreshListener />
+      <EventStreamListener />
       <Header />
       <div className="relative flex-1 flex overflow-hidden">
         <main className="flex w-full h-full p-1.5 gap-2 overflow-hidden sm:p-4 sm:gap-6">

@@ -13,7 +13,7 @@ interface ScheduleStore {
 }
 
 export const useScheduleStore = create<ScheduleStore>((set) => ({
-  mode: "week",
+  mode: "month",
   currentDate: new Date(),
 
   setMode: (mode) => set({ mode }),

@@ -9,6 +9,7 @@ import BaseCard from "@/src/components/ui/card/BaseCard";
 import { Column, Between } from "@/src/components/ui/layout/flex";
 import ScheduleCard from "@/src/components/schedule/components/ScheduleCard";
 import { useSchedules } from "@/src/hooks/querys/useSchedule";
+import Skeleton from "@/src/components/ui/Skeleton";
 import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
 import { toScheduleEvent } from "@/src/utils/schedule";
 
@@ -16,8 +17,17 @@ const MAX_ITEMS = 3;
 
 export default function UpcomingSchedules({ today }: { today: Date }) {
   const { openSheet } = useSheetStore();
-  const { data: personalSchedules } = useSchedules("PERSONAL", true);
-  const { data: groupSchedules } = useSchedules("GROUP", true);
+
+  const { data: personalSchedules, isPending: personalPending } = useSchedules(
+    "PERSONAL",
+    true,
+  );
+  const { data: groupSchedules, isPending: groupPending } = useSchedules(
+    "GROUP",
+    true,
+  );
+
+  const loading = personalPending || groupPending;
 
   const upcomingEvents = useMemo(() => {
     const start = startOfDay(today).getTime();
@@ -50,7 +60,13 @@ export default function UpcomingSchedules({ today }: { today: Date }) {
         </Link>
       </Between>
 
-      {upcomingEvents.length === 0 ? (
+      {loading ? (
+        <Column className="w-full gap-2">
+          <Skeleton className="h-[58px] w-full rounded-xl" />
+          <Skeleton className="h-[58px] w-full rounded-xl" />
+          <Skeleton className="h-[58px] w-full rounded-xl" />
+        </Column>
+      ) : upcomingEvents.length === 0 ? (
         <Column className="items-center gap-3 py-6">
           <p className="typo-caption-2 text-muted text-center">
             아직 등록된 일정이 없어요.

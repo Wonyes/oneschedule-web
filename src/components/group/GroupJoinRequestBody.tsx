@@ -3,7 +3,8 @@
 import AvatarImage from "@/src/components/common/AvatarImage";
 import IconBox from "../ui/IconBox";
 import { Column, Row } from "../ui/layout/flex";
-import { Primary } from "../ui/layout/button";
+import ScrollListArea, { ScrollSentinel } from "../ui/ScrollListArea";
+import { useInfiniteScroll } from "@/src/hooks/useInfiniteScroll";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import {
@@ -23,6 +24,10 @@ export default function GroupJoinRequestBody({
 
   const { data, isPending, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useJoinRequests(group.groupNo);
+
+  const { rootRef, sentinelRef } = useInfiniteScroll(hasNextPage, () => {
+    if (!isFetchingNextPage) fetchNextPage();
+  });
 
   const { mutate: process, isPending: processing } = useProcessJoinRequest(
     group.groupNo,
@@ -84,7 +89,11 @@ export default function GroupJoinRequestBody({
           대기 중인 가입 신청이 없습니다.
         </p>
       ) : (
-        <Column className="w-full">
+        <ScrollListArea
+          rootRef={rootRef}
+          showFade={hasNextPage}
+          className="scroll-hidden flex w-full flex-col items-start lg:max-h-[260px] lg:overflow-y-auto"
+        >
           {requests.map((request) => (
             <Row
               key={request.requestNo}
@@ -163,16 +172,24 @@ export default function GroupJoinRequestBody({
               </Row>
             </Row>
           ))}
-        </Column>
-      )}
 
-      {hasNextPage && (
-        <Primary
-          className="mt-4 w-full"
-          text={isFetchingNextPage ? "불러오는 중…" : "더 보기"}
-          isDisabled={isFetchingNextPage}
-          onClick={() => fetchNextPage()}
-        />
+          {/*
+            여기는 서버에서 다음 장을 받아오므로 진짜 기다리는 시간이 있다.
+            멤버·일정은 이미 받아둔 배열을 푸는 것이라 스켈레톤을 넣지 않는다.
+          */}
+          {isFetchingNextPage && (
+            <Row className="w-full items-center gap-3 py-2.5">
+              <div className="size-9 shrink-0 animate-pulse rounded-full bg-surface-hover" />
+
+              <Column className="flex-1 gap-1.5">
+                <div className="h-2.5 w-20 animate-pulse rounded bg-surface-hover" />
+                <div className="h-2 w-32 animate-pulse rounded bg-surface-hover" />
+              </Column>
+            </Row>
+          )}
+
+          {hasNextPage && <ScrollSentinel sentinelRef={sentinelRef} />}
+        </ScrollListArea>
       )}
     </>
   );

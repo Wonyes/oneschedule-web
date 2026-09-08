@@ -10,7 +10,6 @@ import { useSchedules } from "@/src/hooks/querys/useSchedule";
 import { toScheduleEvent } from "@/src/utils/schedule";
 import IconBox from "../ui/IconBox";
 
-// "다가오는 일정"은 오늘부터 7일 이내(오늘 포함) 시작하는 일정 수를 센다.
 const UPCOMING_RANGE_DAYS = 7;
 
 export default function GroupSummary({ group }: { group: MyGroupResponse }) {

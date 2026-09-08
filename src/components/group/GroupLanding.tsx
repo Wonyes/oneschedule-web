@@ -19,8 +19,6 @@ const TABS = [
 ];
 
 export default function GroupLanding({ onCancel }: { onCancel?: () => void }) {
-  // 그룹이 하나도 없으면(onCancel이 없는 경우) 만들기가 첫 화면이 맞다.
-  // 이미 그룹이 있는데 추가하러 온 경우(?add=1)는 탐색이 주 목적이다.
   const [tab, setTab] = useState<TabKey>(onCancel ? "explore" : "create");
 
   return (
@@ -46,7 +44,9 @@ export default function GroupLanding({ onCancel }: { onCancel?: () => void }) {
 
       {tab === "code" && <JoinByCode onJoined={onCancel} />}
 
-      {tab === "create" && <CreateGroup showBack={false} onBack={() => setTab("explore")} />}
+      {tab === "create" && (
+        <CreateGroup showBack={false} onBack={() => setTab("explore")} />
+      )}
     </main>
   );
 }

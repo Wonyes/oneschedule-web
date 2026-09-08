@@ -89,8 +89,12 @@ const getEventPosition = (
 
   // 그리드 행 높이가 브레이크포인트별 CSS 값이라 절대 px 대신 하루(1440분) 대비 비율(%)로 위치를 계산한다.
   const top = Math.min(Math.max((totalMinutes / 1440) * 100, 0), 100);
-  // 종료 시각이 비었거나 시작과 같은 일정도 시간 칸 하나(60분)는 꽉 채워서 보여준다.
-  const MIN_DURATION_MINUTES = 60;
+  // 길이가 그대로 보여야 한다. 30분이면 시간 칸의 절반을 차지한다.
+  //
+  // 전에는 60분이 하한이라 30분짜리도 한 칸을 꽉 채워서, 09:00-09:30과
+  // 09:00-10:00이 화면에서 구분되지 않았다. 다만 종료 시각이 비었거나 시작과
+  // 같은 일정은 높이가 0이 되어 클릭조차 안 되므로 30분은 남겨둔다.
+  const MIN_DURATION_MINUTES = 30;
   const height = Math.max(
     (duration / 1440) * 100,
     (MIN_DURATION_MINUTES / 1440) * 100,
@@ -170,7 +174,11 @@ const getmonthTime = (startStr: string, endStr: string, date: Date) => {
 };
 
 /**
- * 일정을 수정·삭제할 수 있는지 판정한다. 작성자 본인이거나 그룹 관리자(SUPER)면 가능.
+ * 일정을 수정·삭제할 수 있는지 판정한다.
+ * 작성자 본인이거나 그룹 관리자(SUPER·SUB)면 가능.
+ *
+ * 관리자 범위를 SUPER·SUB로 잡은 건 백엔드 validateManager와 맞춘 것이다.
+ * 한쪽만 SUPER로 두면 부관리자에게 버튼은 보이는데 서버가 막는 일이 생긴다.
  *
  * 이건 어디까지나 화면 처리를 위한 것이고, 실제 차단은 서버가 한다.
  * 두 값 중 하나라도 없으면(구버전 서버 응답 등) 판정을 건너뛰고 허용한다 —
@@ -185,7 +193,7 @@ const canEditSchedule = ({
   myMemberNo?: number;
   myGroupRole?: "SUPER" | "SUB" | "MEMBER";
 }): boolean => {
-  if (myGroupRole === "SUPER") return true;
+  if (myGroupRole === "SUPER" || myGroupRole === "SUB") return true;
 
   if (createdBy === undefined || myMemberNo === undefined) return true;
 

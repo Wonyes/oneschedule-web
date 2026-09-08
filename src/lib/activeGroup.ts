@@ -1,6 +1,20 @@
-import { MyGroupResponse } from "@/src/types/group";
+import { MyGroupResponse, PageResponse } from "@/src/types/group";
 
 export const ACTIVE_GROUP_COOKIE = "active-group";
+
+/**
+ * /group/my/groups는 PageResponse로 감싸서 온다.
+ * 서버 컴포넌트의 프리페치와 클라이언트 쿼리가 같은 모양을 캐시에 넣어야
+ * 하이드레이션이 어긋나지 않으므로 두 곳에서 이 함수를 같이 쓴다.
+ */
+export function toMyGroups(
+  page: PageResponse<MyGroupResponse> | null,
+): MyGroupResponse[] {
+  return (page?.content ?? []).map((group) => ({
+    ...group,
+    members: group.members ?? [],
+  }));
+}
 
 /**
  * 활성 그룹은 쿠키에 담는다.

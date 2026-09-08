@@ -10,6 +10,8 @@ import { toScheduleEvent } from "@/src/utils/schedule";
 import { MyGroupResponse } from "@/src/types/group";
 import { getTimes } from "@/src/utils/time";
 import { useIncrementalList } from "@/src/hooks/useIncrementalList";
+import { PAGE_SIZE } from "@/src/lib/paging";
+import ScrollListArea, { ScrollSentinel } from "../ui/ScrollListArea";
 
 export default function GroupScheduleSection({
   group,
@@ -35,17 +37,16 @@ export default function GroupScheduleSection({
       );
   }, [schedules]);
 
-  // 멤버 목록과 같은 방식으로 5개씩 이어 붙인다
   const {
     visible: visibleEvents,
     hasMore,
     rootRef,
     sentinelRef,
-  } = useIncrementalList(todayEvents, 5);
+  } = useIncrementalList(todayEvents, PAGE_SIZE.todaySchedules);
 
   return (
-    <BaseCard glow className="flex-1 p-5 lg:min-h-[380px]">
-      <Column className="mb-4 gap-1.5">
+    <BaseCard glow className="flex flex-1 flex-col p-5">
+      <Column className="mb-4 shrink-0 gap-1.5">
         <span className="eyebrow">TODAY</span>
         <Row className="gap-1.5">
           <h2 className="typo-sub-t-1 text-foreground">오늘 일정</h2>
@@ -53,13 +54,14 @@ export default function GroupScheduleSection({
       </Column>
 
       {todayEvents.length === 0 ? (
-        <p className="py-10 text-center typo-caption-2 text-muted">
+        <p className="flex flex-1 items-center justify-center py-10 text-center typo-caption-2 text-muted">
           오늘 등록된 그룹 일정이 없습니다.
         </p>
       ) : (
-        <div
-          ref={rootRef}
-          className="scroll-hidden flex flex-col gap-2.5 px-1 py-1 lg:-mx-4 lg:max-h-[304px] lg:overflow-y-auto lg:px-4 lg:pt-3 lg:pb-4"
+        <ScrollListArea
+          rootRef={rootRef}
+          showFade={hasMore}
+          className="scroll-hidden flex flex-col gap-2.5 px-1 py-1 lg:max-h-[304px] lg:overflow-y-auto lg:pt-3 lg:pb-4"
         >
           {visibleEvents.map((event) => (
             <ScheduleItem
@@ -70,8 +72,8 @@ export default function GroupScheduleSection({
             />
           ))}
 
-          {hasMore && <div ref={sentinelRef} className="h-1 shrink-0" />}
-        </div>
+          {hasMore && <ScrollSentinel sentinelRef={sentinelRef} />}
+        </ScrollListArea>
       )}
     </BaseCard>
   );

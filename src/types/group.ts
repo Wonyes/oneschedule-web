@@ -32,6 +32,8 @@ export interface PublicGroup {
   memberCount: number;
   /** 내가 이미 가입한 그룹인지 */
   joined: boolean;
+  /** 승인제 그룹에 신청해두고 답을 기다리는 중인지 */
+  pending: boolean;
 }
 
 /** 서버의 PageResponse<T> */
@@ -57,3 +59,10 @@ export interface JoinRequest {
 }
 
 export type JoinRequestStatus = "PENDING" | "APPROVED" | "REJECTED";
+
+/** 그룹원 접속 상태. 온라인이면 lastSeenAt은 오지 않는다. */
+export interface MemberPresence {
+  memberNo: number;
+  online: boolean;
+  lastSeenAt: string | null;
+}

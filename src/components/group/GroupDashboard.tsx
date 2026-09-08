@@ -13,6 +13,7 @@ import GroupScheduleSection from "./GroupScheduleSection";
 import GroupActivitySection from "./GroupActivitySection";
 import GroupAdminSection from "./GroupAdminSection";
 import SegmentedTabs from "../ui/layout/SegmentedTabs";
+import BaseCard from "../ui/card/BaseCard";
 
 type TabKey = "member" | "schedule" | "activity";
 
@@ -25,8 +26,6 @@ const TABS = [
 export default function GroupDashboard({ group }: { group: MyGroupResponse }) {
   const [tab, setTab] = useState<TabKey>("member");
 
-  // SUPER/SUB 모두 멤버를 관리할 수 있다. SUPER 본인은 GroupMemberSection의
-  // "member.groupRole !== SUPER" 조건으로 건드릴 수 없게 막혀 있다.
   const isAdmin = group?.groupRole === "SUPER" || group?.groupRole === "SUB";
 
   const memberSection = (
@@ -46,12 +45,14 @@ export default function GroupDashboard({ group }: { group: MyGroupResponse }) {
       <GroupAdminSection group={group} isAdmin={isAdmin} />
 
       <Column className="w-full gap-5 lg:hidden">
-        <SegmentedTabs
-          tabs={TABS}
-          value={tab}
-          onChange={setTab}
-          label="그룹 상세"
-        />
+        <BaseCard className="w-full p-2">
+          <SegmentedTabs
+            tabs={TABS}
+            value={tab}
+            onChange={setTab}
+            label="그룹 상세"
+          />
+        </BaseCard>
 
         {tab === "member" && memberSection}
         {tab === "schedule" && <GroupScheduleSection group={group} />}
@@ -59,7 +60,7 @@ export default function GroupDashboard({ group }: { group: MyGroupResponse }) {
       </Column>
 
       <Column className="hidden w-full gap-5 lg:flex">
-        <Row className="w-full gap-5">
+        <Row className="w-full items-stretch gap-5">
           {memberSection}
           <GroupScheduleSection group={group} />
         </Row>

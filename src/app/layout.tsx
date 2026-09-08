@@ -20,9 +20,22 @@ const jakarta = Plus_Jakarta_Sans({
   weight: ["400", "500", "600", "700"],
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_WEB_IP ?? "https://oneschedule.site";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+
   title: "OneSchedule",
   description: "나와 우리 팀의 일정을 한 곳에서 관리하는 스케줄러",
+
+  openGraph: {
+    type: "website",
+    siteName: "OneSchedule",
+    url: SITE_URL,
+    title: "OneSchedule",
+    description: "나와 우리 팀의 일정을 한 곳에서 관리하는 스케줄러",
+    locale: "ko_KR",
+  },
 };
 
 export const viewport: Viewport = {

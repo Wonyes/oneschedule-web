@@ -87,7 +87,6 @@ export default function LocationPicker() {
     <DropdownMenu
       label="지역 선택"
       align="left"
-      // 모바일에선 왼쪽에 있어 오른쪽으로 펼치고, 데스크톱에선 오른쪽 끝이라 왼쪽으로 펼친다
       panelClassName="w-40 lg:left-auto lg:right-0"
       triggerClassName="px-2 py-1.5 typo-caption-2 text-secondary hover:text-foreground lg:px-2.5"
       trigger={(isOpen) => (

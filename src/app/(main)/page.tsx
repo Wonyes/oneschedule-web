@@ -10,11 +10,13 @@ import {
   ACTIVE_GROUP_COOKIE,
   parseActiveGroupNo,
   resolveActiveGroup,
+  toMyGroups,
 } from "@/src/lib/activeGroup";
 import { getMyInfo } from "@/src/lib/member";
 import { getServerQueryClient } from "@/src/lib/queryClient";
+import { PAGE_SIZE } from "@/src/lib/paging";
 import { serverGet } from "@/src/lib/serverApi";
-import { MyGroupResponse } from "@/src/types/group";
+import { MyGroupResponse, PageResponse } from "@/src/types/group";
 import { ScheduleApiResponse } from "@/src/types/schedule";
 
 export default async function HomePage() {
@@ -37,7 +39,12 @@ export default async function HomePage() {
 
     queryClient.prefetchQuery({
       queryKey: [groupkeys.myGroup],
-      queryFn: () => serverGet<MyGroupResponse[]>("/group/my/groups"),
+      queryFn: async () =>
+        toMyGroups(
+          await serverGet<PageResponse<MyGroupResponse>>("/group/my/groups", {
+            size: String(PAGE_SIZE.myGroups),
+          }),
+        ),
     }),
   ]);
 
@@ -47,15 +54,8 @@ export default async function HomePage() {
 
   queryClient.setQueryData([memberskeys.myInfo], user);
 
-  const prefetched = queryClient.getQueryData<
-    MyGroupResponse | MyGroupResponse[]
-  >([groupkeys.myGroup]);
-
-  const groups = !prefetched
-    ? []
-    : Array.isArray(prefetched)
-      ? prefetched
-      : [prefetched];
+  const groups =
+    queryClient.getQueryData<MyGroupResponse[]>([groupkeys.myGroup]) ?? [];
 
   const activeGroup = resolveActiveGroup(
     groups,
@@ -64,7 +64,11 @@ export default async function HomePage() {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <HomeContent user={user} initialGroups={groups} activeGroup={activeGroup} />
+      <HomeContent
+        user={user}
+        initialGroups={groups}
+        activeGroup={activeGroup}
+      />
     </HydrationBoundary>
   );
 }

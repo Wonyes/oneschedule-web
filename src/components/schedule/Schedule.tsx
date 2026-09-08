@@ -32,7 +32,6 @@ export default function Schedule() {
   const otherSchedules =
     viewType === "PERSONAL" ? groupSchedules : personalSchedules;
 
-  // 현재 보고 있는 뷰(개인/그룹)와 반대쪽 일정이 시간상 겹치면 카드에 표시한다.
   const events = useMemo(() => {
     const activeEvents = (activeSchedules ?? []).map(toScheduleEvent);
     const otherEvents = (otherSchedules ?? []).map(toScheduleEvent);

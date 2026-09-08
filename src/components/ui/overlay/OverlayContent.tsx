@@ -1,4 +1,5 @@
 import React from "react";
+import { OVERLAY_LAYER, OverlayLayer } from "./layer";
 
 interface OverlayContentProps {
   show: boolean;
@@ -7,6 +8,8 @@ interface OverlayContentProps {
   message2?: string;
   message3?: string;
   buttons: React.ReactNode;
+  /** 쌓임 순서. alert이 confirm보다 위다. */
+  layer: OverlayLayer;
 }
 
 export default function OverlayContent({
@@ -16,16 +19,23 @@ export default function OverlayContent({
   message2,
   message3,
   buttons,
+  layer,
 }: OverlayContentProps) {
   if (!show) return null;
+
+  const z = OVERLAY_LAYER[layer];
 
   return (
     <>
       {/* Dimmed Background */}
-      <div className="fixed inset-0 z-[9990] bg-black/70  transition-opacity duration-300 opacity-100" />
+      <div
+        className={`fixed inset-0 ${z.backdrop} bg-black/70 transition-opacity duration-300 opacity-100`}
+      />
 
       {/* Alert / Confirm Box */}
-      <div className="fixed left-1/2 top-1/2 z-[9999] flex w-[calc(100%-32px)] max-w-[360px] -translate-x-1/2 -translate-y-1/2 flex-col rounded-2xl bg-surface border border-divider shadow-2xl transition-all duration-300 text-foreground overflow-hidden">
+      <div
+        className={`fixed left-1/2 top-1/2 ${z.box} flex w-[calc(100%-32px)] max-w-[360px] -translate-x-1/2 -translate-y-1/2 flex-col rounded-2xl bg-surface border border-divider shadow-2xl transition-all duration-300 text-foreground overflow-hidden`}
+      >
         {/* 상단 타이틀 */}
         <div className="px-6 pt-6 pb-2">
           <h3 className="text-base font-bold text-foreground tracking-tight">

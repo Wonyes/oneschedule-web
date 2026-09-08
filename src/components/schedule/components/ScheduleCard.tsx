@@ -63,7 +63,6 @@ export default function ScheduleCard({
       </button>
     );
   }
-  // category에 "default"가 올 수 있는데 EVENT_STYLES에는 항목이 없다.
   const style = EVENT_STYLES[event.category as keyof typeof EVENT_STYLES] as
     | (typeof EVENT_STYLES)[keyof typeof EVENT_STYLES]
     | undefined;

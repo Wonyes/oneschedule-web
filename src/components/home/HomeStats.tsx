@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { startOfDay, endOfDay } from "date-fns";
 
 import BaseCard from "@/src/components/ui/card/BaseCard";
+import Skeleton from "@/src/components/ui/Skeleton";
 import IconBox from "@/src/components/ui/IconBox";
 import { Column, Row } from "@/src/components/ui/layout/flex";
 import { useSchedules } from "@/src/hooks/querys/useSchedule";
@@ -16,10 +17,13 @@ function StatTile({
   icon,
   title,
   value,
+  loading,
 }: {
   icon: React.ReactNode;
   title: string;
   value: string;
+  /** 값이 아직 안 왔을 때. 0으로 그렸다가 숫자가 튀는 걸 막는다. */
+  loading?: boolean;
 }) {
   return (
     <BaseCard className="flex-1 px-4 py-3.5">
@@ -27,9 +31,14 @@ function StatTile({
         <IconBox size="md">{icon}</IconBox>
         <Column className="gap-0.5">
           <span className="typo-caption-3 text-place-h">{title}</span>
-          <span className="typo-sub-t-1 text-foreground tabular-nums">
-            {value}
-          </span>
+
+          {loading ? (
+            <Skeleton className="my-0.5 h-4 w-10 rounded" />
+          ) : (
+            <span className="typo-sub-t-1 text-foreground tabular-nums">
+              {value}
+            </span>
+          )}
         </Column>
       </Row>
     </BaseCard>
@@ -43,8 +52,12 @@ export default function HomeStats({
   initialGroups?: MyGroupResponse[];
   activeGroup?: MyGroupResponse;
 }) {
-  const { data: schedules } = useSchedules("PERSONAL");
-  const { group } = useActiveGroup(true, initialGroups);
+  const { data: schedules, isPending: schedulesPending } =
+    useSchedules("PERSONAL");
+  const { group, isPending: groupPending } = useActiveGroup(
+    true,
+    initialGroups,
+  );
   const displayGroup = group ?? activeGroup;
 
   const { todayCount, weekCount } = useMemo(() => {
@@ -76,16 +89,19 @@ export default function HomeStats({
         icon={<CalendarCheck size={17} strokeWidth={1.75} />}
         title="오늘 일정"
         value={`${todayCount}개`}
+        loading={schedulesPending}
       />
       <StatTile
         icon={<CalendarRange size={17} strokeWidth={1.75} />}
         title="이번 주 일정"
         value={`${weekCount}개`}
+        loading={schedulesPending}
       />
       <StatTile
         icon={<Users size={17} strokeWidth={1.75} />}
         title="그룹 멤버"
         value={displayGroup ? `${displayGroup.members.length}명` : "-"}
+        loading={groupPending && !activeGroup}
       />
     </Row>
   );

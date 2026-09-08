@@ -10,8 +10,6 @@ const DAYS = [
 
 const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
 
-// 카테고리별 브랜드 색. 테마와 무관하게 고정이므로 CSS 변수가 아닌 리터럴을 쓴다.
-// border/label은 시트의 카테고리 칩 선택 상태, dot은 일정 카드의 색 점에 쓰인다.
 const EVENT_STYLES = {
   meeting: {
     border: "border border-[#2f855a]/30",

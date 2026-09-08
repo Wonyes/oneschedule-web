@@ -1,11 +1,14 @@
 import React from "react";
 import TitleHeader from "../layout/TitleHeader";
+import { OVERLAY_LAYER, OverlayLayer } from "./layer";
 
 interface ModalContentProps {
   show: boolean;
   title: string;
   children: React.ReactNode;
   buttons: React.ReactNode;
+  /** 쌓임 순서. 기본은 modal 층이다. */
+  layer?: OverlayLayer;
 }
 
 export default function ModalContent({
@@ -13,16 +16,23 @@ export default function ModalContent({
   title,
   children,
   buttons,
+  layer = "modal",
 }: ModalContentProps) {
   if (!show) return null;
+
+  const z = OVERLAY_LAYER[layer];
 
   return (
     <>
       {/* Dimmed Background */}
-      <div className="fixed inset-0 z-[9990] bg-black/70 transition-opacity duration-300 opacity-100" />
+      <div
+        className={`fixed inset-0 ${z.backdrop} bg-black/70 transition-opacity duration-300 opacity-100`}
+      />
 
       {/* Modal Box */}
-      <div className="fixed left-1/2 top-1/2 z-[9999] flex w-[calc(100%-32px)] max-w-[500px] -translate-x-1/2 -translate-y-1/2 flex-col justify-between rounded-[20px] glass transition-all duration-300 text-foreground">
+      <div
+        className={`fixed left-1/2 top-1/2 ${z.box} flex w-[calc(100%-32px)] max-w-[500px] -translate-x-1/2 -translate-y-1/2 flex-col justify-between rounded-[20px] glass transition-all duration-300 text-foreground`}
+      >
         <div className="flex items-center justify-between px-[30px] pt-[24px] pb-[16px] m-0">
           <TitleHeader title={title} pad="0" className="text-[20px]" />
         </div>

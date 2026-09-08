@@ -32,14 +32,19 @@ export default function OnboardingChecklist({
   today: Date;
 }) {
   const { openSheet } = useSheetStore();
-  const { data: schedules } = useSchedules("PERSONAL");
-  const { groups } = useActiveGroup();
+  const { data: schedules, isPending: schedulesPending } =
+    useSchedules("PERSONAL");
+  const { groups, isPending: groupsPending } = useActiveGroup();
 
-  const [dismissed, setDismissed] = useState(true);
+  const [dismissed, setDismissed] = useState<boolean | null>(null);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setDismissed(localStorage.getItem(DISMISS_KEY) === "true");
+    try {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setDismissed(localStorage.getItem(DISMISS_KEY) === "true");
+    } catch {
+      setDismissed(false);
+    }
   }, []);
 
   const steps: Step[] = [
@@ -75,11 +80,16 @@ export default function OnboardingChecklist({
   const doneCount = steps.filter((step) => step.done).length;
   const allDone = doneCount === steps.length;
 
-  if (dismissed || allDone) return null;
+  const undecided = dismissed === null || schedulesPending || groupsPending;
+
+  if (undecided || dismissed || allDone) return null;
 
   const handleDismiss = () => {
     setDismissed(true);
-    localStorage.setItem(DISMISS_KEY, "true");
+
+    try {
+      localStorage.setItem(DISMISS_KEY, "true");
+    } catch {}
   };
 
   return (
@@ -140,9 +150,7 @@ export default function OnboardingChecklist({
             <Column className="min-w-0 flex-1 gap-0.5">
               <span
                 className={`typo-caption-1 font-semibold ${
-                  step.done
-                    ? "text-muted line-through"
-                    : "text-foreground"
+                  step.done ? "text-muted line-through" : "text-foreground"
                 }`}
               >
                 {step.title}

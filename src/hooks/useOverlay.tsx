@@ -46,6 +46,7 @@ export function useOverlay() {
       message={alert.message}
       message2={alert.message2}
       show={alert.isShow}
+      layer="alert"
       buttons={
         <Primary
           onClick={() => closeOverlay("alert", true)}
@@ -63,6 +64,7 @@ export function useOverlay() {
       message2={confirm.message2}
       message3={confirm.message3}
       show={confirm.isShow}
+      layer="confirm"
       buttons={
         <>
           <SecondaryBtn

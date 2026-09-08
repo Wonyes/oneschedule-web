@@ -31,7 +31,6 @@ export const GroupHero = ({ group }: { group: MyGroupResponse }) => {
   });
   const [groupNameCorrection, setGroupNameCorrection] = useState(false);
 
-  // 그룹명 수정이 여기 있으니 소개도 같은 자리에서 고친다
   const [descriptionEditing, setDescriptionEditing] = useState(false);
   const [descriptionDraft, setDescriptionDraft] = useState(
     group.description ?? "",

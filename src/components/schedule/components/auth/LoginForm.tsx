@@ -13,14 +13,11 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import GoogleLoginButton from "./GoogleLoginButton";
 
-// 로그인 후 돌아올 주소는 서버가 프로필별 설정(app.front-url)으로 정하므로
-// 여기서 넘길 필요가 없다.
 const getOauthUrl = (provider: string) =>
   `${process.env.NEXT_PUBLIC_SERVER_IP}/oauth2/authorization/${provider}`;
 
 export default function LoginForm() {
   const router = useRouter();
-  // 회원가입 직후 넘어온 경우 다음 단계를 안내한다
   const isWelcome = useSearchParams().get("welcome") === "1";
 
   const { form, formChange } = useForm({
@@ -37,10 +34,6 @@ export default function LoginForm() {
       });
     },
     onSuccess: () => {
-      // 홈에서 서버가 유저 정보를 직접 조회하므로 여기서 미리 받을 필요가 없다.
-      // 다만 (main) 레이아웃은 쿠키를 읽는 서버 컴포넌트라, 이전에 방문한 적이
-      // 있으면 캐시된 채로 넘어가 헤더가 로그인 상태를 즉시 반영하지 못한다.
-      // refresh()로 라우트 캐시를 무효화해 헤더가 바로 갱신되게 한다.
       router.replace("/");
       router.refresh();
     },

@@ -175,7 +175,7 @@ export default function MonthView({
         className="flex min-h-0 flex-1 flex-col overflow-y-auto sm:hidden"
         {...swipeHandlers}
       >
-        <div className="grid grid-cols-7 shrink-0 px-2 pt-1.5">
+        <div className="grid grid-cols-7 shrink-0 px-2 pt-4">
           {WEEKDAY_LABELS.map((d) => (
             <div
               key={d}
@@ -260,7 +260,9 @@ export default function MonthView({
 
               <button
                 type="button"
-                onClick={() => openSheet({ date: selectedDate, type: viewType })}
+                onClick={() =>
+                  openSheet({ date: selectedDate, type: viewType })
+                }
                 className="btn-spring neu-btn text-secondary hover:text-foreground flex h-9 items-center gap-1.5 rounded-xl px-4 typo-caption-2 font-medium"
               >
                 <Plus size={14} strokeWidth={2} />
