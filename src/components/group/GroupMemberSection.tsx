@@ -1,5 +1,6 @@
 "use client";
 
+import AvatarImage from "@/src/components/common/AvatarImage";
 import { Crown, MoreVertical } from "lucide-react";
 import { useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -152,16 +153,10 @@ export default function GroupMemberSection({
                 tone="accent"
                 className="overflow-hidden typo-caption-3 font-bold bg-accent/10"
               >
-                {member.profileImageUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={member.profileImageUrl}
-                    alt={member.nickname}
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  member.nickname[0]
-                )}
+                <AvatarImage
+                  src={member.profileImageUrl}
+                  nickname={member.nickname}
+                />
               </IconBox>
 
               <Column className="min-w-0">

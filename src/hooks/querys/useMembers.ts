@@ -11,11 +11,14 @@ export type MyInfoResponse = {
   email: string;
   name: string;
   nickname: string;
-  phoneNumber: string;
+  /** 소셜 가입자는 가입 시점에 번호가 없어 null로 내려온다. */
+  phoneNumber: string | null;
+  provider: "LOCAL" | "GOOGLE";
   profileImageUrl?: string;
 };
 
-type MyInfoChangeRequest = {
+export type MyInfoChangeRequest = {
+  name?: string;
   nickname?: string;
   phoneNumber?: string;
 };

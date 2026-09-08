@@ -1,6 +1,6 @@
 "use client";
 
-import { AtSign, Crown, Mail, Phone, Users } from "lucide-react";
+import { AtSign, Crown, Mail, Phone, User, Users } from "lucide-react";
 
 import BaseCard from "@/src/components/ui/card/BaseCard";
 import { Column, Row } from "@/src/components/ui/layout/flex";
@@ -27,8 +27,14 @@ export default function AccountInfo({ user }: { user: MyInfoResponse }) {
 
   const { groups } = useActiveGroup();
 
+  const nameDes = "2~20자까지 입력 가능합니다.";
   const nicknameDes = "한글 2~5자 또는 영문·숫자 4~10자까지 입력 가능합니다.";
   const phoneDes = "'-'를 제외한 숫자만 입력해주세요.";
+
+  // 서버에는 숫자만 저장하므로, 보여줄 때만 하이픈을 넣는다.
+  // 형식이 어긋나면 원본을 그대로 둔다.
+  const formatPhone = (phoneNumber: string) =>
+    phoneNumber.replace(/^(\d{3})(\d{4})(\d{4})$/, "$1-$2-$3");
 
   return (
     <BaseCard className="p-6" glow>
@@ -38,6 +44,21 @@ export default function AccountInfo({ user }: { user: MyInfoResponse }) {
       </Column>
 
       <Column className="w-full">
+        <InfoRow
+          label="이름"
+          icon={<User size={13} strokeWidth={1.75} />}
+          name="name"
+          value={editingField === "name" ? form.name : user.name}
+          editing={editingField === "name"}
+          error={errors.name}
+          deps={nameDes}
+          success={success.name}
+          onEdit={() => startEdit("name")}
+          onSave={saveEdit}
+          onCancel={cancelEdit}
+          onChange={handleChange}
+        />
+
         <InfoRow
           label="닉네임"
           icon={<AtSign size={13} strokeWidth={1.75} />}
@@ -60,7 +81,16 @@ export default function AccountInfo({ user }: { user: MyInfoResponse }) {
           icon={<Phone size={13} strokeWidth={1.75} />}
           name="phoneNumber"
           value={
-            editingField === "phoneNumber" ? form.phoneNumber : user.phoneNumber
+            editingField === "phoneNumber"
+              ? form.phoneNumber
+              : formatPhone(user.phoneNumber ?? "")
+          }
+          valueSlot={
+            user.phoneNumber ? undefined : (
+              <span className="typo-caption-2 text-muted">
+                등록된 번호가 없습니다.
+              </span>
+            )
           }
           error={errors.phoneNumber}
           deps={phoneDes}

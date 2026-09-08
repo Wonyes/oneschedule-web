@@ -1,5 +1,6 @@
 "use client";
 
+import AvatarImage from "@/src/components/common/AvatarImage";
 import { LogIn, LogOut } from "lucide-react";
 import IconBox from "../../ui/IconBox";
 import Link from "next/link";
@@ -34,16 +35,7 @@ export default function HeaderAuth({ user }: { user: MyInfoResponse | null }) {
           shape="circle"
           className="overflow-hidden typo-caption-3 font-bold"
         >
-          {user.profileImageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={user.profileImageUrl}
-              alt={user.nickname}
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            user.nickname[0]
-          )}
+          <AvatarImage src={user.profileImageUrl} nickname={user.nickname} />
         </IconBox>
         <span className="typo-caption-2 text-secondary hidden lg:inline">
           {user.nickname}

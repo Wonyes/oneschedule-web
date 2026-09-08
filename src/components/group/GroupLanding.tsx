@@ -4,6 +4,7 @@ import { useState } from "react";
 import { GhostBtn, Primary } from "../ui/layout/button";
 import { ArrowLeft, KeySquare, Users } from "lucide-react";
 import CreateGroup from "./CreateGroup";
+import PublicGroupList from "./PublicGroupList";
 import BaseCard from "../ui/card/BaseCard";
 import { Row } from "../ui/layout/flex";
 import { Input } from "../ui/layout/input";
@@ -156,6 +157,8 @@ export default function GroupLanding({ onCancel }: { onCancel?: () => void }) {
       ) : (
         <CreateGroup onBack={() => setCreateGroup(false)} />
       )}
+
+      {!createGroup && <PublicGroupList />}
     </main>
   );
 }

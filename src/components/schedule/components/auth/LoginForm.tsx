@@ -11,6 +11,12 @@ import { getErrorMessage, useAppMutation } from "@/src/types/ErrorResponse";
 import { CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import GoogleLoginButton from "./GoogleLoginButton";
+
+// 로그인 후 돌아올 주소는 서버가 프로필별 설정(app.front-url)으로 정하므로
+// 여기서 넘길 필요가 없다.
+const getOauthUrl = (provider: string) =>
+  `${process.env.NEXT_PUBLIC_SERVER_IP}/oauth2/authorization/${provider}`;
 
 export default function LoginForm() {
   const router = useRouter();
@@ -104,11 +110,17 @@ export default function LoginForm() {
         />
       </Column>
 
-      <Primary
-        type="submit"
-        className="w-full py-4"
-        text="로그인"
-      />
+      <Primary type="submit" className="w-full py-4" text="로그인" />
+
+      <Column className="w-full items-center gap-4">
+        <Row className="w-full items-center gap-3">
+          <span className="h-px flex-1 bg-white/10" />
+          <span className="typo-caption-2 text-place-h">또는 간편 로그인</span>
+          <span className="h-px flex-1 bg-white/10" />
+        </Row>
+
+        <GoogleLoginButton href={getOauthUrl("google")} />
+      </Column>
 
       <Row className="flex justify-center w-full gap-2">
         <p className="typo-sub-t-3 text-place-h">계정이 없나요?</p>

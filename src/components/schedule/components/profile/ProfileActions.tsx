@@ -2,14 +2,22 @@ import { useRef } from "react";
 import { Lock, LogOut } from "lucide-react";
 import BaseCard from "@/src/components/ui/card/BaseCard";
 import { ActionRow } from "@/src/components/ui/layout/flex";
-import { useLogout, usePasswordChange } from "@/src/hooks/querys/useMembers";
+import {
+  MyInfoResponse,
+  useLogout,
+  usePasswordChange,
+} from "@/src/hooks/querys/useMembers";
 import { useOverlay } from "@/src/hooks/useOverlay";
 import {
   PasswordChangeForm,
   PasswordFormRef,
 } from "../../layout/modal/PasswordFromRef";
 
-export default function ProfileActions() {
+export default function ProfileActions({
+  auth,
+}: {
+  auth: MyInfoResponse["provider"];
+}) {
   const { mutate: logout } = useLogout();
   const { openModal, openToast, closeModal } = useOverlay();
   const { mutate: passwordChange } = usePasswordChange();
@@ -46,13 +54,15 @@ export default function ProfileActions() {
 
   return (
     <div className="flex w-full flex-col gap-3">
-      <BaseCard className="overflow-hidden" glow>
-        <ActionRow
-          onClick={changePassword}
-          icon={<Lock size={18} />}
-          title="비밀번호 변경"
-        />
-      </BaseCard>
+      {auth === "LOCAL" && (
+        <BaseCard className="overflow-hidden" glow>
+          <ActionRow
+            onClick={changePassword}
+            icon={<Lock size={18} />}
+            title="비밀번호 변경"
+          />
+        </BaseCard>
+      )}
 
       <BaseCard className="overflow-hidden">
         <ActionRow

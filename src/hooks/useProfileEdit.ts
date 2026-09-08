@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { useForm } from "@/src/hooks/useForm";
 import {
+  MyInfoChangeRequest,
   MyInfoResponse,
   useMyinfoChange,
   useNicknameCheck,
@@ -12,39 +13,37 @@ import { CustomError } from "../types/ErrorResponse";
 
 export function useProfileEdit(user: MyInfoResponse) {
   const [editingField, setEditingField] = useState<
-    "nickname" | "phoneNumber" | null
+    "name" | "nickname" | "phoneNumber" | null
   >(null);
 
   const [nicknameChecked, setNicknameChecked] = useState(false);
 
   const { form, formChange, setForm, errors, setErrors, success, setSuccess } =
     useForm({
+      name: user.name,
       nickname: user.nickname,
-      phoneNumber: user.phoneNumber,
+      phoneNumber: user.phoneNumber ?? "",
     });
 
   const { refetch: checkNickname } = useNicknameCheck(form.nickname);
 
   const { mutate: changeInfo } = useMyinfoChange();
 
-  const startEdit = (field: "nickname" | "phoneNumber") => {
+  const startEdit = (field: "name" | "nickname" | "phoneNumber") => {
     setEditingField(field);
 
     if (field === "nickname") {
       setNicknameChecked(false);
-
-      setSuccess({
-        nickname: "",
-      });
-
-      setErrors({
-        nickname: "",
-      });
     }
 
+    // 이전에 실패한 메시지가 남아 있으면 안 되므로 여는 필드 기준으로 지운다
+    setSuccess((prev) => ({ ...prev, [field]: "" }));
+    setErrors((prev) => ({ ...prev, [field]: "" }));
+
     setForm({
+      name: user.name,
       nickname: user.nickname,
-      phoneNumber: user.phoneNumber,
+      phoneNumber: user.phoneNumber ?? "",
     });
   };
 
@@ -102,41 +101,42 @@ export function useProfileEdit(user: MyInfoResponse) {
   };
 
   const saveEdit = () => {
+    if (!editingField) {
+      return false;
+    }
+
     if (editingField === "nickname" && !nicknameChecked) {
-      setErrors({
+      setErrors((prev) => ({
+        ...prev,
         nickname: "닉네임 중복 확인을 해주세요.",
-      });
+      }));
 
       return false;
     }
 
-    changeInfo(
-      {
-        nickname: form.nickname,
-        phoneNumber: form.phoneNumber,
+    // 부분 수정이라 지금 편집 중인 필드만 보낸다.
+    // 세 값을 다 실어 보내면 서버가 바뀌지 않은 값까지 검증한다.
+    const field = editingField;
+    const payload: MyInfoChangeRequest = { [field]: form[field] };
+
+    changeInfo(payload, {
+      onError: (error) => {
+        // 서버가 내려준 검증 메시지를 해당 입력 아래에 그대로 보여준다
+        setErrors((prev) => ({
+          ...prev,
+          [field]: error.response?.data?.message ?? "수정에 실패했습니다.",
+        }));
       },
-      {
-        onError: (error) => {
-          if (editingField) {
-            setErrors({
-              [editingField]:
-                error.response?.data?.message ?? "수정에 실패했습니다.",
-            });
-          }
-        },
 
-        onSuccess: () => {
-          setEditingField(null);
+      onSuccess: () => {
+        setEditingField(null);
 
-          setNicknameChecked(false);
+        setNicknameChecked(false);
 
-          setSuccess({
-            nickname: "",
-            phoneNumber: "",
-          });
-        },
+        setSuccess((prev) => ({ ...prev, [field]: "" }));
+        setErrors((prev) => ({ ...prev, [field]: "" }));
       },
-    );
+    });
 
     return true;
   };
@@ -147,16 +147,19 @@ export function useProfileEdit(user: MyInfoResponse) {
     setNicknameChecked(false);
 
     setForm({
+      name: user.name,
       nickname: user.nickname,
-      phoneNumber: user.phoneNumber,
+      phoneNumber: user.phoneNumber ?? "",
     });
 
     setErrors({
+      name: "",
       nickname: "",
       phoneNumber: "",
     });
 
     setSuccess({
+      name: "",
       nickname: "",
       phoneNumber: "",
     });

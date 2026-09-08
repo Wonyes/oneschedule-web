@@ -1,5 +1,7 @@
 import { useRef } from "react";
-import { Camera, Crown, Loader2, Users } from "lucide-react";
+import { Camera, Crown, Loader2, Mail, Users } from "lucide-react";
+import AvatarImage from "@/src/components/common/AvatarImage";
+import GoogleMark from "@/src/components/common/GoogleMark";
 import BaseCard from "@/src/components/ui/card/BaseCard";
 import { Column, Row } from "@/src/components/ui/layout/flex";
 import { useActiveGroup } from "@/src/hooks/querys/useGroup";
@@ -35,18 +37,15 @@ export default function ProfileCard({ user }: { user: MyInfoResponse }) {
       <Column className="items-center text-center">
         <div className="relative">
           <div className="h-20 w-20 overflow-hidden rounded-full neu-flat">
-            {user.profileImageUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={user.profileImageUrl}
-                alt={user.nickname}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center bg-accent/15 typo-h4 text-accent">
-                {user.nickname[0]}
-              </div>
-            )}
+            <AvatarImage
+              src={user.profileImageUrl}
+              nickname={user.nickname}
+              fallback={
+                <div className="flex h-full w-full items-center justify-center bg-accent/15 typo-h4 text-accent">
+                  {user.nickname[0]}
+                </div>
+              }
+            />
           </div>
 
           <button
@@ -79,6 +78,17 @@ export default function ProfileCard({ user }: { user: MyInfoResponse }) {
         <p className="typo-caption-3 text-place-h mt-0.5">{user.email}</p>
 
         <Row className="mt-4 flex-wrap justify-center gap-1.5">
+          <Row className="neu-flat gap-1.5 rounded-full px-3 py-1.5">
+            {user.provider === "GOOGLE" ? (
+              <GoogleMark size={12} />
+            ) : (
+              <Mail size={12} strokeWidth={1.75} className="text-accent" />
+            )}
+            <span className="typo-caption-3 text-secondary">
+              {user.provider === "GOOGLE" ? "Google 로그인" : "이메일 로그인"}
+            </span>
+          </Row>
+
           <Row className="neu-flat gap-1.5 rounded-full px-3 py-1.5">
             <Users size={12} strokeWidth={1.75} className="text-accent" />
             <span className="typo-caption-3 text-secondary">
