@@ -13,7 +13,15 @@ import { memberskeys } from "@/src/hooks/querys/key/members";
 const MAX_GROUP_NAME = 20;
 const MAX_POSITION = 20;
 
-export default function CreateGroup({ onBack }: { onBack: () => void }) {
+export default function CreateGroup({
+  onBack,
+  showBack = true,
+}: {
+  /** 생성 완료 후에도 호출된다 */
+  onBack: () => void;
+  /** 탭 안에서 쓸 때는 탭 바가 이동을 담당하므로 숨긴다 */
+  showBack?: boolean;
+}) {
   const queryClient = useQueryClient();
   const { openToast } = useOverlay();
   const { form, formChange, errors, setErrors } = useForm({
@@ -87,11 +95,13 @@ export default function CreateGroup({ onBack }: { onBack: () => void }) {
 
   return (
     <BaseCard className="w-full px-6 py-8" glow>
-      <GhostBtn
-        text="돌아가기"
-        icon={<ArrowLeft size={14} />}
-        onClick={onBack}
-      />
+      {showBack && (
+        <GhostBtn
+          text="돌아가기"
+          icon={<ArrowLeft size={14} />}
+          onClick={onBack}
+        />
+      )}
 
       <div className="mb-10 mt-4">
         <span className="text-indigo-400 typo-title-2 font-medium">GROUP</span>

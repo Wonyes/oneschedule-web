@@ -3,9 +3,14 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { Get, Post } from "./useMutations";
+import { Get, Patch, Post } from "./useMutations";
 import { groupkeys } from "./key/groupKey";
+
+const SETTING_URL = (groupNo: number) => `/group/${groupNo}/setting`;
 import {
+  GroupVisibility,
+  JoinRequest,
+  JoinRequestStatus,
   MyGroupResponse,
   PageResponse,
   PublicGroup,
@@ -113,14 +118,80 @@ export const useRequestJoinGroup = () => {
   const queryClient = useQueryClient();
 
   return useAppMutation({
-    mutationFn: (groupNo: number) =>
+    mutationFn: ({ groupNo, message }: { groupNo: number; message?: string }) =>
       Post({
         url: `/group/${groupNo}/join-request`,
         body: null,
+        params: message?.trim() ? { message: message.trim() } : undefined,
       }),
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [groupkeys.publicGroups] });
+    },
+  });
+};
+
+/** 그룹 설정 변경 (그룹장 전용). 보낸 값만 바뀐다. */
+export const useUpdateGroupSetting = (groupNo: number) => {
+  const queryClient = useQueryClient();
+
+  return useAppMutation({
+    mutationFn: (params: { visibility?: GroupVisibility; description?: string }) =>
+      Patch({
+        url: SETTING_URL(groupNo),
+        body: null,
+        params,
+      }),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [groupkeys.myGroup] });
+      queryClient.invalidateQueries({ queryKey: [groupkeys.publicGroups] });
+    },
+  });
+};
+
+/** 가입 신청 대기 목록 (SUPER·SUB만) */
+export const useJoinRequests = (groupNo: number, enabled = true) => {
+  return useInfiniteQuery({
+    queryKey: [groupkeys.joinRequests, groupNo],
+
+    queryFn: ({ pageParam }) =>
+      Get<PageResponse<JoinRequest>>({
+        url: `/group/${groupNo}/join-requests`,
+        params: { page: pageParam },
+      }),
+
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) =>
+      lastPage.last ? undefined : lastPage.page + 1,
+
+    enabled,
+    retry: false,
+  });
+};
+
+/** 가입 신청 승인 / 거절 */
+export const useProcessJoinRequest = (groupNo: number) => {
+  const queryClient = useQueryClient();
+
+  return useAppMutation({
+    mutationFn: ({
+      requestNo,
+      status,
+    }: {
+      requestNo: number;
+      status: JoinRequestStatus;
+    }) =>
+      Patch({
+        url: `/group/${groupNo}/join-request/${requestNo}`,
+        body: null,
+        params: { status },
+      }),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [groupkeys.joinRequests] });
+      // 승인하면 멤버가 늘어난다
+      queryClient.invalidateQueries({ queryKey: [groupkeys.myGroup] });
     },
   });
 };

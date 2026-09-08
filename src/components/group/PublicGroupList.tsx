@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, Search, Users } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import BaseCard from "@/src/components/ui/card/BaseCard";
 import { Primary, SecondaryBtn } from "@/src/components/ui/layout/button";
@@ -16,9 +16,15 @@ import {
 import { useOverlay } from "@/src/hooks/useOverlay";
 import { CustomError, getErrorMessage } from "@/src/types/ErrorResponse";
 import { PublicGroup } from "@/src/types/group";
+import {
+  JoinRequestMessageContent,
+  JoinRequestMessageRef,
+} from "@/src/components/ui/overlay/modal/JoinRequestMessageContent";
 
 function GroupRow({ group }: { group: PublicGroup }) {
-  const { openToast, openAlert } = useOverlay();
+  const { openToast, openAlert, openModal } = useOverlay();
+
+  const messageRef = useRef<JoinRequestMessageRef>(null);
 
   const { mutate: join, isPending: joining } = useJoinPublicGroup();
   const { mutate: request, isPending: requesting } = useRequestJoinGroup();
@@ -34,9 +40,25 @@ function GroupRow({ group }: { group: PublicGroup }) {
 
   const handleClick = () => {
     if (needsApproval) {
-      request(group.groupNo, {
-        onSuccess: () => openToast({ message: "가입을 신청했습니다." }),
-        onError: handleError,
+      // 승인제는 관리자가 판단할 근거가 필요하다. 한마디를 받아서 같이 보낸다.
+      openModal({
+        title: "가입 신청",
+        content: () => (
+          <JoinRequestMessageContent ref={messageRef} groupName={group.groupName} />
+        ),
+        mainBtn: "신청하기",
+        subBtn: "취소",
+        onFunc: () => {
+          messageRef.current?.submit((message) =>
+            request(
+              { groupNo: group.groupNo, message },
+              {
+                onSuccess: () => openToast({ message: "가입을 신청했습니다." }),
+                onError: handleError,
+              },
+            ),
+          );
+        },
       });
       return;
     }

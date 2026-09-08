@@ -3,9 +3,9 @@
 import React, { useMemo } from "react";
 import { startOfDay, endOfDay, addDays } from "date-fns";
 import BaseCard from "../ui/card/BaseCard";
-import { Column, Row } from "../ui/layout/flex";
+import { Row } from "../ui/layout/flex";
 import { MyGroupResponse } from "@/src/types/group";
-import { CalendarDays, Clock, Users } from "lucide-react";
+import { CalendarDays, Clock, Crown, Users } from "lucide-react";
 import { useSchedules } from "@/src/hooks/querys/useSchedule";
 import { toScheduleEvent } from "@/src/utils/schedule";
 import IconBox from "../ui/IconBox";
@@ -38,42 +38,32 @@ export default function GroupSummary({ group }: { group: MyGroupResponse }) {
     };
   }, [schedules]);
 
+  const adminCount = group.members.filter(
+    (member) => member.groupRole === "SUPER" || member.groupRole === "SUB",
+  ).length;
+
   return (
-    <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-[1.3fr_1fr] sm:gap-5">
-      <BaseCard className="h-full p-4">
-        <Row className="h-full items-center justify-between">
-          <Column className="gap-1">
-            <span className="typo-caption-2 text-place-h">멤버</span>
-            <Row className="items-baseline gap-1">
-              <span className="typo-sub-t-1 text-foreground tabular-nums">
-                {group.members.length}
-              </span>
-              <span className="typo-caption-3 text-muted">명</span>
-            </Row>
-          </Column>
-
-          <IconBox
-            size="md"
-            shape="square"
-            className="typo-caption-3 font-bold"
-          >
-            <Users size={16} strokeWidth={1.5} />
-          </IconBox>
-        </Row>
-      </BaseCard>
-
-      <Column className="gap-2.5 sm:gap-3">
-        <Compact
-          icon={<CalendarDays size={15} strokeWidth={1.5} />}
-          title="오늘 일정"
-          value={`${todayCount}개`}
-        />
-        <Compact
-          icon={<Clock size={15} strokeWidth={1.5} />}
-          title={`다가오는 일정 (${UPCOMING_RANGE_DAYS}일)`}
-          value={`${upcomingCount}개`}
-        />
-      </Column>
+    <div className="grid w-full grid-cols-2 gap-2.5 lg:grid-cols-4 lg:gap-5">
+      <Compact
+        icon={<Users size={15} strokeWidth={1.5} />}
+        title="멤버"
+        value={`${group.members.length}명`}
+      />
+      <Compact
+        icon={<Crown size={15} strokeWidth={1.5} />}
+        title="관리자"
+        value={`${adminCount}명`}
+      />
+      <Compact
+        icon={<CalendarDays size={15} strokeWidth={1.5} />}
+        title="오늘 일정"
+        value={`${todayCount}개`}
+      />
+      <Compact
+        icon={<Clock size={15} strokeWidth={1.5} />}
+        title={`다가오는 ${UPCOMING_RANGE_DAYS}일`}
+        value={`${upcomingCount}개`}
+      />
     </div>
   );
 }
@@ -88,9 +78,13 @@ function Compact({
   value: string;
 }) {
   return (
-    <BaseCard className="flex-1 px-4 py-3">
-      <Row className="items-center justify-between">
-        <Row className="gap-2">
+    <BaseCard className="flex-1 px-3 py-3 lg:px-4">
+      {/*
+        좁은 화면에서는 아이콘·라벨·값을 한 줄에 넣으면 라벨이 잘린다.
+        위아래로 나눠 아이콘을 살리고 라벨도 온전히 보여준다.
+      */}
+      <div className="flex flex-col gap-1.5 lg:flex-row lg:items-center lg:justify-between lg:gap-2">
+        <Row className="min-w-0 gap-2">
           <IconBox
             size="md"
             shape="circle"
@@ -98,13 +92,13 @@ function Compact({
           >
             {icon}
           </IconBox>
-          <span className="typo-caption-2 text-place-h">{title}</span>
+          <span className="typo-caption-2 truncate text-place-h">{title}</span>
         </Row>
 
-        <span className="typo-caption-2 font-bold text-foreground tabular-nums">
+        <span className="typo-caption-2 shrink-0 text-right font-bold text-foreground tabular-nums">
           {value}
         </span>
-      </Row>
+      </div>
     </BaseCard>
   );
 }

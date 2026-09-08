@@ -11,6 +11,8 @@ type DropdownMenuProps = {
   children: (close: () => void) => React.ReactNode;
   label: string;
   align?: "left" | "right" | "stretch";
+  /** 트리거를 폭에 맞춰야 할 때 바깥 래퍼에 준다 */
+  className?: string;
   panelClassName?: string;
   triggerClassName?: string;
   disabled?: boolean;
@@ -34,6 +36,7 @@ export default function DropdownMenu({
   align = "right",
   panelClassName,
   triggerClassName,
+  className,
   disabled = false,
 }: DropdownMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -62,7 +65,7 @@ export default function DropdownMenu({
   }, [isOpen]);
 
   return (
-    <div className="relative" ref={wrapRef}>
+    <div className={cn("relative", className)} ref={wrapRef}>
       <button
         type="button"
         onClick={() => !disabled && setIsOpen((v) => !v)}

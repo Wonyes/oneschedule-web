@@ -8,9 +8,11 @@ import GroupDashboardSkeleton from "@/src/components/group/GroupDashboardSkeleto
 import GroupLanding from "@/src/components/group/GroupLanding";
 import GroupPicker from "@/src/components/group/GroupPicker";
 import { useActiveGroup } from "@/src/hooks/querys/useGroup";
+import { useMounted } from "@/src/hooks/useMounted";
 
 function GroupPageContent() {
   const router = useRouter();
+  const mounted = useMounted();
   const { groups, group, isPending, needsSelection } = useActiveGroup();
 
   // add=1 여부를 그대로 화면 상태로 쓴다(로컬 state로 따로 안 들고 있음).
@@ -18,7 +20,8 @@ function GroupPageContent() {
   // 지우는 방식으로 맞춰야 URL과 화면이 안 어긋난다.
   const wantsAdd = useSearchParams().get("add") === "1";
 
-  if (isPending) {
+  // 마운트 전에는 서버와 같은 화면을 그려야 하이드레이션이 어긋나지 않는다
+  if (!mounted || isPending) {
     return <GroupDashboardSkeleton />;
   }
 

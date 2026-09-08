@@ -14,6 +14,8 @@ const group = (
   groupCode: "CODE",
   groupRole: "MEMBER",
   position: "멤버",
+  visibility: "PRIVATE",
+  description: null,
   members: [],
   ...overrides,
 });

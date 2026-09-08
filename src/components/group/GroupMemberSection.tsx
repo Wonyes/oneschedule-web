@@ -18,6 +18,7 @@ import { groupkeys } from "@/src/hooks/querys/key/groupKey";
 import IconBox from "../ui/IconBox";
 import { GroupMember } from "@/src/types/group";
 import { useMyInfo } from "@/src/hooks/querys/useMembers";
+import { useIncrementalList } from "@/src/hooks/useIncrementalList";
 
 type GroupRole = "SUPER" | "SUB" | "MEMBER";
 
@@ -98,6 +99,14 @@ export default function GroupMemberSection({
 
   const memberEditRef = useRef<GroupMemberEditRef>(null);
 
+  // 한 번에 5명씩. 스크롤이 끝에 닿으면 이어서 더 보여준다.
+  const {
+    visible: visibleMembers,
+    hasMore,
+    rootRef,
+    sentinelRef,
+  } = useIncrementalList(members, 5);
+
   const memberChanges = (member: GroupMember) => {
     setOpenMenu(null);
 
@@ -134,14 +143,17 @@ export default function GroupMemberSection({
   };
 
   return (
-    <BaseCard glow className="flex-1 p-5 h-[420px] lg:h-[520px]">
+    <BaseCard glow className="flex-1 p-5 lg:min-h-[380px]">
       <div className="mb-4 flex flex-col gap-1.5">
         <span className="eyebrow">TEAM</span>
         <h2 className="typo-sub-t-1 text-foreground">그룹 멤버</h2>
       </div>
 
-      <Column className="h-[340px] lg:h-[440px] gap-2.5 overflow-y-auto px-0.5 py-1 pr-2.5">
-        {members.map((member: GroupMember) => (
+      <div
+        ref={rootRef}
+        className="scroll-hidden flex flex-col gap-2.5 px-1 py-1 lg:-mx-4 lg:max-h-[304px] lg:overflow-y-auto lg:px-4 lg:pt-3 lg:pb-4"
+      >
+        {visibleMembers.map((member: GroupMember) => (
           <Between
             key={member.memberNo}
             className="w-full rounded-xl px-4 py-3 neu-flat"
@@ -260,7 +272,9 @@ export default function GroupMemberSection({
             </Row>
           </Between>
         ))}
-      </Column>
+
+        {hasMore && <div ref={sentinelRef} className="h-1 shrink-0" />}
+      </div>
     </BaseCard>
   );
 }

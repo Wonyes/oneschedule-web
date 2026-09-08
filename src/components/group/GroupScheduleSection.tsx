@@ -9,6 +9,7 @@ import { useSchedules } from "@/src/hooks/querys/useSchedule";
 import { toScheduleEvent } from "@/src/utils/schedule";
 import { MyGroupResponse } from "@/src/types/group";
 import { getTimes } from "@/src/utils/time";
+import { useIncrementalList } from "@/src/hooks/useIncrementalList";
 
 export default function GroupScheduleSection({
   group,
@@ -34,8 +35,16 @@ export default function GroupScheduleSection({
       );
   }, [schedules]);
 
+  // 멤버 목록과 같은 방식으로 5개씩 이어 붙인다
+  const {
+    visible: visibleEvents,
+    hasMore,
+    rootRef,
+    sentinelRef,
+  } = useIncrementalList(todayEvents, 5);
+
   return (
-    <BaseCard glow className="flex-1 p-5 h-[420px] lg:h-[520px]">
+    <BaseCard glow className="flex-1 p-5 lg:min-h-[380px]">
       <Column className="mb-4 gap-1.5">
         <span className="eyebrow">TODAY</span>
         <Row className="gap-1.5">
@@ -48,8 +57,11 @@ export default function GroupScheduleSection({
           오늘 등록된 그룹 일정이 없습니다.
         </p>
       ) : (
-        <Column className="gap-2.5">
-          {todayEvents.map((event) => (
+        <div
+          ref={rootRef}
+          className="scroll-hidden flex flex-col gap-2.5 px-1 py-1 lg:-mx-4 lg:max-h-[304px] lg:overflow-y-auto lg:px-4 lg:pt-3 lg:pb-4"
+        >
+          {visibleEvents.map((event) => (
             <ScheduleItem
               key={event.id}
               time={getTimes(event.startDate, event.endDate)}
@@ -57,7 +69,9 @@ export default function GroupScheduleSection({
               title={event.title}
             />
           ))}
-        </Column>
+
+          {hasMore && <div ref={sentinelRef} className="h-1 shrink-0" />}
+        </div>
       )}
     </BaseCard>
   );

@@ -3,11 +3,14 @@
 import { Copy, Crown, Pencil } from "lucide-react";
 import { useRouter } from "next/navigation";
 import BaseCard from "../ui/card/BaseCard";
+import VisibilityBadge from "./VisibilityBadge";
 import { Row, Column, Between } from "../ui/layout/flex";
 import { GhostBtn, Primary } from "../ui/layout/button";
 import { useOverlay } from "@/src/hooks/useOverlay";
 import { useState } from "react";
 import { Input } from "../ui/layout/input";
+import { Textarea } from "../ui/layout/textarea";
+import { useUpdateGroupSetting } from "@/src/hooks/querys/useGroup";
 import { useForm } from "@/src/hooks/useForm";
 import { getErrorMessage, useAppMutation } from "@/src/types/ErrorResponse";
 import { Delete, Put } from "@/src/hooks/querys/useMutations";
@@ -27,6 +30,29 @@ export const GroupHero = ({ group }: { group: MyGroupResponse }) => {
     groupName: group.groupName,
   });
   const [groupNameCorrection, setGroupNameCorrection] = useState(false);
+
+  // 그룹명 수정이 여기 있으니 소개도 같은 자리에서 고친다
+  const [descriptionEditing, setDescriptionEditing] = useState(false);
+  const [descriptionDraft, setDescriptionDraft] = useState(
+    group.description ?? "",
+  );
+
+  const { mutate: updateSetting, isPending: savingDescription } =
+    useUpdateGroupSetting(group.groupNo);
+
+  const saveDescription = () => {
+    updateSetting(
+      { description: descriptionDraft.trim() },
+      {
+        onSuccess: () => {
+          setDescriptionEditing(false);
+          openToast({ message: "그룹 소개를 저장했습니다." });
+        },
+        onError: (err) => openToast({ message: getErrorMessage(err) }),
+      },
+    );
+  };
+
   const copyCode = () => {
     navigator.clipboard.writeText(group.groupCode);
     openToast({
@@ -116,7 +142,10 @@ export const GroupHero = ({ group }: { group: MyGroupResponse }) => {
     <BaseCard glow className="p-5">
       <Between className="items-start">
         <Column className="w-full">
-          <span className="eyebrow mb-1.5">GROUP</span>
+          <Between className="mb-1.5">
+            <span className="eyebrow">GROUP</span>
+            <VisibilityBadge visibility={group.visibility} />
+          </Between>
 
           <Between className="w-full">
             <Row className="min-w-0 gap-2 justify-center">
@@ -150,7 +179,11 @@ export const GroupHero = ({ group }: { group: MyGroupResponse }) => {
                       onClick={() => setGroupNameCorrection(true)}
                       ariaLabel="그룹 이름 수정"
                       icon={
-                        <Pencil size={16} strokeWidth={1.5} className="text-accent" />
+                        <Pencil
+                          size={16}
+                          strokeWidth={1.5}
+                          className="text-accent"
+                        />
                       }
                     />
                   )}
@@ -158,21 +191,73 @@ export const GroupHero = ({ group }: { group: MyGroupResponse }) => {
               )}
             </Row>
             {group.groupRole === "SUPER" && (
-              <Row className="gap-1 rounded-full bg-pending-500/10 px-3 py-1 shrink-0">
-                <Crown size={16} strokeWidth={1.75} className="text-pending-500" />
+              <Row className="neu-flat gap-1 rounded-full px-3 py-1 shrink-0">
+                <Crown
+                  size={16}
+                  strokeWidth={1.75}
+                  className="text-pending-500"
+                />
                 <span className="typo-sub-t-3 text-pending-500">관리자</span>
               </Row>
             )}
           </Between>
 
-          <p className="mt-1.5 typo-caption-2 text-muted">
-            함께 일정을 관리하는 그룹입니다.
-          </p>
+          {descriptionEditing ? (
+            <Column className="mt-2 w-full gap-2">
+              <Textarea
+                value={descriptionDraft}
+                maxLength={200}
+                placeholder="어떤 그룹인지 한두 줄로 소개해주세요."
+                description="공개 그룹 목록에서 이 문구가 함께 보입니다."
+                onChange={(e) => setDescriptionDraft(e.target.value)}
+              />
+
+              <Row className="justify-end gap-2">
+                <GhostBtn
+                  text="취소"
+                  className="typo-caption-2 h-8 px-3"
+                  onClick={() => setDescriptionEditing(false)}
+                />
+                <Primary
+                  text={savingDescription ? "저장 중…" : "저장"}
+                  className="typo-caption-2 h-8 px-4"
+                  isDisabled={savingDescription}
+                  onClick={saveDescription}
+                />
+              </Row>
+            </Column>
+          ) : (
+            <Row className="mt-2 min-w-0 items-center gap-1.5">
+              <p className="typo-caption-2 min-w-0 text-muted">
+                {group.description || "아직 그룹 소개가 없어요."}
+              </p>
+
+              {group.groupRole === "SUPER" && (
+                <GhostBtn
+                  ariaLabel="그룹 소개 수정"
+                  className="h-6 shrink-0 px-1"
+                  onClick={() => {
+                    setDescriptionDraft(group.description ?? "");
+                    setDescriptionEditing(true);
+                  }}
+                  icon={
+                    <Pencil
+                      size={12}
+                      strokeWidth={1.5}
+                      className="text-accent"
+                    />
+                  }
+                />
+              )}
+            </Row>
+          )}
           <Between className="mt-5">
             <Row className="gap-3">
-              <span className="typo-caption-2 text-place-h">초대 코드</span>
+              <span className="typo-caption-2 shrink-0 whitespace-nowrap text-place-h">
+                초대 코드
+              </span>
 
-              <Row className="gap-2 rounded-lg bg-surface-hover px-3 py-1.5">
+              <Row className="neu-pressed gap-2 rounded-lg px-3 py-1.5">
                 <span className="typo-caption-2 font-semibold text-secondary">
                   {group.groupCode}
                 </span>
