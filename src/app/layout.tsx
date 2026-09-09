@@ -20,7 +20,15 @@ const jakarta = Plus_Jakarta_Sans({
   weight: ["400", "500", "600", "700"],
 });
 
-const SITE_URL = process.env.NEXT_PUBLIC_WEB_IP ?? "https://oneschedule.site";
+/**
+ * 공유 미리보기에 실릴 절대 주소.
+ *
+ * NEXT_PUBLIC_WEB_IP를 쓰지 않는다. 배포 환경에 API 주소가 들어가 있어서
+ * og:image가 api.oneschedule.site를 가리켰고, 거기선 401이라 카카오톡이
+ * 이미지를 못 받았다. 서비스 도메인은 바뀌지 않는 값이니 여기 박아두고,
+ * 정말 필요할 때만 NEXT_PUBLIC_SITE_URL로 덮는다.
+ */
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://oneschedule.site";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
