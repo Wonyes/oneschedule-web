@@ -1,9 +1,3 @@
-/**
- * axios 인터셉터의 토큰 재발급 흐름 테스트.
- * 401 → /token-refresh 1회 호출 → 원요청 재시도가 핵심이고,
- * 동시에 여러 요청이 실패해도 재발급은 한 번만 나가야 한다.
- * 403은 진짜 권한 거부라 재발급을 타면 안 된다.
- */
 import MockAdapter from "axios-mock-adapter";
 import api from "./api";
 
@@ -51,7 +45,6 @@ describe("api 인터셉터 (토큰 재발급)", () => {
 
     await expect(api.get("/schedules")).rejects.toBeDefined();
 
-    // 최초 1회 + 재발급 후 재시도 1회. 무한 반복되면 안 된다.
     expect(scheduleCallCount).toBe(2);
   });
 
@@ -83,8 +76,6 @@ describe("api 인터셉터 (토큰 재발급)", () => {
     ).toHaveLength(0);
   });
 
-  // 서버는 인증 실패를 전부 401로 내려준다. 403은 "그룹 관리 권한 없음" 같은
-  // 진짜 권한 거부라, 재발급/재시도로 삼켜버리면 오류 메시지가 사라진다.
   test("403은 재발급을 타지 않고 권한 오류를 그대로 올려보낸다", async () => {
     let scheduleCallCount = 0;
 

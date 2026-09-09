@@ -99,7 +99,6 @@ export default function SignForm() {
         throw result.error;
       }
 
-      // true = 사용 가능, false = 이미 사용 중
       if (!result.data) {
         return openAlert({
           title: "이미 사용 중입니다.",

@@ -2,13 +2,7 @@ import GoogleMark from "@/src/components/common/GoogleMark";
 import { cn } from "@/src/utils/cn";
 
 type GoogleLoginButtonProps = {
-  /**
-   * 백엔드의 OAuth 시작 주소.
-   * 응답이 구글로 향하는 302라 next/link나 fetch가 아니라
-   * 브라우저 전체 이동이어야 한다.
-   */
   href: string;
-  /** 아이콘만 있는 버튼이라 스크린리더용 이름이 필요하다 */
   label?: string;
   className?: string;
 };

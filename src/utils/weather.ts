@@ -1,12 +1,12 @@
 export function latLngToGrid(lat: number, lng: number) {
-  const RE = 6371.00877; // 지구 반경(km)
-  const GRID = 5.0; // 격자 간격(km)
-  const SLAT1 = 30.0; // 투영 위도1(degree)
-  const SLAT2 = 60.0; // 투영 위도2(degree)
-  const OLON = 126.0; // 기준점 경도(degree)
-  const OLAT = 38.0; // 기준점 위도(degree)
-  const XO = 43; // 기준점 X좌표(GRID)
-  const YO = 136; // 기준점 Y좌표(GRID)
+  const RE = 6371.00877;
+  const GRID = 5.0;
+  const SLAT1 = 30.0;
+  const SLAT2 = 60.0;
+  const OLON = 126.0;
+  const OLAT = 38.0;
+  const XO = 43;
+  const YO = 136;
 
   const DEGRAD = Math.PI / 180.0;
   const re = RE / GRID;
@@ -43,7 +43,6 @@ export const getBrowserLocation = (): Promise<GeolocationPosition> => {
   });
 };
 
-// 2. 주소 변환 로직
 export const getAddressFromCoords = async (
   longitude: number,
   latitude: number,

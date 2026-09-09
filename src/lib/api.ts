@@ -40,10 +40,6 @@ api.interceptors.response.use(
     }
 
     switch (status) {
-      // 401만 재발급 흐름을 탄다.
-      // 서버는 인증 실패(만료/위조/미로그인)를 전부 401로 내려주고,
-      // 403은 "그룹 관리 권한 없음", "일정 접근 권한 없음" 같은 진짜 권한 거부다.
-      // 403까지 재발급을 태우면 권한 오류 메시지가 재시도에 묻혀 사라진다.
       case 401: {
         if (originalRequest._retry) {
           return Promise.reject(error);

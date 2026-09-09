@@ -36,7 +36,6 @@ export function useProfileEdit(user: MyInfoResponse) {
       setNicknameChecked(false);
     }
 
-    // 이전에 실패한 메시지가 남아 있으면 안 되므로 여는 필드 기준으로 지운다
     setSuccess((prev) => ({ ...prev, [field]: "" }));
     setErrors((prev) => ({ ...prev, [field]: "" }));
 
@@ -114,14 +113,11 @@ export function useProfileEdit(user: MyInfoResponse) {
       return false;
     }
 
-    // 부분 수정이라 지금 편집 중인 필드만 보낸다.
-    // 세 값을 다 실어 보내면 서버가 바뀌지 않은 값까지 검증한다.
     const field = editingField;
     const payload: MyInfoChangeRequest = { [field]: form[field] };
 
     changeInfo(payload, {
       onError: (error) => {
-        // 서버가 내려준 검증 메시지를 해당 입력 아래에 그대로 보여준다
         setErrors((prev) => ({
           ...prev,
           [field]: error.response?.data?.message ?? "수정에 실패했습니다.",

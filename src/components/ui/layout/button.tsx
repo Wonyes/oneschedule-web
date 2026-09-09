@@ -9,7 +9,6 @@ type ButtonProps = {
   isDisabled?: boolean;
   onClick?: () => void;
   type?: "button" | "submit" | "reset";
-  /** 아이콘만 있는 버튼은 스크린리더용 레이블이 필요하다 */
   ariaLabel?: string;
   href?: string;
 };
@@ -75,10 +74,6 @@ const BaseButton = ({
   );
 };
 
-/**
- * 가장 중요한 액션
- * 생성 / 저장 / 완료
- */
 const Primary = (props: ButtonProps) => {
   return (
     <BaseButton
@@ -104,10 +99,6 @@ const Primary = (props: ButtonProps) => {
   );
 };
 
-/**
- * 일반 보조 액션
- * 취소 / 초대 / 선택
- */
 const SecondaryBtn = (props: ButtonProps) => {
   return (
     <BaseButton
@@ -130,10 +121,6 @@ const SecondaryBtn = (props: ButtonProps) => {
   );
 };
 
-/**
- * 최소 강조 액션
- * 뒤로가기 / 닫기 / 더보기
- */
 const GhostBtn = (props: ButtonProps) => {
   return (
     <BaseButton
@@ -156,10 +143,6 @@ const GhostBtn = (props: ButtonProps) => {
   );
 };
 
-/**
- * 위험 액션
- * 삭제 / 탈퇴
- */
 const RedBtn = (props: ButtonProps) => {
   return (
     <BaseButton

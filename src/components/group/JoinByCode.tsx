@@ -14,7 +14,6 @@ import { useForm } from "@/src/hooks/useForm";
 import { useOverlay } from "@/src/hooks/useOverlay";
 import { getErrorMessage, useAppMutation } from "@/src/types/ErrorResponse";
 
-/** 초대코드를 아는 사람이 비공개 그룹에 들어오는 경로 */
 export default function JoinByCode({ onJoined }: { onJoined?: () => void }) {
   const queryClient = useQueryClient();
   const { openToast } = useOverlay();

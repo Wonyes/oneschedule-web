@@ -1,9 +1,3 @@
-/**
- * 서버 에러 응답에서 사용자에게 보여줄 문구를 고르는 규칙 테스트.
- *
- * 서버(SuccessResponse/ErrorResponse)는 {success, code, message, result} 봉투로
- * 내려주고, 검증 실패일 때만 result가 필드별 사유 배열이 된다.
- */
 import { AxiosError } from "axios";
 import { getErrorMessage, CustomError, ErrorResponse } from "./ErrorResponse";
 
@@ -57,8 +51,6 @@ describe("getErrorMessage", () => {
     );
   });
 
-  // 검증 실패는 message에 "파라미터 검증 에러입니다." 총평만 담기고
-  // 진짜 사유는 result 배열의 reason에 들어온다.
   test("검증 실패는 총평 대신 필드별 사유를 보여준다", () => {
     const err = axiosError(
       {
@@ -100,7 +92,6 @@ describe("getErrorMessage", () => {
     expect(getErrorMessage(err)).toBe("파라미터 검증 에러입니다.");
   });
 
-  // axios의 "Request failed with status code 500"은 영어라 화면에 띄우지 않는다.
   test("응답이 없는 네트워크 오류는 fallback을 쓴다", () => {
     const err = axiosError(undefined, 0, "Network Error");
 

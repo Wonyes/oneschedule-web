@@ -12,17 +12,10 @@ type SegmentedTabsProps<T extends string> = {
   tabs: Tab<T>[];
   value: T;
   onChange: (key: T) => void;
-  /** 스크린리더용 그룹 이름 */
   label: string;
   className?: string;
 };
 
-/**
- * 뉴모피즘 세그먼트 탭.
- *
- * 헤더의 일/주/월 토글(ViewModeToggle)과 같은 방식이다.
- * 눌린 트랙 위에 떠 있는 인디케이터가 선택된 칸으로 미끄러진다.
- */
 export default function SegmentedTabs<T extends string>({
   tabs,
   value,
@@ -44,7 +37,6 @@ export default function SegmentedTabs<T extends string>({
         className,
       )}
     >
-      {/* 트랙 안쪽 너비는 (100% - 좌우 패딩 8px)이라 칸마다 8/n px씩 뺀다 */}
       <div
         aria-hidden="true"
         className="neu-flat absolute inset-y-1 left-1 rounded-lg transition-transform duration-300"

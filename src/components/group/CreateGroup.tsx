@@ -17,9 +17,7 @@ export default function CreateGroup({
   onBack,
   showBack = true,
 }: {
-  /** 생성 완료 후에도 호출된다 */
   onBack: () => void;
-  /** 탭 안에서 쓸 때는 탭 바가 이동을 담당하므로 숨긴다 */
   showBack?: boolean;
 }) {
   const queryClient = useQueryClient();

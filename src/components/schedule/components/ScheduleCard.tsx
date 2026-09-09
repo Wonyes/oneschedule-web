@@ -4,10 +4,6 @@ import { EVENT_STYLES } from "@/src/constant/schedule";
 import { Column, Row } from "../../ui/layout/flex";
 import { getTimes } from "@/src/utils/time";
 
-/**
- * 카드가 칸을 꽉 채우면 이미 일정이 있는 시간대에는 빈 곳을 누를 수 없어
- * 새 일정을 추가할 방법이 없어진다. 오른쪽을 이만큼 비워 클릭 영역을 남긴다.
- */
 const GRID_CLICK_GUTTER = 10;
 
 type EventCardProps = {

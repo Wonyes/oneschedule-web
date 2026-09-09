@@ -6,12 +6,10 @@ import { useAppMutation } from "@/src/types/ErrorResponse";
 import { useRouter } from "next/navigation";
 
 export type MyInfoResponse = {
-  /** 내 memberNo. 구버전 서버 응답에는 없을 수 있어 옵셔널로 둔다. */
   memberNo?: number;
   email: string;
   name: string;
   nickname: string;
-  /** 소셜 가입자는 가입 시점에 번호가 없어 null로 내려온다. */
   phoneNumber: string | null;
   provider: "LOCAL" | "GOOGLE";
   profileImageUrl?: string;
@@ -85,8 +83,6 @@ export const useLogout = () => {
     onSuccess: () => {
       queryClient.clear();
       router.push("/");
-      // (main) 레이아웃이 쿠키를 읽는 서버 컴포넌트라 push만으로는 헤더가
-      // 로그아웃 상태를 즉시 반영하지 못해서, 라우트 캐시를 강제로 갱신한다.
       router.refresh();
     },
   });
@@ -137,8 +133,6 @@ export const useProfileImageUpload = () => {
           prev ? { ...prev, profileImageUrl: data.profileImageUrl } : prev,
       );
 
-      // 그룹 멤버 목록(GroupMemberSection, GroupQuickLink, 참여자 선택 등)에도
-      // 내 프로필 사진이 들어있으니 같이 갱신한다.
       queryClient.invalidateQueries({
         queryKey: [groupkeys.myGroup],
       });

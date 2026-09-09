@@ -37,10 +37,10 @@ export type ScheduleApiRequest = {
   title: string;
   category: string;
   content?: string;
-  startDate: string; // yyyy-MM-dd
-  endDate?: string; // yyyy-MM-dd
-  startTime?: string; // HH:mm:ss
-  endTime?: string; // HH:mm:ss
+  startDate: string;
+  endDate?: string;
+  startTime?: string;
+  endTime?: string;
   participantMemberNos?: number[];
 };
 
@@ -64,9 +64,7 @@ export type ScheduleApiResponse = {
     nickname: string;
   };
   participants: ScheduleParticipant[];
-  /** 개인/그룹 구분. 서버가 내려주는 값이다. */
   type?: ScheduleViewType;
-  /** 작성자 memberNo. 서버는 author.memberNo로 내려주므로 보통 비어 있다. */
   createdBy?: number;
 };
 
@@ -92,16 +90,12 @@ export type WeatherData = {
   date: string;
   time: string;
 
-  // 하늘 상태
   SKY: string;
 
-  // 습도
   REH: string;
 
-  // 강수 형태
   PTY: string;
 
-  // 기온
   TMP: string;
 };
 

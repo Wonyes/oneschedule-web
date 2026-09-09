@@ -61,12 +61,6 @@ export const useActiveGroup = (
   };
 };
 
-/**
- * 공개 그룹 목록.
- *
- * last가 true면 다음 페이지가 없다.
- */
-
 export const usePublicGroups = (
   keyword?: string,
   size = PAGE_SIZE.publicGroups,
@@ -81,7 +75,6 @@ export const usePublicGroups = (
   });
 };
 
-/** 공개 · 즉시 가입 그룹에 바로 참여 */
 export const useJoinPublicGroup = () => {
   const queryClient = useQueryClient();
 
@@ -100,7 +93,6 @@ export const useJoinPublicGroup = () => {
   });
 };
 
-/** 공개 · 승인제 그룹에 가입 신청 */
 export const useRequestJoinGroup = () => {
   const queryClient = useQueryClient();
 
@@ -118,7 +110,6 @@ export const useRequestJoinGroup = () => {
   });
 };
 
-/** 그룹 설정 변경 (그룹장 전용). 보낸 값만 바뀐다. */
 export const useUpdateGroupSetting = (groupNo: number) => {
   const queryClient = useQueryClient();
 
@@ -167,7 +158,6 @@ export const useJoinRequests = (
   });
 };
 
-/** 가입 신청 승인 / 거절 */
 export const useProcessJoinRequest = (groupNo: number) => {
   const queryClient = useQueryClient();
 
@@ -187,7 +177,6 @@ export const useProcessJoinRequest = (groupNo: number) => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [groupkeys.joinRequests] });
-      // 승인하면 멤버가 늘어난다
       queryClient.invalidateQueries({ queryKey: [groupkeys.myGroup] });
     },
   });

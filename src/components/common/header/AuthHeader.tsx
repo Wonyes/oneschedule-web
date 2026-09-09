@@ -6,9 +6,6 @@ import { ArrowLeft } from "lucide-react";
 export default function AuthHeader() {
   return (
     <header className="w-full flex justify-between px-8 py-6 shrink-0 bg-transparent">
-      {/* 좌측: 깔끔한 로고 */}
-
-      {/* 우측: 군더더기 없는 미니멀 버튼 */}
       <Link
         href="/"
         prefetch

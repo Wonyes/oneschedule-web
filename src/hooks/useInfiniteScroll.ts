@@ -17,7 +17,6 @@ export function useInfiniteScroll(hasMore: boolean, onLoadMore: () => void) {
 
     if (!sentinel || !hasMore) return;
 
-    //
     const container = rootRef.current;
     const scrollable =
       !!container &&

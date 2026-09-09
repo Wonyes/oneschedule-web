@@ -78,10 +78,6 @@ function Compact({
 }) {
   return (
     <BaseCard className="flex-1 px-3 py-3 lg:px-4">
-      {/*
-        좁은 화면에서는 아이콘·라벨·값을 한 줄에 넣으면 라벨이 잘린다.
-        위아래로 나눠 아이콘을 살리고 라벨도 온전히 보여준다.
-      */}
       <div className="flex flex-col gap-1.5 lg:flex-row lg:items-center lg:justify-between lg:gap-2">
         <Row className="min-w-0 gap-2">
           <IconBox

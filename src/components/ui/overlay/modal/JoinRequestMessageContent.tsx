@@ -11,11 +11,6 @@ export interface JoinRequestMessageRef {
   submit: (onSuccess: (message: string) => void) => void;
 }
 
-/**
- * 승인제 그룹에 신청할 때 관리자에게 남기는 한마디.
- *
- * 선택 입력이다. 비워도 신청은 되게 해서 가입 장벽을 올리지 않는다.
- */
 export const JoinRequestMessageContent = forwardRef<
   JoinRequestMessageRef,
   { groupName: string }

@@ -23,12 +23,10 @@ export default function ModalContent({
 
   return (
     <>
-      {/* Dimmed Background */}
       <div
         className={`fixed inset-0 ${z.backdrop} bg-black/70 transition-opacity duration-300 opacity-100`}
       />
 
-      {/* Modal Box */}
       <div
         className={`fixed left-1/2 top-1/2 ${z.box} flex w-[calc(100%-32px)] max-w-[500px] -translate-x-1/2 -translate-y-1/2 flex-col justify-between rounded-[20px] glass transition-all duration-300 text-foreground`}
       >

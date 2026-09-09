@@ -1,7 +1,6 @@
 import Skeleton from "../ui/Skeleton";
 import { Between, Column, Row } from "../ui/layout/flex";
 
-/** 요약 카드 한 칸. 아이콘 + 라벨 + 값 배치를 그대로 흉내낸다. */
 function SummaryCardSkeleton() {
   return (
     <div className="neu-flat w-full rounded-[var(--radius-outer)] px-3 py-3 lg:px-4">
@@ -16,7 +15,6 @@ function SummaryCardSkeleton() {
   );
 }
 
-/** 아바타 + 이름·부제 + 우측 뱃지 형태의 행. 멤버 목록과 같은 구조다. */
 function RowSkeleton() {
   return (
     <Between className="neu-flat w-full gap-3 rounded-xl px-4 py-3">
@@ -32,7 +30,6 @@ function RowSkeleton() {
   );
 }
 
-/** 헤더(eyebrow + 제목)를 가진 카드 */
 function SectionCardSkeleton({
   children,
   className,
@@ -54,16 +51,9 @@ function SectionCardSkeleton({
   );
 }
 
-/**
- * GroupDashboard와 같은 뼈대로 그린다.
- *
- * 하이드레이션 시점에는 서버·클라이언트가 모두 이 화면을 그리므로
- * 실제 카드와 구조가 어긋나면 전환할 때 레이아웃이 튄다.
- */
 export default function GroupDashboardSkeleton() {
   return (
     <Column className="w-full gap-5 pb-1">
-      {/* Hero — 아이브로우 + 그룹명 + 설명 + 초대 코드 줄 */}
       <div className="neu-flat w-full rounded-[var(--radius-outer)] p-5">
         <Between className="mb-1.5">
           <Skeleton className="h-2.5 w-12" />
@@ -82,7 +72,6 @@ export default function GroupDashboardSkeleton() {
         </Between>
       </div>
 
-      {/* Summary — 모바일 2×2, PC 한 줄 */}
       <div className="grid w-full grid-cols-2 gap-2.5 lg:grid-cols-4 lg:gap-5">
         <SummaryCardSkeleton />
         <SummaryCardSkeleton />
@@ -90,7 +79,6 @@ export default function GroupDashboardSkeleton() {
         <SummaryCardSkeleton />
       </div>
 
-      {/* 상세 — 모바일은 탭, PC는 나란히 */}
       <Column className="w-full gap-5 lg:hidden">
         <Skeleton className="h-12 w-full rounded-xl" />
 

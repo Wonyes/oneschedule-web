@@ -74,8 +74,6 @@ export default function ProfilePage() {
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
         <div className="flex w-full flex-col gap-3 lg:w-[320px] lg:shrink-0">
           <ProfileCard user={user} />
-          {/* 모바일에서는 비밀번호 변경/로그아웃이 계정 정보보다 아래로 가야 해서
-              lg 이상에서만 여기(왼쪽 컬럼)에 렌더링한다 */}
           <div className="hidden lg:block">
             <ProfileActions auth={user.provider} />
           </div>

@@ -30,10 +30,6 @@ export default function HolidayBanner({ today }: { today: Date }) {
       .sort((a, b) => a.date.getTime() - b.date.getTime())[0];
   }, [holidays, today]);
 
-  /*
-    공휴일이 오기 전에는 자리만 잡아둔다.
-    바로 null을 돌려주면 배너가 없다가 갑자기 끼어들면서 아래 카드들이 밀린다.
-  */
   if (isPending) {
     return (
       <BaseCard className="p-4">

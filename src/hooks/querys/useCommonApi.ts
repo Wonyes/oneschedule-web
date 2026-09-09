@@ -36,7 +36,6 @@ export function useWeathers() {
     refetchOnWindowFocus: false,
     refetchOnMount: false,
 
-    // 응답은 배열이 아니라 "yyyyMMdd" 키로 접근하는 객체다.
     queryFn: () =>
       Get<ProcessedWeather>({
         url: "/weather/info",

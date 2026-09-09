@@ -18,10 +18,6 @@ const TONE: Record<IconBoxTone, string> = {
   danger: "text-error-500",
 };
 
-/**
- * 아이콘을 감싸는 표면. 앱 전체에서 같은 크기·모양·톤을 쓰기 위한 것으로,
- * 각 화면에서 neu-flat과 크기 클래스를 매번 적어 붙이지 않게 한다.
- */
 export default function IconBox({
   children,
   size = "md",
@@ -34,7 +30,6 @@ export default function IconBox({
   size?: IconBoxSize;
   tone?: IconBoxTone;
   shape?: IconBoxShape;
-  /** 눌린 표면이 필요한 경우(선택된 상태 등) */
   pressed?: boolean;
   className?: string;
 }) {

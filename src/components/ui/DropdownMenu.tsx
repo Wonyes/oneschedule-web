@@ -5,13 +5,10 @@ import { useEffect, useRef, useState } from "react";
 import { cn } from "@/src/utils/cn";
 
 type DropdownMenuProps = {
-  /** 버튼 안에 들어갈 내용. 열림 상태에 따라 화살표 등을 바꿀 수 있다. */
   trigger: (isOpen: boolean) => React.ReactNode;
-  /** 패널 내용. close를 받아 항목 선택 후 닫을 수 있다. */
   children: (close: () => void) => React.ReactNode;
   label: string;
   align?: "left" | "right" | "stretch";
-  /** 트리거를 폭에 맞춰야 할 때 바깥 래퍼에 준다 */
   className?: string;
   panelClassName?: string;
   triggerClassName?: string;
@@ -24,11 +21,6 @@ const ALIGN = {
   stretch: "left-0 right-0",
 } as const;
 
-/**
- * 헤더·시트 등 여러 곳에서 쓰는 드롭다운.
- * 바깥 클릭/ESC 닫기와 패널 스타일을 한곳에서 관리한다.
- * 패널은 불투명하다 — 반투명이면 뒤 내용이 비쳐 읽기 어렵다.
- */
 export default function DropdownMenu({
   trigger,
   children,

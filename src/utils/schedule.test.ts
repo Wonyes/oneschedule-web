@@ -40,12 +40,11 @@ const event = (
 
 describe("getWeekDates", () => {
   test("월요일 시작으로 7일을 반환한다", () => {
-    // 2024-01-17 은 수요일
     const dates = getWeekDates(new Date(2024, 0, 17));
 
     expect(dates).toHaveLength(7);
-    expect(dates[0]).toEqual(new Date(2024, 0, 15)); // Mon
-    expect(dates[6]).toEqual(new Date(2024, 0, 21)); // Sun
+    expect(dates[0]).toEqual(new Date(2024, 0, 15));
+    expect(dates[6]).toEqual(new Date(2024, 0, 21));
   });
 });
 
@@ -92,7 +91,7 @@ describe("findHoliday", () => {
 
 describe("getDayColor", () => {
   test("공휴일이면 다른 조건보다 우선한다", () => {
-    const sunday = new Date(2024, 0, 7); // Sun
+    const sunday = new Date(2024, 0, 7);
     expect(getDayColor(sunday, holiday("20240107"))).toBe("text-red-800");
   });
 
@@ -169,7 +168,6 @@ describe("getmonthTime", () => {
 
 describe("getMonthDates", () => {
   test("월 시작/종료가 주 경계와 딱 맞으면 4주(28일)를 반환한다", () => {
-    // 2021-02: 2/1 Mon ~ 2/28 Sun
     const dates = getMonthDates(new Date(2021, 1, 15));
     expect(dates).toHaveLength(28);
     expect(dates[0]).toEqual(new Date(2021, 1, 1));
@@ -177,19 +175,18 @@ describe("getMonthDates", () => {
   });
 
   test("월 앞뒤로 여백이 생기면 6주(42일)까지 채운다", () => {
-    // 2021-05: 5/1 Sat ~ 5/31 Mon
     const dates = getMonthDates(new Date(2021, 4, 15));
     expect(dates).toHaveLength(42);
-    expect(dates[0]).toEqual(new Date(2021, 3, 26)); // 그리드 시작 Mon
-    expect(dates[dates.length - 1]).toEqual(new Date(2021, 5, 6)); // 그리드 끝 Sun
+    expect(dates[0]).toEqual(new Date(2021, 3, 26));
+    expect(dates[dates.length - 1]).toEqual(new Date(2021, 5, 6));
   });
 });
 
 describe("getEventPosition", () => {
   test("자정 기준 경과 시간을 하루(1440분) 대비 비율(%)로 변환한다", () => {
     const dayStart = new Date(2024, 0, 1, 0, 0);
-    const displayStart = new Date(2024, 0, 1, 1, 0); // 60분 경과
-    const displayEnd = new Date(2024, 0, 1, 2, 0); // 60분 길이
+    const displayStart = new Date(2024, 0, 1, 1, 0);
+    const displayEnd = new Date(2024, 0, 1, 2, 0);
 
     const { top, height } = getEventPosition(
       displayStart,
@@ -276,8 +273,6 @@ describe("getWeekEvents (겹치는 일정 레이아웃)", () => {
   test("A-B, B-C만 겹치는 체인에서도 폭과 위치가 어긋나지 않는다", () => {
     const weekDates = getWeekDates(new Date(2024, 0, 17));
 
-    // A(09:00~10:00) - B(09:30~11:00) - C(10:30~12:00)
-    // A와 C는 서로 겹치지 않지만 B를 통해 한 덩어리로 묶인다.
     const events: ScheduleEvent[] = [
       event({
         id: 1,
@@ -298,14 +293,12 @@ describe("getWeekEvents (겹치는 일정 레이아웃)", () => {
 
     const layouts = getWeekEvents(events, weekDates);
 
-    // 같은 덩어리이므로 모두 같은 폭(2열)을 갖는다
     layouts.forEach((layout) => {
       expect(layout.width).toBe(50);
     });
 
     const byId = (id: number) => layouts.find((l) => l.event.id === id)!;
 
-    // A와 C는 겹치지 않으므로 같은 열을 재사용하고, B만 다른 열로 밀린다
     expect(byId(1).left).toBe(0);
     expect(byId(2).left).toBe(50);
     expect(byId(3).left).toBe(0);
@@ -334,7 +327,6 @@ describe("getWeekEvents (겹치는 일정 레이아웃)", () => {
 
     const layouts = getWeekEvents(events, weekDates);
 
-    // 셋 다 서로 겹치므로 3열로 나뉘고, 가로 구간이 겹치면 안 된다
     layouts.forEach((a) => {
       layouts
         .filter((b) => b.event.id !== a.event.id)
@@ -495,8 +487,6 @@ describe("toScheduleEvent (서버 응답 → 화면 이벤트)", () => {
     ...overrides,
   });
 
-  // 서버는 작성자를 author.memberNo로만 내려준다. 이 매핑이 빠지면
-  // canEditSchedule의 createdBy가 undefined가 되어 권한 판정이 통째로 무력화된다.
   test("author.memberNo를 createdBy로 옮겨 담는다", () => {
     expect(toScheduleEvent(apiResponse()).createdBy).toBe(7);
   });
@@ -548,7 +538,6 @@ describe("canEditSchedule (수정·삭제 권한)", () => {
     ).toBe(false);
   });
 
-  // 값이 없으면 판정을 건너뛰고 허용한다. 그러지 않으면 자기 일정도 못 고친다.
   test("작성자나 내 memberNo를 모르면 허용한다", () => {
     expect(canEditSchedule({ createdBy: undefined, myMemberNo: 7 })).toBe(true);
     expect(canEditSchedule({ createdBy: 7, myMemberNo: undefined })).toBe(true);

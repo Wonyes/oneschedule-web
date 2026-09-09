@@ -56,14 +56,12 @@ export async function middleware(request: NextRequest) {
   }
 
   if ((isPrivateRoute || isHome) && !accessToken) {
-    // 액세스 토큰 쿠키가 없어도 리프레시 토큰이 살아있으면 재발급부터 시도
     const refreshed = await tryRefreshToken(request);
 
     if (refreshed) {
       return applyRefreshedCookies(request, refreshed);
     }
 
-    // 홈은 재발급도 실패했을 때 그냥 통과시켜서 자체 로그인 유도 화면을 보여준다
     if (isHome) {
       return NextResponse.next();
     }

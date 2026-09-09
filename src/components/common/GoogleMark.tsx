@@ -1,4 +1,3 @@
-/** 구글 브랜드 가이드의 4색 G 마크 */
 export default function GoogleMark({ size = 18 }: { size?: number }) {
   return (
     <svg

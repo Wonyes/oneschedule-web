@@ -17,7 +17,6 @@ const OPTIONS: GroupVisibility[] = [
   "PUBLIC_APPROVAL",
 ];
 
-/** 닫혔을 때와 열렸을 때가 같은 모양이라 한 곳에서 그린다. */
 function OptionRow({
   option,
   selected,
@@ -52,12 +51,6 @@ function OptionRow({
   );
 }
 
-/**
- * 그룹 공개 범위 설정.
- *
- * 소개는 히어로에서 고친다. 그룹명 수정이 거기 있어 자리를 맞췄다.
- * 그룹장에게만 보인다.
- */
 export default function GroupSettingBody({
   group,
 }: {
