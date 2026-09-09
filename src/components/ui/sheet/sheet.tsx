@@ -234,6 +234,7 @@ export default function Sheet() {
     editingAuthorNo,
   } = useSheetStore();
   const { isCalendarOpen, toggleCalendar } = useCalendarStore();
+  const [titleError, setTitleError] = useState("");
   const { group } = useActiveGroup(open);
   const viewType = useScheduleViewStore((s) => s.viewType);
   const { openAlert } = useOverlay();
@@ -326,7 +327,12 @@ export default function Sheet() {
     });
 
   const handleSave = () => {
-    if (!currentForm.title.trim()) return;
+    if (!currentForm.title.trim()) {
+      setTitleError("제목을 입력해주세요.");
+      return;
+    }
+
+    setTitleError("");
 
     const startDate = currentForm.startDate ?? new Date();
     const endDate = currentForm.endDate ?? startDate;
@@ -368,6 +374,8 @@ export default function Sheet() {
       />
 
       <section
+        aria-hidden={!open}
+        inert={!open}
         className={`fixed bottom-0 left-0 right-0 z-50 mx-auto flex h-[75dvh] max-w-[800px] flex-col rounded-t-[32px] glass text-foreground transition-transform duration-300 ease-out ${
           open
             ? "translate-y-0 pointer-events-auto"
@@ -381,7 +389,13 @@ export default function Sheet() {
             <label className="typo-sub-t-2 text-secondary">📝 제목</label>
             <Input
               value={currentForm.title}
-              onChange={(e) => updateForm({ title: e.target.value })}
+              required
+              aria-invalid={!!titleError}
+              errorMessage={titleError}
+              onChange={(e) => {
+                if (titleError) setTitleError("");
+                updateForm({ title: e.target.value });
+              }}
               placeholder="일정 제목을 입력하세요."
             />
           </Column>
