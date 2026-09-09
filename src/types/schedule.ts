@@ -1,9 +1,5 @@
 export type EventCategory =
-  | "meeting"
-  | "work"
-  | "personal"
-  | "important"
-  | "default";
+  "meeting" | "work" | "personal" | "important" | "default";
 
 export type Day =
   | "Monday"

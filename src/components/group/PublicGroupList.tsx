@@ -109,10 +109,6 @@ function GroupRow({ group }: { group: PublicGroup }) {
           <span className="typo-caption-2">가입됨</span>
         </Row>
       ) : group.pending ? (
-        /*
-          이미 신청해둔 그룹. 버튼을 남겨두면 다시 눌러도
-          JOIN_REQUEST_ALREADY_PENDING만 돌아와서 아무 일도 안 일어난 것처럼 보인다.
-        */
         <Row className="shrink-0 items-center gap-1 px-3 text-pending-500">
           <Hourglass size={13} strokeWidth={2} />
           <span className="typo-caption-2 whitespace-nowrap">가입 대기 중</span>

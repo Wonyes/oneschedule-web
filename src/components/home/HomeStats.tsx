@@ -22,7 +22,6 @@ function StatTile({
   icon: React.ReactNode;
   title: string;
   value: string;
-  /** 값이 아직 안 왔을 때. 0으로 그렸다가 숫자가 튀는 걸 막는다. */
   loading?: boolean;
 }) {
   return (

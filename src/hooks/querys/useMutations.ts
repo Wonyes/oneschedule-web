@@ -28,8 +28,7 @@ export const Post = async <T>({
   const response = await api.post(url, body, { params, headers });
 
   return (responseFull ? response : (response.data.result ?? response.data)) as
-    | T
-    | AxiosResponse<T>;
+    T | AxiosResponse<T>;
 };
 
 export const Delete = async <T>({ url, params }: ApiProps): Promise<T> => {

@@ -227,11 +227,6 @@ export default function GroupMemberSection({
                     {member.groupRole}
                   </span>
 
-                  {/*
-                  오프라인도 같은 자리에 그린다. 온라인일 때만 보이면 줄마다
-                  높이가 달라져 목록이 들쭉날쭉해지고, 점이 없는 게 "오프라인"인지
-                  "아직 안 불러온 것"인지 구분이 안 된다.
-                */}
                   <Row
                     className={cn(
                       "items-center gap-1.5 rounded-full px-2 py-0.5",

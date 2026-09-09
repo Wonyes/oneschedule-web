@@ -15,9 +15,7 @@ export interface ValidationErrorItem {
   reason?: string;
 }
 
-export interface ErrorResponse<
-  T = ErrorResult | ValidationErrorItem[] | null,
-> {
+export interface ErrorResponse<T = ErrorResult | ValidationErrorItem[] | null> {
   success: boolean;
   code: number;
   message: string;

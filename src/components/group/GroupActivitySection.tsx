@@ -59,9 +59,7 @@ export default function GroupActivitySection({
           </span>
           <button
             type="button"
-            onClick={() =>
-              openSheet({ date: new Date(), type: "GROUP" })
-            }
+            onClick={() => openSheet({ date: new Date(), type: "GROUP" })}
             className="btn-spring neu-btn text-secondary hover:text-foreground flex h-9 items-center gap-1.5 rounded-xl px-4 typo-caption-2 font-medium"
           >
             <CalendarPlus size={14} strokeWidth={2} />첫 그룹 일정 만들기

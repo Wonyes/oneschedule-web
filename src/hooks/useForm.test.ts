@@ -13,9 +13,7 @@ describe("useForm", () => {
   });
 
   test("formChange는 해당 필드만 갱신하고 그 필드의 에러/성공 메시지를 지운다", () => {
-    const { result } = renderHook(() =>
-      useForm({ nickname: "", phone: "" }),
-    );
+    const { result } = renderHook(() => useForm({ nickname: "", phone: "" }));
 
     act(() => {
       result.current.setErrors({ nickname: "중복된 닉네임입니다." });
@@ -52,9 +50,7 @@ describe("useForm", () => {
   });
 
   test("clearError는 해당 필드의 에러만 지운다", () => {
-    const { result } = renderHook(() =>
-      useForm({ a: "", b: "" }),
-    );
+    const { result } = renderHook(() => useForm({ a: "", b: "" }));
 
     act(() => {
       result.current.setErrors({ a: "에러A", b: "에러B" });

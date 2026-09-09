@@ -15,8 +15,7 @@ export default function GuestHome() {
             <br />한 곳에서 관리하세요
           </h1>
           <p className="mt-2 typo-caption-2 text-muted">
-            개인 일정과 그룹 일정을 함께 보고, 겹치는 시간도 한눈에
-            확인해요.
+            개인 일정과 그룹 일정을 함께 보고, 겹치는 시간도 한눈에 확인해요.
           </p>
         </div>
 

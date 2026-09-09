@@ -48,7 +48,6 @@ export default function HolidayBanner({ today }: { today: Date }) {
     );
   }
 
-  // 다가오는 공휴일이 정말 없을 때만 자리를 비운다
   if (!upcomingHoliday) return null;
 
   const dDay = differenceInCalendarDays(upcomingHoliday.date, today);

@@ -53,7 +53,6 @@ function ParticipantPicker({
   members: GroupMember[];
   selected: number[];
   onChange: (ids: number[]) => void;
-  /** 권한이 없으면 누가 참여하는지만 보여주고 고치지 못하게 한다 */
   readOnly?: boolean;
 }) {
   const [query, setQuery] = useState("");
@@ -203,13 +202,11 @@ function SheetFooter({
   onSave: () => void;
   onDelete: () => void;
   isEditing: boolean;
-  /** 그룹 일정을 고칠 권한. 없으면 읽기 전용으로 보여준다. */
   canEdit: boolean;
 }) {
   return (
     <footer className="border-t border-white/10 px-4 sm:px-6 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom))] bg-surface/90 rounded-b-[32px]">
       <div className="flex gap-3">
-        {/* 삭제는 이미 있는 일정에만. 추가 화면에는 지울 대상이 없다. */}
         {isEditing && canEdit && (
           <RedBtn text="삭제" onClick={onDelete} className="flex-1" />
         )}
@@ -320,13 +317,6 @@ export default function Sheet() {
 
   const isEditing = !!editingId;
 
-  /**
-   * 남의 그룹 일정은 고치지 못한다. 작성자 본인이거나 그룹 관리자여야 한다.
-   * 새로 만드는 중이면 판정할 대상이 없으므로 그냥 허용한다.
-   *
-   * 서버도 같은 범위를 검사한다. 여기서 막는 건 되지도 않을 요청을 보내
-   * 실패 알럿을 띄우지 않기 위해서다.
-   */
   const canEdit =
     !isEditing ||
     canEditSchedule({

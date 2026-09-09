@@ -8,7 +8,6 @@ interface OverlayContentProps {
   message2?: string;
   message3?: string;
   buttons: React.ReactNode;
-  /** 쌓임 순서. alert이 confirm보다 위다. */
   layer: OverlayLayer;
 }
 

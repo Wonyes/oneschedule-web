@@ -17,13 +17,6 @@ function GroupPageContent() {
 
   const wantsAdd = useSearchParams().get("add") === "1";
 
-  /*
-    ?add=1은 대시보드가 아니라 탐색 화면으로 간다. 그룹을 기다리는 동안
-    대시보드 스켈레톤을 깔면 전혀 다른 모양이 떴다가 바뀐다.
-
-    안쪽 목록은 각자 로딩을 처리하므로 바로 그려도 된다. 취소 버튼만
-    "돌아갈 그룹이 있는지"를 알아야 해서 데이터가 온 뒤에 붙인다.
-  */
   if (wantsAdd) {
     return (
       <GroupLanding

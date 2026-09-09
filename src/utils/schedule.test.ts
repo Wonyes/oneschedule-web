@@ -201,7 +201,6 @@ describe("getEventPosition", () => {
     expect(height).toBeCloseTo((60 / 1440) * 100);
   });
 
-  // 30분짜리가 한 칸을 꽉 채우면 09:00-09:30과 09:00-10:00이 구분되지 않는다.
   test("30분 일정은 시간 칸의 절반만 차지한다", () => {
     const dayStart = new Date(2024, 0, 1, 0, 0);
 
@@ -214,7 +213,6 @@ describe("getEventPosition", () => {
     expect(height).toBeCloseTo((30 / 1440) * 100);
   });
 
-  // 종료 시각이 비면 높이가 0이 되어 클릭조차 안 된다. 30분은 남겨둔다.
   test("길이가 0인 일정도 최소 30분 높이를 갖는다", () => {
     const dayStart = new Date(2024, 0, 1, 0, 0);
     const sameMoment = new Date(2024, 0, 1, 9, 0);
@@ -538,8 +536,6 @@ describe("canEditSchedule (수정·삭제 권한)", () => {
     ).toBe(true);
   });
 
-  // 백엔드 validateManager가 SUPER·SUB를 함께 허용한다. 한쪽만 SUPER로 두면
-  // 부관리자에게 버튼은 보이는데 서버가 막는 일이 생긴다.
   test("부관리자(SUB)도 남의 일정을 수정할 수 있다", () => {
     expect(
       canEditSchedule({ createdBy: 7, myMemberNo: 8, myGroupRole: "SUB" }),

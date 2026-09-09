@@ -66,8 +66,16 @@ describe("getErrorMessage", () => {
         code: -104,
         message: "파라미터 검증 에러입니다.",
         result: [
-          { key: "password", value: "123", reason: "비밀번호는 8~20자여야 합니다." },
-          { key: "nickname", value: "가", reason: "닉네임은 2~10자여야 합니다." },
+          {
+            key: "password",
+            value: "123",
+            reason: "비밀번호는 8~20자여야 합니다.",
+          },
+          {
+            key: "nickname",
+            value: "가",
+            reason: "닉네임은 2~10자여야 합니다.",
+          },
         ],
       },
       422,

@@ -58,9 +58,7 @@ export function Input({
         </div>
       </div>
       {!errorMessage && !successMessage && description && (
-        <span className="typo-caption-3 text-muted pl-1">
-          {description}
-        </span>
+        <span className="typo-caption-3 text-muted pl-1">{description}</span>
       )}
       {errorMessage && (
         <span className="typo-caption-3 text-red-400 pl-1">{errorMessage}</span>

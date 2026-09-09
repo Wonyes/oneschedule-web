@@ -173,10 +173,6 @@ export default function GroupJoinRequestBody({
             </Row>
           ))}
 
-          {/*
-            여기는 서버에서 다음 장을 받아오므로 진짜 기다리는 시간이 있다.
-            멤버·일정은 이미 받아둔 배열을 푸는 것이라 스켈레톤을 넣지 않는다.
-          */}
           {isFetchingNextPage && (
             <Row className="w-full items-center gap-3 py-2.5">
               <div className="size-9 shrink-0 animate-pulse rounded-full bg-surface-hover" />

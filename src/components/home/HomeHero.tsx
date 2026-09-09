@@ -48,7 +48,10 @@ export default function HomeHero({
             {todayWeather && (
               <>
                 {" · "}
-                {getWeatherPhrase(Number(todayWeather.TMP), todayWeather.PTY)}{" "}
+                {getWeatherPhrase(
+                  Number(todayWeather.TMP),
+                  todayWeather.PTY,
+                )}{" "}
                 {getWeatherIcon(todayWeather.PTY, todayWeather.SKY)}{" "}
                 {todayWeather.TMP}°
               </>

@@ -140,14 +140,6 @@ export const useUpdateGroupSetting = (groupNo: number) => {
   });
 };
 
-/**
- * 그룹원 접속 상태.
- *
- * 멤버 목록과 따로 받는다. 로스터는 가입·탈퇴할 때만 바뀌어 staleTime이 Infinity인데,
- * 접속 상태는 수십 초마다 바뀐다. 합쳐두면 이것 때문에 그룹 전체를 다시 받게 된다.
- *
- * 접속 여부는 서버가 열려 있는 SSE 연결로 판단하고, lastSeenAt은 오프라인일 때만 온다.
- */
 export const useMemberPresence = (groupNo?: number) => {
   return useQuery({
     queryKey: [groupkeys.presence, groupNo],
@@ -158,12 +150,10 @@ export const useMemberPresence = (groupNo?: number) => {
     refetchInterval: 30_000,
     retry: false,
 
-    // 렌더마다 배열을 훑지 않도록 memberNo로 색인해 캐시에 둔다
     select: (list) => new Map(list.map((it) => [it.memberNo, it])),
   });
 };
 
-/** 가입 신청 대기 목록 (SUPER·SUB만) */
 export const useJoinRequests = (
   groupNo: number,
   enabled = true,

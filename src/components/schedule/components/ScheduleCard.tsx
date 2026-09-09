@@ -64,8 +64,7 @@ export default function ScheduleCard({
     );
   }
   const style = EVENT_STYLES[event.category as keyof typeof EVENT_STYLES] as
-    | (typeof EVENT_STYLES)[keyof typeof EVENT_STYLES]
-    | undefined;
+    (typeof EVENT_STYLES)[keyof typeof EVENT_STYLES] | undefined;
 
   const start = new Date(event.startDate);
   const end = new Date(event.endDate);

@@ -34,7 +34,9 @@ describe("api 인터셉터 (토큰 재발급)", () => {
 
     expect(response.status).toBe(200);
     expect(scheduleCallCount).toBe(2);
-    expect(mock.history.post.filter((r) => r.url === "/token-refresh")).toHaveLength(1);
+    expect(
+      mock.history.post.filter((r) => r.url === "/token-refresh"),
+    ).toHaveLength(1);
   });
 
   test("재발급 후에도 실패하면 재시도를 반복하지 않는다", async () => {
@@ -59,7 +61,9 @@ describe("api 인터셉터 (토큰 재발급)", () => {
 
     await expect(api.post("/members/login")).rejects.toBeDefined();
 
-    expect(mock.history.post.filter((r) => r.url === "/token-refresh")).toHaveLength(0);
+    expect(
+      mock.history.post.filter((r) => r.url === "/token-refresh"),
+    ).toHaveLength(0);
   });
 
   test("재발급 자체가 실패하면 그대로 에러를 던진다", async () => {
@@ -74,7 +78,9 @@ describe("api 인터셉터 (토큰 재발급)", () => {
     mock.onPost("/token-refresh").reply(200);
 
     await expect(api.get("/schedules")).rejects.toBeDefined();
-    expect(mock.history.post.filter((r) => r.url === "/token-refresh")).toHaveLength(0);
+    expect(
+      mock.history.post.filter((r) => r.url === "/token-refresh"),
+    ).toHaveLength(0);
   });
 
   // 서버는 인증 실패를 전부 401로 내려준다. 403은 "그룹 관리 권한 없음" 같은
@@ -84,7 +90,15 @@ describe("api 인터셉터 (토큰 재발급)", () => {
 
     mock.onGet("/schedules").reply(() => {
       scheduleCallCount += 1;
-      return [403, { success: false, code: -501, message: "일정에 접근할 권한이 없습니다.", result: null }];
+      return [
+        403,
+        {
+          success: false,
+          code: -501,
+          message: "일정에 접근할 권한이 없습니다.",
+          result: null,
+        },
+      ];
     });
     mock.onPost("/token-refresh").reply(200);
 
@@ -93,6 +107,8 @@ describe("api 인터셉터 (토큰 재발급)", () => {
     });
 
     expect(scheduleCallCount).toBe(1);
-    expect(mock.history.post.filter((r) => r.url === "/token-refresh")).toHaveLength(0);
+    expect(
+      mock.history.post.filter((r) => r.url === "/token-refresh"),
+    ).toHaveLength(0);
   });
 });

@@ -7,7 +7,6 @@ interface ModalContentProps {
   title: string;
   children: React.ReactNode;
   buttons: React.ReactNode;
-  /** 쌓임 순서. 기본은 modal 층이다. */
   layer?: OverlayLayer;
 }
 

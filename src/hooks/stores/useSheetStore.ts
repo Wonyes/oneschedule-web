@@ -47,7 +47,6 @@ type SheetStore = {
 
   form: SheetForm;
   editingId: number | null;
-  /** 수정 중인 일정의 작성자. 수정·삭제 권한 판단에 쓴다. */
   editingAuthorNo: number | null;
   createType: ScheduleViewType;
 
