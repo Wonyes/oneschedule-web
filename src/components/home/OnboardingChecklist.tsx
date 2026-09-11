@@ -11,7 +11,24 @@ import { useActiveGroup } from "@/src/hooks/querys/useGroup";
 import { useSchedules } from "@/src/hooks/querys/useSchedule";
 import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
 
-const DISMISS_KEY = "onboarding-dismissed";
+const LEGACY_DISMISS_KEY = "onboarding-dismissed";
+
+const dismissKey = (memberNo?: number) =>
+  memberNo ? `onboarding-dismissed:${memberNo}` : LEGACY_DISMISS_KEY;
+
+const readDismissed = (memberNo?: number) => {
+  const key = dismissKey(memberNo);
+
+  if (localStorage.getItem(key) === "true") return true;
+
+  if (memberNo && localStorage.getItem(LEGACY_DISMISS_KEY) === "true") {
+    localStorage.setItem(key, "true");
+    localStorage.removeItem(LEGACY_DISMISS_KEY);
+    return true;
+  }
+
+  return false;
+};
 
 type Step = {
   id: string;
@@ -41,11 +58,11 @@ export default function OnboardingChecklist({
   useEffect(() => {
     try {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setDismissed(localStorage.getItem(DISMISS_KEY) === "true");
+      setDismissed(readDismissed(user.memberNo));
     } catch {
       setDismissed(false);
     }
-  }, []);
+  }, [user.memberNo]);
 
   const steps: Step[] = [
     {
@@ -88,7 +105,7 @@ export default function OnboardingChecklist({
     setDismissed(true);
 
     try {
-      localStorage.setItem(DISMISS_KEY, "true");
+      localStorage.setItem(dismissKey(user.memberNo), "true");
     } catch {}
   };
 
