@@ -6,6 +6,7 @@ type Tab<T extends string> = {
   key: T;
   label: string;
   icon?: React.ReactNode;
+  badge?: number;
 };
 
 type SegmentedTabsProps<T extends string> = {
@@ -79,6 +80,18 @@ export default function SegmentedTabs<T extends string>({
         >
           {tab.icon}
           {tab.label}
+          {!!tab.badge && (
+            <span
+              className={cn(
+                "ml-0.5 min-w-5 rounded-full px-1.5 py-px text-[10px] font-bold leading-4 tabular-nums",
+                value === tab.key
+                  ? "bg-accent text-on-primary"
+                  : "bg-surface-hover text-secondary",
+              )}
+            >
+              {tab.badge > 99 ? "99+" : tab.badge}
+            </span>
+          )}
         </button>
       ))}
     </div>

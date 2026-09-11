@@ -9,7 +9,7 @@ import GroupSwitcher from "../../group/GroupSwitcher";
 
 export default function GroupHeaderControls() {
   const pathname = usePathname();
-  const isGroupPage = pathname === "/group";
+  const isGroupPage = pathname === "/group" || pathname.startsWith("/group/");
 
   const { groups } = useActiveGroup(isGroupPage);
 

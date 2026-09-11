@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import { cn } from "@/src/utils/cn";
 
@@ -15,11 +16,14 @@ type DropdownMenuProps = {
   disabled?: boolean;
 };
 
-const ALIGN = {
-  left: "left-0",
-  right: "right-0",
-  stretch: "left-0 right-0",
-} as const;
+const GAP = 8;
+
+type PanelPosition = {
+  top: number;
+  left?: number;
+  right?: number;
+  width?: number;
+};
 
 export default function DropdownMenu({
   trigger,
@@ -32,15 +36,55 @@ export default function DropdownMenu({
   disabled = false,
 }: DropdownMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [position, setPosition] = useState<PanelPosition | null>(null);
+
   const wrapRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   const close = () => setIsOpen(false);
+
+  useLayoutEffect(() => {
+    if (!isOpen) return;
+
+    const place = () => {
+      const anchor = wrapRef.current?.getBoundingClientRect();
+      if (!anchor) return;
+
+      const panelHeight = panelRef.current?.offsetHeight ?? 0;
+      const spaceBelow = window.innerHeight - anchor.bottom - GAP;
+      const flipUp = panelHeight > spaceBelow && anchor.top > panelHeight + GAP;
+
+      const top = flipUp ? anchor.top - panelHeight - GAP : anchor.bottom + GAP;
+
+      if (align === "stretch") {
+        setPosition({ top, left: anchor.left, width: anchor.width });
+      } else if (align === "left") {
+        setPosition({ top, left: anchor.left });
+      } else {
+        setPosition({ top, right: window.innerWidth - anchor.right });
+      }
+    };
+
+    place();
+
+    window.addEventListener("scroll", place, true);
+    window.addEventListener("resize", place);
+
+    return () => {
+      window.removeEventListener("scroll", place, true);
+      window.removeEventListener("resize", place);
+    };
+  }, [isOpen, align]);
 
   useEffect(() => {
     if (!isOpen) return;
 
     const onPointerDown = (e: MouseEvent) => {
-      if (!wrapRef.current?.contains(e.target as Node)) close();
+      const target = e.target as Node;
+      const inside =
+        wrapRef.current?.contains(target) || panelRef.current?.contains(target);
+
+      if (!inside) close();
     };
 
     const onKeyDown = (e: KeyboardEvent) => {
@@ -73,19 +117,29 @@ export default function DropdownMenu({
         {trigger(isOpen)}
       </button>
 
-      {isOpen && (
-        <div
-          role="menu"
-          className={cn(
-            "absolute top-full z-50 mt-2 rounded-2xl p-2",
-            "bg-surface border border-divider shadow-[var(--shadow-float)]",
-            ALIGN[align],
-            panelClassName,
-          )}
-        >
-          {children(close)}
-        </div>
-      )}
+      {isOpen &&
+        createPortal(
+          <div
+            ref={panelRef}
+            role="menu"
+            style={{
+              position: "fixed",
+              top: position?.top ?? -9999,
+              left: position?.left,
+              right: position?.right,
+              width: position?.width,
+              visibility: position ? "visible" : "hidden",
+            }}
+            className={cn(
+              "z-[1000] rounded-2xl p-2",
+              "bg-surface border border-divider shadow-[var(--shadow-float)]",
+              panelClassName,
+            )}
+          >
+            {children(close)}
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }

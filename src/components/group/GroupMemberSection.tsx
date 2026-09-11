@@ -2,7 +2,7 @@
 
 import AvatarImage from "@/src/components/common/AvatarImage";
 import { Crown, MoreVertical } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import BaseCard from "../ui/card/BaseCard";
@@ -16,6 +16,7 @@ import { getErrorMessage, useAppMutation } from "@/src/types/ErrorResponse";
 import { Patch, Delete } from "@/src/hooks/querys/useMutations";
 import { groupkeys } from "@/src/hooks/querys/key/groupKey";
 import IconBox from "../ui/IconBox";
+import DropdownMenu from "../ui/DropdownMenu";
 import { GroupMember } from "@/src/types/group";
 import { useMyInfo } from "@/src/hooks/querys/useMembers";
 import { useIncrementalList } from "@/src/hooks/useIncrementalList";
@@ -37,8 +38,6 @@ export default function GroupMemberSection({
   isAdmin: boolean;
   groupNo: number;
 }) {
-  const [openMenu, setOpenMenu] = useState<number | null>(null);
-
   const { data: myInfo } = useMyInfo();
   const { data: presence } = useMemberPresence(groupNo);
   const { openModal, openToast, openConfirm, closeModal } = useOverlay();
@@ -114,8 +113,6 @@ export default function GroupMemberSection({
   } = useIncrementalList(members, PAGE_SIZE.groupMembers);
 
   const memberChanges = (member: GroupMember) => {
-    setOpenMenu(null);
-
     openModal({
       title: "멤버 관리",
 
@@ -135,8 +132,6 @@ export default function GroupMemberSection({
   };
 
   const memberDelete = (member: GroupMember) => {
-    setOpenMenu(null);
-
     openConfirm({
       title: `${member.nickname} 멤버 삭제`,
       message: `정말 ${member.nickname}를 추방하시겠습니까?`,
@@ -255,67 +250,43 @@ export default function GroupMemberSection({
                 {isAdmin &&
                   member.groupRole !== "SUPER" &&
                   member.memberNo !== myInfo?.memberNo && (
-                    <div className="relative">
-                      <button
-                        onClick={() =>
-                          setOpenMenu(
-                            openMenu === member.memberNo
-                              ? null
-                              : member.memberNo,
-                          )
-                        }
-                        className="
-                      flex h-7 w-7
-                      items-center justify-center
-                      rounded-lg
-                      text-muted
-                      btn-spring
-                      hover:bg-surface-hover
-                      hover:text-foreground
-                    "
-                      >
+                    <DropdownMenu
+                      label="멤버 관리 메뉴"
+                      align="right"
+                      panelClassName="w-40 glass"
+                      triggerClassName="h-7 w-7 justify-center rounded-lg text-muted hover:bg-surface-hover hover:text-foreground"
+                      trigger={() => (
                         <MoreVertical size={15} strokeWidth={1.75} />
-                      </button>
-
-                      {openMenu === member.memberNo && (
-                        <div
-                          className="
-                      absolute right-0 top-10 z-30
-                      w-40 rounded-xl
-                      glass
-                      p-2
-                    "
-                        >
+                      )}
+                    >
+                      {(close) => (
+                        <>
                           <button
-                            onClick={() => memberChanges(member)}
-                            className="
-                          w-full rounded-lg
-                          px-3 py-2
-                          text-left
-                          typo-caption-2
-                          text-secondary
-                          hover:bg-white/5
-                        "
+                            type="button"
+                            role="menuitem"
+                            onClick={() => {
+                              close();
+                              memberChanges(member);
+                            }}
+                            className="w-full rounded-lg px-3 py-2 text-left typo-caption-2 text-secondary hover:bg-white/5"
                           >
                             멤버 수정
                           </button>
 
                           <button
-                            onClick={() => memberDelete(member)}
-                            className="
-                          mt-1 w-full rounded-lg
-                          px-3 py-2
-                          text-left
-                          typo-caption-2
-                          text-error-500
-                          hover:bg-white/5
-                        "
+                            type="button"
+                            role="menuitem"
+                            onClick={() => {
+                              close();
+                              memberDelete(member);
+                            }}
+                            className="mt-1 w-full rounded-lg px-3 py-2 text-left typo-caption-2 text-error-500 hover:bg-white/5"
                           >
                             그룹 내보내기
                           </button>
-                        </div>
+                        </>
                       )}
-                    </div>
+                    </DropdownMenu>
                   )}
               </Row>
             </Between>
