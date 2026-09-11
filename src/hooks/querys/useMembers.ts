@@ -4,6 +4,7 @@ import { memberskeys } from "./key/members";
 import { groupkeys } from "./key/groupKey";
 import { useAppMutation } from "@/src/types/ErrorResponse";
 import { useRouter } from "next/navigation";
+import { useActiveGroupStore } from "../stores/useActiveGroupStore";
 
 export type MyInfoResponse = {
   memberNo?: number;
@@ -74,6 +75,8 @@ export const useMyInfo = (enabled = true) => {
 export const useLogout = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
+  const clearActiveGroup = useActiveGroupStore((s) => s.clearActiveGroup);
+
   return useAppMutation({
     mutationFn: () =>
       Post({
@@ -81,6 +84,7 @@ export const useLogout = () => {
       }),
 
     onSuccess: () => {
+      clearActiveGroup();
       queryClient.clear();
       router.push("/");
       router.refresh();
