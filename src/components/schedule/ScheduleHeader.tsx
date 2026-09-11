@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { format, addDays, startOfDay, endOfDay } from "date-fns";
 import { useScheduleStore } from "@/src/hooks/stores/useScheduleStore";
-import { useScheduleViewStore } from "@/src/hooks/stores/useScheduleViewStore";
+import { useScheduleView } from "@/src/hooks/useScheduleView";
 import { useWeathers } from "@/src/hooks/querys/useCommonApi";
 import { useSchedules } from "@/src/hooks/querys/useSchedule";
 import { useActiveGroup } from "@/src/hooks/querys/useGroup";
@@ -88,7 +88,7 @@ function SummaryRow({
 
 export default function ScheduleHeader() {
   const { mode, currentDate, next, prev } = useScheduleStore();
-  const viewType = useScheduleViewStore((s) => s.viewType);
+  const { viewType } = useScheduleView();
   const { group } = useActiveGroup();
   const { data: weathers, isLoading: isWeatherLoading } = useWeathers();
   const { data: schedules } = useSchedules(viewType, true, group?.groupNo);

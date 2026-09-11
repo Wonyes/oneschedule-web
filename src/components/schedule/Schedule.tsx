@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { useScheduleStore } from "@/src/hooks/stores/useScheduleStore";
-import { useScheduleViewStore } from "@/src/hooks/stores/useScheduleViewStore";
+import { useScheduleView } from "@/src/hooks/useScheduleView";
 import DayView from "./view/DayView";
 import MonthView from "./view/MonthView";
 import WeekView from "./view/WeekView";
@@ -14,7 +14,7 @@ import { markConflicts, toScheduleEvent } from "@/src/utils/schedule";
 
 export default function Schedule() {
   const mode = useScheduleStore((s) => s.mode);
-  const viewType = useScheduleViewStore((s) => s.viewType);
+  const { viewType } = useScheduleView();
 
   const { data: holidays } = useHolidays();
   const { data: weathers, isLoading: isWeatherLoading } = useWeathers();

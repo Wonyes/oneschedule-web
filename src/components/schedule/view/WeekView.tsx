@@ -20,7 +20,7 @@ import {
 } from "@/src/utils/schedule";
 
 import { useScheduleStore } from "@/src/hooks/stores/useScheduleStore";
-import { useScheduleViewStore } from "@/src/hooks/stores/useScheduleViewStore";
+import { useScheduleView } from "@/src/hooks/useScheduleView";
 import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
 import { useSwipe } from "@/src/hooks/useSwipe";
 
@@ -183,7 +183,7 @@ export default function WeekView({
   const setCurrentDate = useScheduleStore((state) => state.setCurrentDate);
   const setMode = useScheduleStore((state) => state.setMode);
 
-  const viewType = useScheduleViewStore((s) => s.viewType);
+  const { viewType } = useScheduleView();
   const { openSheet } = useSheetStore();
 
   const weekDates = useMemo(() => getWeekDates(currentDate), [currentDate]);

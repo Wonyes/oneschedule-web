@@ -6,7 +6,7 @@ import AvatarImage from "@/src/components/common/AvatarImage";
 import { Check, ChevronDown, Search, X } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
-import { useScheduleViewStore } from "@/src/hooks/stores/useScheduleViewStore";
+import { useScheduleView } from "@/src/hooks/useScheduleView";
 import { format } from "date-fns";
 import { Input } from "../layout/input";
 import { Column } from "../layout/flex";
@@ -236,7 +236,7 @@ export default function Sheet() {
   const { isCalendarOpen, toggleCalendar } = useCalendarStore();
   const [titleError, setTitleError] = useState("");
   const { group } = useActiveGroup(open);
-  const viewType = useScheduleViewStore((s) => s.viewType);
+  const { viewType } = useScheduleView();
   const { openAlert } = useOverlay();
   const { data: myInfo } = useMyInfo(open);
   const queryClient = useQueryClient();

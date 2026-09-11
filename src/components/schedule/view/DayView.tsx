@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { useState } from "react";
 import { getDayColor, getDayEvents } from "@/src/utils/schedule";
 import { useScheduleStore } from "@/src/hooks/stores/useScheduleStore";
-import { useScheduleViewStore } from "@/src/hooks/stores/useScheduleViewStore";
+import { useScheduleView } from "@/src/hooks/useScheduleView";
 import ScheduleCard from "../components/ScheduleCard";
 import { ScheduleViewProps } from "@/src/types/schedule";
 import { useIsHoliday } from "@/src/hooks/useIsHoliday";
@@ -27,7 +27,7 @@ export default function DayView({
   const next = useScheduleStore((s) => s.next);
   const prev = useScheduleStore((s) => s.prev);
   const holiday = useIsHoliday(currentDate, holidays);
-  const viewType = useScheduleViewStore((s) => s.viewType);
+  const { viewType } = useScheduleView();
   const { openSheet } = useSheetStore();
 
   const dateKey = format(currentDate, "yyyyMMdd");

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { useScheduleViewStore } from "@/src/hooks/stores/useScheduleViewStore";
+import { useScheduleView } from "@/src/hooks/useScheduleView";
 import { useActiveGroup } from "@/src/hooks/querys/useGroup";
 import { ScheduleViewType } from "@/src/types/schedule";
 import GroupSwitcher from "../../group/GroupSwitcher";
@@ -15,7 +15,7 @@ const TABS = [
 type TabKey = (typeof TABS)[number]["key"];
 
 export default function HeaderTabs() {
-  const { viewType, setViewType } = useScheduleViewStore();
+  const { viewType, setViewType } = useScheduleView();
   const pathname = usePathname();
 
   const isSchedulePage = pathname === "/schedule";

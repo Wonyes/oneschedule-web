@@ -12,7 +12,7 @@ import {
 } from "@/src/utils/schedule";
 import ScheduleCard from "../components/ScheduleCard";
 import { useScheduleStore } from "@/src/hooks/stores/useScheduleStore";
-import { useScheduleViewStore } from "@/src/hooks/stores/useScheduleViewStore";
+import { useScheduleView } from "@/src/hooks/useScheduleView";
 import { ScheduleViewProps } from "@/src/types/schedule";
 import WeatherBadge from "../components/WeatherBadge";
 import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
@@ -34,7 +34,7 @@ export default function MonthView({
   const setMode = useScheduleStore((s) => s.setMode);
   const setCurrentDate = useScheduleStore((s) => s.setCurrentDate);
   const monthDates = getMonthDates(currentDate);
-  const viewType = useScheduleViewStore((s) => s.viewType);
+  const { viewType } = useScheduleView();
   const { openSheet } = useSheetStore();
 
   const [selectedDate, setSelectedDate] = useState(currentDate);
