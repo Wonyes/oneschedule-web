@@ -68,6 +68,8 @@ export default function ScheduleCard({
   const isStart = isSameDate(start, date);
   const isEnd = isSameDate(end, date);
 
+  const compact = end.getTime() - start.getTime() < 60 * 60 * 1000;
+
   const horizontalConnection = `
     ${!isStart ? "-ml-[1px] rounded-l-none border-l-0" : "rounded-l-lg"}
     ${!isEnd ? "-mr-[1px] rounded-r-none border-r-0" : "rounded-r-lg"}
@@ -135,8 +137,9 @@ export default function ScheduleCard({
         className={`
           absolute rounded-lg
           bg-surface/90  border border-white/10
-          px-2 py-1.5 shadow-xl z-10 overflow-hidden transition-all duration-200
-          cursor-pointer hover:border-accent/40 hover:bg-surface-hover ${conflictRing} ${className}
+          px-2 shadow-xl z-10 overflow-hidden transition-all duration-200
+          cursor-pointer hover:border-accent/40 hover:bg-surface-hover
+          ${compact ? "py-1" : "py-1.5"} ${conflictRing} ${className}
         `}
         style={{
           top: `${top}%`,
@@ -146,21 +149,34 @@ export default function ScheduleCard({
           width: `calc(${width ?? 100}% - ${GRID_CLICK_GUTTER}px)`,
         }}
       >
-        {(isStart || isEnd) && (
-          <Column className="h-full min-w-0 justify-center gap-0.5">
-            <Row className="min-w-0 items-center gap-1.5">
+        {(isStart || isEnd) &&
+          (compact ? (
+            <Row className="h-full min-w-0 items-center gap-1.5">
               <span
                 className={`h-1.5 w-1.5 shrink-0 rounded-full ${style?.dot ?? "bg-accent"}`}
               />
               <span className="min-w-0 flex-1 truncate typo-caption-1 font-semibold text-foreground">
                 {event.title}
               </span>
+              <span className="shrink-0 whitespace-nowrap text-[10px] font-medium text-accent/80 tracking-tight">
+                {getTimes(event.startDate)}-{getTimes(event.endDate)}
+              </span>
             </Row>
-            <span className="shrink-0 whitespace-nowrap pl-3 text-[10px] font-medium text-accent/80 tracking-tight">
-              {getTimes(event.startDate)}-{getTimes(event.endDate)}
-            </span>
-          </Column>
-        )}
+          ) : (
+            <Column className="h-full min-w-0 justify-center gap-0.5">
+              <Row className="min-w-0 items-center gap-1.5">
+                <span
+                  className={`h-1.5 w-1.5 shrink-0 rounded-full ${style?.dot ?? "bg-accent"}`}
+                />
+                <span className="min-w-0 flex-1 truncate typo-caption-1 font-semibold text-foreground">
+                  {event.title}
+                </span>
+              </Row>
+              <span className="shrink-0 whitespace-nowrap pl-3 text-[10px] font-medium text-accent/80 tracking-tight">
+                {getTimes(event.startDate)}-{getTimes(event.endDate)}
+              </span>
+            </Column>
+          ))}
       </div>
     );
   }
@@ -171,9 +187,10 @@ export default function ScheduleCard({
       className={`
         absolute rounded-lg
         bg-surface/90 border border-white/10
-        px-2 py-1.5 z-10 overflow-hidden
+        px-2 z-10 overflow-hidden
         cursor-pointer hover:z-50 hover:border-accent/50 hover:bg-surface-hover hover:shadow-2xl
         transition-all duration-200
+        ${compact ? "py-1" : "py-1.5"}
         ${connectionClass} ${conflictRing} ${className}
       `}
       style={{
@@ -188,16 +205,23 @@ export default function ScheduleCard({
         className={`absolute left-0 top-0 bottom-0 w-1 ${style?.dot ?? "bg-accent"}`}
       />
 
-      {(isStart || isEnd) && (
-        <Column className="h-full min-w-0 justify-center gap-0.5 pl-1.5">
-          <span className="w-full truncate typo-caption-1 font-semibold text-foreground">
-            {event.title}
-          </span>
-          <span className="shrink-0 whitespace-nowrap text-[10px] font-medium text-accent/80 tracking-tight">
-            {getTimes(event.startDate)}-{getTimes(event.endDate)}
-          </span>
-        </Column>
-      )}
+      {(isStart || isEnd) &&
+        (compact ? (
+          <Row className="h-full min-w-0 items-center pl-1.5">
+            <span className="w-full truncate typo-caption-1 font-semibold text-foreground">
+              {event.title}
+            </span>
+          </Row>
+        ) : (
+          <Column className="h-full min-w-0 justify-center gap-0.5 pl-1.5">
+            <span className="w-full truncate typo-caption-1 font-semibold text-foreground">
+              {event.title}
+            </span>
+            <span className="shrink-0 whitespace-nowrap text-[10px] font-medium text-accent/80 tracking-tight">
+              {getTimes(event.startDate)}-{getTimes(event.endDate)}
+            </span>
+          </Column>
+        ))}
     </div>
   );
 }
