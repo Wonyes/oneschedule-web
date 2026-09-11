@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence } from "motion/react";
 import { Primary, SecondaryBtn } from "../components/ui/layout/button";
 import OverlayContent from "../components/ui/overlay/OverlayContent";
 import ModalContent from "../components/ui/overlay/ModalContent";
@@ -105,8 +106,10 @@ export function useOverlay() {
     </ModalContent>
   );
 
-  const toastComponent = toast.isShow && (
-    <ToastContent message={toast.message} />
+  const toastComponent = (
+    <AnimatePresence>
+      {toast.isShow && <ToastContent message={toast.message} />}
+    </AnimatePresence>
   );
 
   return {

@@ -25,8 +25,6 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    console.error(error.response);
-
     const originalRequest = error.config as CustomAxiosRequestConfig;
     const status = error.response.status;
 

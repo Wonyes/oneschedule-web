@@ -6,7 +6,7 @@ import { useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import BaseCard from "../ui/card/BaseCard";
-import { Row, Column, Between } from "../ui/layout/flex";
+import { Row, Column } from "../ui/layout/flex";
 import { useOverlay } from "@/src/hooks/useOverlay";
 import {
   GroupMemberEditContent,
@@ -17,26 +17,29 @@ import { Patch, Delete } from "@/src/hooks/querys/useMutations";
 import { groupkeys } from "@/src/hooks/querys/key/groupKey";
 import IconBox from "../ui/IconBox";
 import DropdownMenu from "../ui/DropdownMenu";
-import { GroupMember } from "@/src/types/group";
+import { GroupMember, GroupRole } from "@/src/types/group";
 import { useMyInfo } from "@/src/hooks/querys/useMembers";
 import { useIncrementalList } from "@/src/hooks/useIncrementalList";
 import { useMemberPresence } from "@/src/hooks/querys/useGroup";
 import { cn } from "@/src/utils/cn";
+import { AnimatePresence, motion } from "motion/react";
+import { fadeQuick, springSoft } from "@/src/lib/motion";
 import { PAGE_SIZE } from "@/src/lib/paging";
 import ScrollListArea, { ScrollSentinel } from "../ui/ScrollListArea";
+import SectionBody from "./SectionBody";
 import { formatDistanceToNowStrict } from "date-fns";
 import { ko } from "date-fns/locale";
-
-type GroupRole = "SUPER" | "SUB" | "MEMBER";
 
 export default function GroupMemberSection({
   members,
   isAdmin,
   groupNo,
+  toolbar,
 }: {
   members: GroupMember[];
   isAdmin: boolean;
   groupNo: number;
+  toolbar?: React.ReactNode;
 }) {
   const { data: myInfo } = useMyInfo();
   const { data: presence } = useMemberPresence(groupNo);
@@ -150,67 +153,74 @@ export default function GroupMemberSection({
         <h2 className="typo-sub-t-1 text-foreground">그룹 멤버</h2>
       </div>
 
-      <ScrollListArea
-        rootRef={rootRef}
-        showFade={hasMore}
-        className="scroll-hidden flex flex-col gap-2.5 px-1 py-1 lg:max-h-[304px] lg:overflow-y-auto lg:pt-3 lg:pb-4"
-      >
-        {visibleMembers.map((member: GroupMember) => {
-          const status = presence?.get(member.memberNo);
-          const isOnline = status?.online ?? false;
+      {toolbar && <div className="mb-4">{toolbar}</div>}
 
-          const statusLabel = isOnline
-            ? "온라인"
-            : status?.lastSeenAt
-              ? formatDistanceToNowStrict(new Date(status.lastSeenAt), {
-                  addSuffix: true,
-                  locale: ko,
-                })
-              : "오프라인";
+      <SectionBody animate={!!toolbar}>
+        <ScrollListArea
+          rootRef={rootRef}
+          showFade={hasMore}
+          className="scroll-hidden flex flex-col gap-2.5 px-1 py-1 lg:max-h-[304px] lg:overflow-y-auto lg:pt-3 lg:pb-4"
+        >
+          <AnimatePresence initial={false} mode="popLayout">
+            {visibleMembers.map((member: GroupMember) => {
+              const status = presence?.get(member.memberNo);
+              const isOnline = status?.online ?? false;
 
-          return (
-            <Between
-              key={member.memberNo}
-              className="w-full rounded-xl px-4 py-3 neu-flat"
-            >
-              <Row className="min-w-0 flex-1 gap-3">
-                <IconBox
-                  size="md"
-                  shape="circle"
-                  tone="accent"
-                  className="overflow-hidden typo-caption-3 font-bold bg-accent/10 shrink-0"
+              const statusLabel = isOnline
+                ? "온라인"
+                : status?.lastSeenAt
+                  ? formatDistanceToNowStrict(new Date(status.lastSeenAt), {
+                      addSuffix: true,
+                      locale: ko,
+                    })
+                  : "오프라인";
+
+              return (
+                <motion.div
+                  key={member.memberNo}
+                  layout
+                  exit={{ opacity: 0, x: 24, transition: fadeQuick }}
+                  transition={springSoft}
+                  className="flex w-full items-center justify-between rounded-xl px-4 py-3 neu-flat"
                 >
-                  <AvatarImage
-                    src={member.profileImageUrl}
-                    nickname={member.nickname}
-                  />
-                </IconBox>
-
-                <Column className="min-w-0">
-                  <Row className="min-w-0 gap-1.5">
-                    <span className="typo-caption-2 font-semibold text-foreground truncate">
-                      {member.nickname}
-                    </span>
-
-                    {member.groupRole === "SUPER" && (
-                      <Crown
-                        size={12}
-                        strokeWidth={1.75}
-                        className="shrink-0 text-pending-500"
+                  <Row className="min-w-0 flex-1 gap-3">
+                    <IconBox
+                      size="md"
+                      shape="circle"
+                      tone="accent"
+                      className="overflow-hidden typo-caption-3 font-bold bg-accent/10 shrink-0"
+                    >
+                      <AvatarImage
+                        src={member.profileImageUrl}
+                        nickname={member.nickname}
                       />
-                    )}
+                    </IconBox>
+
+                    <Column className="min-w-0">
+                      <Row className="min-w-0 gap-1.5">
+                        <span className="typo-caption-2 font-semibold text-foreground truncate">
+                          {member.nickname}
+                        </span>
+
+                        {member.groupRole === "SUPER" && (
+                          <Crown
+                            size={12}
+                            strokeWidth={1.75}
+                            className="shrink-0 text-pending-500"
+                          />
+                        )}
+                      </Row>
+
+                      <span className="mt-0.5 typo-caption-3 text-place-h truncate">
+                        {member.position}
+                      </span>
+                    </Column>
                   </Row>
 
-                  <span className="mt-0.5 typo-caption-3 text-place-h truncate">
-                    {member.position}
-                  </span>
-                </Column>
-              </Row>
-
-              <Row className="relative shrink-0 items-center gap-2">
-                <Column className="items-end gap-1">
-                  <span
-                    className="
+                  <Row className="relative shrink-0 items-center gap-2">
+                    <Column className="items-end gap-1">
+                      <span
+                        className="
                     rounded-full
                     bg-surface-hover
                     px-2.5 py-1
@@ -218,83 +228,85 @@ export default function GroupMemberSection({
                     font-medium
                     text-secondary
                   "
-                  >
-                    {member.groupRole}
-                  </span>
+                      >
+                        {member.groupRole}
+                      </span>
 
-                  <Row
-                    className={cn(
-                      "items-center gap-1.5 rounded-full px-2 py-0.5",
-                      isOnline ? "bg-success-500/12" : "bg-surface-hover",
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        "size-2 shrink-0 rounded-full",
-                        isOnline
-                          ? "bg-success-500 ring-2 ring-success-500/30"
-                          : "bg-place-h",
+                      <Row
+                        className={cn(
+                          "items-center gap-1.5 rounded-full px-2 py-0.5",
+                          isOnline ? "bg-success-500/12" : "bg-surface-hover",
+                        )}
+                      >
+                        <span
+                          className={cn(
+                            "size-2 shrink-0 rounded-full",
+                            isOnline
+                              ? "bg-success-500 ring-2 ring-success-500/30"
+                              : "bg-place-h",
+                          )}
+                        />
+                        <span
+                          className={cn(
+                            "typo-caption-3 font-medium whitespace-nowrap",
+                            isOnline ? "text-success-500" : "text-muted",
+                          )}
+                        >
+                          {statusLabel}
+                        </span>
+                      </Row>
+                    </Column>
+
+                    {isAdmin &&
+                      member.groupRole !== "SUPER" &&
+                      member.memberNo !== myInfo?.memberNo && (
+                        <DropdownMenu
+                          label="멤버 관리 메뉴"
+                          align="right"
+                          panelClassName="w-40 glass"
+                          triggerClassName="h-7 w-7 justify-center rounded-lg text-muted hover:bg-surface-hover hover:text-foreground"
+                          trigger={() => (
+                            <MoreVertical size={15} strokeWidth={1.75} />
+                          )}
+                        >
+                          {(close) => (
+                            <>
+                              <button
+                                type="button"
+                                role="menuitem"
+                                onClick={() => {
+                                  close();
+                                  memberChanges(member);
+                                }}
+                                className="w-full rounded-lg px-3 py-2 text-left typo-caption-2 text-secondary hover:bg-white/5"
+                              >
+                                멤버 수정
+                              </button>
+
+                              <button
+                                type="button"
+                                role="menuitem"
+                                onClick={() => {
+                                  close();
+                                  memberDelete(member);
+                                }}
+                                className="mt-1 w-full rounded-lg px-3 py-2 text-left typo-caption-2 text-error-500 hover:bg-white/5"
+                              >
+                                그룹 내보내기
+                              </button>
+                            </>
+                          )}
+                        </DropdownMenu>
                       )}
-                    />
-                    <span
-                      className={cn(
-                        "typo-caption-3 font-medium whitespace-nowrap",
-                        isOnline ? "text-success-500" : "text-muted",
-                      )}
-                    >
-                      {statusLabel}
-                    </span>
                   </Row>
-                </Column>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
 
-                {isAdmin &&
-                  member.groupRole !== "SUPER" &&
-                  member.memberNo !== myInfo?.memberNo && (
-                    <DropdownMenu
-                      label="멤버 관리 메뉴"
-                      align="right"
-                      panelClassName="w-40 glass"
-                      triggerClassName="h-7 w-7 justify-center rounded-lg text-muted hover:bg-surface-hover hover:text-foreground"
-                      trigger={() => (
-                        <MoreVertical size={15} strokeWidth={1.75} />
-                      )}
-                    >
-                      {(close) => (
-                        <>
-                          <button
-                            type="button"
-                            role="menuitem"
-                            onClick={() => {
-                              close();
-                              memberChanges(member);
-                            }}
-                            className="w-full rounded-lg px-3 py-2 text-left typo-caption-2 text-secondary hover:bg-white/5"
-                          >
-                            멤버 수정
-                          </button>
-
-                          <button
-                            type="button"
-                            role="menuitem"
-                            onClick={() => {
-                              close();
-                              memberDelete(member);
-                            }}
-                            className="mt-1 w-full rounded-lg px-3 py-2 text-left typo-caption-2 text-error-500 hover:bg-white/5"
-                          >
-                            그룹 내보내기
-                          </button>
-                        </>
-                      )}
-                    </DropdownMenu>
-                  )}
-              </Row>
-            </Between>
-          );
-        })}
-
-        {hasMore && <ScrollSentinel sentinelRef={sentinelRef} />}
-      </ScrollListArea>
+          {hasMore && <ScrollSentinel sentinelRef={sentinelRef} />}
+        </ScrollListArea>
+      </SectionBody>
     </BaseCard>
   );
 }

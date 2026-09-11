@@ -5,6 +5,8 @@ import IconBox from "../ui/IconBox";
 import { Column, Row } from "../ui/layout/flex";
 import ScrollListArea, { ScrollSentinel } from "../ui/ScrollListArea";
 import { useInfiniteScroll } from "@/src/hooks/useInfiniteScroll";
+import { AnimatePresence, motion } from "motion/react";
+import { fadeQuick, springSoft } from "@/src/lib/motion";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import {
@@ -94,84 +96,89 @@ export default function GroupJoinRequestBody({
           showFade={hasNextPage}
           className="scroll-hidden flex w-full flex-col items-start lg:max-h-[260px] lg:overflow-y-auto"
         >
-          {requests.map((request) => (
-            <Row
-              key={request.requestNo}
-              className="w-full items-center gap-3 border-b border-divider py-2.5 last:border-none"
-            >
-              <IconBox
-                size="md"
-                shape="circle"
-                tone="accent"
-                className="typo-caption-3 shrink-0 overflow-hidden bg-accent/10 font-bold"
+          <AnimatePresence initial={false} mode="popLayout">
+            {requests.map((request) => (
+              <motion.div
+                key={request.requestNo}
+                layout
+                exit={{ opacity: 0, x: 24, transition: fadeQuick }}
+                transition={springSoft}
+                className="flex w-full items-center gap-3 border-b border-divider py-2.5 last:border-none"
               >
-                <AvatarImage
-                  src={request.profileImageUrl}
-                  nickname={request.nickname}
-                />
-              </IconBox>
+                <IconBox
+                  size="md"
+                  shape="circle"
+                  tone="accent"
+                  className="typo-caption-3 shrink-0 overflow-hidden bg-accent/10 font-bold"
+                >
+                  <AvatarImage
+                    src={request.profileImageUrl}
+                    nickname={request.nickname}
+                  />
+                </IconBox>
 
-              <div
-                className="
+                <div
+                  className="
                   flex min-w-0 flex-1 flex-col gap-0.5
                   lg:flex-row lg:items-baseline lg:gap-1.5
                 "
-                title={request.message ?? request.email}
-              >
-                <Row className="shrink-0 items-baseline gap-1.5">
-                  <span className="typo-caption-2 font-semibold text-foreground">
-                    {request.nickname}
+                  title={request.message ?? request.email}
+                >
+                  <Row className="shrink-0 items-baseline gap-1.5">
+                    <span className="typo-caption-2 font-semibold text-foreground">
+                      {request.nickname}
+                    </span>
+
+                    <span className="typo-caption-3 text-place-h">
+                      {format(new Date(request.createdAt), "M월 d일", {
+                        locale: ko,
+                      })}
+                    </span>
+                  </Row>
+
+                  <span className="typo-caption-3 line-clamp-4 min-w-0 text-muted lg:line-clamp-none lg:truncate">
+                    {request.message || request.email}
                   </span>
+                </div>
 
-                  <span className="typo-caption-3 text-place-h">
-                    {format(new Date(request.createdAt), "M월 d일", {
-                      locale: ko,
-                    })}
-                  </span>
-                </Row>
-
-                <span className="typo-caption-3 line-clamp-4 min-w-0 text-muted lg:line-clamp-none lg:truncate">
-                  {request.message || request.email}
-                </span>
-              </div>
-
-              <Row className="shrink-0 gap-1.5">
-                <button
-                  type="button"
-                  disabled={processing}
-                  onClick={() =>
-                    handle(request.requestNo, "REJECTED", request.nickname)
-                  }
-                  className="
+                <Row className="shrink-0 gap-1.5">
+                  <button
+                    type="button"
+                    disabled={processing}
+                    onClick={() =>
+                      handle(request.requestNo, "REJECTED", request.nickname)
+                    }
+                    className="
                     neu-btn btn-spring
                     flex h-7 items-center rounded-lg px-2.5
                     typo-caption-3 font-medium text-muted
                     hover:text-error-500
                     disabled:cursor-not-allowed disabled:opacity-50
                   "
-                >
-                  거절
-                </button>
+                  >
+                    거절
+                  </button>
 
-                <button
-                  type="button"
-                  disabled={processing}
-                  onClick={() =>
-                    handle(request.requestNo, "APPROVED", request.nickname)
-                  }
-                  className="
+                  <button
+                    type="button"
+                    disabled={processing}
+                    onClick={() =>
+                      handle(request.requestNo, "APPROVED", request.nickname)
+                    }
+                    className="
                     btn-spring
                     flex h-7 items-center rounded-lg px-3
                     bg-accent typo-caption-3 font-semibold text-on-primary
                     hover:bg-accent/90
                     disabled:cursor-not-allowed disabled:opacity-50
                   "
-                >
-                  승인
-                </button>
-              </Row>
-            </Row>
-          ))}
+                  >
+                    승인
+                  </button>
+                </Row>
+              </motion.div>
+            ))}
+          </AnimatePresence>
 
           {isFetchingNextPage && (
             <Row className="w-full items-center gap-3 py-2.5">

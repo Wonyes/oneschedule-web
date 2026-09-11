@@ -4,7 +4,7 @@ import LoginForm from "@/src/components/schedule/components/auth/LoginForm";
 
 export default function Page() {
   return (
-    <main className="flex w-full justify-center py-8">
+    <main className="flex min-h-full w-full items-center justify-center py-8">
       <Suspense>
         <LoginForm />
       </Suspense>

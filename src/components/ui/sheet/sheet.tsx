@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "motion/react";
+import { fadeQuick, springFirm } from "@/src/lib/motion";
 import { usePathname } from "next/navigation";
 import AvatarImage from "@/src/components/common/AvatarImage";
 import { Check, ChevronDown, Search, X } from "lucide-react";
@@ -77,7 +79,7 @@ function ParticipantPicker({
       align="stretch"
       disabled={readOnly}
       triggerClassName={`w-full justify-between rounded-xl neu-pressed px-4 py-3 text-left shadow-sm ${
-        readOnly ? "opacity-70" : "hover:ring-2 hover:ring-indigo-500/30"
+        readOnly ? "opacity-70" : "hover:ring-2 hover:ring-accent/30"
       }`}
       trigger={(isOpen) => (
         <>
@@ -254,7 +256,7 @@ export default function Sheet() {
 
   useEffect(() => {
     closeSheet();
-  }, [pathname]);
+  }, [pathname, closeSheet]);
 
   const close = () => {
     closeSheet();
@@ -364,22 +366,24 @@ export default function Sheet() {
 
   return (
     <>
-      <div
-        className={`fixed inset-0 z-40 bg-black/60 transition-opacity duration-300 ${
-          open
-            ? "pointer-events-auto opacity-100"
-            : "pointer-events-none opacity-0"
+      <motion.div
+        initial={false}
+        animate={{ opacity: open ? 1 : 0 }}
+        transition={fadeQuick}
+        className={`fixed inset-0 z-40 bg-black/60 ${
+          open ? "pointer-events-auto" : "pointer-events-none"
         }`}
         onClick={close}
       />
 
-      <section
+      <motion.section
         aria-hidden={!open}
         inert={!open}
-        className={`fixed bottom-0 left-0 right-0 z-50 mx-auto flex h-[75dvh] max-w-[800px] flex-col rounded-t-[32px] glass text-foreground transition-transform duration-300 ease-out ${
-          open
-            ? "translate-y-0 pointer-events-auto"
-            : "translate-y-full pointer-events-none"
+        initial={false}
+        animate={{ y: open ? 0 : "100%" }}
+        transition={springFirm}
+        className={`fixed bottom-0 left-0 right-0 z-50 mx-auto flex h-[75dvh] max-w-[800px] flex-col rounded-t-[32px] glass text-foreground ${
+          open ? "pointer-events-auto" : "pointer-events-none"
         }`}
       >
         <SheetHeader onClose={close} isEditing={isEditing} />
@@ -406,7 +410,7 @@ export default function Sheet() {
             <button
               type="button"
               onClick={() => toggleCalendar(currentForm.startDate)}
-              className="flex w-full items-center justify-between rounded-xl neu-pressed px-4 py-3 text-left hover:ring-2 hover:ring-indigo-500/30 transition-all shadow-sm"
+              className="flex w-full items-center justify-between rounded-xl neu-pressed px-4 py-3 text-left hover:ring-2 hover:ring-accent/30 transition-all shadow-sm"
             >
               <div className="flex items-center gap-2">
                 <span className="typo-caption-2 text-foreground font-medium">
@@ -521,7 +525,7 @@ export default function Sheet() {
           isEditing={isEditing}
           canEdit={canEdit}
         />
-      </section>
+      </motion.section>
     </>
   );
 }

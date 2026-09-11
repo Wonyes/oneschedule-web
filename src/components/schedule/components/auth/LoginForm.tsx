@@ -1,131 +1,106 @@
 "use client";
 
-import BrandHero from "@/src/components/common/BrandHero";
-import { Primary } from "@/src/components/ui/layout/button";
-import { Row, Column } from "@/src/components/ui/layout/flex";
-import { Input, PasswordInput } from "@/src/components/ui/layout/input";
-import { Post } from "@/src/hooks/querys/useMutations";
-import { useForm } from "@/src/hooks/useForm";
-import { useOverlay } from "@/src/hooks/useOverlay";
-import { getErrorMessage, useAppMutation } from "@/src/types/ErrorResponse";
 import { CheckCircle2 } from "lucide-react";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import GoogleLoginButton from "./GoogleLoginButton";
+import { motion } from "motion/react";
+import { useSearchParams } from "next/navigation";
 
-const getOauthUrl = (provider: string) =>
-  `${process.env.NEXT_PUBLIC_SERVER_IP}/oauth2/authorization/${provider}`;
+import { Primary } from "@/src/components/ui/layout/button";
+import { Column, Row } from "@/src/components/ui/layout/flex";
+import { Input, PasswordInput } from "@/src/components/ui/layout/input";
+import {
+  AuthAlternatives,
+  AuthLayoutGrid,
+  BrandPlate,
+  rise,
+  stagger,
+} from "./AuthShell";
+import { useLogin } from "./useLogin";
 
 export default function LoginForm() {
-  const router = useRouter();
   const isWelcome = useSearchParams().get("welcome") === "1";
-
-  const { form, formChange } = useForm({
-    email: "",
-    password: "",
-  });
-  const { openAlert } = useOverlay();
-
-  const { mutate: loginForm } = useAppMutation({
-    mutationFn: () => {
-      return Post({
-        url: "/members/login",
-        body: { email: form.email, password: form.password },
-      });
-    },
-    onSuccess: () => {
-      router.replace("/");
-      router.refresh();
-    },
-    onError: (err) => {
-      openAlert({
-        title: "로그인에 실패하였습니다.",
-        message: getErrorMessage(err),
-      });
-    },
-  });
-
-  const handleLogin = (e?: React.SyntheticEvent) => {
-    e?.preventDefault();
-    loginForm();
-  };
+  const { form, error, isPending, handleChange, submit } = useLogin();
 
   return (
-    <form
-      onSubmit={handleLogin}
-      className="flex max-w-[420px] w-full flex-col items-start gap-6"
-    >
-      <BrandHero />
+    <AuthLayoutGrid>
+      <BrandPlate
+        title={isWelcome ? "가입이 완료됐어요." : "팀의 일정을 한눈에."}
+        subtitle={
+          isWelcome
+            ? "로그인하면 바로 시작할 수 있어요."
+            : "개인 일정과 그룹 일정을 함께 관리하세요."
+        }
+      />
 
-      <div className="w-full">
-        <h1 className="typo-h1 tracking-tight">
-          {isWelcome ? "가입 완료 🎉" : "Welcome 👋"}
-        </h1>
+      <motion.form
+        variants={stagger}
+        noValidate
+        onSubmit={(e) => {
+          e.preventDefault();
+          submit();
+        }}
+        className="relative z-10 flex w-full flex-col gap-6 lg:ml-6 lg:w-[400px]"
+      >
+        {isWelcome && (
+          <motion.div variants={rise}>
+            <Row className="neu-flat w-full items-start gap-2.5 rounded-xl px-4 py-3">
+              <CheckCircle2
+                size={16}
+                strokeWidth={2}
+                className="text-success-500 mt-0.5 shrink-0"
+              />
+              <span className="typo-caption-2 text-secondary">
+                계정이 만들어졌어요. 방금 입력한 이메일과 비밀번호로 로그인해
+                주세요.
+              </span>
+            </Row>
+          </motion.div>
+        )}
 
-        <p className="typo-title-3 text-muted mt-2">
-          {isWelcome
-            ? "로그인하면 그룹 참여와 첫 일정 등록을 안내해드려요."
-            : "로그인하고 일정을 관리하세요."}
-        </p>
-      </div>
+        <motion.div variants={rise} className="hidden lg:block">
+          <h2 className="typo-sub-t-1 text-foreground">로그인</h2>
+          <p className="typo-caption-2 mt-1 text-muted">
+            이메일과 비밀번호를 입력해 주세요.
+          </p>
+        </motion.div>
 
-      {isWelcome && (
-        <Row className="neu-flat w-full items-start gap-2.5 rounded-xl px-4 py-3">
-          <CheckCircle2
-            size={16}
-            strokeWidth={2}
-            className="text-success-500 mt-0.5 shrink-0"
+        <motion.div variants={rise}>
+          <Column className="w-full gap-3">
+            <Input
+              name="email"
+              type="email"
+              autoComplete="email"
+              label="이메일"
+              value={form.email}
+              invalid={!!error}
+              onChange={handleChange}
+            />
+            <PasswordInput
+              name="password"
+              autoComplete="current-password"
+              label="비밀번호"
+              value={form.password}
+              errorMessage={error ?? undefined}
+              onChange={handleChange}
+            />
+          </Column>
+        </motion.div>
+
+        <motion.div variants={rise}>
+          <Primary
+            type="submit"
+            className="w-full py-4"
+            text={isPending ? "로그인 중…" : "로그인"}
           />
-          <span className="typo-caption-2 text-secondary">
-            계정이 만들어졌어요. 방금 입력한 이메일과 비밀번호로 로그인해
-            주세요.
-          </span>
-        </Row>
-      )}
+        </motion.div>
 
-      <Column className="gap-4 w-full">
-        <Input
-          name="email"
-          type="email"
-          autoComplete="email"
-          value={form.email}
-          className="w-full"
-          placeholder="이메일"
-          onChange={formChange}
+        <AuthAlternatives
+          dividerText="또는 Google로 계속하기"
+          googleLabel="Google 계정으로 로그인"
+          question="계정이 없으신가요?"
+          linkHref="/sign"
+          linkText="회원가입"
         />
-        <PasswordInput
-          name="password"
-          autoComplete="current-password"
-          value={form.password}
-          className="w-full"
-          placeholder="비밀번호"
-          onChange={formChange}
-        />
-      </Column>
-
-      <Primary type="submit" className="w-full py-4" text="로그인" />
-
-      <Column className="w-full items-center gap-4">
-        <Row className="w-full items-center gap-3">
-          <span className="h-px flex-1 bg-white/10" />
-          <span className="typo-caption-2 text-place-h">또는 간편 로그인</span>
-          <span className="h-px flex-1 bg-white/10" />
-        </Row>
-
-        <GoogleLoginButton href={getOauthUrl("google")} />
-      </Column>
-
-      <Row className="flex justify-center w-full gap-2">
-        <p className="typo-sub-t-3 text-place-h">계정이 없나요?</p>
-
-        <Link
-          href="/sign"
-          prefetch
-          className="typo-sub-t-1 text-indigo-600 hover:underline"
-        >
-          회원가입
-        </Link>
-      </Row>
-    </form>
+      </motion.form>
+    </AuthLayoutGrid>
   );
 }

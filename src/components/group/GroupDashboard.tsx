@@ -13,26 +13,39 @@ import GroupScheduleSection from "./GroupScheduleSection";
 import GroupActivitySection from "./GroupActivitySection";
 import GroupAdminSection from "./GroupAdminSection";
 import SegmentedTabs from "../ui/layout/SegmentedTabs";
-import BaseCard from "../ui/card/BaseCard";
 
 type TabKey = "member" | "schedule" | "activity";
-
-const TABS = [
-  { key: "member" as const, label: "멤버", icon: <Users size={12} /> },
-  { key: "schedule" as const, label: "일정", icon: <CalendarDays size={12} /> },
-  { key: "activity" as const, label: "활동", icon: <Activity size={12} /> },
-];
 
 export default function GroupDashboard({ group }: { group: MyGroupResponse }) {
   const [tab, setTab] = useState<TabKey>("member");
 
   const isAdmin = group?.groupRole === "SUPER" || group?.groupRole === "SUB";
 
-  const memberSection = (
-    <GroupMemberSection
-      isAdmin={isAdmin}
-      members={group.members}
-      groupNo={group.groupNo}
+  const tabs = [
+    {
+      key: "member" as const,
+      label: "멤버",
+      icon: <Users size={12} />,
+      badge: group.members.length,
+    },
+    {
+      key: "schedule" as const,
+      label: "일정",
+      icon: <CalendarDays size={12} />,
+    },
+    {
+      key: "activity" as const,
+      label: "활동",
+      icon: <Activity size={12} />,
+    },
+  ];
+
+  const mobileTabs = (
+    <SegmentedTabs
+      tabs={tabs}
+      value={tab}
+      onChange={setTab}
+      label="그룹 상세"
     />
   );
 
@@ -45,23 +58,29 @@ export default function GroupDashboard({ group }: { group: MyGroupResponse }) {
       <GroupAdminSection group={group} isAdmin={isAdmin} />
 
       <Column className="w-full gap-5 lg:hidden">
-        <BaseCard className="w-full p-2">
-          <SegmentedTabs
-            tabs={TABS}
-            value={tab}
-            onChange={setTab}
-            label="그룹 상세"
+        {tab === "member" && (
+          <GroupMemberSection
+            isAdmin={isAdmin}
+            members={group.members}
+            groupNo={group.groupNo}
+            toolbar={mobileTabs}
           />
-        </BaseCard>
-
-        {tab === "member" && memberSection}
-        {tab === "schedule" && <GroupScheduleSection group={group} />}
-        {tab === "activity" && <GroupActivitySection group={group} />}
+        )}
+        {tab === "schedule" && (
+          <GroupScheduleSection group={group} toolbar={mobileTabs} />
+        )}
+        {tab === "activity" && (
+          <GroupActivitySection group={group} toolbar={mobileTabs} />
+        )}
       </Column>
 
       <Column className="hidden w-full gap-5 lg:flex">
         <Row className="w-full items-stretch gap-5">
-          {memberSection}
+          <GroupMemberSection
+            isAdmin={isAdmin}
+            members={group.members}
+            groupNo={group.groupNo}
+          />
           <GroupScheduleSection group={group} />
         </Row>
 

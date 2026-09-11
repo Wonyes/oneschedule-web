@@ -84,13 +84,7 @@ const Primary = (props: ButtonProps) => {
         px-5
         rounded-xl
 
-        bg-accent
-        text-on-primary
-
-        shadow-lg
-        shadow-accent/25
-
-        hover:bg-accent/90
+        btn-primary
 
         `,
         props.className,

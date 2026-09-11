@@ -61,7 +61,7 @@ export default function GroupAdminSection({
   const active = showTabs ? tab : tabs[0].key;
 
   return (
-    <BaseCard className="relative z-30 w-full p-5" glow>
+    <BaseCard className="relative z-30 order-last w-full p-5 lg:order-none" glow>
       <Column className="mb-4 gap-1">
         <span className="eyebrow">MANAGE</span>
         <Row className="items-center gap-2">

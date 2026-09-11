@@ -1,8 +1,32 @@
 import { cn } from "@/src/utils/cn";
 import { Eye, EyeClosed } from "lucide-react";
-import { useState } from "react";
+import { useId, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { springSnappy } from "@/src/lib/motion";
+
+const shake = {
+  idle: { x: 0 },
+  error: { x: [0, -6, 6, -4, 4, 0], transition: { duration: 0.4 } },
+};
+
+function Message({ text, className }: { text: string; className: string }) {
+  return (
+    <motion.span
+      key={text}
+      initial={{ opacity: 0, y: -4 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -4 }}
+      transition={{ duration: 0.18 }}
+      className={cn("typo-caption-3 pl-1", className)}
+    >
+      {text}
+    </motion.span>
+  );
+}
 
 type InputProps = React.ComponentProps<"input"> & {
+  label?: string;
+  invalid?: boolean;
   leftSection?: React.ReactNode;
   rightSection?: React.ReactNode;
   description?: string;
@@ -12,6 +36,8 @@ type InputProps = React.ComponentProps<"input"> & {
 };
 
 export function Input({
+  label,
+  invalid,
   successMessage,
   rightSection,
   errorMessage,
@@ -21,20 +47,37 @@ export function Input({
   onEnter,
   ...props
 }: InputProps) {
+  const autoId = useId();
+  const id = props.id ?? autoId;
+
+  const [focused, setFocused] = useState(false);
+  const [typedLength, setTypedLength] = useState(0);
+
+  const valueLength =
+    props.value != null ? String(props.value).length : typedLength;
+  const floated = !label || focused || valueLength > 0;
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       onEnter?.();
     }
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTypedLength(e.target.value.length);
+    props.onChange?.(e);
+  };
+
   return (
     <div className="flex flex-col gap-1.5 w-full">
-      <div
+      <motion.div
+        variants={shake}
+        animate={errorMessage || invalid ? "error" : "idle"}
+        data-invalid={errorMessage || invalid ? "true" : undefined}
         className={cn(
-          "w-full rounded-xl flex items-center transition px-4",
-          "neu-pressed",
-          "focus-within:ring-2 focus-within:ring-indigo-500/30",
-          "py-3",
+          "relative w-full rounded-xl flex items-center px-4 overflow-hidden",
+          "neu-input",
+          label ? "h-[52px]" : "py-3",
           className,
         )}
       >
@@ -46,28 +89,61 @@ export function Input({
           )}
         >
           {leftSection}
-          <input
-            {...props}
-            onKeyDown={handleKeyDown}
-            className={cn(
-              "w-full outline-none typo-caption-2 bg-transparent text-foreground placeholder:text-place-h",
-              "disabled:text-place-h",
+
+          <div className="relative flex h-full min-w-0 flex-1 items-center">
+            {label && (
+              <motion.label
+                htmlFor={id}
+                initial={false}
+                animate={{
+                  y: floated ? -11 : 0,
+                  scale: floated ? 0.78 : 1,
+                }}
+                transition={springSnappy}
+                className={cn(
+                  "pointer-events-none absolute left-0.5 origin-left typo-caption-2 transition-colors duration-200",
+                  focused ? "text-accent" : "text-place-h",
+                )}
+              >
+                {label}
+              </motion.label>
             )}
-          />
+
+            <input
+              {...props}
+              id={id}
+              placeholder={label ? undefined : props.placeholder}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+              onFocus={(e) => {
+                setFocused(true);
+                props.onFocus?.(e);
+              }}
+              onBlur={(e) => {
+                setFocused(false);
+                props.onBlur?.(e);
+              }}
+              className={cn(
+                "w-full px-0.5 outline-none typo-caption-2 bg-transparent text-foreground placeholder:text-place-h",
+                "disabled:text-place-h",
+                label && "pt-4",
+              )}
+            />
+          </div>
+
           {rightSection}
         </div>
-      </div>
-      {!errorMessage && !successMessage && description && (
-        <span className="typo-caption-3 text-muted pl-1">{description}</span>
-      )}
-      {errorMessage && (
-        <span className="typo-caption-3 text-red-400 pl-1">{errorMessage}</span>
-      )}
-      {successMessage && (
-        <span className="typo-caption-3 text-blue-400 pl-1">
-          {successMessage}
-        </span>
-      )}
+      </motion.div>
+
+      <AnimatePresence mode="wait" initial={false}>
+        {errorMessage ? (
+          <Message text={errorMessage} className="text-red-400" />
+        ) : successMessage ? (
+          <Message text={successMessage} className="text-blue-400" />
+        ) : description ? (
+          <Message text={description} className="text-muted" />
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 }

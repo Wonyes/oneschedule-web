@@ -4,10 +4,9 @@ import { forwardRef, useImperativeHandle } from "react";
 import { Column } from "../../layout/flex";
 import Dropdown from "../../Dropdown";
 import { useForm } from "@/src/hooks/useForm";
-import { GroupMember } from "@/src/types/group";
+import { GroupMember, GroupRole } from "@/src/types/group";
 import { Input } from "../../layout/input";
 
-type GroupRole = "SUPER" | "SUB" | "MEMBER";
 
 const roleOptions = [
   {
@@ -20,7 +19,7 @@ const roleOptions = [
   },
 ];
 
-export interface GroupMemberEditValues {
+interface GroupMemberEditValues {
   memberNo: number;
   groupRole: GroupRole;
   position: string;

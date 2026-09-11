@@ -12,11 +12,14 @@ import { getTimes } from "@/src/utils/time";
 import { useIncrementalList } from "@/src/hooks/useIncrementalList";
 import { PAGE_SIZE } from "@/src/lib/paging";
 import ScrollListArea, { ScrollSentinel } from "../ui/ScrollListArea";
+import SectionBody from "./SectionBody";
 
 export default function GroupScheduleSection({
   group,
+  toolbar,
 }: {
   group: MyGroupResponse;
+  toolbar?: React.ReactNode;
 }) {
   const { data: schedules } = useSchedules("GROUP", true, group.groupNo);
 
@@ -53,28 +56,32 @@ export default function GroupScheduleSection({
         </Row>
       </Column>
 
-      {todayEvents.length === 0 ? (
-        <p className="flex flex-1 items-center justify-center py-10 text-center typo-caption-2 text-muted">
-          오늘 등록된 그룹 일정이 없습니다.
-        </p>
-      ) : (
-        <ScrollListArea
-          rootRef={rootRef}
-          showFade={hasMore}
-          className="scroll-hidden flex flex-col gap-2.5 px-1 py-1 lg:max-h-[304px] lg:overflow-y-auto lg:pt-3 lg:pb-4"
-        >
-          {visibleEvents.map((event) => (
-            <ScheduleItem
-              key={event.id}
-              time={getTimes(event.startDate, event.endDate)}
-              author={event.author.nickname}
-              title={event.title}
-            />
-          ))}
+      {toolbar && <div className="mb-4">{toolbar}</div>}
 
-          {hasMore && <ScrollSentinel sentinelRef={sentinelRef} />}
-        </ScrollListArea>
-      )}
+      <SectionBody animate={!!toolbar}>
+        {todayEvents.length === 0 ? (
+          <p className="flex flex-1 items-center justify-center py-10 text-center typo-caption-2 text-muted">
+            오늘 등록된 그룹 일정이 없습니다.
+          </p>
+        ) : (
+          <ScrollListArea
+            rootRef={rootRef}
+            showFade={hasMore}
+            className="scroll-hidden flex flex-col gap-2.5 px-1 py-1 lg:max-h-[304px] lg:overflow-y-auto lg:pt-3 lg:pb-4"
+          >
+            {visibleEvents.map((event) => (
+              <ScheduleItem
+                key={event.id}
+                time={getTimes(event.startDate, event.endDate)}
+                author={event.author.nickname}
+                title={event.title}
+              />
+            ))}
+
+            {hasMore && <ScrollSentinel sentinelRef={sentinelRef} />}
+          </ScrollListArea>
+        )}
+      </SectionBody>
     </BaseCard>
   );
 }

@@ -1,13 +1,3 @@
-const DAYS = [
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-  "Sunday",
-] as const;
-
 const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
 
 const EVENT_STYLES = {
@@ -36,4 +26,4 @@ const EVENT_STYLES = {
   },
 } as const;
 
-export { DAYS, HOURS, EVENT_STYLES };
+export { HOURS, EVENT_STYLES };

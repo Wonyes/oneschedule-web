@@ -101,19 +101,19 @@ const Day = ({
 
         isRange &&
           `
-          bg-indigo-950/70
-          text-indigo-200
+          bg-accent/20
+          text-accent
           rounded-none
           `,
 
         isSelected &&
           `
-          bg-indigo-600
+          bg-accent
           text-white
           font-semibold
           rounded-lg
           shadow-md
-          shadow-indigo-600/30
+          shadow-accent/30
           `,
       )}
     >
@@ -364,30 +364,11 @@ export const useCalendarLogic = () => {
     return currentMonthArr[`month${today.getMonth() + 1}`];
   };
 
-  const getFormattedDateRange = () => {
-    const { startDate, endDate } = form;
-
-    if (!startDate) {
-      return null;
-    }
-
-    const start = format(startDate, "yyyy.MM.dd");
-
-    if (!endDate) {
-      return start;
-    }
-
-    const end = format(endDate, "yyyy.MM.dd");
-
-    return `${start} ~ ${end}`;
-  };
-
   return {
     createCalendar,
     getDateStatus,
     getDateInfo,
     moveMonth,
-    getFormattedDateRange,
     ...getMonthCalculation(),
     currentMonth: getCurrentMonth(),
   };

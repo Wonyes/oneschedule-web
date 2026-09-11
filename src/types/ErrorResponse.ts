@@ -1,14 +1,14 @@
 import { AxiosError } from "axios";
 import { useMutation, UseMutationOptions } from "@tanstack/react-query";
 
-export interface ErrorResult {
+interface ErrorResult {
   errorClass?: string;
   errorLocation?: string;
   errorMessage?: string;
   [key: string]: unknown;
 }
 
-export interface ValidationErrorItem {
+interface ValidationErrorItem {
   key?: string;
   value?: string | null;
   reason?: string;

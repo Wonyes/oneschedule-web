@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { cookies } from "next/headers";
 import Logo from "./header/Logo";
 import HeaderTabs from "./header/HeaderTabs";
 import HeaderAuth from "./header/HeaderAuth";
@@ -9,13 +10,17 @@ import LocationPicker from "./header/LocationPicker";
 import MobileGroupSwitcher from "./header/MobileGroupSwitcher";
 import GroupHeaderControls from "./header/GroupHeaderControls";
 import ThemeToggle from "./header/ThemeToggle";
+import NotificationMenu from "./header/NotificationMenu";
 
 async function HeaderAuthResolved() {
   const user = await getMyInfo();
   return <HeaderAuth user={user} />;
 }
 
-export default function Header() {
+export default async function Header() {
+  const cookieStore = await cookies();
+  const isLoggedIn = !!cookieStore.get("access-token");
+
   return (
     <header
       className="
@@ -36,6 +41,7 @@ export default function Header() {
         </div>
 
         <div className="flex min-w-0 items-center justify-end gap-1 lg:hidden">
+          {isLoggedIn && <NotificationMenu mobileSlot="top" />}
           <ThemeToggle />
           <Suspense fallback={<AuthSkeleton />}>
             <HeaderAuthResolved />
@@ -45,26 +51,35 @@ export default function Header() {
 
       <div
         className="
-          relative flex justify-center
+          relative flex justify-center empty:hidden
           lg:absolute lg:left-1/2 lg:top-1/2
           lg:-translate-x-1/2 lg:-translate-y-1/2
         "
       >
         <HeaderTabs />
+        <MobileGroupSwitcher />
+        {isLoggedIn && (
+          <NotificationMenu
+            mobileSlot="sub"
+            className="absolute left-0 top-1/2 -translate-y-1/2 lg:hidden"
+          />
+        )}
+      </div>
 
-        <div className="hidden lg:block">
-          <GroupHeaderControls />
-        </div>
-
-        <div className="absolute right-0 top-1/2 -translate-y-1/2 lg:hidden">
-          <MobileGroupSwitcher />
-        </div>
+      <div
+        className="
+          hidden lg:flex lg:absolute lg:left-1/2 lg:top-1/2
+          lg:-translate-x-1/2 lg:-translate-y-1/2
+        "
+      >
+        <GroupHeaderControls />
       </div>
 
       <div className="hidden lg:flex items-center gap-3 lg:ml-auto">
         <LocationPicker />
         <ViewModeToggle />
 
+        {isLoggedIn && <NotificationMenu />}
         <ThemeToggle />
         <Suspense fallback={<AuthSkeleton />}>
           <HeaderAuthResolved />

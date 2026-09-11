@@ -19,7 +19,7 @@ import { useActiveGroupStore } from "../stores/useActiveGroupStore";
 import { PAGE_SIZE } from "@/src/lib/paging";
 import { usePagedQuery } from "./usePagedQuery";
 
-export const useMyGroups = (
+const useMyGroups = (
   enabled = true,
   initialData?: MyGroupResponse[],
 ) => {

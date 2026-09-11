@@ -10,7 +10,7 @@ export default function MobileGroupSwitcher() {
   if (pathname !== "/schedule") return null;
 
   return (
-    <div className="lg:hidden">
+    <div className="absolute right-0 top-1/2 -translate-y-1/2 lg:hidden">
       <GroupSwitcher />
     </div>
   );

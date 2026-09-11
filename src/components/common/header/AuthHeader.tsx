@@ -2,17 +2,21 @@
 
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export default function AuthHeader() {
+  const pathname = usePathname();
+  const isTitle = pathname === "/login" ? "홈으로" : "뒤로 가기";
+  const isPath = pathname === "/login" ? "/" : "/login";
   return (
     <header className="w-full flex justify-between px-8 py-6 shrink-0 bg-transparent">
       <Link
-        href="/"
+        href={isPath}
         prefetch
-        className="flex items-center gap-2 text-xs font-medium text-muted hover:text-foreground bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 px-3.5 py-2 rounded-xl transition-all duration-200 shadow-sm"
+        className="neu-btn btn-spring flex items-center gap-2 rounded-xl px-3.5 py-2 typo-caption-2 font-medium text-muted hover:text-foreground"
       >
         <ArrowLeft size={14} />
-        홈으로
+        {isTitle}
       </Link>
     </header>
   );

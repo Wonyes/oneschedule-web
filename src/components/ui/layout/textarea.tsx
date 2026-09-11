@@ -20,7 +20,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         <div
           className={cn(
             "neu-pressed w-full rounded-xl transition",
-            "focus-within:ring-2 focus-within:ring-indigo-500/30",
+            "focus-within:ring-2 focus-within:ring-accent/30",
             className,
           )}
         >

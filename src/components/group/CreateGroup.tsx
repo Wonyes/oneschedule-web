@@ -102,7 +102,7 @@ export default function CreateGroup({
       )}
 
       <div className="mb-10 mt-4">
-        <span className="text-indigo-400 typo-title-2 font-medium">GROUP</span>
+        <span className="text-accent typo-title-2 font-medium">GROUP</span>
 
         <h1 className="mt-2 typo-title-1 text-foreground">새 그룹 만들기</h1>
 

@@ -24,17 +24,12 @@ export default function GroupSwitcher({
 
   if (groups.length === 0) return null;
 
-  const isSingle = groups.length === 1;
-
   return (
     <DropdownMenu
       label="그룹 전환"
-      disabled={isSingle}
       align={align}
       panelClassName="w-56"
-      triggerClassName={`text-secondary px-2 py-1.5 typo-caption-2 lg:px-2.5 ${
-        isSingle ? "" : "hover:text-foreground"
-      }`}
+      triggerClassName="text-secondary px-2 py-1.5 typo-caption-2 hover:text-foreground lg:px-2.5"
       trigger={(isOpen) => (
         <>
           <Users
@@ -47,13 +42,11 @@ export default function GroupSwitcher({
             {group?.groupName}
           </span>
 
-          {!isSingle && (
-            <ChevronDown
-              size={12}
-              strokeWidth={1.75}
-              className={`shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`}
-            />
-          )}
+          <ChevronDown
+            size={12}
+            strokeWidth={1.75}
+            className={`shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`}
+          />
         </>
       )}
     >

@@ -1,15 +1,6 @@
 export type EventCategory =
   "meeting" | "work" | "personal" | "important" | "default";
 
-export type Day =
-  | "Monday"
-  | "Tuesday"
-  | "Wednesday"
-  | "Thursday"
-  | "Friday"
-  | "Saturday"
-  | "Sunday";
-
 export type ScheduleEvent = {
   id: number;
   title: string;
@@ -44,7 +35,7 @@ export type ScheduleApiRequest = {
   participantMemberNos?: number[];
 };
 
-export type ScheduleParticipant = {
+type ScheduleParticipant = {
   memberNo: number;
   nickname: string;
 };

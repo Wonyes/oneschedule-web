@@ -4,7 +4,7 @@ import { cn } from "@/src/utils/cn";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 
-export type DropdownOption = {
+type DropdownOption = {
   label: string;
   value: string;
 };

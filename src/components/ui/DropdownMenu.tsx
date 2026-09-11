@@ -1,9 +1,17 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { createPortal } from "react-dom";
+import { AnimatePresence, motion } from "motion/react";
 
 import { cn } from "@/src/utils/cn";
+import { fadeQuick, springSnappy } from "@/src/lib/motion";
 
 type DropdownMenuProps = {
   trigger: (isOpen: boolean) => React.ReactNode;
@@ -18,11 +26,13 @@ type DropdownMenuProps = {
 
 const GAP = 8;
 
+const noop = () => () => {};
+
 type PanelPosition = {
   top: number;
-  left?: number;
-  right?: number;
+  left: number;
   width?: number;
+  origin: string;
 };
 
 export default function DropdownMenu({
@@ -37,6 +47,11 @@ export default function DropdownMenu({
 }: DropdownMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [position, setPosition] = useState<PanelPosition | null>(null);
+  const mounted = useSyncExternalStore(
+    noop,
+    () => true,
+    () => false,
+  );
 
   const wrapRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -55,14 +70,21 @@ export default function DropdownMenu({
       const flipUp = panelHeight > spaceBelow && anchor.top > panelHeight + GAP;
 
       const top = flipUp ? anchor.top - panelHeight - GAP : anchor.bottom + GAP;
+      const origin = `${flipUp ? "bottom" : "top"} ${align === "right" ? "right" : "left"}`;
 
-      if (align === "stretch") {
-        setPosition({ top, left: anchor.left, width: anchor.width });
-      } else if (align === "left") {
-        setPosition({ top, left: anchor.left });
-      } else {
-        setPosition({ top, right: window.innerWidth - anchor.right });
-      }
+      const width =
+        align === "stretch"
+          ? anchor.width
+          : (panelRef.current?.offsetWidth ?? 0);
+      const wanted = align === "right" ? anchor.right - width : anchor.left;
+      const maxLeft = window.innerWidth - width - GAP;
+      const left = Math.max(GAP, Math.min(wanted, maxLeft));
+
+      setPosition(
+        align === "stretch"
+          ? { top, left, width: anchor.width, origin }
+          : { top, left, origin },
+      );
     };
 
     place();
@@ -117,27 +139,35 @@ export default function DropdownMenu({
         {trigger(isOpen)}
       </button>
 
-      {isOpen &&
+      {mounted &&
         createPortal(
-          <div
-            ref={panelRef}
-            role="menu"
-            style={{
-              position: "fixed",
-              top: position?.top ?? -9999,
-              left: position?.left,
-              right: position?.right,
-              width: position?.width,
-              visibility: position ? "visible" : "hidden",
-            }}
-            className={cn(
-              "z-[1000] rounded-2xl p-2",
-              "bg-surface border border-divider shadow-[var(--shadow-float)]",
-              panelClassName,
+          <AnimatePresence>
+            {isOpen && (
+              <motion.div
+                ref={panelRef}
+                role="menu"
+                initial={{ opacity: 0, scale: 0.94, y: -6 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.96, y: -4, transition: fadeQuick }}
+                transition={springSnappy}
+                style={{
+                  position: "fixed",
+                  top: position?.top ?? -9999,
+                  left: position?.left,
+                  width: position?.width,
+                  visibility: position ? "visible" : "hidden",
+                  transformOrigin: position?.origin,
+                }}
+                className={cn(
+                  "z-[1000] rounded-2xl p-2",
+                  "bg-surface border border-divider shadow-[var(--shadow-float)]",
+                  panelClassName,
+                )}
+              >
+                {children(close)}
+              </motion.div>
             )}
-          >
-            {children(close)}
-          </div>,
+          </AnimatePresence>,
           document.body,
         )}
     </div>

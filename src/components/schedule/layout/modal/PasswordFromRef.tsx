@@ -3,7 +3,7 @@ import { Column } from "@/src/components/ui/layout/flex";
 import { PasswordInput } from "@/src/components/ui/layout/input";
 import { useForm } from "@/src/hooks/useForm";
 
-export interface PasswordChangeValues {
+interface PasswordChangeValues {
   currentPassword: string;
   newPassword: string;
 }
