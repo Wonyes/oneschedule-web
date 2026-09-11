@@ -2,11 +2,13 @@
 
 import { Check, ChevronDown, Plus, Users } from "lucide-react";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 
 import DropdownMenu from "../ui/DropdownMenu";
 import { Column } from "../ui/layout/flex";
 import { useActiveGroup } from "@/src/hooks/querys/useGroup";
 import { useActiveGroupStore } from "@/src/hooks/stores/useActiveGroupStore";
+import { groupPath } from "@/src/lib/activeGroup";
 
 export default function GroupSwitcher({
   enabled = true,
@@ -17,6 +19,8 @@ export default function GroupSwitcher({
 }) {
   const { groups, group } = useActiveGroup(enabled);
   const setActiveGroup = useActiveGroupStore((s) => s.setActiveGroup);
+  const router = useRouter();
+  const pathname = usePathname();
 
   if (groups.length === 0) return null;
 
@@ -67,6 +71,9 @@ export default function GroupSwitcher({
                   aria-checked={isActive}
                   onClick={() => {
                     setActiveGroup(item.groupNo);
+                    if (pathname.startsWith("/group")) {
+                      router.push(groupPath(item));
+                    }
                     close();
                   }}
                   className="hover:bg-surface-hover flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left transition-colors"

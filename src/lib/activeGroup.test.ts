@@ -1,5 +1,8 @@
 import {
   ACTIVE_GROUP_COOKIE,
+  groupPath,
+  groupSlug,
+  parseGroupNo,
   parseActiveGroupNo,
   readActiveGroupNo,
   resolveActiveGroup,
@@ -73,5 +76,52 @@ describe("readActiveGroupNo / writeActiveGroupNo (쿠키)", () => {
   test("쓴 값을 그대로 읽는다", () => {
     writeActiveGroupNo(7);
     expect(readActiveGroupNo()).toBe(7);
+  });
+});
+
+describe("groupSlug / groupPath (URL 조각)", () => {
+  test("공백은 하이픈으로, 대문자는 소문자로", () => {
+    expect(groupSlug("Wony House")).toBe("wony-house");
+  });
+
+  test("한글은 그대로 남긴다", () => {
+    expect(groupSlug("운동 모임")).toBe("운동-모임");
+  });
+
+  test("기호는 버린다", () => {
+    expect(groupSlug("팀! (2026)")).toBe("팀-2026");
+  });
+
+  test("번호 뒤에 이름을 붙인다", () => {
+    expect(groupPath({ groupNo: 45, groupName: "Wony House" })).toBe(
+      "/group/45-wony-house",
+    );
+  });
+
+  test("이름이 기호뿐이면 번호만 남긴다", () => {
+    expect(groupPath({ groupNo: 45, groupName: "!!!" })).toBe("/group/45");
+  });
+});
+
+describe("parseGroupNo (URL 조각 → 번호)", () => {
+  test("번호-이름에서 번호를 꺼낸다", () => {
+    expect(parseGroupNo("45-wony-house")).toBe(45);
+  });
+
+  test("번호만 있어도 된다", () => {
+    expect(parseGroupNo("45")).toBe(45);
+  });
+
+  test("이름이 바뀌어 슬러그가 달라도 번호로 찾는다", () => {
+    expect(parseGroupNo("45-old-name")).toBe(45);
+  });
+
+  test("인코딩된 한글도 처리한다", () => {
+    expect(parseGroupNo("12-%EC%9A%B4%EB%8F%99")).toBe(12);
+  });
+
+  test("번호로 시작하지 않으면 null", () => {
+    expect(parseGroupNo("wony-house")).toBeNull();
+    expect(parseGroupNo("")).toBeNull();
   });
 });

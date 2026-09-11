@@ -40,3 +40,23 @@ export function resolveActiveGroup(
 
   return groups.find((group) => group.groupNo === activeGroupNo) ?? groups[0];
 }
+
+export function groupSlug(groupName: string): string {
+  return groupName
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^\p{L}\p{N}-]/gu, "");
+}
+
+export function groupPath(
+  group: Pick<MyGroupResponse, "groupNo" | "groupName">,
+) {
+  const slug = groupSlug(group.groupName);
+  return slug ? `/group/${group.groupNo}-${slug}` : `/group/${group.groupNo}`;
+}
+
+export function parseGroupNo(segment: string): number | null {
+  const match = /^(\d+)(?:-.*)?$/.exec(decodeURIComponent(segment));
+  return match ? Number(match[1]) : null;
+}

@@ -77,5 +77,13 @@ function tryRefreshToken(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/login", "/sign", "/schedule", "/group", "/profile"],
+  matcher: [
+    "/",
+    "/login",
+    "/sign",
+    "/schedule",
+    "/group",
+    "/group/:path*",
+    "/profile",
+  ],
 };

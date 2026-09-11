@@ -1,14 +1,14 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 
-import GroupDashboard from "@/src/components/group/GroupDashboard";
 import GroupDashboardSkeleton from "@/src/components/group/GroupDashboardSkeleton";
 import GroupLanding from "@/src/components/group/GroupLanding";
 import GroupPicker from "@/src/components/group/GroupPicker";
 import { useActiveGroup } from "@/src/hooks/querys/useGroup";
 import { useMounted } from "@/src/hooks/useMounted";
+import { groupPath } from "@/src/lib/activeGroup";
 
 function GroupPageContent() {
   const router = useRouter();
@@ -16,6 +16,12 @@ function GroupPageContent() {
   const { groups, group, isPending, needsSelection } = useActiveGroup();
 
   const wantsAdd = useSearchParams().get("add") === "1";
+
+  const target = !wantsAdd && mounted && !isPending && group ? group : null;
+
+  useEffect(() => {
+    if (target) router.replace(groupPath(target));
+  }, [target, router]);
 
   if (wantsAdd) {
     return (
@@ -48,11 +54,7 @@ function GroupPageContent() {
     );
   }
 
-  if (!group) {
-    return <GroupLanding />;
-  }
-
-  return <GroupDashboard group={group} />;
+  return <GroupDashboardSkeleton />;
 }
 
 export default function GroupPage() {
