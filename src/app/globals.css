@@ -363,6 +363,8 @@
 
   --radius-outer: 1.25rem;
   --radius-inner: 0.875rem;
+  --radius-nested: 0.5rem;
+  --radius-nested-row: 0.375rem;
 
   --gradient-mint: linear-gradient(90deg, #34d399 0%, #059669 100%);
   --gradient-pink: linear-gradient(90deg, #f43f5e 0%, #e11d48 100%);
@@ -470,6 +472,10 @@
 
 @theme inline {
   --font-sans: "Pretendard", sans-serif;
+
+  --radius-card: var(--radius-outer);
+  --radius-nest: var(--radius-nested);
+  --radius-nest-row: var(--radius-nested-row);
 
   --font-gmarket: "GmarketSans", sans-serif;
 

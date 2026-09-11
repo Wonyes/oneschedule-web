@@ -64,7 +64,7 @@ function SummaryRow({
   const primary = events[0];
 
   return (
-    <div className="flex items-center justify-between neu-flat px-4 py-3 rounded-xl text-xs text-secondary">
+    <div className="flex items-center justify-between neu-flat px-4 py-3 rounded-nest-row text-xs text-secondary">
       <div className="flex items-center gap-2 shrink-0">
         <span
           className={`w-1.5 h-1.5 rounded-full inline-block ${dotClassName}`}
@@ -142,7 +142,7 @@ export default function ScheduleHeader() {
       </div>
 
       <div className="p-5">
-        <div className="neu-flat rounded-2xl p-4 flex flex-col gap-3">
+        <div className="neu-flat rounded-nest p-4 flex flex-col gap-3">
           <h3 className="typo-sub-t-3 font-bold text-foreground">
             오늘의 주요 일정
           </h3>
