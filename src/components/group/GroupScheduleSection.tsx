@@ -1,84 +1,104 @@
 "use client";
 
-import { useMemo } from "react";
-import { startOfDay, endOfDay } from "date-fns";
+import { format, isTomorrow } from "date-fns";
+import { ko } from "date-fns/locale";
+import { CalendarPlus } from "lucide-react";
 
 import BaseCard from "../ui/card/BaseCard";
+import { GROUP_SECTION_HEIGHT } from "./sectionHeight";
 import { Column, Row } from "../ui/layout/flex";
-import { useSchedules } from "@/src/hooks/querys/useSchedule";
-import { toScheduleEvent } from "@/src/utils/schedule";
-import { MyGroupResponse } from "@/src/types/group";
-import { getTimes } from "@/src/utils/time";
-import { useIncrementalList } from "@/src/hooks/useIncrementalList";
-import { PAGE_SIZE } from "@/src/lib/paging";
 import ScrollListArea, { ScrollSentinel } from "../ui/ScrollListArea";
 import SectionBody from "./SectionBody";
+import { UPCOMING_RANGE_DAYS, useGroupSchedules } from "./useGroupSchedules";
+import { useIncrementalList } from "@/src/hooks/useIncrementalList";
+import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
+import { PAGE_SIZE } from "@/src/lib/paging";
+import { MyGroupResponse } from "@/src/types/group";
+import { ScheduleEvent } from "@/src/types/schedule";
+import { getTimes } from "@/src/utils/time";
 
 export default function GroupScheduleSection({
   group,
-  toolbar,
+  animate = false,
 }: {
   group: MyGroupResponse;
-  toolbar?: React.ReactNode;
+  animate?: boolean;
 }) {
-  const { data: schedules } = useSchedules("GROUP", true, group.groupNo);
-
-  const todayEvents = useMemo(() => {
-    const now = new Date();
-    const start = startOfDay(now).getTime();
-    const end = endOfDay(now).getTime();
-
-    return (schedules ?? [])
-      .map(toScheduleEvent)
-      .filter((e) => {
-        const s = new Date(e.startDate).getTime();
-        return s >= start && s <= end;
-      })
-      .sort(
-        (a, b) =>
-          new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
-      );
-  }, [schedules]);
+  const { today, upcoming } = useGroupSchedules(group.groupNo);
+  const { openSheet } = useSheetStore();
 
   const {
-    visible: visibleEvents,
+    visible: visibleUpcoming,
     hasMore,
     rootRef,
     sentinelRef,
-  } = useIncrementalList(todayEvents, PAGE_SIZE.todaySchedules);
+  } = useIncrementalList(upcoming, PAGE_SIZE.todaySchedules);
+
+  const isEmpty = today.length === 0 && upcoming.length === 0;
 
   return (
-    <BaseCard glow className="flex flex-1 flex-col p-5">
-      <Column className="mb-4 shrink-0 gap-1.5">
-        <span className="eyebrow">TODAY</span>
-        <Row className="gap-1.5">
-          <h2 className="typo-sub-t-1 text-foreground">오늘 일정</h2>
-        </Row>
-      </Column>
+    <BaseCard
+      className={`flex flex-col p-5 ${GROUP_SECTION_HEIGHT}`}
+      childClass="flex min-h-0 flex-1 flex-col"
+    >
+      <Row className="mb-4 shrink-0 items-start justify-between gap-3">
+        <Column className="gap-1">
+          <span className="eyebrow">SCHEDULE</span>
+          <h2 className="typo-sub-t-1 text-foreground">그룹 일정</h2>
+        </Column>
 
-      {toolbar && <div className="mb-4">{toolbar}</div>}
+        <button
+          type="button"
+          onClick={() => openSheet({ date: new Date(), type: "GROUP" })}
+          className="btn-primary btn-spring flex h-9 shrink-0 items-center gap-1.5 rounded-xl px-3.5 typo-caption-2 font-semibold"
+        >
+          <CalendarPlus size={14} strokeWidth={2} />
+          일정 추가
+        </button>
+      </Row>
 
-      <SectionBody animate={!!toolbar}>
-        {todayEvents.length === 0 ? (
-          <p className="flex flex-1 items-center justify-center py-10 text-center typo-caption-2 text-muted">
-            오늘 등록된 그룹 일정이 없습니다.
-          </p>
+      <SectionBody animate={animate}>
+        {isEmpty ? (
+          <Column className="flex-1 items-center justify-center gap-1 py-10 text-center">
+            <span className="typo-caption-1 text-secondary">
+              앞으로 {UPCOMING_RANGE_DAYS}일 동안 그룹 일정이 없어요.
+            </span>
+            <span className="typo-caption-3 text-place-h">
+              일정을 추가하면 멤버들에게 알림이 가요.
+            </span>
+          </Column>
         ) : (
           <ScrollListArea
             rootRef={rootRef}
             showFade={hasMore}
-            className="scroll-hidden flex flex-col gap-2.5 px-1 py-1 lg:max-h-[304px] lg:overflow-y-auto lg:pt-3 lg:pb-4"
+            className="scroll-hidden flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pb-3"
           >
-            {visibleEvents.map((event) => (
-              <ScheduleItem
-                key={event.id}
-                time={getTimes(event.startDate, event.endDate)}
-                author={event.author.nickname}
-                title={event.title}
-              />
-            ))}
+            <Group
+              title="오늘"
+              meta={format(new Date(), "M월 d일 EEEE", { locale: ko })}
+            >
+              {today.length === 0 ? (
+                <span className="typo-caption-3 px-1 text-place-h">
+                  오늘은 비어 있어요.
+                </span>
+              ) : (
+                today.map((event) => (
+                  <ScheduleItem key={event.id} event={event} />
+                ))
+              )}
+            </Group>
 
-            {hasMore && <ScrollSentinel sentinelRef={sentinelRef} />}
+            {upcoming.length > 0 && (
+              <Group
+                title={`다가오는 ${UPCOMING_RANGE_DAYS}일`}
+                meta={`${upcoming.length}개`}
+              >
+                {visibleUpcoming.map((event) => (
+                  <ScheduleItem key={event.id} event={event} showDay />
+                ))}
+                {hasMore && <ScrollSentinel sentinelRef={sentinelRef} />}
+              </Group>
+            )}
           </ScrollListArea>
         )}
       </SectionBody>
@@ -86,32 +106,62 @@ export default function GroupScheduleSection({
   );
 }
 
-function ScheduleItem({
-  time,
+function Group({
   title,
-  author,
+  meta,
+  children,
 }: {
-  time: string;
   title: string;
-  author?: string;
+  meta: string;
+  children: React.ReactNode;
 }) {
   return (
-    <Row className="w-full min-w-0 gap-2 rounded-lg px-3 py-2.5 neu-flat">
-      <span className="w-[82px] shrink-0 typo-caption-2 tabular-nums text-place-h">
-        {time}
-      </span>
-
-      <Row className="min-w-0 flex-1 items-center gap-1.5">
-        <span className="min-w-0 flex-1 truncate typo-caption-2 font-medium">
+    <Column className="w-full gap-2">
+      <Row className="items-baseline gap-2 px-1">
+        <span className="typo-caption-2 font-semibold text-foreground">
           {title}
         </span>
+        <span className="typo-caption-3 text-place-h">{meta}</span>
+      </Row>
+      {children}
+    </Column>
+  );
+}
 
-        {author && (
-          <span className="max-w-[60px] shrink-0 truncate typo-caption-3 text-place-h">
-            {author}
+function ScheduleItem({
+  event,
+  showDay = false,
+}: {
+  event: ScheduleEvent;
+  showDay?: boolean;
+}) {
+  const start = new Date(event.startDate);
+  const day = isTomorrow(start)
+    ? "내일"
+    : format(start, "M/d EEE", { locale: ko });
+
+  return (
+    <Row className="neu-flat w-full min-w-0 gap-3 rounded-lg px-3 py-2.5">
+      <Column className="w-[92px] shrink-0 gap-0">
+        {showDay && (
+          <span className="typo-caption-3 font-semibold text-accent">
+            {day}
           </span>
         )}
-      </Row>
+        <span className="typo-caption-3 tabular-nums text-place-h">
+          {getTimes(event.startDate, event.endDate)}
+        </span>
+      </Column>
+
+      <span className="min-w-0 flex-1 truncate typo-caption-2 font-medium text-foreground">
+        {event.title}
+      </span>
+
+      {event.author?.nickname && (
+        <span className="max-w-[72px] shrink-0 truncate typo-caption-3 text-place-h">
+          {event.author.nickname}
+        </span>
+      )}
     </Row>
   );
 }

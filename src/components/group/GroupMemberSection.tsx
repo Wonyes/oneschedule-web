@@ -1,311 +1,112 @@
 "use client";
 
-import AvatarImage from "@/src/components/common/AvatarImage";
-import { Crown, MoreVertical } from "lucide-react";
-import { useRef } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Settings, UserPlus, Users } from "lucide-react";
 
 import BaseCard from "../ui/card/BaseCard";
-import { Row, Column } from "../ui/layout/flex";
-import { useOverlay } from "@/src/hooks/useOverlay";
-import {
-  GroupMemberEditContent,
-  GroupMemberEditRef,
-} from "../ui/overlay/modal/GroupMemberEditContent";
-import { getErrorMessage, useAppMutation } from "@/src/types/ErrorResponse";
-import { Patch, Delete } from "@/src/hooks/querys/useMutations";
-import { groupkeys } from "@/src/hooks/querys/key/groupKey";
-import IconBox from "../ui/IconBox";
-import DropdownMenu from "../ui/DropdownMenu";
-import { GroupMember, GroupRole } from "@/src/types/group";
-import { useMyInfo } from "@/src/hooks/querys/useMembers";
-import { useIncrementalList } from "@/src/hooks/useIncrementalList";
-import { useMemberPresence } from "@/src/hooks/querys/useGroup";
-import { cn } from "@/src/utils/cn";
-import { AnimatePresence, motion } from "motion/react";
-import { fadeQuick, springSoft } from "@/src/lib/motion";
-import { PAGE_SIZE } from "@/src/lib/paging";
-import ScrollListArea, { ScrollSentinel } from "../ui/ScrollListArea";
+import { GROUP_SECTION_HEIGHT } from "./sectionHeight";
+import { Column } from "../ui/layout/flex";
+import SegmentedTabs from "../ui/layout/SegmentedTabs";
+import GroupJoinRequestBody from "./GroupJoinRequestBody";
+import GroupMemberList from "./GroupMemberList";
+import GroupSettingBody from "./GroupSettingBody";
 import SectionBody from "./SectionBody";
-import { formatDistanceToNowStrict } from "date-fns";
-import { ko } from "date-fns/locale";
+import { useJoinRequests } from "@/src/hooks/querys/useGroup";
+import { MyGroupResponse } from "@/src/types/group";
+
+type TeamTab = "members" | "requests" | "settings";
 
 export default function GroupMemberSection({
-  members,
+  group,
   isAdmin,
-  groupNo,
-  toolbar,
+  withAdminTabs = false,
+  animate = false,
 }: {
-  members: GroupMember[];
+  group: MyGroupResponse;
   isAdmin: boolean;
-  groupNo: number;
-  toolbar?: React.ReactNode;
+  withAdminTabs?: boolean;
+  animate?: boolean;
 }) {
-  const { data: myInfo } = useMyInfo();
-  const { data: presence } = useMemberPresence(groupNo);
-  const { openModal, openToast, openConfirm, closeModal } = useOverlay();
+  const canReview =
+    withAdminTabs && isAdmin && group.visibility === "PUBLIC_APPROVAL";
+  const canEdit = withAdminTabs && group.groupRole === "SUPER";
+  const requested = useSearchParams().get("tab") === "requests";
 
-  const queryClient = useQueryClient();
-  const { mutate: updateMember } = useAppMutation({
-    mutationFn: ({
-      memberNo,
-      groupRole,
-      position,
-    }: {
-      memberNo: number;
-      groupRole: GroupRole;
-      position: string;
-    }) =>
-      Patch({
-        url: `/group/${groupNo}/member/${memberNo}`,
-        body: null,
-        params: {
-          groupRole,
-          position,
-        },
-      }),
+  const [tab, setTab] = useState<TeamTab>(
+    requested && canReview ? "requests" : "members",
+  );
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [groupkeys.myGroup],
-      });
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (requested && canReview) setTab("requests");
+  }, [requested, canReview]);
 
-      openToast({
-        message: "멤버 정보를 수정했습니다.",
-      });
+  const { data: requestPages } = useJoinRequests(group.groupNo, canReview);
+  const pendingCount = requestPages?.pages[0]?.totalElements ?? 0;
 
-      closeModal();
-    },
+  const tabs = [
+    { key: "members" as const, label: "멤버", icon: <Users size={12} /> },
+    ...(canReview
+      ? [
+          {
+            key: "requests" as const,
+            label: "신청",
+            icon: <UserPlus size={12} />,
+            badge: pendingCount,
+          },
+        ]
+      : []),
+    ...(canEdit
+      ? [
+          {
+            key: "settings" as const,
+            label: "설정",
+            icon: <Settings size={12} />,
+          },
+        ]
+      : []),
+  ];
 
-    onError: (err) => {
-      openToast({
-        message: getErrorMessage(err),
-      });
-    },
-  });
-
-  const { mutate: deleteMember } = useAppMutation({
-    mutationFn: (memberNo: number) =>
-      Delete({
-        url: `/group/${groupNo}/member/${memberNo}`,
-      }),
-
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [groupkeys.myGroup],
-      });
-
-      openToast({
-        message: "멤버를 삭제했습니다.",
-      });
-    },
-    onError: (err) => {
-      openToast({
-        message: getErrorMessage(err),
-      });
-    },
-  });
-
-  const memberEditRef = useRef<GroupMemberEditRef>(null);
-
-  const {
-    visible: visibleMembers,
-    hasMore,
-    rootRef,
-    sentinelRef,
-  } = useIncrementalList(members, PAGE_SIZE.groupMembers);
-
-  const memberChanges = (member: GroupMember) => {
-    openModal({
-      title: "멤버 관리",
-
-      content: () => (
-        <GroupMemberEditContent ref={memberEditRef} member={member} />
-      ),
-
-      mainBtn: "저장",
-      subBtn: "취소",
-
-      onFunc: () => {
-        memberEditRef.current?.submit((data) => {
-          updateMember(data);
-        });
-      },
-    });
-  };
-
-  const memberDelete = (member: GroupMember) => {
-    openConfirm({
-      title: `${member.nickname} 멤버 삭제`,
-      message: `정말 ${member.nickname}를 추방하시겠습니까?`,
-      mainBtn: "삭제",
-      subBtn: "취소",
-      onFunc: () => {
-        deleteMember(member.memberNo);
-      },
-    });
-  };
+  const active = tabs.some((t) => t.key === tab) ? tab : "members";
 
   return (
-    <BaseCard glow className="flex flex-1 flex-col p-5">
-      <div className="mb-4 flex shrink-0 flex-col gap-1.5">
+    <BaseCard
+      id="group-team"
+      className={`flex flex-col p-5 ${GROUP_SECTION_HEIGHT}`}
+      childClass="flex min-h-0 flex-1 flex-col"
+    >
+      <Column className="mb-4 shrink-0 gap-1">
         <span className="eyebrow">TEAM</span>
-        <h2 className="typo-sub-t-1 text-foreground">그룹 멤버</h2>
-      </div>
+        <h2 className="typo-sub-t-1 text-foreground">
+          멤버{" "}
+          <span className="font-normal text-place-h">
+            {group.members.length}
+          </span>
+        </h2>
+      </Column>
 
-      {toolbar && <div className="mb-4">{toolbar}</div>}
+      {tabs.length > 1 && (
+        <div className="mb-4">
+          <SegmentedTabs
+            tabs={tabs}
+            value={active}
+            onChange={setTab}
+            label="팀 관리"
+          />
+        </div>
+      )}
 
-      <SectionBody animate={!!toolbar}>
-        <ScrollListArea
-          rootRef={rootRef}
-          showFade={hasMore}
-          className="scroll-hidden flex flex-col gap-2.5 px-1 py-1 lg:max-h-[304px] lg:overflow-y-auto lg:pt-3 lg:pb-4"
-        >
-          <AnimatePresence initial={false} mode="popLayout">
-            {visibleMembers.map((member: GroupMember) => {
-              const status = presence?.get(member.memberNo);
-              const isOnline = status?.online ?? false;
-
-              const statusLabel = isOnline
-                ? "온라인"
-                : status?.lastSeenAt
-                  ? formatDistanceToNowStrict(new Date(status.lastSeenAt), {
-                      addSuffix: true,
-                      locale: ko,
-                    })
-                  : "오프라인";
-
-              return (
-                <motion.div
-                  key={member.memberNo}
-                  layout
-                  exit={{ opacity: 0, x: 24, transition: fadeQuick }}
-                  transition={springSoft}
-                  className="flex w-full items-center justify-between rounded-xl px-4 py-3 neu-flat"
-                >
-                  <Row className="min-w-0 flex-1 gap-3">
-                    <IconBox
-                      size="md"
-                      shape="circle"
-                      tone="accent"
-                      className="overflow-hidden typo-caption-3 font-bold bg-accent/10 shrink-0"
-                    >
-                      <AvatarImage
-                        src={member.profileImageUrl}
-                        nickname={member.nickname}
-                      />
-                    </IconBox>
-
-                    <Column className="min-w-0">
-                      <Row className="min-w-0 gap-1.5">
-                        <span className="typo-caption-2 font-semibold text-foreground truncate">
-                          {member.nickname}
-                        </span>
-
-                        {member.groupRole === "SUPER" && (
-                          <Crown
-                            size={12}
-                            strokeWidth={1.75}
-                            className="shrink-0 text-pending-500"
-                          />
-                        )}
-                      </Row>
-
-                      <span className="mt-0.5 typo-caption-3 text-place-h truncate">
-                        {member.position}
-                      </span>
-                    </Column>
-                  </Row>
-
-                  <Row className="relative shrink-0 items-center gap-2">
-                    <Column className="items-end gap-1">
-                      <span
-                        className="
-                    rounded-full
-                    bg-surface-hover
-                    px-2.5 py-1
-                    typo-caption-3
-                    font-medium
-                    text-secondary
-                  "
-                      >
-                        {member.groupRole}
-                      </span>
-
-                      <Row
-                        className={cn(
-                          "items-center gap-1.5 rounded-full px-2 py-0.5",
-                          isOnline ? "bg-success-500/12" : "bg-surface-hover",
-                        )}
-                      >
-                        <span
-                          className={cn(
-                            "size-2 shrink-0 rounded-full",
-                            isOnline
-                              ? "bg-success-500 ring-2 ring-success-500/30"
-                              : "bg-place-h",
-                          )}
-                        />
-                        <span
-                          className={cn(
-                            "typo-caption-3 font-medium whitespace-nowrap",
-                            isOnline ? "text-success-500" : "text-muted",
-                          )}
-                        >
-                          {statusLabel}
-                        </span>
-                      </Row>
-                    </Column>
-
-                    {isAdmin &&
-                      member.groupRole !== "SUPER" &&
-                      member.memberNo !== myInfo?.memberNo && (
-                        <DropdownMenu
-                          label="멤버 관리 메뉴"
-                          align="right"
-                          panelClassName="w-40 glass"
-                          triggerClassName="h-7 w-7 justify-center rounded-lg text-muted hover:bg-surface-hover hover:text-foreground"
-                          trigger={() => (
-                            <MoreVertical size={15} strokeWidth={1.75} />
-                          )}
-                        >
-                          {(close) => (
-                            <>
-                              <button
-                                type="button"
-                                role="menuitem"
-                                onClick={() => {
-                                  close();
-                                  memberChanges(member);
-                                }}
-                                className="w-full rounded-lg px-3 py-2 text-left typo-caption-2 text-secondary hover:bg-white/5"
-                              >
-                                멤버 수정
-                              </button>
-
-                              <button
-                                type="button"
-                                role="menuitem"
-                                onClick={() => {
-                                  close();
-                                  memberDelete(member);
-                                }}
-                                className="mt-1 w-full rounded-lg px-3 py-2 text-left typo-caption-2 text-error-500 hover:bg-white/5"
-                              >
-                                그룹 내보내기
-                              </button>
-                            </>
-                          )}
-                        </DropdownMenu>
-                      )}
-                  </Row>
-                </motion.div>
-              );
-            })}
-          </AnimatePresence>
-
-          {hasMore && <ScrollSentinel sentinelRef={sentinelRef} />}
-        </ScrollListArea>
+      <SectionBody animate={animate}>
+        {active === "members" && (
+          <GroupMemberList
+            members={group.members}
+            isAdmin={isAdmin}
+            groupNo={group.groupNo}
+          />
+        )}
+        {active === "requests" && <GroupJoinRequestBody group={group} />}
+        {active === "settings" && <GroupSettingBody group={group} />}
       </SectionBody>
     </BaseCard>
   );

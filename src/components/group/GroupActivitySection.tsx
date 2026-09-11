@@ -4,6 +4,7 @@ import { Activity, CalendarPlus } from "lucide-react";
 import { useMemo } from "react";
 
 import BaseCard from "../ui/card/BaseCard";
+import { GROUP_SECTION_HEIGHT } from "./sectionHeight";
 import SectionBody from "./SectionBody";
 import Skeleton from "../ui/Skeleton";
 import { Column, Row } from "../ui/layout/flex";
@@ -17,10 +18,10 @@ const MAX_ITEMS = 4;
 
 export default function GroupActivitySection({
   group,
-  toolbar,
+  animate = false,
 }: {
   group: MyGroupResponse;
-  toolbar?: React.ReactNode;
+  animate?: boolean;
 }) {
   const { data: groupSchedules, isLoading } = useSchedules(
     "GROUP",
@@ -40,7 +41,10 @@ export default function GroupActivitySection({
   }, [groupSchedules]);
 
   return (
-    <BaseCard glow className="p-5">
+    <BaseCard
+      className={`flex flex-col p-5 ${GROUP_SECTION_HEIGHT}`}
+      childClass="flex min-h-0 flex-1 flex-col"
+    >
       <Column className="mb-3 gap-1.5">
         <span className="eyebrow">ACTIVITY</span>
         <Row className="gap-1.5">
@@ -49,9 +53,7 @@ export default function GroupActivitySection({
         </Row>
       </Column>
 
-      {toolbar && <div className="mb-4">{toolbar}</div>}
-
-      <SectionBody animate={!!toolbar}>
+      <SectionBody animate={animate}>
         {isLoading ? (
           <Column className="w-full gap-2">
             {Array.from({ length: 2 }).map((_, i) => (

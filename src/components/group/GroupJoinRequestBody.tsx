@@ -77,7 +77,7 @@ export default function GroupJoinRequestBody({
   return (
     <>
       {total > 0 && (
-        <p className="typo-caption-3 mb-2 text-place-h">
+        <p className="typo-caption-3 mb-2 shrink-0 text-place-h">
           대기 중인 신청 {total}건
         </p>
       )}
@@ -94,7 +94,7 @@ export default function GroupJoinRequestBody({
         <ScrollListArea
           rootRef={rootRef}
           showFade={hasNextPage}
-          className="scroll-hidden flex w-full flex-col items-start lg:max-h-[260px] lg:overflow-y-auto"
+          className="scroll-hidden flex min-h-0 w-full flex-1 flex-col items-start overflow-y-auto"
         >
           <AnimatePresence initial={false} mode="popLayout">
             {requests.map((request) => (

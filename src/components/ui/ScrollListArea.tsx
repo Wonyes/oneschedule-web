@@ -15,7 +15,7 @@ export default function ScrollListArea({
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative">
+    <div className="relative flex min-h-0 flex-1 flex-col">
       <div ref={rootRef} className={className}>
         {children}
       </div>

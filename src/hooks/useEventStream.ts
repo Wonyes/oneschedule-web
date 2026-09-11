@@ -1,8 +1,13 @@
 "use client";
 
 import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+
+import { notificationkeys } from "./querys/key/notificationKey";
 
 export function useEventStream(enabled: boolean) {
+  const queryClient = useQueryClient();
+
   useEffect(() => {
     if (!enabled) return;
 
@@ -11,10 +16,17 @@ export function useEventStream(enabled: boolean) {
       { withCredentials: true },
     );
 
+    source.addEventListener("notification", () => {
+      queryClient.invalidateQueries({ queryKey: [notificationkeys.list] });
+      queryClient.invalidateQueries({
+        queryKey: [notificationkeys.unreadCount],
+      });
+    });
+
     source.onerror = () => {
       if (source.readyState === EventSource.CLOSED) source.close();
     };
 
     return () => source.close();
-  }, [enabled]);
+  }, [enabled, queryClient]);
 }

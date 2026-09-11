@@ -1,13 +1,16 @@
 "use client";
 
 import { Settings, UserPlus } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 import BaseCard from "../ui/card/BaseCard";
 import { Column, Row } from "../ui/layout/flex";
 import SegmentedTabs from "../ui/layout/SegmentedTabs";
 import GroupJoinRequestBody from "./GroupJoinRequestBody";
 import GroupSettingBody from "./GroupSettingBody";
+import SectionBody from "./SectionBody";
+import { GROUP_SECTION_HEIGHT } from "./sectionHeight";
 import { useJoinRequests } from "@/src/hooks/querys/useGroup";
 import { MyGroupResponse } from "@/src/types/group";
 
@@ -23,9 +26,15 @@ export default function GroupAdminSection({
   const canReviewRequests = isAdmin && group.visibility === "PUBLIC_APPROVAL";
   const canEditSetting = group.groupRole === "SUPER";
 
+  const requested = useSearchParams().get("tab") === "requests";
   const [tab, setTab] = useState<AdminTab>(
     canReviewRequests ? "request" : "setting",
   );
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (requested && canReviewRequests) setTab("request");
+  }, [requested, canReviewRequests]);
 
   const { data: requestPages } = useJoinRequests(
     group.groupNo,
@@ -61,8 +70,12 @@ export default function GroupAdminSection({
   const active = showTabs ? tab : tabs[0].key;
 
   return (
-    <BaseCard className="relative z-30 order-last w-full p-5 lg:order-none" glow>
-      <Column className="mb-4 gap-1">
+    <BaseCard
+      id="group-manage"
+      className={`relative z-30 flex w-full flex-col p-5 ${GROUP_SECTION_HEIGHT}`}
+      childClass="flex min-h-0 flex-1 flex-col"
+    >
+      <Column className="mb-4 shrink-0 gap-1">
         <span className="eyebrow">MANAGE</span>
         <Row className="items-center gap-2">
           <h2 className="typo-sub-t-1 text-foreground">
@@ -77,7 +90,7 @@ export default function GroupAdminSection({
       </Column>
 
       {showTabs && (
-        <div className="mb-4">
+        <div className="mb-4 shrink-0">
           <SegmentedTabs
             tabs={tabs}
             value={tab}
@@ -87,11 +100,13 @@ export default function GroupAdminSection({
         </div>
       )}
 
-      {active === "request" ? (
-        <GroupJoinRequestBody group={group} />
-      ) : (
-        <GroupSettingBody group={group} />
-      )}
+      <SectionBody animate={false}>
+        {active === "request" ? (
+          <GroupJoinRequestBody group={group} />
+        ) : (
+          <GroupSettingBody group={group} />
+        )}
+      </SectionBody>
     </BaseCard>
   );
 }

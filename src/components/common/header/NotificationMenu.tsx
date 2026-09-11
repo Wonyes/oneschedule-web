@@ -4,6 +4,12 @@ import { usePathname, useRouter } from "next/navigation";
 
 import NotificationBell from "@/src/components/notification/NotificationBell";
 import { Notification } from "@/src/types/notification";
+import {
+  useAllreadNotifications,
+  useNotification,
+  useUnreadNotifications,
+  useUpdateNotificationReadStatus,
+} from "@/src/hooks/querys/useNotification";
 
 export default function NotificationMenu({
   className,
@@ -18,21 +24,21 @@ export default function NotificationMenu({
   const pathname = usePathname();
   const isSchedulePage = pathname === "/schedule";
 
+  const {
+    data: notifications,
+    isLoading,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = useNotification();
+  const { data: unreadCount = 0 } = useUnreadNotifications();
+  const { mutate: markRead } = useUpdateNotificationReadStatus();
+  const { mutate: markAllRead } = useAllreadNotifications();
+
+  const items = notifications?.pages.flatMap((page) => page.content) ?? [];
+
   if (mobileSlot === "top" && isSchedulePage) return null;
   if (mobileSlot === "sub" && !isSchedulePage) return null;
-  const items: Notification[] = [];
-  const unreadCount = 0;
-  const loading = false;
-  const hasMore = false;
-  const loadingMore = false;
-
-  const markRead = (notificationNo: number) => {
-    void notificationNo;
-  };
-
-  const markAllRead = () => {};
-
-  const loadMore = () => {};
 
   const handleSelect = (notification: Notification) => {
     if (!notification.read) markRead(notification.notificationNo);
@@ -45,14 +51,14 @@ export default function NotificationMenu({
   return (
     <NotificationBell
       items={items}
-      unreadCount={unreadCount}
-      loading={loading}
-      hasMore={hasMore}
-      loadingMore={loadingMore}
-      onSelect={handleSelect}
-      onReadAll={markAllRead}
-      onLoadMore={loadMore}
+      loading={isLoading}
       className={className}
+      hasMore={hasNextPage}
+      onSelect={handleSelect}
+      unreadCount={unreadCount}
+      onReadAll={() => markAllRead()}
+      loadingMore={isFetchingNextPage}
+      onLoadMore={() => fetchNextPage()}
       triggerClassName={triggerClassName}
     />
   );

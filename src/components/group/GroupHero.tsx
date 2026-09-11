@@ -1,20 +1,25 @@
 "use client";
 
-import { Copy, Crown, Pencil } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Copy, Crown, Pencil, UserPlus } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 import BaseCard from "../ui/card/BaseCard";
 import VisibilityBadge from "./VisibilityBadge";
 import { Row, Column } from "../ui/layout/flex";
-import AvatarImage from "@/src/components/common/AvatarImage";
 import { motion } from "motion/react";
 import { rise, stagger } from "@/src/lib/motion";
 import { cn } from "@/src/utils/cn";
-import { GhostBtn, Primary } from "../ui/layout/button";
+import { GhostBtn } from "../ui/layout/button";
+import { GroupEditPanel } from "./GroupHeroEditors";
 import { useOverlay } from "@/src/hooks/useOverlay";
-import { useState } from "react";
-import { Input } from "../ui/layout/input";
-import { Textarea } from "../ui/layout/textarea";
-import { useUpdateGroupSetting } from "@/src/hooks/querys/useGroup";
+import { useRef, useState } from "react";
+import {
+  useGroupProfileImageUpload,
+  useJoinRequests,
+  useMemberPresence,
+  useUpdateGroupSetting,
+} from "@/src/hooks/querys/useGroup";
+import GroupOrbit from "./GroupOrbit";
+import { UPCOMING_RANGE_DAYS, useGroupSchedules } from "./useGroupSchedules";
 import { useForm } from "@/src/hooks/useForm";
 import { getErrorMessage, useAppMutation } from "@/src/types/ErrorResponse";
 import { Delete, Put } from "@/src/hooks/querys/useMutations";
@@ -27,8 +32,11 @@ import { useActiveGroupStore } from "@/src/hooks/stores/useActiveGroupStore";
 export const GroupHero = ({ group }: { group: MyGroupResponse }) => {
   const queryClient = useQueryClient();
   const router = useRouter();
+  const pathname = usePathname();
   const clearActiveGroup = useActiveGroupStore((s) => s.clearActiveGroup);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const { mutate: uploadImage } = useGroupProfileImageUpload();
   const { openToast, openConfirm } = useOverlay();
   const { form, formChange } = useForm({
     groupName: group.groupName,
@@ -126,6 +134,21 @@ export const GroupHero = ({ group }: { group: MyGroupResponse }) => {
     },
   });
 
+  const groupFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    uploadImage(
+      { file, groupNo: group.groupNo },
+      {
+        onError: (err) => {
+          openToast({ message: getErrorMessage(err) });
+        },
+      },
+    );
+  };
+
   const withdrawGroups = () => {
     openConfirm({
       title: group.groupRole === "SUPER" ? "그룹해체" : "그룹탈퇴",
@@ -142,8 +165,50 @@ export const GroupHero = ({ group }: { group: MyGroupResponse }) => {
   };
 
   const isAdmin = group.groupRole === "SUPER";
-  const visibleMembers = group.members.slice(0, 4);
-  const hiddenCount = group.members.length - visibleMembers.length;
+  const canReview = isAdmin && group.visibility === "PUBLIC_APPROVAL";
+  const editing = groupNameCorrection || descriptionEditing;
+
+  const { today, upcoming } = useGroupSchedules(group.groupNo);
+  const { data: presence } = useMemberPresence(group.groupNo);
+  const { data: requestPages } = useJoinRequests(group.groupNo, canReview);
+  const pendingCount = requestPages?.pages[0]?.totalElements ?? 0;
+  const onlineCount = group.members.filter(
+    (m) => presence?.get(m.memberNo)?.online,
+  ).length;
+
+  const scrollTo = (ids: string[]) => {
+    const target = ids
+      .map((id) => document.getElementById(id))
+      .find((el) => el && el.offsetParent !== null);
+    target?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const goToRequests = () => {
+    router.replace(`${pathname}?tab=requests`, { scroll: false });
+    scrollTo(["group-manage", "group-team"]);
+  };
+
+  const startEditing = () => {
+    setDescriptionDraft(group.description ?? "");
+    setGroupNameCorrection(true);
+    setDescriptionEditing(true);
+  };
+
+  const cancelEditing = () => {
+    setGroupNameCorrection(false);
+    setDescriptionEditing(false);
+  };
+
+  const saveEditing = () => {
+    const nameChanged = form.groupName.trim() !== group.groupName;
+    const descChanged = descriptionDraft.trim() !== (group.description ?? "");
+
+    if (nameChanged) changeGroupName();
+    else setGroupNameCorrection(false);
+
+    if (descChanged) saveDescription();
+    else setDescriptionEditing(false);
+  };
 
   return (
     <BaseCard glow className="relative overflow-hidden p-5 sm:p-6">
@@ -156,15 +221,30 @@ export const GroupHero = ({ group }: { group: MyGroupResponse }) => {
         variants={stagger}
         initial="hidden"
         animate="show"
-        className="relative flex flex-col gap-5"
+        className="relative flex flex-col items-center gap-5 lg:flex-row lg:items-center lg:gap-10"
       >
-        <motion.div variants={rise} className="flex items-start gap-4">
-          <div className="neu-float flex h-16 w-16 shrink-0 items-center justify-center rounded-[22px] typo-title-1 font-bold text-accent sm:h-[72px] sm:w-[72px]">
-            {group.groupName.trim().charAt(0).toUpperCase()}
-          </div>
+        <motion.div variants={rise}>
+          <GroupOrbit
+            name={group.groupName}
+            imageUrl={group.profileImageUrl}
+            members={group.members}
+            presence={presence}
+            canEditImage={isAdmin}
+            onPickImage={() => fileInputRef.current?.click()}
+            onMemberClick={() => scrollTo(["group-team"])}
+          />
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={groupFileChange}
+          />
+        </motion.div>
 
-          <Column className="min-w-0 flex-1 gap-1.5">
-            <Row className="flex-wrap gap-1.5">
+        <Column className="w-full min-w-0 flex-1 items-center gap-2 text-center lg:items-start lg:text-left">
+          <motion.div variants={rise}>
+            <Row className="flex-wrap justify-center gap-1.5 lg:justify-start">
               <span className="eyebrow">GROUP</span>
               <VisibilityBadge visibility={group.visibility} />
               {isAdmin && (
@@ -180,156 +260,124 @@ export const GroupHero = ({ group }: { group: MyGroupResponse }) => {
                 </Row>
               )}
             </Row>
+          </motion.div>
 
-            {groupNameCorrection ? (
-              <Row className="w-full gap-2">
-                <Input
-                  name="groupName"
-                  value={form.groupName}
-                  onChange={formChange}
-                  onEnter={changeGroupName}
-                />
-                <Primary
-                  text="변경"
-                  className="h-11 w-fit shrink-0 px-4"
-                  onClick={changeGroupName}
-                />
-                <GhostBtn
-                  text="취소"
-                  className="h-11 w-fit shrink-0 px-3"
-                  onClick={() => setGroupNameCorrection(false)}
-                />
-              </Row>
-            ) : (
-              <Row className="min-w-0 gap-1.5">
-                <h1 className="typo-title-1 truncate text-foreground">
-                  {group.groupName}
-                </h1>
-                {isAdmin && (
-                  <GhostBtn
-                    onClick={() => setGroupNameCorrection(true)}
-                    ariaLabel="그룹 이름 수정"
-                    className="h-8 w-8 shrink-0 px-0"
-                    icon={
-                      <Pencil
-                        size={14}
-                        strokeWidth={1.75}
-                        className="text-muted"
-                      />
-                    }
-                  />
+          {editing ? (
+            <motion.div variants={rise} className="w-full">
+              <GroupEditPanel
+                name={form.groupName}
+                onNameChange={formChange}
+                description={descriptionDraft}
+                onDescriptionChange={setDescriptionDraft}
+                onSave={saveEditing}
+                onCancel={cancelEditing}
+                saving={savingDescription}
+              />
+            </motion.div>
+          ) : (
+            <motion.div variants={rise} className="w-full min-w-0">
+              <h1 className="typo-h2 truncate text-foreground">
+                {group.groupName}
+              </h1>
+              <p
+                className={cn(
+                  "mx-auto mt-1.5 max-w-[520px] typo-caption-1 leading-relaxed lg:mx-0",
+                  group.description ? "text-secondary" : "text-place-h",
                 )}
-              </Row>
-            )}
-
-            {descriptionEditing ? (
-              <Column className="mt-1 w-full gap-2">
-                <Textarea
-                  value={descriptionDraft}
-                  maxLength={200}
-                  placeholder="어떤 그룹인지 한두 줄로 소개해 주세요."
-                  description="공개 그룹 목록에서 이 문구가 함께 보입니다."
-                  onChange={(e) => setDescriptionDraft(e.target.value)}
-                />
-                <Row className="justify-end gap-2">
-                  <GhostBtn
-                    text="취소"
-                    className="typo-caption-2 h-8 px-3"
-                    onClick={() => setDescriptionEditing(false)}
-                  />
-                  <Primary
-                    text={savingDescription ? "저장 중…" : "저장"}
-                    className="typo-caption-2 h-8 px-4"
-                    isDisabled={savingDescription}
-                    onClick={saveDescription}
-                  />
-                </Row>
-              </Column>
-            ) : (
-              <Row className="min-w-0 items-start gap-1">
-                <p
-                  className={cn(
-                    "typo-caption-1 min-w-0 leading-relaxed",
-                    group.description ? "text-secondary" : "text-place-h",
-                  )}
-                >
-                  {group.description || "아직 그룹 소개가 없어요."}
-                </p>
-                {isAdmin && (
-                  <GhostBtn
-                    ariaLabel="그룹 소개 수정"
-                    className="h-6 w-6 shrink-0 px-0"
-                    onClick={() => {
-                      setDescriptionDraft(group.description ?? "");
-                      setDescriptionEditing(true);
-                    }}
-                    icon={
-                      <Pencil
-                        size={12}
-                        strokeWidth={1.75}
-                        className="text-muted"
-                      />
-                    }
-                  />
-                )}
-              </Row>
-            )}
-          </Column>
-        </motion.div>
-
-        <motion.div
-          variants={rise}
-          className="flex flex-col gap-3 border-t border-divider pt-4 sm:flex-row sm:items-center sm:justify-between"
-        >
-          <Row className="flex-wrap gap-2.5">
-            <Row className="neu-pressed h-9 gap-2 rounded-lg pl-3 pr-1.5">
-              <span className="typo-caption-3 text-place-h">초대 코드</span>
-              <span className="typo-caption-2 font-semibold tabular-nums text-foreground">
-                {group.groupCode}
-              </span>
-              <button
-                type="button"
-                onClick={copyCode}
-                aria-label="초대 코드 복사"
-                className="neu-btn btn-spring flex h-6 w-6 items-center justify-center rounded-md text-muted hover:text-foreground"
               >
-                <Copy size={12} strokeWidth={1.75} />
-              </button>
-            </Row>
+                {group.description || "아직 그룹 소개가 없어요."}
+              </p>
+            </motion.div>
+          )}
 
-            <Row className="gap-2">
-              <Row className="-space-x-2">
-                {visibleMembers.map((member) => (
-                  <span
-                    key={member.memberNo}
-                    title={member.nickname}
-                    className="neu-flat flex h-7 w-7 items-center justify-center overflow-hidden rounded-full typo-caption-3 font-bold text-accent ring-2 ring-[var(--surface)]"
-                  >
-                    <AvatarImage
-                      src={member.profileImageUrl}
-                      nickname={member.nickname}
-                    />
-                  </span>
-                ))}
-                {hiddenCount > 0 && (
-                  <span className="neu-flat flex h-7 w-7 items-center justify-center rounded-full typo-caption-3 font-semibold text-muted ring-2 ring-[var(--surface)]">
-                    +{hiddenCount}
-                  </span>
-                )}
+          <motion.div variants={rise}>
+            <Row className="mt-1 flex-wrap justify-center gap-x-4 gap-y-1.5 lg:justify-start">
+              <Stat label="멤버" value={group.members.length} />
+              <Stat label="온라인" value={onlineCount} tone="success" />
+              <Stat label="오늘" value={today.length} />
+              <Stat
+                label={`${UPCOMING_RANGE_DAYS}일 내`}
+                value={upcoming.length}
+              />
+            </Row>
+          </motion.div>
+
+          <motion.div variants={rise} className="w-full">
+            <Row className="mt-2 w-full flex-wrap justify-center gap-2 lg:justify-start">
+              <Row className="neu-pressed h-9 min-w-0 gap-2 rounded-lg pl-3 pr-1.5">
+                <span className="typo-caption-3 shrink-0 text-place-h">
+                  초대 코드
+                </span>
+                <span className="min-w-0 truncate typo-caption-2 font-semibold tabular-nums text-foreground">
+                  {group.groupCode}
+                </span>
+                <button
+                  type="button"
+                  onClick={copyCode}
+                  aria-label="초대 코드 복사"
+                  className="neu-btn btn-spring flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted hover:text-foreground"
+                >
+                  <Copy size={12} strokeWidth={1.75} />
+                </button>
               </Row>
-              <span className="typo-caption-2 text-muted">
-                멤버 {group.members.length}명
-              </span>
-            </Row>
-          </Row>
 
-          <GhostBtn
-            onClick={withdrawGroups}
-            text={isAdmin ? "그룹 해체" : "그룹 탈퇴"}
-            className="typo-caption-2 h-8 w-fit self-end px-3 text-place-h hover:text-error-500 sm:self-auto"
-          />
-        </motion.div>
+              {isAdmin && pendingCount > 0 && (
+                <button
+                  type="button"
+                  onClick={goToRequests}
+                  className="btn-spring flex h-9 items-center gap-1.5 rounded-lg bg-accent/12 px-3 typo-caption-2 font-semibold text-accent hover:bg-accent/20"
+                >
+                  <UserPlus size={13} strokeWidth={2} />
+                  가입 신청 {pendingCount}건
+                </button>
+              )}
+
+              {isAdmin && !editing && (
+                <button
+                  type="button"
+                  onClick={startEditing}
+                  className="neu-btn btn-spring flex h-9 items-center gap-1.5 rounded-lg px-3 typo-caption-2 font-medium text-secondary hover:text-foreground"
+                >
+                  <Pencil size={13} strokeWidth={1.75} />
+                  그룹 편집
+                </button>
+              )}
+
+              <GhostBtn
+                onClick={withdrawGroups}
+                text={isAdmin ? "그룹 해체" : "그룹 탈퇴"}
+                className="typo-caption-2 h-9 w-fit px-3 text-place-h hover:text-error-500 lg:ml-auto"
+              />
+            </Row>
+          </motion.div>
+        </Column>
       </motion.div>
     </BaseCard>
   );
 };
+
+function Stat({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: number;
+  tone?: "success";
+}) {
+  return (
+    <Row className="items-baseline gap-1">
+      <span className="typo-caption-3 text-place-h">{label}</span>
+      <span
+        className={cn(
+          "typo-caption-1 font-semibold tabular-nums",
+          tone === "success" && value > 0
+            ? "text-success-500"
+            : "text-foreground",
+        )}
+      >
+        {value}
+      </span>
+    </Row>
+  );
+}

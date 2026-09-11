@@ -22,7 +22,7 @@ export default function GroupLanding({ onCancel }: { onCancel?: () => void }) {
   const [tab, setTab] = useState<TabKey>(onCancel ? "explore" : "create");
 
   return (
-    <main className="mx-auto flex w-full max-w-[420px] flex-col gap-3">
+    <main className="mx-auto flex w-full max-w-[420px] flex-col gap-3 lg:max-w-[720px]">
       {onCancel && (
         <Row className="w-full">
           <GhostBtn

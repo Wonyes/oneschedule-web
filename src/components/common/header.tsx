@@ -33,7 +33,12 @@ export default async function Header() {
       "
     >
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-1 lg:contents">
-        <Logo />
+        <div className="flex items-center gap-2">
+          <Logo />
+          {isLoggedIn && (
+            <NotificationMenu mobileSlot="top" className="lg:hidden" />
+          )}
+        </div>
 
         <div className="flex justify-center lg:hidden">
           <GroupHeaderControls />
@@ -41,7 +46,6 @@ export default async function Header() {
         </div>
 
         <div className="flex min-w-0 items-center justify-end gap-1 lg:hidden">
-          {isLoggedIn && <NotificationMenu mobileSlot="top" />}
           <ThemeToggle />
           <Suspense fallback={<AuthSkeleton />}>
             <HeaderAuthResolved />

@@ -18,11 +18,9 @@ import { resolveActiveGroup, toMyGroups } from "@/src/lib/activeGroup";
 import { useActiveGroupStore } from "../stores/useActiveGroupStore";
 import { PAGE_SIZE } from "@/src/lib/paging";
 import { usePagedQuery } from "./usePagedQuery";
+import { useRouter } from "next/navigation";
 
-const useMyGroups = (
-  enabled = true,
-  initialData?: MyGroupResponse[],
-) => {
+const useMyGroups = (enabled = true, initialData?: MyGroupResponse[]) => {
   return useQuery({
     queryKey: [groupkeys.myGroup],
 
@@ -179,5 +177,44 @@ export const useProcessJoinRequest = (groupNo: number) => {
       queryClient.invalidateQueries({ queryKey: [groupkeys.joinRequests] });
       queryClient.invalidateQueries({ queryKey: [groupkeys.myGroup] });
     },
+  });
+};
+
+export const useGroupProfileImageUpload = () => {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  return useAppMutation({
+    mutationFn: async ({ file, groupNo }: { file: File; groupNo: number }) => {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      return (await Post<{ profileImageUrl: string }>({
+        url: `/group/${groupNo}/profile-image`,
+        body: formData,
+        headers: { "Content-Type": undefined },
+      })) as { profileImageUrl: string };
+    },
+
+    onSuccess: (data, variables) => {
+      queryClient.setQueriesData<MyGroupResponse[]>(
+        { queryKey: [groupkeys.myGroup] },
+        (prev) =>
+          prev?.map((g) =>
+            g.groupNo === variables.groupNo
+              ? { ...g, profileImageUrl: data.profileImageUrl }
+              : g,
+          ),
+      );
+      queryClient.invalidateQueries({
+        queryKey: [groupkeys.myGroup],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [groupkeys.publicGroups],
+      });
+
+      router.refresh();
+    },
+    retry: false,
   });
 };

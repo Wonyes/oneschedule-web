@@ -46,7 +46,9 @@ export function groupSlug(groupName: string): string {
     .trim()
     .toLowerCase()
     .replace(/\s+/g, "-")
-    .replace(/[^\p{L}\p{N}-]/gu, "");
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
 export function groupPath(

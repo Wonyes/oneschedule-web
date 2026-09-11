@@ -1,6 +1,7 @@
 import { cn } from "@/src/utils/cn";
 
 type BaseCardProps = {
+  id?: string;
   children: React.ReactNode;
   className?: string;
   childClass?: string;
@@ -9,6 +10,7 @@ type BaseCardProps = {
 };
 
 export default function BaseCard({
+  id,
   children,
   className,
   childClass,
@@ -17,6 +19,7 @@ export default function BaseCard({
 }: BaseCardProps) {
   return (
     <div
+      id={id}
       className={cn(
         `
         relative

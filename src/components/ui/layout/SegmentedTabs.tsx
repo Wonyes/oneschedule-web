@@ -1,5 +1,6 @@
 "use client";
 
+import { useLayoutEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 
 import { springGlide } from "@/src/lib/motion";
@@ -32,8 +33,30 @@ export default function SegmentedTabs<T extends string>({
   fit = false,
   className,
 }: SegmentedTabsProps<T>) {
+  const listRef = useRef<HTMLDivElement>(null);
+  const [indicator, setIndicator] = useState<{
+    left: number;
+    width: number;
+  } | null>(null);
+
+  useLayoutEffect(() => {
+    const list = listRef.current;
+    const active = list?.querySelector<HTMLElement>('[aria-selected="true"]');
+    if (!list || !active) return;
+
+    const measure = () =>
+      setIndicator({ left: active.offsetLeft, width: active.offsetWidth });
+
+    measure();
+
+    const observer = new ResizeObserver(measure);
+    observer.observe(list);
+    return () => observer.disconnect();
+  }, [value, tabs.length]);
+
   return (
     <div
+      ref={listRef}
       role="tablist"
       aria-label={label}
       className={cn(
@@ -42,6 +65,16 @@ export default function SegmentedTabs<T extends string>({
         className,
       )}
     >
+      {indicator && (
+        <motion.span
+          aria-hidden="true"
+          initial={false}
+          animate={{ left: indicator.left, width: indicator.width }}
+          transition={springGlide}
+          className="neu-flat absolute inset-y-1 rounded-lg"
+        />
+      )}
+
       {tabs.map((tab) => (
         <button
           key={tab.key}
@@ -74,15 +107,6 @@ export default function SegmentedTabs<T extends string>({
             value === tab.key ? "text-accent" : "text-secondary",
           )}
         >
-          {value === tab.key && (
-            <motion.span
-              aria-hidden="true"
-              layoutId={`segmented-tabs-${label}`}
-              transition={springGlide}
-              className="neu-flat absolute inset-0 rounded-lg"
-            />
-          )}
-
           <span className="relative z-10 flex items-center gap-1.5">
             {tab.icon}
             {tab.shortLabel ? (

@@ -1,10 +1,10 @@
 "use client";
 
-import { Check, Hourglass, Search, Users } from "lucide-react";
+import { Check, Hourglass, Loader2, Plus, Search, Users } from "lucide-react";
+import GroupAvatar from "./GroupAvatar";
 import { useRef, useState } from "react";
 
 import BaseCard from "@/src/components/ui/card/BaseCard";
-import { Primary, SecondaryBtn } from "@/src/components/ui/layout/button";
 import { Column, Row } from "@/src/components/ui/layout/flex";
 import { Input } from "@/src/components/ui/layout/input";
 import Skeleton from "@/src/components/ui/Skeleton";
@@ -20,10 +20,14 @@ import {
   JoinRequestMessageContent,
   JoinRequestMessageRef,
 } from "@/src/components/ui/overlay/modal/JoinRequestMessageContent";
+import { useRouter } from "next/navigation";
+import { motion } from "motion/react";
+import { rise, stagger } from "@/src/lib/motion";
+import { cn } from "@/src/utils/cn";
 
 function GroupRow({ group }: { group: PublicGroup }) {
+  const router = useRouter();
   const { openToast, openAlert, openModal, closeModal } = useOverlay();
-
   const messageRef = useRef<JoinRequestMessageRef>(null);
 
   const { mutate: join, isPending: joining } = useJoinPublicGroup();
@@ -74,56 +78,84 @@ function GroupRow({ group }: { group: PublicGroup }) {
     });
   };
 
+  const status = group.joined ? "joined" : group.pending ? "pending" : "none";
+
   return (
-    <Row className="w-full items-center gap-3 border-b border-divider py-3.5 last:border-none">
-      <Column className="min-w-0 flex-1 gap-1">
-        <Row className="items-center gap-2">
-          <span className="typo-sub-t-2 truncate text-foreground">
+    <motion.div
+      variants={rise}
+      role={group.joined ? "link" : undefined}
+      onClick={() => group.joined && router.push(`/group/${group.groupNo}`)}
+      className={cn(
+        "group relative flex flex-col items-center gap-2.5 rounded-2xl p-3 text-center transition-colors",
+        group.joined && "cursor-pointer hover:bg-surface-hover",
+      )}
+    >
+      <div className="relative">
+        <div className="neu-pressed absolute -inset-2 rounded-full" />
+        <GroupAvatar
+          name={group.groupName}
+          imageUrl={group.profileImageUrl}
+          className="relative h-16 w-16 rounded-full typo-sub-t-1"
+        />
+
+        {status === "joined" ? (
+          <span
+            title="가입됨"
+            className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-success-500 text-on-primary ring-2 ring-[var(--surface)]"
+          >
+            <Check size={12} strokeWidth={3} />
+          </span>
+        ) : status === "pending" ? (
+          <span
+            title="가입 대기 중"
+            className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-pending-500 text-on-primary ring-2 ring-[var(--surface)]"
+          >
+            <Hourglass size={11} strokeWidth={2.5} />
+          </span>
+        ) : (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleClick();
+            }}
+            disabled={isPending}
+            aria-label={needsApproval ? "가입 신청" : "가입하기"}
+            className="btn-primary btn-spring absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full ring-2 ring-[var(--surface)] disabled:opacity-60"
+          >
+            {isPending ? (
+              <Loader2 size={12} strokeWidth={3} className="animate-spin" />
+            ) : (
+              <Plus size={13} strokeWidth={3} />
+            )}
+          </button>
+        )}
+      </div>
+
+      <Column className="w-full min-w-0 items-center gap-0.5">
+        <Row className="max-w-full items-center gap-1">
+          <span className="truncate typo-caption-1 font-semibold text-foreground">
             {group.groupName}
           </span>
-
           {needsApproval && (
-            <span className="typo-caption-3 shrink-0 rounded-full bg-pending-500/15 px-2 py-0.5 text-pending-500">
-              승인 필요
+            <span className="shrink-0 rounded-full bg-pending-500/12 px-1.5 text-[9px] font-semibold leading-4 text-pending-500">
+              승인
             </span>
           )}
         </Row>
-
+        <Row className="items-center gap-1 text-place-h">
+          <Users size={10} strokeWidth={2} />
+          <span className="typo-caption-3 tabular-nums">
+            {group.memberCount}
+          </span>
+        </Row>
         {group.description && (
-          <span className="typo-caption-2 truncate text-muted">
+          <span className="line-clamp-2 typo-caption-3 leading-snug text-muted">
             {group.description}
           </span>
         )}
-
-        <Row className="items-center gap-1">
-          <Users size={11} strokeWidth={1.75} className="text-place-h" />
-          <span className="typo-caption-3 text-place-h">
-            {group.memberCount}명
-          </span>
-        </Row>
       </Column>
-
-      {group.joined ? (
-        <Row className="shrink-0 items-center gap-1 px-3 text-success-500">
-          <Check size={13} strokeWidth={2} />
-          <span className="typo-caption-2">가입됨</span>
-        </Row>
-      ) : group.pending ? (
-        <Row className="shrink-0 items-center gap-1 px-3 text-pending-500">
-          <Hourglass size={13} strokeWidth={2} />
-          <span className="typo-caption-2 whitespace-nowrap">가입 대기 중</span>
-        </Row>
-      ) : (
-        <SecondaryBtn
-          className="h-9 shrink-0 px-3.5 typo-caption-2"
-          text={
-            isPending ? "처리 중…" : needsApproval ? "신청하기" : "가입하기"
-          }
-          isDisabled={isPending}
-          onClick={handleClick}
-        />
-      )}
-    </Row>
+    </motion.div>
   );
 }
 
@@ -155,12 +187,18 @@ export default function PublicGroupList() {
         onChange={(e) => setKeyword(e.target.value)}
       />
 
-      <Column className="mt-2 w-full">
+      <Column className="mt-4 w-full">
         {isPending ? (
           <Column className="gap-3 py-4">
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
+            <div className="grid w-full grid-cols-2 gap-3 sm:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Column key={i} className="items-center gap-2 p-3">
+                  <Skeleton className="h-20 w-20 rounded-full" />
+                  <Skeleton className="h-3 w-16" />
+                  <Skeleton className="h-2.5 w-10" />
+                </Column>
+              ))}
+            </div>
           </Column>
         ) : isError ? (
           <p className="typo-caption-2 py-8 text-center text-muted">
@@ -173,17 +211,28 @@ export default function PublicGroupList() {
               : "아직 공개된 그룹이 없습니다."}
           </p>
         ) : (
-          groups.map((group) => <GroupRow key={group.groupNo} group={group} />)
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            animate="show"
+            className="grid w-full grid-cols-2 gap-1 sm:grid-cols-3"
+          >
+            {groups.map((group) => (
+              <GroupRow key={group.groupNo} group={group} />
+            ))}
+          </motion.div>
         )}
       </Column>
 
       {hasNextPage && (
-        <Primary
-          className="mt-4 w-full"
-          text={isFetchingNextPage ? "불러오는 중…" : "더 보기"}
-          isDisabled={isFetchingNextPage}
+        <button
+          type="button"
           onClick={() => fetchNextPage()}
-        />
+          disabled={isFetchingNextPage}
+          className="neu-btn btn-spring mt-4 flex h-10 w-full items-center justify-center rounded-xl typo-caption-2 font-medium text-secondary hover:text-foreground disabled:opacity-60"
+        >
+          {isFetchingNextPage ? "불러오는 중…" : "더 보기"}
+        </button>
       )}
     </BaseCard>
   );

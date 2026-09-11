@@ -1,4 +1,4 @@
-export type NotificationType =
+type NotificationType =
   | "GROUP_JOIN_REQUESTED"
   | "GROUP_JOIN_APPROVED"
   | "GROUP_JOIN_REJECTED"

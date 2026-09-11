@@ -84,12 +84,14 @@ describe("groupSlug / groupPath (URL 조각)", () => {
     expect(groupSlug("Wony House")).toBe("wony-house");
   });
 
-  test("한글은 그대로 남긴다", () => {
-    expect(groupSlug("운동 모임")).toBe("운동-모임");
+  test("한글은 URL에서 %로 깨져 보이므로 버린다", () => {
+    expect(groupSlug("운동 모임")).toBe("");
+    expect(groupPath({ groupNo: 45, groupName: "공개그룹" })).toBe("/group/45");
   });
 
-  test("기호는 버린다", () => {
-    expect(groupSlug("팀! (2026)")).toBe("팀-2026");
+  test("기호는 버리고 영문·숫자만 남긴다", () => {
+    expect(groupSlug("팀! (2026)")).toBe("2026");
+    expect(groupSlug("wony  house!!")).toBe("wony-house");
   });
 
   test("번호 뒤에 이름을 붙인다", () => {

@@ -20,6 +20,7 @@ export interface MyGroupResponse {
   position: string;
   visibility: GroupVisibility;
   description: string | null;
+  profileImageUrl?: string;
   members: GroupMember[];
 }
 
@@ -31,6 +32,7 @@ export interface PublicGroup {
   memberCount: number;
   joined: boolean;
   pending: boolean;
+  profileImageUrl?: string;
 }
 
 export interface PageResponse<T> {

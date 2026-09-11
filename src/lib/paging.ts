@@ -8,4 +8,6 @@ export const PAGE_SIZE = {
   groupMembers: 5,
 
   todaySchedules: 5,
+
+  notifications: 10,
 } as const;

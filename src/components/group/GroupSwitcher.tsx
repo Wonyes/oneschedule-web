@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
 import DropdownMenu from "../ui/DropdownMenu";
+import GroupAvatar from "./GroupAvatar";
 import { Column } from "../ui/layout/flex";
 import { useActiveGroup } from "@/src/hooks/querys/useGroup";
 import { useActiveGroupStore } from "@/src/hooks/stores/useActiveGroupStore";
@@ -32,11 +33,19 @@ export default function GroupSwitcher({
       triggerClassName="text-secondary px-2 py-1.5 typo-caption-2 hover:text-foreground lg:px-2.5"
       trigger={(isOpen) => (
         <>
-          <Users
-            size={13}
-            strokeWidth={1.75}
-            className="text-accent shrink-0"
-          />
+          {group ? (
+            <GroupAvatar
+              name={group.groupName}
+              imageUrl={group.profileImageUrl}
+              size="xs"
+            />
+          ) : (
+            <Users
+              size={13}
+              strokeWidth={1.75}
+              className="text-accent shrink-0"
+            />
+          )}
 
           <span className="max-w-[72px] truncate sm:max-w-[120px] hidden lg:inline">
             {group?.groupName}
@@ -69,8 +78,13 @@ export default function GroupSwitcher({
                     }
                     close();
                   }}
-                  className="hover:bg-surface-hover flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left transition-colors"
+                  className="hover:bg-surface-hover flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left transition-colors"
                 >
+                  <GroupAvatar
+                    name={item.groupName}
+                    imageUrl={item.profileImageUrl}
+                    size="sm"
+                  />
                   <Column className="min-w-0 flex-1 gap-0.5">
                     <span className="typo-caption-2 text-foreground truncate">
                       {item.groupName}

@@ -16,7 +16,7 @@ export default function SectionBody({
       initial={animate ? { opacity: 0, y: 8 } : false}
       animate={{ opacity: 1, y: 0 }}
       transition={springSoft}
-      className="flex min-h-0 w-full flex-1 flex-col"
+      className="scroll-hidden flex min-h-0 w-full flex-1 flex-col p-2 overflow-y-auto"
     >
       {children}
     </motion.div>
