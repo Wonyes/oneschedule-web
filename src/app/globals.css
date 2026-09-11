@@ -363,8 +363,8 @@
 
   --radius-outer: 1.25rem;
   --radius-inner: 0.875rem;
-  --radius-nested: 0.5rem;
-  --radius-nested-row: 0.375rem;
+  --radius-nested: 0.75rem;
+  --radius-nested-row: 0.5rem;
 
   --gradient-mint: linear-gradient(90deg, #34d399 0%, #059669 100%);
   --gradient-pink: linear-gradient(90deg, #f43f5e 0%, #e11d48 100%);
