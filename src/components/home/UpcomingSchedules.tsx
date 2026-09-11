@@ -9,6 +9,7 @@ import BaseCard from "@/src/components/ui/card/BaseCard";
 import { Column, Between } from "@/src/components/ui/layout/flex";
 import ScheduleCard from "@/src/components/schedule/components/ScheduleCard";
 import { useSchedules } from "@/src/hooks/querys/useSchedule";
+import { useActiveGroup } from "@/src/hooks/querys/useGroup";
 import Skeleton from "@/src/components/ui/Skeleton";
 import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
 import { toScheduleEvent } from "@/src/utils/schedule";
@@ -18,16 +19,19 @@ const MAX_ITEMS = 3;
 export default function UpcomingSchedules({ today }: { today: Date }) {
   const { openSheet } = useSheetStore();
 
-  const { data: personalSchedules, isPending: personalPending } = useSchedules(
+  const { group } = useActiveGroup();
+
+  const { data: personalSchedules, isLoading: personalLoading } = useSchedules(
     "PERSONAL",
     true,
   );
-  const { data: groupSchedules, isPending: groupPending } = useSchedules(
+  const { data: groupSchedules, isLoading: groupLoading } = useSchedules(
     "GROUP",
     true,
+    group?.groupNo,
   );
 
-  const loading = personalPending || groupPending;
+  const loading = personalLoading || groupLoading;
 
   const upcomingEvents = useMemo(() => {
     const start = startOfDay(today).getTime();

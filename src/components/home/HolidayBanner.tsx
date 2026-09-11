@@ -9,7 +9,7 @@ import Skeleton from "@/src/components/ui/Skeleton";
 import { useHolidays } from "@/src/hooks/querys/useCommonApi";
 
 export default function HolidayBanner({ today }: { today: Date }) {
-  const { data: holidays, isPending } = useHolidays();
+  const { data: holidays, isLoading } = useHolidays();
 
   const upcomingHoliday = useMemo(() => {
     if (!holidays?.length) return null;
@@ -30,7 +30,7 @@ export default function HolidayBanner({ today }: { today: Date }) {
       .sort((a, b) => a.date.getTime() - b.date.getTime())[0];
   }, [holidays, today]);
 
-  if (isPending) {
+  if (isLoading) {
     return (
       <BaseCard className="p-4">
         <Between>

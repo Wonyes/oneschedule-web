@@ -32,9 +32,9 @@ export default function OnboardingChecklist({
   today: Date;
 }) {
   const { openSheet } = useSheetStore();
-  const { data: schedules, isPending: schedulesPending } =
+  const { data: schedules, isLoading: schedulesLoading } =
     useSchedules("PERSONAL");
-  const { groups, isPending: groupsPending } = useActiveGroup();
+  const { groups, isLoading: groupsLoading } = useActiveGroup();
 
   const [dismissed, setDismissed] = useState<boolean | null>(null);
 
@@ -80,7 +80,7 @@ export default function OnboardingChecklist({
   const doneCount = steps.filter((step) => step.done).length;
   const allDone = doneCount === steps.length;
 
-  const undecided = dismissed === null || schedulesPending || groupsPending;
+  const undecided = dismissed === null || schedulesLoading || groupsLoading;
 
   if (undecided || dismissed || allDone) return null;
 

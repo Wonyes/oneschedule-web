@@ -51,9 +51,9 @@ export default function HomeStats({
   initialGroups?: MyGroupResponse[];
   activeGroup?: MyGroupResponse;
 }) {
-  const { data: schedules, isPending: schedulesPending } =
+  const { data: schedules, isLoading: schedulesLoading } =
     useSchedules("PERSONAL");
-  const { group, isPending: groupPending } = useActiveGroup(
+  const { group, isLoading: groupLoading } = useActiveGroup(
     true,
     initialGroups,
   );
@@ -88,19 +88,19 @@ export default function HomeStats({
         icon={<CalendarCheck size={17} strokeWidth={1.75} />}
         title="오늘 일정"
         value={`${todayCount}개`}
-        loading={schedulesPending}
+        loading={schedulesLoading}
       />
       <StatTile
         icon={<CalendarRange size={17} strokeWidth={1.75} />}
         title="이번 주 일정"
         value={`${weekCount}개`}
-        loading={schedulesPending}
+        loading={schedulesLoading}
       />
       <StatTile
         icon={<Users size={17} strokeWidth={1.75} />}
         title="그룹 멤버"
         value={displayGroup ? `${displayGroup.members.length}명` : "-"}
-        loading={groupPending && !activeGroup}
+        loading={groupLoading && !activeGroup}
       />
     </Row>
   );
