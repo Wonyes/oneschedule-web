@@ -245,7 +245,7 @@ export default function GroupMemberList({
                           close();
                           memberChanges(member);
                         }}
-                        className="w-full rounded-lg px-3 py-2 text-left typo-caption-2 text-secondary hover:bg-white/5"
+                        className="w-full rounded-lg px-3 py-2 text-left typo-caption-2 text-secondary hover:bg-surface-hover"
                       >
                         멤버 수정
                       </button>
@@ -257,7 +257,7 @@ export default function GroupMemberList({
                           close();
                           memberDelete(member);
                         }}
-                        className="mt-1 w-full rounded-lg px-3 py-2 text-left typo-caption-2 text-error-500 hover:bg-white/5"
+                        className="mt-1 w-full rounded-lg px-3 py-2 text-left typo-caption-2 text-error-500 hover:bg-surface-hover"
                       >
                         그룹 내보내기
                       </button>

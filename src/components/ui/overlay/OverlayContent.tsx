@@ -1,4 +1,10 @@
-import React from "react";
+"use client";
+
+import { AlertCircle, Info } from "lucide-react";
+import { motion } from "motion/react";
+
+import { springSnappy } from "@/src/lib/motion";
+import { cn } from "@/src/utils/cn";
 import OverlayShell from "./OverlayShell";
 import { OverlayLayer } from "./layer";
 
@@ -21,27 +27,36 @@ export default function OverlayContent({
   buttons,
   layer,
 }: OverlayContentProps) {
+  const confirm = layer === "confirm";
+  const Icon = confirm ? AlertCircle : Info;
+
   return (
-    <OverlayShell
-      show={show}
-      layer={layer}
-      className="max-w-[360px] overflow-hidden rounded-2xl border border-divider bg-surface shadow-2xl"
-    >
-      <div className="px-6 pt-6 pb-2">
-        <h3 className="text-base font-bold text-foreground tracking-tight">
-          {title}
-        </h3>
+    <OverlayShell show={show} layer={layer} className="max-w-[340px]">
+      <div className="flex flex-col items-center px-6 pt-7 text-center">
+        <motion.span
+          initial={{ scale: 0.4, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ ...springSnappy, delay: 0.08 }}
+          className={cn(
+            "neu-btn flex h-12 w-12 items-center justify-center rounded-2xl",
+            confirm ? "text-pending-500" : "text-accent",
+          )}
+        >
+          <Icon size={22} strokeWidth={1.75} />
+        </motion.span>
+
+        <h3 className="mt-4 typo-sub-t-1 text-foreground">{title}</h3>
+
+        {(message || message2 || message3) && (
+          <div className="mt-1.5 flex flex-col gap-0.5 whitespace-pre-line break-words typo-caption-1 text-muted">
+            {message && <p>{message}</p>}
+            {message2 && <p>{message2}</p>}
+            {message3 && <p>{message3}</p>}
+          </div>
+        )}
       </div>
 
-      <div className="px-6 py-2 space-y-1 text-secondary text-sm whitespace-pre-line break-words">
-        {message && <p>{message}</p>}
-        {message2 && <p>{message2}</p>}
-        {message3 && <p>{message3}</p>}
-      </div>
-
-      <div className="px-6 pt-4 pb-6 flex items-center gap-2.5">
-        {buttons}
-      </div>
+      <div className="flex items-center gap-2.5 px-6 pb-6 pt-6">{buttons}</div>
     </OverlayShell>
   );
 }

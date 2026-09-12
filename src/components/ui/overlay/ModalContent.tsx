@@ -1,5 +1,5 @@
-import React from "react";
-import TitleHeader from "../layout/TitleHeader";
+"use client";
+
 import OverlayShell from "./OverlayShell";
 import { OverlayLayer } from "./layer";
 
@@ -22,17 +22,17 @@ export default function ModalContent({
     <OverlayShell
       show={show}
       layer={layer}
-      className="max-w-[500px] justify-between rounded-[20px] glass"
+      className="max-h-[calc(100dvh-32px)] max-w-[480px]"
     >
-      <div className="flex items-center justify-between px-[30px] pt-[24px] pb-[16px] m-0">
-        <TitleHeader title={title} pad="0" className="text-[20px]" />
+      <div className="px-6 pb-2 pt-6">
+        <h3 className="typo-title-2 text-foreground">{title}</h3>
       </div>
 
-      <div className="flex-grow px-[30px] pb-[20px] text-secondary">
+      <div className="scroll-hidden min-h-0 flex-1 overflow-y-auto px-6 pb-5 pt-2 text-secondary">
         {children}
       </div>
 
-      <div className="flex items-center justify-end gap-[12px] rounded-b-[20px] bg-black/20 border-t border-white/10 px-[30px] py-[16px]">
+      <div className="flex items-center justify-end gap-2.5 border-t border-divider px-6 py-4">
         {buttons}
       </div>
     </OverlayShell>

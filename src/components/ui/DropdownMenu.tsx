@@ -159,8 +159,7 @@ export default function DropdownMenu({
                   transformOrigin: position?.origin,
                 }}
                 className={cn(
-                  "z-[1000] rounded-2xl p-2",
-                  "bg-surface border border-divider shadow-[var(--shadow-float)]",
+                  "neu-float z-[1000] rounded-2xl bg-surface p-2",
                   panelClassName,
                 )}
               >

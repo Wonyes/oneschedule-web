@@ -128,7 +128,7 @@ const GhostBtn = (props: ButtonProps) => {
         bg-transparent
         text-muted
 
-        hover:bg-white/[0.05]
+        hover:bg-surface-hover
         hover:text-foreground
         `,
         props.className,
@@ -154,7 +154,7 @@ const RedBtn = (props: ButtonProps) => {
         border-error-500/25
 
         hover:bg-error-500
-        hover:text-white
+        hover:text-on-primary
         hover:border-transparent
 
         `,

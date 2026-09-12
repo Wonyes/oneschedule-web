@@ -525,6 +525,10 @@
     cursor: pointer;
   }
 
+  button:disabled {
+    cursor: not-allowed;
+  }
+
   /* 뉴모피즘 표면 위에서는 기본 포커스 링이 잘 안 보여서 액센트 링으로 대체한다.
      마우스 클릭 때는 뜨지 않고 키보드 이동일 때만 보인다. */
   :where(button, a, input, textarea, select, [tabindex]):focus-visible {

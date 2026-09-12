@@ -87,8 +87,8 @@ export default function ScheduleCard({
         }}
         className={`
           group px-2 py-1 rounded-md truncate flex items-center gap-1.5
-          bg-surface/80  border border-white/5
-          hover:border-white/15 hover:bg-surface-hover
+          bg-surface/80  border border-divider/60
+          hover:border-divider hover:bg-surface-hover
           cursor-pointer transition-all duration-150 ${connectionClass} ${conflictRing} ${className}
         `}
       >
@@ -108,7 +108,7 @@ export default function ScheduleCard({
         onClick={onClick}
         className={`
           flex items-center gap-3 rounded-xl
-          bg-surface/90 border border-white/10
+          bg-surface/90 border border-divider
           p-3 transition-all duration-150
           cursor-pointer hover:border-accent/40 hover:bg-surface-hover ${conflictRing} ${className}
         `}
@@ -136,7 +136,7 @@ export default function ScheduleCard({
         onClick={onClick}
         className={`
           absolute rounded-lg
-          bg-surface/90  border border-white/10
+          bg-surface/90  border border-divider
           px-2 shadow-xl z-10 overflow-hidden transition-all duration-200
           cursor-pointer hover:border-accent/40 hover:bg-surface-hover
           ${compact ? "py-1" : "py-1.5"} ${conflictRing} ${className}
@@ -186,7 +186,7 @@ export default function ScheduleCard({
       onClick={onClick}
       className={`
         absolute rounded-lg
-        bg-surface/90 border border-white/10
+        bg-surface/90 border border-divider
         px-2 z-10 overflow-hidden
         cursor-pointer hover:z-50 hover:border-accent/50 hover:bg-surface-hover hover:shadow-2xl
         transition-all duration-200

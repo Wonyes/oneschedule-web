@@ -51,7 +51,7 @@ export function useOverlay() {
       buttons={
         <Primary
           onClick={() => closeOverlay("alert", true)}
-          className="typo-caption-2 w-full p-3"
+          className="h-11 w-full typo-caption-2"
           text={alert.mainBtn}
         />
       }
@@ -71,12 +71,12 @@ export function useOverlay() {
           <SecondaryBtn
             onClick={() => closeOverlay("confirm")}
             text={confirm.subBtn}
-            className="p-[12px] w-full"
+            className="h-11 w-full typo-caption-2"
           />
           <Primary
             onClick={() => closeOverlay("confirm", true)}
             text={confirm.mainBtn}
-            className="p-[12px] w-full"
+            className="h-11 w-full typo-caption-2"
           />
         </>
       }
@@ -92,12 +92,12 @@ export function useOverlay() {
           <SecondaryBtn
             onClick={() => closeOverlay("modal")}
             text={modal.subBtn}
-            className="w-[100px] p-[12px] w-full"
+            className="h-10 px-4 typo-caption-2"
           />
           <Primary
             onClick={() => modal.onFunc?.()}
             text={modal.mainBtn}
-            className="w-[100px] p-[12px] w-full"
+            className="h-10 px-5 typo-caption-2"
           />
         </>
       }

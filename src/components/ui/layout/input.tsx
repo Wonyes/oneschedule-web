@@ -137,9 +137,9 @@ export function Input({
 
       <AnimatePresence mode="wait" initial={false}>
         {errorMessage ? (
-          <Message text={errorMessage} className="text-red-400" />
+          <Message text={errorMessage} className="text-error-500" />
         ) : successMessage ? (
-          <Message text={successMessage} className="text-blue-400" />
+          <Message text={successMessage} className="text-success-500" />
         ) : description ? (
           <Message text={description} className="text-muted" />
         ) : null}

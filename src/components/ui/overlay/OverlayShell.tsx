@@ -26,7 +26,7 @@ export default function OverlayShell({
       {show && (
         <motion.div
           key="backdrop"
-          className={`fixed inset-0 ${z.backdrop} bg-black/70`}
+          className={`fixed inset-0 ${z.backdrop} bg-black/55`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -40,13 +40,19 @@ export default function OverlayShell({
           role="dialog"
           aria-modal="true"
           className={cn(
-            "fixed left-1/2 top-1/2 flex w-[calc(100%-32px)] flex-col text-foreground",
+            "neu-float fixed left-1/2 top-1/2 flex w-[calc(100%-32px)] flex-col overflow-hidden rounded-[var(--radius-outer)] bg-surface text-foreground",
             z.box,
             className,
           )}
-          initial={{ ...centered, opacity: 0, scale: 0.96 }}
+          initial={{ ...centered, opacity: 0, scale: 0.92, y: "-46%" }}
           animate={{ ...centered, opacity: 1, scale: 1 }}
-          exit={{ ...centered, opacity: 0, scale: 0.97, transition: fadeQuick }}
+          exit={{
+            ...centered,
+            opacity: 0,
+            scale: 0.96,
+            y: "-48%",
+            transition: fadeQuick,
+          }}
           transition={springSoft}
         >
           {children}
