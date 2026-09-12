@@ -75,6 +75,8 @@ export const useSheetStore = create<SheetStore>((set) => ({
     if (event) {
       const start = new Date(event.startDate);
       const end = new Date(event.endDate);
+      const multiDay =
+        format(start, "yyyy-MM-dd") !== format(end, "yyyy-MM-dd");
 
       set({
         open: true,
@@ -83,7 +85,7 @@ export const useSheetStore = create<SheetStore>((set) => ({
         form: {
           title: event.title,
           startDate: start,
-          endDate: end,
+          endDate: multiDay ? end : null,
           startTime: format(start, "HH:mm"),
           endTime: format(end, "HH:mm"),
           category: event.category,
@@ -101,6 +103,9 @@ export const useSheetStore = create<SheetStore>((set) => ({
       createType: type ?? "PERSONAL",
       form: {
         ...initialForm,
+
+        // 그룹 일정은 업무, 개인 일정은 개인이 기본 카테고리
+        category: type === "GROUP" ? "work" : "personal",
 
         startDate: date ?? null,
         endDate: null,

@@ -18,7 +18,7 @@ export default function CalendarBody() {
   return (
     <div
       className={cn(
-        "p-5 rounded-2xl bg-surface border border-divider",
+        "neu-flat rounded-2xl p-5",
         "shadow-2xl mt-2 z-[999] w-full flex flex-col items-center gap-4 text-foreground",
       )}
     >
@@ -28,7 +28,7 @@ export default function CalendarBody() {
             type="button"
             className={cn(
               "w-7 h-7 flex items-center justify-center rounded-lg",
-              "text-muted hover:bg-white/10 hover:text-foreground transition-colors",
+              "text-muted hover:bg-surface-hover hover:text-foreground transition-colors",
               "cursor-pointer rotate-180",
               isCurrentMonth &&
                 "cursor-auto opacity-30 hover:bg-transparent hover:text-muted",
@@ -47,7 +47,7 @@ export default function CalendarBody() {
             type="button"
             className={cn(
               "w-7 h-7 flex items-center justify-center rounded-lg",
-              "text-muted hover:bg-white/10 hover:text-foreground transition-colors",
+              "text-muted hover:bg-surface-hover hover:text-foreground transition-colors",
               "cursor-pointer",
             )}
             onClick={() => moveMonth("next")}

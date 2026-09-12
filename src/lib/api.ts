@@ -7,7 +7,7 @@ interface CustomAxiosRequestConfig extends AxiosRequestConfig {
 
 const api = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_SERVER_IP}/v1/api`,
-  timeout: 5000,
+  timeout: 15000,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",

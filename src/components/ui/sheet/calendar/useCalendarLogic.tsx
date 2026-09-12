@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { format, isSameDay, startOfDay } from "date-fns";
 
 import { cn } from "@/src/utils/cn";
 import { useCalendarStore } from "@/src/hooks/stores/useCalendarStore";
@@ -30,9 +30,9 @@ const CalendarTD = ({
         select-none
         `,
 
-        className?.includes("sunday") && "text-rose-400 font-medium",
+        className?.includes("sunday") && "text-error-500 font-medium",
 
-        className?.includes("saturday") && "text-sky-400 font-medium",
+        className?.includes("saturday") && "text-blue font-medium",
 
         className?.includes("impossible_select") &&
           `
@@ -97,7 +97,9 @@ const Day = ({
         transition-colors
         `,
 
-        !isSelected && !isRange && "hover:bg-white/10 hover:text-foreground",
+        !isSelected &&
+          !isRange &&
+          "hover:bg-surface-hover hover:text-foreground",
 
         isRange &&
           `
@@ -109,7 +111,7 @@ const Day = ({
         isSelected &&
           `
           bg-accent
-          text-white
+          text-on-primary
           font-semibold
           rounded-lg
           shadow-md
@@ -152,8 +154,11 @@ export const useCalendarLogic = () => {
     const isInRange =
       startDate && endDate && date > startDate && date < endDate;
 
+    // 오늘 이전만 막는다. 오늘은 고를 수 있고, 이미 선택된 날짜(과거 일정 수정)도 풀리지 않게 둔다.
+    const isPast = date < startOfDay(currentDate) && !isStartDate && !isEndDate;
+
     return {
-      isFuture: currentDate > date,
+      isFuture: isPast,
       isStartDate,
       isEndDate,
       isInRange,
@@ -227,13 +232,14 @@ export const useCalendarLogic = () => {
       const classes = getDateClasses(dateStatus);
 
       const handleDateClick = (date: Date) => {
-        const { startDate, endDate } = form;
+        const { startDate } = form;
+        // 시작일과 같은 종료일은 "하루짜리"라서 범위가 없는 것으로 본다.
+        const endDate =
+          form.endDate && startDate && isSameDay(form.endDate, startDate)
+            ? null
+            : form.endDate;
 
-        if (
-          startDate &&
-          !endDate &&
-          format(startDate, "yyyy-MM-dd") === format(date, "yyyy-MM-dd")
-        ) {
+        if (startDate && !endDate && isSameDay(startDate, date)) {
           return;
         }
 
@@ -300,7 +306,7 @@ export const useCalendarLogic = () => {
       <CalendarTable>
         <thead>
           <tr>
-            <CalendarTD className="sunday weekly text-rose-400 font-semibold">
+            <CalendarTD className="sunday weekly text-error-500 font-semibold">
               일
             </CalendarTD>
 
@@ -324,7 +330,7 @@ export const useCalendarLogic = () => {
               금
             </CalendarTD>
 
-            <CalendarTD className="saturday weekly text-sky-400 font-semibold">
+            <CalendarTD className="saturday weekly text-blue font-semibold">
               토
             </CalendarTD>
           </tr>
