@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 
 import { ScheduleViewType } from "@/src/types/schedule";
@@ -12,7 +12,6 @@ const parse = (raw: string | null): ScheduleViewType =>
 
 export function useScheduleView() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const pathname = usePathname();
 
   const viewType = parse(searchParams.get(PARAM));
@@ -25,11 +24,14 @@ export function useScheduleView() {
       else next.delete(PARAM);
 
       const query = next.toString();
-      router.replace(query ? `${pathname}?${query}` : pathname, {
-        scroll: false,
-      });
+      // 서버 왕복 없이 주소만 바꾼다. Next 라우터가 useSearchParams에 반영해 준다.
+      window.history.replaceState(
+        null,
+        "",
+        query ? `${pathname}?${query}` : pathname,
+      );
     },
-    [searchParams, router, pathname],
+    [searchParams, pathname],
   );
 
   return { viewType, setViewType };

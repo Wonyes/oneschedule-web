@@ -2,6 +2,7 @@
 
 import { Timer } from "lucide-react";
 import { format, isSameDay, addDays } from "date-fns";
+import { ko } from "date-fns/locale";
 import { useMemo } from "react";
 
 import ScheduleCard from "../components/ScheduleCard";
@@ -51,7 +52,7 @@ const DayHeader = ({
           mobile ? "text-sm" : "text-xs"
         } ${getDayColor(date, isHoliday)}`}
       >
-        <span>{format(date, "EEE")}</span>
+        <span>{format(date, "EEE", { locale: ko })}</span>
         <WeatherBadge
           targetWeather={targetWeather}
           isLoading={isWeatherLoading}

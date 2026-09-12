@@ -1,6 +1,6 @@
 import { ProcessedWeather } from "@/src/types/schedule";
-import { getWeatherIcon } from "@/src/utils/schedule";
 import Skeleton from "../../ui/Skeleton";
+import WeatherIcon from "./WeatherIcon";
 
 type WeatherProps = {
   targetWeather?: ProcessedWeather[string];
@@ -25,20 +25,16 @@ export default function WeatherBadge({
 
   if (iconOnly) {
     return (
-      <span className="text-[10px] leading-none">
-        {getWeatherIcon(targetWeather.PTY, targetWeather.SKY)}
-      </span>
+      <WeatherIcon pty={targetWeather.PTY} sky={targetWeather.SKY} size={10} />
     );
   }
 
   return (
-    <div className="flex items-center gap-0.5 leading-none">
-      <span className="leading-none">
-        {getWeatherIcon(targetWeather.PTY, targetWeather.SKY)}
-      </span>
-      <span className="typo-caption-1 text-muted leading-none">
+    <span className="inline-flex items-center gap-1 leading-none">
+      <WeatherIcon pty={targetWeather.PTY} sky={targetWeather.SKY} size={13} />
+      <span className="typo-caption-2 tabular-nums leading-none text-muted">
         {targetWeather.TMP}°
       </span>
-    </div>
+    </span>
   );
 }

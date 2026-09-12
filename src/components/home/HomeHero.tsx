@@ -1,6 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
+import { ko } from "date-fns/locale";
 import { Plus } from "lucide-react";
 
 import BaseCard from "@/src/components/ui/card/BaseCard";
@@ -9,7 +10,7 @@ import { Column, Between } from "@/src/components/ui/layout/flex";
 import { MyInfoResponse } from "@/src/hooks/querys/useMembers";
 import { useWeathers } from "@/src/hooks/querys/useCommonApi";
 import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
-import { getWeatherIcon } from "@/src/utils/schedule";
+import WeatherIcon from "@/src/components/schedule/components/WeatherIcon";
 
 function getWeatherPhrase(tmp: number, pty: string) {
   if (pty !== "0") {
@@ -44,7 +45,7 @@ export default function HomeHero({
             안녕하세요, {user.nickname}님
           </h1>
           <p className="mt-1.5 typo-caption-2 text-muted">
-            {format(today, "yyyy년 M월 d일 EEEE")}
+            {format(today, "yyyy년 M월 d일 EEEE", { locale: ko })}
             {todayWeather && (
               <>
                 {" · "}
@@ -52,7 +53,12 @@ export default function HomeHero({
                   Number(todayWeather.TMP),
                   todayWeather.PTY,
                 )}{" "}
-                {getWeatherIcon(todayWeather.PTY, todayWeather.SKY)}{" "}
+                <WeatherIcon
+                  pty={todayWeather.PTY}
+                  sky={todayWeather.SKY}
+                  size={14}
+                  className="inline-block align-[-2px]"
+                />{" "}
                 {todayWeather.TMP}°
               </>
             )}

@@ -1,7 +1,8 @@
 "use client";
 
 import { format } from "date-fns";
-import { useState } from "react";
+import { ko } from "date-fns/locale";
+import { useEffect, useRef, useState } from "react";
 import { getDayColor, getDayEvents } from "@/src/utils/schedule";
 import { useScheduleStore } from "@/src/hooks/stores/useScheduleStore";
 import { useScheduleView } from "@/src/hooks/useScheduleView";
@@ -48,6 +49,27 @@ export default function DayView({
   );
 
   const swipeHandlers = useSwipe(next, prev);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // 날짜가 바뀌면 첫 일정 한 시간 전(없으면 오전 8시)이 보이도록 스크롤한다.
+  const firstHour = getDayLayouts.length
+    ? Math.min(
+        ...getDayLayouts.map((l) => new Date(l.event.startDate).getHours()),
+      )
+    : 9;
+
+  useEffect(() => {
+    const root = scrollRef.current;
+    const row = root?.querySelector<HTMLElement>(
+      `[data-hour="${Math.max(firstHour - 1, 0)}"]`,
+    );
+    if (!root || !row) return;
+
+    root.scrollTop =
+      row.getBoundingClientRect().top -
+      root.getBoundingClientRect().top +
+      root.scrollTop;
+  }, [currentDate, firstHour]);
 
   return (
     <div className="h-full neu-flat rounded-3xl flex flex-col overflow-hidden">
@@ -67,7 +89,7 @@ export default function DayView({
           <span
             className={`typo-body-2 font-semibold ${getDayColor(currentDate, holiday)}`}
           >
-            {format(currentDate, "M월, d일 EEEE")}
+            {format(currentDate, "M월 d일 EEEE", { locale: ko })}
           </span>
           <WeatherBadge
             targetWeather={targetWeather}
@@ -83,7 +105,11 @@ export default function DayView({
         />
       </BaseCard>
 
-      <div className="flex-1 overflow-y-auto min-h-0 p-2" {...swipeHandlers}>
+      <div
+        ref={scrollRef}
+        className="flex-1 overflow-y-auto min-h-0 p-2"
+        {...swipeHandlers}
+      >
         <div className="grid grid-cols-[60px_1fr] min-h-full neu-pressed rounded-2xl">
           <HourColumn />
 
@@ -91,6 +117,7 @@ export default function DayView({
             {HOURS.map((hour, i) => (
               <div
                 key={i}
+                data-hour={i}
                 onClick={() =>
                   openSheet({
                     date: currentDate,

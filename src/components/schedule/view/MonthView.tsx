@@ -2,13 +2,14 @@
 
 import { useMemo, useState } from "react";
 import { format, isSameDay, isSameMonth } from "date-fns";
+import { ko } from "date-fns/locale";
 import { Plus } from "lucide-react";
 import {
   findHoliday,
   getDayColor,
   getMonthDates,
+  getMonthWeekLanes,
   getSortedDayEvents,
-  isSameDate,
 } from "@/src/utils/schedule";
 import ScheduleCard from "../components/ScheduleCard";
 import { useScheduleStore } from "@/src/hooks/stores/useScheduleStore";
@@ -20,7 +21,7 @@ import BaseCard from "../../ui/card/BaseCard";
 import { useSwipe } from "@/src/hooks/useSwipe";
 import NavButton from "../components/NavButton";
 
-const WEEKDAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const WEEKDAY_LABELS = ["월", "화", "수", "목", "금", "토", "일"];
 
 export default function MonthView({
   events,
@@ -52,12 +53,26 @@ export default function MonthView({
 
   const swipeHandlers = useSwipe(next, prev);
 
+  // 주 단위로 줄을 배정해서 여러 날짜에 걸친 일정이 같은 줄에 이어지게 한다.
+  const weekLanes = useMemo(() => {
+    const byDate = new Map<
+      number,
+      ReturnType<typeof getMonthWeekLanes>[number]
+    >();
+    for (let i = 0; i < monthDates.length; i += 7) {
+      const week = monthDates.slice(i, i + 7);
+      getMonthWeekLanes(events, week).forEach((lanes, j) =>
+        byDate.set(week[j].getTime(), lanes),
+      );
+    }
+    return byDate;
+  }, [events, monthDates]);
+
   return (
     <div className="h-full neu-flat rounded-3xl flex flex-col overflow-hidden">
       <BaseCard
         className="shrink-0 px-3 py-1 sm:hidden"
         childClass="flex items-center justify-between"
-        glow
       >
         <NavButton direction="prev" onClick={prev} label="이전 달" />
 
@@ -70,12 +85,18 @@ export default function MonthView({
 
       <div className="hidden min-h-0 flex-1 flex-col sm:flex sm:overflow-x-auto">
         <div className="min-w-[560px] flex flex-col flex-1 min-h-0">
-          <BaseCard glow>
+          <BaseCard>
             <div className="grid grid-cols-7 border-b border-divider shrink-0">
-              {WEEKDAY_LABELS.map((d) => (
+              {WEEKDAY_LABELS.map((d, i) => (
                 <div
                   key={d}
-                  className="h-10 flex items-center justify-center text-xs text-muted"
+                  className={`flex h-10 items-center justify-center typo-caption-2 font-medium ${
+                    i === 6
+                      ? "text-error-500"
+                      : i === 5
+                        ? "text-blue"
+                        : "text-muted"
+                  }`}
                 >
                   {d}
                 </div>
@@ -92,29 +113,68 @@ export default function MonthView({
                 const dateKey = format(date, "yyyyMMdd");
                 const targetWeather = weathers?.[dateKey];
 
-                const sortedDayEvents = getSortedDayEvents(events, date);
-
                 const MAX_VISIBLE_EVENTS = 2;
-                const visibleEvents = sortedDayEvents.slice(
-                  0,
-                  MAX_VISIBLE_EVENTS,
+                const lanes = weekLanes.get(date.getTime()) ?? [];
+                const sortedDayEvents = lanes.filter((cell) => cell !== null);
+                const visibleLanes = Array.from(
+                  { length: Math.min(lanes.length, MAX_VISIBLE_EVENTS) },
+                  (_, i) => lanes[i] ?? null,
                 );
-                const hiddenEventsCount =
-                  sortedDayEvents.length - MAX_VISIBLE_EVENTS;
+                const hiddenEventsCount = lanes
+                  .slice(MAX_VISIBLE_EVENTS)
+                  .filter((cell) => cell !== null).length;
+
+                const hasEvents = sortedDayEvents.length > 0;
+                const openDay = () => {
+                  setCurrentDate(date);
+                  setMode("day");
+                };
 
                 return (
                   <div
                     key={date.toISOString()}
-                    onClick={() => openSheet({ date, type: viewType })}
-                    className={`border-r border-b border-divider/40 p-1 cursor-pointer hover:bg-surface/40 transition-colors ${
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`${format(date, "M월 d일", { locale: ko })}${
+                      hasEvents
+                        ? ` 일정 ${sortedDayEvents.length}개 보기`
+                        : " 일정 추가"
+                    }`}
+                    onClick={() =>
+                      hasEvents
+                        ? openDay()
+                        : openSheet({ date, type: viewType })
+                    }
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        if (hasEvents) openDay();
+                        else openSheet({ date, type: viewType });
+                      }
+                    }}
+                    className={`group relative border-r border-b border-divider/40 p-1 cursor-pointer hover:bg-surface/40 transition-colors ${
                       inCurrentMonth ? "" : "opacity-40"
                     }`}
                   >
+                    {hasEvents && (
+                      <button
+                        type="button"
+                        aria-label={`${format(date, "M월 d일", { locale: ko })}에 일정 추가`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openSheet({ date, type: viewType });
+                        }}
+                        className="neu-btn btn-spring absolute right-1 top-1 z-20 flex h-6 w-6 items-center justify-center rounded-lg text-muted opacity-0 hover:text-accent focus-visible:opacity-100 group-hover:opacity-100"
+                      >
+                        <Plus size={12} strokeWidth={2.25} />
+                      </button>
+                    )}
+
                     <div className="flex h-8 items-center justify-left gap-2">
                       <span
-                        className={`flex h-5 w-5 items-center justify-center rounded-full text-xs ${
+                        className={`flex h-6 min-w-6 items-center justify-center px-1 typo-caption-2 tabular-nums ${
                           isSameDay(date, new Date())
-                            ? "bg-primary text-on-primary"
+                            ? "btn-primary rounded-lg font-semibold"
                             : getDayColor(date, isHoliday)
                         }`}
                       >
@@ -127,38 +187,32 @@ export default function MonthView({
                       />
                     </div>
 
-                    <div className="relative h-full flex flex-col gap-0.5 mt-1">
-                      {visibleEvents.map((event) => {
-                        const start = new Date(event.startDate);
-                        const end = new Date(event.endDate);
-                        const isStartOfDay = isSameDate(start, date);
-                        const isEndOfDay = isSameDate(end, date);
-
-                        return (
+                    <div className="relative mt-1 flex flex-col gap-0.5">
+                      {visibleLanes.map((cell, lane) =>
+                        cell ? (
                           <ScheduleCard
-                            key={`${event.id}-${date.toISOString()}`}
-                            event={event}
+                            key={`${cell.event.id}-${date.toISOString()}`}
+                            event={cell.event}
                             date={date}
                             variant="month"
-                            onClick={() => openSheet({ event })}
+                            onClick={() => openSheet({ event: cell.event })}
                             className={`
-                              ${!isStartOfDay ? "ml-[-8px] rounded-l-none border-l-0" : ""}
-                              ${!isEndOfDay ? "mr-[-8px] rounded-r-none border-r-0" : ""}
+                              ${!cell.isStart ? "ml-[-8px] rounded-l-none border-l-0" : ""}
+                              ${!cell.isEnd ? "mr-[-8px] rounded-r-none border-r-0" : ""}
                               z-10
                             `}
                           />
-                        );
-                      })}
+                        ) : (
+                          <div
+                            key={`empty-${lane}`}
+                            aria-hidden
+                            className="h-[26px]"
+                          />
+                        ),
+                      )}
 
                       {hiddenEventsCount > 0 && (
-                        <div
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setCurrentDate(date);
-                            setMode("day");
-                          }}
-                          className="typo-caption-2 text-muted pl-1 cursor-pointer hover:underline"
-                        >
+                        <div className="typo-caption-2 text-muted pl-1">
                           + {hiddenEventsCount}개 더보기
                         </div>
                       )}
@@ -241,7 +295,7 @@ export default function MonthView({
         <div className="shrink-0 border-t border-divider px-3 py-3">
           <div className="mb-2 flex items-center justify-between">
             <span className="typo-body-2 font-semibold text-primary">
-              {format(selectedDate, "M월 d일 EEEE")}
+              {format(selectedDate, "M월 d일 EEEE", { locale: ko })}
             </span>
 
             <button

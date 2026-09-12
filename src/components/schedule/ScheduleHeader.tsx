@@ -9,11 +9,12 @@ import { useWeathers } from "@/src/hooks/querys/useCommonApi";
 import { useSchedules } from "@/src/hooks/querys/useSchedule";
 import { useActiveGroup } from "@/src/hooks/querys/useGroup";
 import { toScheduleEvent } from "@/src/utils/schedule";
-import { ScheduleEvent, WeatherData } from "@/src/types/schedule";
+import { ScheduleEvent } from "@/src/types/schedule";
 import WeatherBadge from "./components/WeatherBadge";
+import { DayGroup } from "./components/DayTimeline";
 import BaseCard from "../ui/card/BaseCard";
 import { Column } from "../ui/layout/flex";
-import { getTimes } from "@/src/utils/time";
+import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
 
 function getFormattedDateTitle(mode: string, date: Date) {
   if (!date || !(date instanceof Date)) return "";
@@ -48,50 +49,13 @@ function eventsOnDay(schedules: ScheduleEvent[], date: Date) {
     );
 }
 
-function SummaryRow({
-  label,
-  dotClassName,
-  events,
-  weather,
-  isWeatherLoading,
-}: {
-  label: string;
-  dotClassName: string;
-  events: ScheduleEvent[];
-  weather?: WeatherData;
-  isWeatherLoading?: boolean;
-}) {
-  const primary = events[0];
-
-  return (
-    <div className="flex items-center justify-between neu-flat px-4 py-3 rounded-nest-row text-xs text-secondary">
-      <div className="flex items-center gap-2 shrink-0">
-        <span
-          className={`w-1.5 h-1.5 rounded-full inline-block ${dotClassName}`}
-        />
-        <span>{label}</span>
-      </div>
-      <div className="flex items-center gap-2 min-w-0 text-foreground font-medium">
-        {primary ? (
-          <span className="truncate">
-            {getTimes(primary.startDate)} · {primary.title}
-            {events.length > 1 ? ` 외 ${events.length - 1}건` : ""}
-          </span>
-        ) : (
-          <span className="text-muted font-normal">일정이 없어요</span>
-        )}
-        <WeatherBadge targetWeather={weather} isLoading={isWeatherLoading} />
-      </div>
-    </div>
-  );
-}
-
 export default function ScheduleHeader() {
   const { mode, currentDate, next, prev } = useScheduleStore();
   const { viewType } = useScheduleView();
   const { group } = useActiveGroup();
   const { data: weathers, isLoading: isWeatherLoading } = useWeathers();
   const { data: schedules } = useSchedules(viewType, true, group?.groupNo);
+  const { openSheet } = useSheetStore();
 
   const today = useMemo(() => new Date(), []);
   const tomorrow = useMemo(() => addDays(today, 1), [today]);
@@ -117,10 +81,12 @@ export default function ScheduleHeader() {
   );
 
   return (
-    <BaseCard className="hidden sm:flex flex-col shrink-0 overflow-hidden" glow>
+    <BaseCard className="hidden shrink-0 flex-col sm:flex">
       <div className="flex items-center justify-between px-5 py-3 border-b border-divider">
         <button
+          type="button"
           onClick={prev}
+          aria-label="이전"
           className="w-7 h-7 rounded-lg neu-btn flex items-center justify-center text-foreground btn-spring hover:scale-105"
         >
           <ChevronLeft size={14} strokeWidth={1.75} />
@@ -134,36 +100,40 @@ export default function ScheduleHeader() {
         </Column>
 
         <button
+          type="button"
           onClick={next}
+          aria-label="다음"
           className="w-7 h-7 rounded-lg neu-btn flex items-center justify-center text-foreground btn-spring hover:scale-105"
         >
           <ChevronRight size={14} strokeWidth={1.75} />
         </button>
       </div>
 
-      <div className="p-5">
-        <div className="neu-flat rounded-nest p-4 flex flex-col gap-3">
-          <h3 className="typo-sub-t-3 font-bold text-foreground">
-            오늘의 주요 일정
-          </h3>
-          <div className="flex flex-col gap-2">
-            <SummaryRow
-              label="오늘의 주요 일정"
-              dotClassName="bg-accent"
-              events={todayEvents}
-              weather={todayWeather}
-              isWeatherLoading={isWeatherLoading}
+      <div className="grid gap-x-8 gap-y-4 px-5 py-4 lg:grid-cols-2">
+        <DayGroup
+          date={today}
+          events={todayEvents}
+          emptyText="오늘은 비어 있어요."
+          trailing={
+            <WeatherBadge
+              targetWeather={todayWeather}
+              isLoading={isWeatherLoading}
             />
-
-            <SummaryRow
-              label="내일의 계획"
-              dotClassName="bg-muted"
-              events={tomorrowEvents}
-              weather={tomorrowWeather}
-              isWeatherLoading={isWeatherLoading}
+          }
+          onEventClick={(event) => openSheet({ event })}
+        />
+        <DayGroup
+          date={tomorrow}
+          events={tomorrowEvents}
+          emptyText="내일은 비어 있어요."
+          trailing={
+            <WeatherBadge
+              targetWeather={tomorrowWeather}
+              isLoading={isWeatherLoading}
             />
-          </div>
-        </div>
+          }
+          onEventClick={(event) => openSheet({ event })}
+        />
       </div>
     </BaseCard>
   );

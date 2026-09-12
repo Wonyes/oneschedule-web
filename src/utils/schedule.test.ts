@@ -3,7 +3,7 @@ import {
   isSameDate,
   findHoliday,
   getDayColor,
-  getWeatherIcon,
+  getWeatherKind,
   getmonthTime,
   getMonthDates,
   getEventPosition,
@@ -92,15 +92,17 @@ describe("findHoliday", () => {
 describe("getDayColor", () => {
   test("공휴일이면 다른 조건보다 우선한다", () => {
     const sunday = new Date(2024, 0, 7);
-    expect(getDayColor(sunday, holiday("20240107"))).toBe("text-red-800");
+    expect(getDayColor(sunday, holiday("20240107"))).toBe(
+      "text-error-500 font-semibold",
+    );
   });
 
-  test("일요일이면 text-red-600", () => {
-    expect(getDayColor(new Date(2024, 0, 7), undefined)).toBe("text-red-600");
+  test("일요일이면 text-error-500", () => {
+    expect(getDayColor(new Date(2024, 0, 7), undefined)).toBe("text-error-500");
   });
 
-  test("토요일이면 text-blue-600", () => {
-    expect(getDayColor(new Date(2024, 0, 6), undefined)).toBe("text-blue-600");
+  test("토요일이면 text-blue", () => {
+    expect(getDayColor(new Date(2024, 0, 6), undefined)).toBe("text-blue");
   });
 
   test("평일이면 text-muted", () => {
@@ -108,23 +110,23 @@ describe("getDayColor", () => {
   });
 });
 
-describe("getWeatherIcon", () => {
-  test("강수형태가 있으면 비/눈 아이콘을 사용한다", () => {
-    expect(getWeatherIcon("1", "1")).toBe("🌧️");
-    expect(getWeatherIcon("3", "1")).toBe("❄️");
+describe("getWeatherKind", () => {
+  test("강수형태가 있으면 비/눈 종류를 사용한다", () => {
+    expect(getWeatherKind("1", "1")).toBe("rain");
+    expect(getWeatherKind("3", "1")).toBe("snow");
   });
 
-  test("알 수 없는 강수코드는 빈 문자열", () => {
-    expect(getWeatherIcon("9", "1")).toBe("");
+  test("알 수 없는 강수코드는 null", () => {
+    expect(getWeatherKind("9", "1")).toBeNull();
   });
 
-  test("강수형태가 없으면(pty=0) 하늘상태 아이콘을 사용한다", () => {
-    expect(getWeatherIcon("0", "1")).toBe("☀️");
-    expect(getWeatherIcon("0", "4")).toBe("☁️");
+  test("강수형태가 없으면(pty=0) 하늘상태 종류를 사용한다", () => {
+    expect(getWeatherKind("0", "1")).toBe("sun");
+    expect(getWeatherKind("0", "4")).toBe("cloud");
   });
 
-  test("알 수 없는 하늘상태 코드는 빈 문자열", () => {
-    expect(getWeatherIcon("0", "2")).toBe("");
+  test("알 수 없는 하늘상태 코드는 null", () => {
+    expect(getWeatherKind("0", "2")).toBeNull();
   });
 });
 
@@ -541,5 +543,55 @@ describe("canEditSchedule (수정·삭제 권한)", () => {
   test("작성자나 내 memberNo를 모르면 허용한다", () => {
     expect(canEditSchedule({ createdBy: undefined, myMemberNo: 7 })).toBe(true);
     expect(canEditSchedule({ createdBy: 7, myMemberNo: undefined })).toBe(true);
+  });
+});
+
+describe("getMonthWeekLanes (월뷰 주 단위 줄 배치)", () => {
+  const { getMonthWeekLanes } = jest.requireActual("./schedule");
+  const week = Array.from({ length: 7 }, (_, i) => new Date(2026, 8, 14 + i)); // 9/14(월) ~ 9/20(일)
+  const ev = (id: number, start: string, end: string) => ({
+    id,
+    title: `e${id}`,
+    startDate: start,
+    endDate: end,
+    category: "work",
+    author: { memberNo: 1, nickname: "a" },
+    createdAt: "",
+  });
+
+  test("여러 날에 걸친 일정은 주 안에서 같은 줄을 유지한다", () => {
+    const lanes = getMonthWeekLanes(
+      [
+        ev(1, "2026-09-15T10:00", "2026-09-18T11:00"),
+        ev(2, "2026-09-16T09:00", "2026-09-16T10:00"),
+      ],
+      week,
+    );
+    // 15~18일 모두 0번 줄이 1번 일정
+    for (const i of [1, 2, 3, 4]) expect(lanes[i][0]?.event.id).toBe(1);
+    // 16일 하루짜리는 밀려서 1번 줄
+    expect(lanes[2][1]?.event.id).toBe(2);
+    // 14일엔 아무것도 없다
+    expect(lanes[0]).toEqual([]);
+  });
+
+  test("주를 넘어 이어지는 일정은 시작/끝 플래그가 주 경계가 아니라 실제 날짜 기준이다", () => {
+    const lanes = getMonthWeekLanes(
+      [ev(1, "2026-09-12T00:00", "2026-09-30T00:00")],
+      week,
+    );
+    expect(lanes[0][0]).toMatchObject({ isStart: false, isEnd: false });
+    expect(lanes[6][0]).toMatchObject({ isStart: false, isEnd: false });
+  });
+
+  test("앞 줄이 끝나면 뒤에 시작한 일정이 빈 줄을 재사용한다", () => {
+    const lanes = getMonthWeekLanes(
+      [
+        ev(1, "2026-09-14T00:00", "2026-09-15T00:00"),
+        ev(2, "2026-09-17T00:00", "2026-09-17T00:00"),
+      ],
+      week,
+    );
+    expect(lanes[3][0]?.event.id).toBe(2);
   });
 });

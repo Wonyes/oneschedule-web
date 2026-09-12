@@ -126,29 +126,36 @@ const findHoliday = (date: Date, holidays: holidayType[] | holidayType) => {
 };
 
 const getDayColor = (date: Date, isHoliday: holidayType | undefined) => {
-  if (isHoliday) return "text-red-800";
-  if (isSunday(date)) return "text-red-600";
-  if (isSaturday(date)) return "text-blue-600";
+  if (isHoliday) return "text-error-500 font-semibold";
+  if (isSunday(date)) return "text-error-500";
+  if (isSaturday(date)) return "text-blue";
   return "text-muted";
 };
 
-export const getWeatherIcon = (pty: string, sky: string): string => {
-  const rainIcons: Record<string, string> = {
-    "1": "🌧️",
-    "2": "🌨️",
-    "3": "❄️",
-    "4": "🌦️",
+export type WeatherKind =
+  "rain" | "sleet" | "snow" | "shower" | "sun" | "partly" | "cloud";
+
+/** 기상청 단기예보의 강수형태(PTY)·하늘상태(SKY) 코드를 아이콘 종류로 바꾼다. */
+export const getWeatherKind = (
+  pty: string,
+  sky: string,
+): WeatherKind | null => {
+  const rain: Record<string, WeatherKind> = {
+    "1": "rain",
+    "2": "sleet",
+    "3": "snow",
+    "4": "shower",
   };
 
-  if (pty !== "0") return rainIcons[pty] || "";
+  if (pty !== "0") return rain[pty] ?? null;
 
-  const skyIcons: Record<string, string> = {
-    "1": "☀️",
-    "3": "⛅",
-    "4": "☁️",
+  const skyKinds: Record<string, WeatherKind> = {
+    "1": "sun",
+    "3": "partly",
+    "4": "cloud",
   };
 
-  return skyIcons[sky] || "";
+  return skyKinds[sky] ?? null;
 };
 
 const getmonthTime = (startStr: string, endStr: string, date: Date) => {
@@ -393,8 +400,76 @@ const getSortedDayEvents = (events: ScheduleEvent[], date: Date) => {
   });
 };
 
+/**
+ * 월뷰 한 주(7일)의 일정 배치. 여러 날에 걸친 일정이 주 안에서 같은 줄(lane)을 유지하도록
+ * 시작일 → 긴 기간 순으로 줄을 배정한다. 결과는 날짜별로 lane 인덱스 → 일정(없으면 null).
+ */
+type MonthLaneCell = { event: ScheduleEvent; isStart: boolean; isEnd: boolean };
+
+const getMonthWeekLanes = (
+  events: ScheduleEvent[],
+  weekDates: Date[],
+): (MonthLaneCell | null)[][] => {
+  const weekStart = startOfDay(weekDates[0]).getTime();
+  const weekEnd = new Date(weekDates[weekDates.length - 1]).setHours(
+    23,
+    59,
+    59,
+    999,
+  );
+
+  const segments = events
+    .map((event) => {
+      const start = new Date(event.startDate).setHours(0, 0, 0, 0);
+      const end = new Date(event.endDate).setHours(23, 59, 59, 999);
+      if (end < weekStart || start > weekEnd) return null;
+
+      const from = weekDates.findIndex((d) => startOfDay(d).getTime() >= start);
+      let to = weekDates.length - 1;
+      while (to > 0 && startOfDay(weekDates[to]).getTime() > end) to--;
+
+      return {
+        event,
+        from: Math.max(from, 0),
+        to,
+        startAt: new Date(event.startDate).getTime(),
+      };
+    })
+    .filter((seg): seg is NonNullable<typeof seg> => seg !== null)
+    .sort((a, b) => {
+      if (a.from !== b.from) return a.from - b.from;
+      const spanA = a.to - a.from;
+      const spanB = b.to - b.from;
+      if (spanA !== spanB) return spanB - spanA;
+      return a.startAt - b.startAt;
+    });
+
+  const lanes: (MonthLaneCell | null)[][] = weekDates.map(() => []);
+
+  for (const seg of segments) {
+    let lane = 0;
+    while (
+      weekDates.some((_, i) => i >= seg.from && i <= seg.to && lanes[i][lane])
+    ) {
+      lane++;
+    }
+
+    for (let i = seg.from; i <= seg.to; i++) {
+      while (lanes[i].length <= lane) lanes[i].push(null);
+      lanes[i][lane] = {
+        event: seg.event,
+        isStart: isSameDay(new Date(seg.event.startDate), weekDates[i]),
+        isEnd: isSameDay(new Date(seg.event.endDate), weekDates[i]),
+      };
+    }
+  }
+
+  return lanes;
+};
+
 export {
   canEditSchedule,
+  getMonthWeekLanes,
   isSameDate,
   getDayColor,
   findHoliday,
