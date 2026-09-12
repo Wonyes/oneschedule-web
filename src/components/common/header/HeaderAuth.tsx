@@ -28,7 +28,7 @@ export default function HeaderAuth({ user }: { user: MyInfoResponse | null }) {
         href="/profile"
         prefetch
         aria-label="내 프로필"
-        className="btn-spring flex cursor-pointer items-center gap-2 rounded-lg p-1 hover:bg-white/5 lg:px-2.5 lg:py-1.5"
+        className="btn-spring flex cursor-pointer items-center gap-2 rounded-lg p-1 hover:bg-surface-hover lg:px-2.5 lg:py-1.5"
       >
         <IconBox
           size="sm"
@@ -37,7 +37,7 @@ export default function HeaderAuth({ user }: { user: MyInfoResponse | null }) {
         >
           <AvatarImage src={user.profileImageUrl} nickname={user.nickname} />
         </IconBox>
-        <span className="typo-caption-2 text-secondary hidden lg:inline">
+        <span className="typo-caption-2 text-secondary hidden min-[1360px]:inline">
           {user.nickname}
         </span>
       </Link>
@@ -45,7 +45,7 @@ export default function HeaderAuth({ user }: { user: MyInfoResponse | null }) {
       <button
         onClick={() => logout()}
         aria-label="로그아웃"
-        className="p-1.5 rounded-xl neu-flat text-muted btn-spring hover:bg-white/5 hover:text-foreground active:scale-95"
+        className="p-1.5 rounded-xl neu-flat text-muted btn-spring hover:bg-surface-hover hover:text-foreground active:scale-95"
       >
         <LogOut size={15} strokeWidth={1.75} />
       </button>

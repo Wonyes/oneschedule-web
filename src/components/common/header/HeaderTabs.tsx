@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import SegmentedTabs from "@/src/components/ui/layout/SegmentedTabs";
 import { useScheduleView } from "@/src/hooks/useScheduleView";
 import { useActiveGroup } from "@/src/hooks/querys/useGroup";
-import GroupSwitcher from "../../group/GroupSwitcher";
 
 export default function HeaderTabs() {
   const { viewType, setViewType } = useScheduleView();
@@ -18,7 +17,7 @@ export default function HeaderTabs() {
   if (!isSchedulePage) return null;
 
   return (
-    <div className="relative flex items-center">
+    <div className="relative flex min-w-0 items-center">
       <SegmentedTabs
         fit
         label="일정 보기"
@@ -35,10 +34,6 @@ export default function HeaderTabs() {
           },
         ]}
       />
-
-      <div className="absolute left-full top-1/2 ml-1 hidden -translate-y-1/2 lg:block">
-        <GroupSwitcher />
-      </div>
     </div>
   );
 }

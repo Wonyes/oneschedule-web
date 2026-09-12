@@ -7,7 +7,7 @@ import AuthSkeleton from "./header/AuthSkeleton";
 import { getMyInfo } from "@/src/lib/member";
 import ViewModeToggle from "./header/ViewModeToggle";
 import LocationPicker from "./header/LocationPicker";
-import MobileGroupSwitcher from "./header/MobileGroupSwitcher";
+import ScheduleGroupSwitcher from "./header/ScheduleGroupSwitcher";
 import GroupHeaderControls from "./header/GroupHeaderControls";
 import ThemeToggle from "./header/ThemeToggle";
 import NotificationMenu from "./header/NotificationMenu";
@@ -29,7 +29,7 @@ export default async function Header() {
         rounded-2xl
         glass
         sm:mx-3 sm:mt-3 sm:px-4
-        lg:h-14 lg:flex-row lg:items-center lg:gap-4 lg:py-0
+        lg:grid lg:h-14 lg:grid-cols-[1fr_auto_1fr] lg:items-center lg:gap-4 lg:py-0
       "
     >
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-1 lg:contents">
@@ -55,13 +55,15 @@ export default async function Header() {
 
       <div
         className="
-          relative flex justify-center empty:hidden
-          lg:absolute lg:left-1/2 lg:top-1/2
-          lg:-translate-x-1/2 lg:-translate-y-1/2
+          relative flex min-w-0 justify-center empty:hidden
+          lg:col-start-2 lg:row-start-1
         "
       >
         <HeaderTabs />
-        <MobileGroupSwitcher />
+        <ScheduleGroupSwitcher
+          compact
+          className="absolute right-0 top-1/2 -translate-y-1/2 lg:hidden"
+        />
         {isLoggedIn && (
           <NotificationMenu
             mobileSlot="sub"
@@ -70,16 +72,12 @@ export default async function Header() {
         )}
       </div>
 
-      <div
-        className="
-          hidden lg:flex lg:absolute lg:left-1/2 lg:top-1/2
-          lg:-translate-x-1/2 lg:-translate-y-1/2
-        "
-      >
+      <div className="hidden min-w-0 justify-center lg:col-start-2 lg:row-start-1 lg:flex">
         <GroupHeaderControls />
       </div>
 
-      <div className="hidden lg:flex items-center gap-3 lg:ml-auto">
+      <div className="hidden items-center justify-end gap-2 lg:col-start-3 lg:row-start-1 lg:flex">
+        <ScheduleGroupSwitcher compact />
         <LocationPicker />
         <ViewModeToggle />
 

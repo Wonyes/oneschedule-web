@@ -4,14 +4,20 @@ import { usePathname } from "next/navigation";
 
 import GroupSwitcher from "../../group/GroupSwitcher";
 
-export default function MobileGroupSwitcher() {
+export default function ScheduleGroupSwitcher({
+  className,
+  compact = false,
+}: {
+  className?: string;
+  compact?: boolean;
+}) {
   const pathname = usePathname();
 
   if (pathname !== "/schedule") return null;
 
   return (
-    <div className="absolute right-0 top-1/2 -translate-y-1/2 lg:hidden">
-      <GroupSwitcher />
+    <div className={className}>
+      <GroupSwitcher compact={compact} />
     </div>
   );
 }

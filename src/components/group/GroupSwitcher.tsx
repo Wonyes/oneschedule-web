@@ -14,9 +14,12 @@ import { groupPath } from "@/src/lib/activeGroup";
 export default function GroupSwitcher({
   enabled = true,
   align = "right",
+  compact = false,
 }: {
   enabled?: boolean;
   align?: "left" | "right";
+  /** 아바타만 보여주고 그룹 이름은 툴팁으로 넘긴다. */
+  compact?: boolean;
 }) {
   const { groups, group } = useActiveGroup(enabled);
   const setActiveGroup = useActiveGroupStore((s) => s.setActiveGroup);
@@ -27,17 +30,21 @@ export default function GroupSwitcher({
 
   return (
     <DropdownMenu
-      label="그룹 전환"
+      label={group && compact ? `그룹 전환 · ${group.groupName}` : "그룹 전환"}
       align={align}
       panelClassName="w-56"
-      triggerClassName="text-secondary px-2 py-1.5 typo-caption-2 hover:text-foreground lg:px-2.5"
+      triggerClassName={
+        compact
+          ? "relative h-10 w-10 justify-center rounded-xl p-0 text-secondary"
+          : "text-secondary px-2 py-1.5 typo-caption-2 hover:text-foreground lg:px-2.5"
+      }
       trigger={(isOpen) => (
         <>
           {group ? (
             <GroupAvatar
               name={group.groupName}
               imageUrl={group.profileImageUrl}
-              size="xs"
+              size={compact ? "sm" : "xs"}
             />
           ) : (
             <Users
@@ -47,15 +54,25 @@ export default function GroupSwitcher({
             />
           )}
 
-          <span className="max-w-[72px] truncate sm:max-w-[120px] hidden lg:inline">
-            {group?.groupName}
-          </span>
+          {!compact && (
+            <span className="hidden max-w-[72px] truncate sm:max-w-[120px] lg:inline">
+              {group?.groupName}
+            </span>
+          )}
 
-          <ChevronDown
-            size={12}
-            strokeWidth={1.75}
-            className={`shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`}
-          />
+          {compact ? (
+            <span
+              className={`absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-on-primary ring-2 ring-[var(--surface)] transition-transform ${isOpen ? "rotate-180" : ""}`}
+            >
+              <ChevronDown size={10} strokeWidth={2.5} />
+            </span>
+          ) : (
+            <ChevronDown
+              size={12}
+              strokeWidth={1.75}
+              className={`shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`}
+            />
+          )}
         </>
       )}
     >
