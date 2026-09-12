@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import Link from "next/link";
 
 import OrbitHero from "@/src/components/common/OrbitHero";
+import Plate from "@/src/components/common/Plate";
 import { Column, Row } from "@/src/components/ui/layout/flex";
 import GoogleLoginButton from "./GoogleLoginButton";
 import { rise, stagger } from "@/src/lib/motion";
@@ -15,27 +16,7 @@ const FEATURES = [
   { icon: Bell, text: "가입 승인과 새 일정 실시간 알림" },
 ];
 
-const PLATE =
-  "lg:h-[var(--plate)] lg:w-[var(--plate)] lg:[--plate:min(640px,100dvh-9rem,50vw-1.5rem)]";
-
 export { rise, stagger };
-
-function Plate() {
-  return (
-    <>
-      <div
-        aria-hidden
-        className="neu-pressed pointer-events-none absolute inset-0 -z-10 hidden rounded-full lg:block"
-      />
-      <motion.div
-        aria-hidden
-        className="pointer-events-none absolute inset-5 -z-10 hidden rounded-full border border-dashed border-divider lg:block"
-        animate={{ rotate: 360 }}
-        transition={{ duration: 180, ease: "linear", repeat: Infinity }}
-      />
-    </>
-  );
-}
 
 export function BrandPlate({
   title,
@@ -45,11 +26,7 @@ export function BrandPlate({
   subtitle: string;
 }) {
   return (
-    <div
-      className={`relative isolate lg:flex lg:items-center lg:justify-center ${PLATE}`}
-    >
-      <Plate />
-
+    <Plate size="wide">
       <motion.section
         variants={stagger}
         className="flex flex-col lg:w-[420px] lg:items-center lg:text-center"
@@ -82,7 +59,7 @@ export function BrandPlate({
           ))}
         </motion.ul>
       </motion.section>
-    </div>
+    </Plate>
   );
 }
 

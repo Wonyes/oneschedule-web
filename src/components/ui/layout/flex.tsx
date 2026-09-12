@@ -1,5 +1,4 @@
 import { cn } from "@/src/utils/cn";
-import { ChevronRight } from "lucide-react";
 
 interface FlexProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
@@ -32,47 +31,4 @@ const Between = ({ className, children, ...props }: FlexProps) => {
   );
 };
 
-function ActionRow({
-  icon,
-  title,
-  danger,
-  onClick,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  danger?: boolean;
-  onClick?: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className="
-        w-full
-        flex
-        items-center
-        justify-between
-        px-7
-        py-5
-        hover:bg-white/5
-        transition
-      "
-    >
-      <div
-        className={`
-          flex
-          items-center
-          gap-3
-          ${danger ? "text-error-500" : "text-secondary"}
-        `}
-      >
-        {icon}
-
-        <span className="typo-caption-2">{title}</span>
-      </div>
-
-      <ChevronRight size={16} className="text-place-h" />
-    </button>
-  );
-}
-
-export { Row, Column, Between, ActionRow };
+export { Row, Column, Between };

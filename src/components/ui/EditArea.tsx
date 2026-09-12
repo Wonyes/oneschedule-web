@@ -3,6 +3,7 @@ import { Row } from "./layout/flex";
 import { Input } from "./layout/input";
 
 interface Props {
+  label?: string;
   deps?: string;
   name?: string;
   value?: string;
@@ -17,6 +18,7 @@ interface Props {
 }
 
 export default function EditArea({
+  label,
   deps,
   name,
   error,
@@ -33,6 +35,8 @@ export default function EditArea({
     <div className="mt-3">
       <Input
         name={name}
+        label={label}
+        onEnter={onSave}
         description={deps}
         value={value ?? ""}
         onChange={onChange}
@@ -42,13 +46,7 @@ export default function EditArea({
           showCheck && (
             <Primary
               text="중복확인"
-              className="
-                py-[6px]
-                px-3
-                h-fit
-                rounded-lg
-                text-xs
-              "
+              className="h-8 shrink-0 rounded-lg px-3 typo-caption-3"
               onClick={onCheck}
             />
           )
@@ -65,21 +63,13 @@ export default function EditArea({
         <GhostBtn
           text="취소"
           onClick={onCancel}
-          className="
-            px-3
-            h-8
-            typo-caption-2
-          "
+          className="h-9 rounded-xl px-3 typo-caption-2"
         />
 
         <Primary
           text="완료"
           onClick={onSave}
-          className="
-            px-3
-            h-8
-            typo-caption-2
-          "
+          className="h-9 rounded-xl px-4 typo-caption-2"
         />
       </Row>
     </div>

@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { Lock, LogOut } from "lucide-react";
-import BaseCard from "@/src/components/ui/card/BaseCard";
-import { ActionRow } from "@/src/components/ui/layout/flex";
+import { motion } from "motion/react";
+import { rise } from "@/src/lib/motion";
 import {
   MyInfoResponse,
   useLogout,
@@ -53,25 +53,32 @@ export default function ProfileActions({
   };
 
   return (
-    <div className="flex w-full flex-col gap-3">
+    <motion.div
+      variants={rise}
+      initial="hidden"
+      animate="show"
+      transition={{ ...rise.show.transition, delay: 0.5 }}
+      className="flex w-full items-center gap-2"
+    >
       {auth === "LOCAL" && (
-        <BaseCard className="overflow-hidden" glow>
-          <ActionRow
-            onClick={changePassword}
-            icon={<Lock size={18} />}
-            title="비밀번호 변경"
-          />
-        </BaseCard>
+        <button
+          type="button"
+          onClick={changePassword}
+          className="neu-btn btn-spring w-full flex h-10 items-center gap-2 rounded-xl px-4 typo-caption-2 font-medium text-secondary hover:text-foreground"
+        >
+          <Lock size={14} strokeWidth={1.75} />
+          비밀번호 변경
+        </button>
       )}
 
-      <BaseCard className="overflow-hidden">
-        <ActionRow
-          icon={<LogOut size={18} />}
-          title="로그아웃"
-          danger
-          onClick={() => logout()}
-        />
-      </BaseCard>
-    </div>
+      <button
+        type="button"
+        onClick={() => logout()}
+        className="neu-btn btn-spring flex h-10 w-full items-center gap-2 rounded-xl px-3 typo-caption-2 font-medium text-error-500"
+      >
+        <LogOut size={14} strokeWidth={1.75} />
+        로그아웃
+      </button>
+    </motion.div>
   );
 }

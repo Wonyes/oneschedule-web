@@ -14,42 +14,30 @@ export default function ProfilePage() {
 
   if (isPending) {
     return (
-      <main className="mx-auto w-full max-w-[860px] px-1 py-1">
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-start">
-          <div className="flex w-full flex-col gap-3 lg:w-[320px] lg:shrink-0">
-            <div className="rounded-[var(--radius-outer)] neu-flat p-8">
-              <Column className="items-center gap-3">
-                <Skeleton className="h-20 w-20 rounded-full" />
-                <Skeleton className="h-5 w-24" />
-                <Skeleton className="h-3.5 w-16" />
-                <Skeleton className="h-3 w-32" />
-                <Skeleton className="mt-2 h-6 w-24 rounded-full" />
+      <main className="mx-auto grid w-full max-w-[1100px] gap-8 px-1 py-2 lg:grid-cols-[auto_1fr] lg:items-center lg:justify-center">
+        <div className="mx-auto flex w-full flex-col items-center gap-3 py-2 lg:h-[min(560px,100dvh-11rem)] lg:w-[min(560px,100dvh-11rem)] lg:justify-center">
+          <Skeleton className="h-60 w-60 rounded-full" />
+          <Skeleton className="h-7 w-32" />
+          <Skeleton className="h-3.5 w-48" />
+          <Skeleton className="h-3 w-40" />
+        </div>
+
+        <Column className="w-full max-w-[440px] gap-4 lg:ml-4">
+          <Skeleton className="h-2.5 w-16" />
+          <Skeleton className="h-5 w-20" />
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div
+              key={i}
+              className="flex w-full items-center gap-3 border-b border-divider py-4 last:border-none"
+            >
+              <Skeleton className="h-9 w-9 rounded-xl" />
+              <Column className="flex-1 gap-1.5">
+                <Skeleton className="h-2.5 w-12" />
+                <Skeleton className="h-4 w-36" />
               </Column>
             </div>
-
-            <Skeleton className="h-[60px] w-full rounded-[var(--radius-outer)]" />
-            <Skeleton className="h-[60px] w-full rounded-[var(--radius-outer)]" />
-          </div>
-
-          <div className="min-w-0 flex-1 rounded-[var(--radius-outer)] neu-flat p-6">
-            <Column className="mb-3 gap-1">
-              <Skeleton className="h-2.5 w-16" />
-              <Skeleton className="h-5 w-20" />
-            </Column>
-
-            <Column className="w-full gap-0">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="w-full border-b border-divider py-4 last:border-none"
-                >
-                  <Skeleton className="h-3 w-14" />
-                  <Skeleton className="mt-2 h-4 w-32" />
-                </div>
-              ))}
-            </Column>
-          </div>
-        </div>
+          ))}
+        </Column>
       </main>
     );
   }
@@ -70,23 +58,13 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-[860px] px-1 py-1">
-      <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
-        <div className="flex w-full flex-col gap-3 lg:w-[320px] lg:shrink-0">
-          <ProfileCard user={user} />
-          <div className="hidden lg:block">
-            <ProfileActions auth={user.provider} />
-          </div>
-        </div>
+    <main className="mx-auto grid w-full max-w-[1100px] gap-8 px-1 py-2 lg:grid-cols-[auto_1fr] lg:items-center lg:justify-center">
+      <ProfileCard user={user} />
 
-        <div className="min-w-0 flex-1">
-          <AccountInfo user={user} />
-        </div>
-
-        <div className="lg:hidden">
-          <ProfileActions auth={user.provider} />
-        </div>
-      </div>
+      <Column className="w-full max-w-[460px] gap-5 lg:ml-4">
+        <AccountInfo user={user} />
+        <ProfileActions auth={user.provider} />
+      </Column>
     </main>
   );
 }
