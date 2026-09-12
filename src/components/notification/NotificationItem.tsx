@@ -87,7 +87,7 @@ export default function NotificationItem({
           {emphasize(title, senderNickname)}
         </span>
         {content && (
-          <span className="typo-caption-3 truncate text-muted">{content}</span>
+          <span className="typo-caption-3 text-muted">{content}</span>
         )}
         <span className="typo-caption-3 text-place-h">
           {formatDistanceToNowStrict(new Date(notification.createdAt), {
