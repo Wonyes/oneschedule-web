@@ -1,12 +1,15 @@
 "use client";
 
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 import AvatarImage from "@/src/components/common/AvatarImage";
 import IconBox from "../ui/IconBox";
 import { Column, Row } from "../ui/layout/flex";
 import ScrollListArea, { ScrollSentinel } from "../ui/ScrollListArea";
 import { useInfiniteScroll } from "@/src/hooks/useInfiniteScroll";
 import { AnimatePresence, motion } from "motion/react";
-import { fadeQuick, springSoft } from "@/src/lib/motion";
+import { fadeQuick, springFirm, springSoft } from "@/src/lib/motion";
+import { cn } from "@/src/utils/cn";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import {
@@ -23,6 +26,7 @@ export default function GroupJoinRequestBody({
   group: MyGroupResponse;
 }) {
   const { openToast, openAlert, openConfirm } = useOverlay();
+  const [openNo, setOpenNo] = useState<number | null>(null);
 
   const { data, isPending, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useJoinRequests(group.groupNo);
@@ -97,87 +101,140 @@ export default function GroupJoinRequestBody({
           className="scroll-hidden flex min-h-0 w-full flex-1 flex-col items-start overflow-y-auto"
         >
           <AnimatePresence initial={false} mode="popLayout">
-            {requests.map((request) => (
-              <motion.div
-                key={request.requestNo}
-                layout
-                exit={{ opacity: 0, x: 24, transition: fadeQuick }}
-                transition={springSoft}
-                className="flex w-full items-center gap-3 border-b border-divider py-2.5 last:border-none"
-              >
-                <IconBox
-                  size="md"
-                  shape="circle"
-                  tone="accent"
-                  className="typo-caption-3 shrink-0 overflow-hidden bg-accent/10 font-bold"
+            {requests.map((request) => {
+              const open = openNo === request.requestNo;
+              const detailId = `join-request-${request.requestNo}`;
+
+              return (
+                <motion.div
+                  key={request.requestNo}
+                  layout
+                  exit={{ opacity: 0, x: 24, transition: fadeQuick }}
+                  transition={springSoft}
+                  className="w-full border-b border-divider py-2.5 last:border-none"
                 >
-                  <AvatarImage
-                    src={request.profileImageUrl}
-                    nickname={request.nickname}
-                  />
-                </IconBox>
+                  <div className="flex w-full items-center gap-3">
+                    <IconBox
+                      size="md"
+                      shape="circle"
+                      tone="accent"
+                      className="typo-caption-3 shrink-0 overflow-hidden bg-accent/10 font-bold"
+                    >
+                      <AvatarImage
+                        src={request.profileImageUrl}
+                        nickname={request.nickname}
+                      />
+                    </IconBox>
 
-                <div
-                  className="
-                  flex min-w-0 flex-1 flex-col gap-0.5
-                  lg:flex-row lg:items-baseline lg:gap-1.5
-                "
-                  title={request.message ?? request.email}
-                >
-                  <Row className="shrink-0 items-baseline gap-1.5">
-                    <span className="typo-caption-2 font-semibold text-foreground">
-                      {request.nickname}
-                    </span>
+                    <button
+                      type="button"
+                      aria-expanded={open}
+                      aria-controls={detailId}
+                      onClick={() => setOpenNo(open ? null : request.requestNo)}
+                      className="flex min-w-0 flex-1 items-center gap-2 text-left"
+                    >
+                      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                        <Row className="items-baseline gap-1.5">
+                          <span className="typo-caption-2 font-semibold text-foreground">
+                            {request.nickname}
+                          </span>
 
-                    <span className="typo-caption-3 text-place-h">
-                      {format(new Date(request.createdAt), "M월 d일", {
-                        locale: ko,
-                      })}
-                    </span>
-                  </Row>
+                          <span className="typo-caption-3 text-place-h">
+                            {format(new Date(request.createdAt), "M월 d일", {
+                              locale: ko,
+                            })}
+                          </span>
+                        </Row>
 
-                  <span className="typo-caption-3 line-clamp-4 min-w-0 text-muted lg:line-clamp-none lg:truncate">
-                    {request.message || request.email}
-                  </span>
-                </div>
+                        {!open && (
+                          <span className="typo-caption-3 min-w-0 truncate text-muted">
+                            {request.message || request.email}
+                          </span>
+                        )}
+                      </div>
 
-                <Row className="shrink-0 gap-1.5">
-                  <button
-                    type="button"
-                    disabled={processing}
-                    onClick={() =>
-                      handle(request.requestNo, "REJECTED", request.nickname)
-                    }
-                    className="
+                      <motion.span
+                        animate={{ rotate: open ? 180 : 0 }}
+                        transition={springFirm}
+                        className={cn(
+                          "shrink-0 text-place-h",
+                          open && "text-accent",
+                        )}
+                      >
+                        <ChevronDown size={14} strokeWidth={2} />
+                      </motion.span>
+                    </button>
+
+                    <Row className="shrink-0 gap-1.5">
+                      <button
+                        type="button"
+                        disabled={processing}
+                        onClick={() =>
+                          handle(
+                            request.requestNo,
+                            "REJECTED",
+                            request.nickname,
+                          )
+                        }
+                        className="
                     neu-btn btn-spring
                     flex h-7 items-center rounded-lg px-2.5
                     typo-caption-3 font-medium text-muted
                     hover:text-error-500
                     disabled:cursor-not-allowed disabled:opacity-50
                   "
-                  >
-                    거절
-                  </button>
+                      >
+                        거절
+                      </button>
 
-                  <button
-                    type="button"
-                    disabled={processing}
-                    onClick={() =>
-                      handle(request.requestNo, "APPROVED", request.nickname)
-                    }
-                    className="
+                      <button
+                        type="button"
+                        disabled={processing}
+                        onClick={() =>
+                          handle(
+                            request.requestNo,
+                            "APPROVED",
+                            request.nickname,
+                          )
+                        }
+                        className="
                     btn-spring
                     flex h-7 items-center rounded-lg px-3
                     bg-accent typo-caption-3 font-semibold text-on-primary
                     hover:bg-accent/90
                     disabled:cursor-not-allowed disabled:opacity-50
                   "
-                  >
-                    승인
-                  </button>
-                </Row>
-              </motion.div>
-            ))}
+                      >
+                        승인
+                      </button>
+                    </Row>
+                  </div>
+
+                  <AnimatePresence initial={false}>
+                    {open && (
+                      <motion.div
+                        key="detail"
+                        id={detailId}
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={springFirm}
+                        className="overflow-hidden"
+                      >
+                        <div className="neu-pressed mt-2.5 rounded-xl px-3.5 py-3">
+                          <p className="typo-caption-2 whitespace-pre-wrap break-words leading-relaxed text-foreground">
+                            {request.message || "남긴 메시지가 없습니다."}
+                          </p>
+                          <p className="typo-caption-3 mt-2 text-place-h">
+                            {request.email}
+                          </p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              );
+            })}
           </AnimatePresence>
 
           {isFetchingNextPage && (

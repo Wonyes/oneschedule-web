@@ -8,6 +8,10 @@ import BaseCard from "@/src/components/ui/card/BaseCard";
 import { Column, Row } from "@/src/components/ui/layout/flex";
 import { Input } from "@/src/components/ui/layout/input";
 import Skeleton from "@/src/components/ui/Skeleton";
+import ScrollListArea, {
+  ScrollSentinel,
+} from "@/src/components/ui/ScrollListArea";
+import { useInfiniteScroll } from "@/src/hooks/useInfiniteScroll";
 import {
   useJoinPublicGroup,
   usePublicGroups,
@@ -173,6 +177,10 @@ export default function PublicGroupList() {
 
   const groups = data?.pages.flatMap((page) => page.content) ?? [];
 
+  const { rootRef, sentinelRef } = useInfiniteScroll(!!hasNextPage, () => {
+    if (!isFetchingNextPage) fetchNextPage();
+  });
+
   return (
     <BaseCard className="w-full p-6" glow>
       <Column className="mb-3 gap-1">
@@ -211,29 +219,37 @@ export default function PublicGroupList() {
               : "아직 공개된 그룹이 없습니다."}
           </p>
         ) : (
-          <motion.div
-            variants={stagger}
-            initial="hidden"
-            animate="show"
-            className="grid w-full grid-cols-2 gap-1 sm:grid-cols-3"
+          <ScrollListArea
+            rootRef={rootRef}
+            showFade={!!hasNextPage}
+            className="scroll-hidden max-h-[440px] w-full overflow-y-auto"
           >
-            {groups.map((group) => (
-              <GroupRow key={group.groupNo} group={group} />
-            ))}
-          </motion.div>
+            <motion.div
+              variants={stagger}
+              initial="hidden"
+              animate="show"
+              className="grid w-full grid-cols-2 gap-1 sm:grid-cols-3"
+            >
+              {groups.map((group) => (
+                <GroupRow key={group.groupNo} group={group} />
+              ))}
+            </motion.div>
+
+            {isFetchingNextPage && (
+              <div className="grid w-full grid-cols-2 gap-3 sm:grid-cols-3">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <Column key={i} className="items-center gap-2 p-3">
+                    <Skeleton className="h-20 w-20 rounded-full" />
+                    <Skeleton className="h-3 w-16" />
+                  </Column>
+                ))}
+              </div>
+            )}
+
+            {hasNextPage && <ScrollSentinel sentinelRef={sentinelRef} />}
+          </ScrollListArea>
         )}
       </Column>
-
-      {hasNextPage && (
-        <button
-          type="button"
-          onClick={() => fetchNextPage()}
-          disabled={isFetchingNextPage}
-          className="neu-btn btn-spring mt-4 flex h-10 w-full items-center justify-center rounded-xl typo-caption-2 font-medium text-secondary hover:text-foreground disabled:opacity-60"
-        >
-          {isFetchingNextPage ? "불러오는 중…" : "더 보기"}
-        </button>
-      )}
     </BaseCard>
   );
 }

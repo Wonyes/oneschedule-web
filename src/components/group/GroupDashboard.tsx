@@ -63,12 +63,13 @@ export default function GroupDashboard({ group }: { group: MyGroupResponse }) {
       </Column>
 
       <Column className="hidden w-full gap-5 lg:flex">
-        <div className="grid w-full gap-5 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-          <GroupScheduleSection group={group} />
+        <div className="grid w-full items-start gap-5 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+          <Column className="min-w-0 gap-5">
+            <GroupScheduleSection group={group} />
+            <GroupActivitySection group={group} />
+          </Column>
           <GroupMemberSection group={group} isAdmin={isAdmin} withAdminTabs />
         </div>
-
-        <GroupActivitySection group={group} />
       </Column>
     </Column>
   );

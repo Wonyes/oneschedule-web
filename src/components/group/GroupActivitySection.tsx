@@ -1,10 +1,12 @@
 "use client";
 
-import { Activity, CalendarPlus } from "lucide-react";
+import { CalendarPlus } from "lucide-react";
 import { useMemo } from "react";
+import { format } from "date-fns";
+import { ko } from "date-fns/locale";
 
+import AvatarImage from "../common/AvatarImage";
 import BaseCard from "../ui/card/BaseCard";
-import { GROUP_SECTION_HEIGHT } from "./sectionHeight";
 import SectionBody from "./SectionBody";
 import Skeleton from "../ui/Skeleton";
 import { Column, Row } from "../ui/layout/flex";
@@ -12,6 +14,8 @@ import { EVENT_STYLES } from "@/src/constant/schedule";
 import { useSchedules } from "@/src/hooks/querys/useSchedule";
 import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
 import { MyGroupResponse } from "@/src/types/group";
+import { cn } from "@/src/utils/cn";
+import { toScheduleEvent } from "@/src/utils/schedule";
 import { formatRelativeTime } from "@/src/utils/time";
 
 const MAX_ITEMS = 4;
@@ -41,83 +45,99 @@ export default function GroupActivitySection({
   }, [groupSchedules]);
 
   return (
-    <BaseCard
-      className={`flex flex-col p-5 ${GROUP_SECTION_HEIGHT}`}
-      childClass="flex min-h-0 flex-1 flex-col"
-    >
-      <Column className="mb-3 gap-1.5">
+    <BaseCard className="flex flex-col p-5" childClass="flex flex-col">
+      <Column className="mb-3 gap-1">
         <span className="eyebrow">ACTIVITY</span>
-        <Row className="gap-1.5">
-          <Activity size={16} strokeWidth={1.5} className="text-muted" />
-          <h2 className="typo-sub-t-1 text-foreground">최근 활동</h2>
-        </Row>
+        <h2 className="typo-sub-t-1 text-foreground">최근 활동</h2>
       </Column>
 
       <SectionBody animate={animate}>
         {isLoading ? (
-          <Column className="w-full gap-2">
+          <Column className="w-full gap-3">
             {Array.from({ length: 2 }).map((_, i) => (
-              <Skeleton key={i} className="h-14 w-full rounded-lg" />
+              <Row key={i} className="w-full gap-3">
+                <Skeleton className="h-8 w-8 rounded-full" />
+                <Column className="flex-1 gap-1.5">
+                  <Skeleton className="h-3 w-48" />
+                  <Skeleton className="h-2.5 w-28" />
+                </Column>
+              </Row>
             ))}
           </Column>
         ) : recent.length === 0 ? (
-          <Column className="neu-flat w-full items-center gap-3 rounded-lg px-4 py-6">
+          <Column className="items-center gap-3 py-4 text-center">
             <span className="typo-caption-2 text-muted">
               아직 그룹에 등록된 일정이 없어요.
             </span>
             <button
               type="button"
               onClick={() => openSheet({ date: new Date(), type: "GROUP" })}
-              className="btn-spring neu-btn text-secondary hover:text-foreground flex h-9 items-center gap-1.5 rounded-xl px-4 typo-caption-2 font-medium"
+              className="btn-spring neu-btn flex h-9 items-center gap-1.5 rounded-xl px-4 typo-caption-2 font-medium text-secondary hover:text-foreground"
             >
               <CalendarPlus size={14} strokeWidth={2} />첫 그룹 일정 만들기
             </button>
           </Column>
         ) : (
-          <Column className="w-full gap-2">
+          <div className="relative w-full">
+            <span
+              aria-hidden
+              className="absolute bottom-4 left-4 top-4 border-l border-dashed border-divider"
+            />
+
             {recent.map((schedule) => {
               const style =
                 EVENT_STYLES[schedule.category as keyof typeof EVENT_STYLES];
-
-              const participants = schedule.participants ?? [];
               const author = schedule.author ?? { nickname: "알 수 없음" };
-              const names = participants
-                .slice(0, 2)
-                .map((p) => p.nickname)
-                .join(", ");
+              const count = schedule.participants?.length ?? 0;
+              const start = new Date(toScheduleEvent(schedule).startDate);
 
               return (
                 <Row
                   key={schedule.id}
-                  className="neu-flat w-full gap-3 rounded-lg px-4 py-3"
+                  className="relative w-full items-start gap-3 py-2"
                 >
-                  <span
-                    className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${style?.dot ?? "bg-accent"}`}
-                  />
+                  <span className="neu-flat relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full typo-caption-3 font-bold text-accent ring-4 ring-[var(--surface)]">
+                    <AvatarImage nickname={author.nickname} />
+                  </span>
 
-                  <Column className="min-w-0 flex-1 gap-0.5">
-                    <Row className="gap-1.5">
-                      <span className="typo-caption-1 text-foreground truncate font-medium">
+                  <Column className="min-w-0 flex-1 gap-0.5 pt-1">
+                    <p className="truncate typo-caption-2 text-secondary">
+                      <span className="font-semibold text-foreground">
+                        {author.nickname}
+                      </span>
+                      님이{" "}
+                      <span className="font-semibold text-foreground">
                         {schedule.title || "제목 없는 일정"}
                       </span>
-                      <span className="typo-caption-1 text-muted truncate">
-                        등록 · {author.nickname}
+                      {" 일정을 추가했어요"}
+                    </p>
+
+                    <Row className="gap-1.5 typo-caption-3 text-place-h">
+                      <span
+                        className={cn(
+                          "h-1.5 w-1.5 shrink-0 rounded-full",
+                          style?.dot ?? "bg-accent",
+                        )}
+                      />
+                      <span className="tabular-nums">
+                        {format(start, "M/d(EEE) HH:mm", { locale: ko })}
                       </span>
+                      {count > 0 && (
+                        <>
+                          <span>·</span>
+                          <span>참여 {count}명</span>
+                        </>
+                      )}
                     </Row>
-                    <span className="typo-caption-2 text-muted truncate">
-                      {participants.length > 0
-                        ? `참여자 · ${names}${participants.length > 2 ? ` 외 ${participants.length - 2}명` : ""}`
-                        : "일정 등록"}
-                    </span>
                   </Column>
 
-                  <span className="typo-caption-3 text-place-h shrink-0 whitespace-nowrap">
+                  <span className="shrink-0 whitespace-nowrap pt-1 typo-caption-3 text-place-h">
                     {formatRelativeTime(schedule.createdAt)}
                   </span>
                 </Row>
               );
             })}
-          </Column>
+          </div>
         )}
       </SectionBody>
     </BaseCard>
