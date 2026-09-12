@@ -7,6 +7,7 @@ import { Column, Row } from "../ui/layout/flex";
 import IconBox from "../ui/IconBox";
 import { useActiveGroupStore } from "@/src/hooks/stores/useActiveGroupStore";
 import { MyGroupResponse } from "@/src/types/group";
+import GroupAvatar from "./GroupAvatar";
 
 export default function GroupPicker({
   groups,
@@ -16,7 +17,6 @@ export default function GroupPicker({
   description?: string;
 }) {
   const setActiveGroup = useActiveGroupStore((s) => s.setActiveGroup);
-
   return (
     <BaseCard className="mx-auto w-full max-w-[420px] p-6" glow>
       <Column className="mb-5 gap-1.5">
@@ -33,9 +33,17 @@ export default function GroupPicker({
             onClick={() => setActiveGroup(group.groupNo)}
             className="neu-flat btn-spring hover:text-foreground flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left"
           >
-            <IconBox size="md">
-              <Users size={16} strokeWidth={1.75} />
-            </IconBox>
+            {group.profileImageUrl ? (
+              <GroupAvatar
+                name={group.groupName}
+                imageUrl={group.profileImageUrl}
+                className="relative h-9 w-9 rounded-lg typo-sub-t-1"
+              />
+            ) : (
+              <IconBox size="md">
+                <Users size={16} strokeWidth={1.75} />
+              </IconBox>
+            )}
 
             <Column className="min-w-0 flex-1 gap-0.5">
               <Row className="min-w-0 items-center gap-1.5">

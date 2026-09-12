@@ -10,6 +10,8 @@ interface PasswordChangeValues {
 
 export interface PasswordFormRef {
   submit: (onSuccess: (data: PasswordChangeValues) => void) => void;
+  /** 서버가 거절한 이유를 해당 입력칸 밑에 보여준다. */
+  setServerError: (field: keyof PasswordChangeValues, message: string) => void;
 }
 
 export const PasswordChangeForm = forwardRef<PasswordFormRef>((_, ref) => {
@@ -42,6 +44,8 @@ export const PasswordChangeForm = forwardRef<PasswordFormRef>((_, ref) => {
 
       onSuccess(form);
     },
+    setServerError: (field, message) =>
+      setErrors({ currentPassword: "", newPassword: "", [field]: message }),
   }));
 
   return (

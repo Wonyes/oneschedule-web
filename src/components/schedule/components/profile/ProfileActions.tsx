@@ -8,6 +8,7 @@ import {
   usePasswordChange,
 } from "@/src/hooks/querys/useMembers";
 import { useOverlay } from "@/src/hooks/useOverlay";
+import { CustomError, getErrorMessage } from "@/src/types/ErrorResponse";
 import {
   PasswordChangeForm,
   PasswordFormRef,
@@ -39,11 +40,19 @@ export default function ProfileActions({
             },
             {
               onSuccess: () => {
-                openToast({
-                  message: "비밀번호가 변경되었습니다.",
-                  onFunc: () => logout(),
-                });
                 closeModal();
+                logout(); // 바꾼 비밀번호로 다시 로그인하게 즉시 로그아웃
+                openToast({
+                  message: "비밀번호가 변경됐어요. 다시 로그인해 주세요.",
+                });
+              },
+              onError: (err: CustomError) => {
+                const code = err.response?.data?.code;
+                // -211 현재 비밀번호 불일치 → 현재 칸, 그 외 형식 오류는 새 비밀번호 칸
+                formRef.current?.setServerError(
+                  code === -211 ? "currentPassword" : "newPassword",
+                  getErrorMessage(err, "비밀번호를 변경하지 못했어요."),
+                );
               },
             },
           );
