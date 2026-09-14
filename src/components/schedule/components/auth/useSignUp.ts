@@ -6,9 +6,15 @@ import { isAxiosError } from "axios";
 
 import { useForm } from "@/src/hooks/useForm";
 import { Post } from "@/src/hooks/querys/useMutations";
-import { useEmailCheck, useNicknameCheck } from "@/src/hooks/querys/useMembers";
+import { useNicknameCheck } from "@/src/hooks/querys/useMembers";
 import { useOverlay } from "@/src/hooks/useOverlay";
 import { getErrorMessage, useAppMutation } from "@/src/types/ErrorResponse";
+import {
+  VERIFICATION_CODE_TTL,
+  VERIFICATION_RESEND_WAIT,
+  verificationTypes,
+} from "@/src/types/verification";
+import { useCountdown } from "@/src/hooks/useCountdown";
 
 export const SIGN_STEPS = [
   {
@@ -34,19 +40,29 @@ export const SIGN_STEPS = [
 ] as const;
 
 export type SignField =
-  "email" | "password" | "passwordConfirm" | "name" | "nickname" | "phone";
+  | "email"
+  | "emailCode"
+  | "password"
+  | "passwordConfirm"
+  | "name"
+  | "nickname"
+  | "phone";
 
 export type SignErrors = Partial<Record<SignField, string>>;
+
+/** idle: 코드 요청 전 → sent: 코드 입력 대기 → verified: 인증 완료 */
+export type EmailStatus = "idle" | "sent" | "verified";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_PATTERN = /^\d{9,11}$/;
 
 export function useSignUp() {
   const router = useRouter();
-  const { openAlert } = useOverlay();
+  const { openAlert, openToast } = useOverlay();
 
   const { form, formChange } = useForm({
     email: "",
+    emailCode: "",
     password: "",
     passwordConfirm: "",
     nickname: "",
@@ -59,13 +75,60 @@ export function useSignUp() {
   const [errors, setErrors] = useState<SignErrors>({});
   const [checking, setChecking] = useState(false);
 
-  const [checkedEmail, setCheckedEmail] = useState<string | null>(null);
+  const [emailStatus, setEmailStatus] = useState<EmailStatus>("idle");
+  const codeTimer = useCountdown();
+  const resendTimer = useCountdown();
+
   const [checkedNickname, setCheckedNickname] = useState<string | null>(null);
-  const emailChecked = !!form.email && form.email === checkedEmail;
   const nicknameChecked = !!form.nickname && form.nickname === checkedNickname;
 
-  const { refetch: checkEmail } = useEmailCheck(form.email);
   const { refetch: checkNickname } = useNicknameCheck(form.nickname);
+
+  const fail = (field: SignField, message: string) => {
+    setErrors((prev) => ({ ...prev, [field]: message }));
+    return false;
+  };
+
+  const clearError = (field: SignField) =>
+    setErrors((prev) => (prev[field] ? { ...prev, [field]: undefined } : prev));
+
+  const { mutate: emailRequest, isPending: emailRequestPending } =
+    useAppMutation({
+      mutationFn: () =>
+        Post({
+          url: "/members/email-verification/request",
+          params: { email: form.email, purpose: verificationTypes.SIGNUP },
+        }),
+      onSuccess: () => {
+        setEmailStatus("sent");
+        clearError("emailCode");
+        codeTimer.start(VERIFICATION_CODE_TTL);
+        resendTimer.start(VERIFICATION_RESEND_WAIT);
+        openToast({ message: "인증 코드를 메일로 보냈어요." });
+      },
+      onError: (err) => fail("email", getErrorMessage(err)),
+    });
+
+  const { mutate: emailVerify, isPending: emailVerifyPending } =
+    useAppMutation({
+      mutationFn: () =>
+        Post({
+          url: "/members/email-verification/verify",
+          params: {
+            email: form.email,
+            purpose: verificationTypes.SIGNUP,
+            code: form.emailCode,
+          },
+        }),
+      onSuccess: () => {
+        setEmailStatus("verified");
+        codeTimer.stop();
+        resendTimer.stop();
+        setDirection(1);
+        setStep(1);
+      },
+      onError: (err) => fail("emailCode", getErrorMessage(err)),
+    });
 
   const { mutate: signUp, isPending } = useAppMutation({
     mutationFn: () =>
@@ -89,28 +152,34 @@ export function useSignUp() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.target.name as SignField;
-    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: undefined }));
+
+    // 이메일을 바꾸면 이전 인증은 무효
+    if (name === "email" && e.target.value !== form.email) {
+      setEmailStatus("idle");
+      codeTimer.stop();
+      resendTimer.stop();
+      clearError("emailCode");
+    }
+
+    clearError(name);
     formChange(e);
   };
 
-  const fail = (field: SignField, message: string) => {
-    setErrors((prev) => ({ ...prev, [field]: message }));
-    return false;
+  const resend = () => {
+    if (busy || resendTimer.seconds > 0) return;
+    emailRequest();
   };
 
-  const duplicationCheck = async (field: "email" | "nickname") => {
-    const label = field === "email" ? "이메일" : "닉네임";
+  const duplicationCheck = async (field: "nickname") => {
+    const label = "닉네임";
     const taken = () => fail(field, `이미 사용 중인 ${label}이에요.`);
 
     setChecking(true);
     try {
-      const result =
-        field === "email" ? await checkEmail() : await checkNickname();
+      const result = await checkNickname();
 
       if (result.error) throw result.error;
       if (!result.data) return taken();
-
-      if (field === "email") setCheckedEmail(form.email);
       else setCheckedNickname(form.nickname);
 
       return true;
@@ -130,7 +199,7 @@ export function useSignUp() {
         if (!EMAIL_PATTERN.test(form.email)) {
           return fail("email", "이메일 형식을 확인해 주세요.");
         }
-        return emailChecked || duplicationCheck("email");
+        return emailStatus === "verified";
 
       case 1:
         if (form.password.length < 8) {
@@ -159,11 +228,25 @@ export function useSignUp() {
     }
   };
 
-  const busy = checking || isPending;
+  const busy =
+    checking || isPending || emailRequestPending || emailVerifyPending;
   const isLast = step === SIGN_STEPS.length - 1;
 
   const goNext = async () => {
     if (busy) return;
+
+    // 0단계: 인증 전이면 버튼이 "코드 받기 → 확인" 역할을 한다
+    if (step === 0 && emailStatus !== "verified") {
+      if (!EMAIL_PATTERN.test(form.email)) {
+        return fail("email", "이메일 형식을 확인해 주세요.");
+      }
+      if (emailStatus === "idle") return emailRequest();
+      if (!form.emailCode.trim()) {
+        return fail("emailCode", "인증 코드를 입력해 주세요.");
+      }
+      return emailVerify();
+    }
+
     if (!(await validate(step))) return;
 
     if (isLast) {
@@ -188,7 +271,10 @@ export function useSignUp() {
     direction,
     busy,
     isLast,
-    emailChecked,
+    emailStatus,
+    codeSeconds: codeTimer.seconds,
+    resendSeconds: resendTimer.seconds,
+    resend,
     nicknameChecked,
     handleChange,
     goNext,

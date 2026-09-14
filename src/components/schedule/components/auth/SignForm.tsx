@@ -24,7 +24,10 @@ export default function SignForm() {
     direction,
     busy,
     isLast,
-    emailChecked,
+    emailStatus,
+    codeSeconds,
+    resendSeconds,
+    resend,
     nicknameChecked,
     handleChange,
     goNext,
@@ -38,7 +41,11 @@ export default function SignForm() {
       : "확인 중…"
     : isLast
       ? "회원가입"
-      : "다음";
+      : step === 0 && emailStatus === "idle"
+        ? "인증 코드 받기"
+        : step === 0 && emailStatus === "sent"
+          ? "인증하기"
+          : "다음";
 
   return (
     <AuthLayoutGrid>
@@ -78,7 +85,10 @@ export default function SignForm() {
               step={step}
               form={form}
               errors={errors}
-              emailChecked={emailChecked}
+              emailStatus={emailStatus}
+              codeSeconds={codeSeconds}
+              resendSeconds={resendSeconds}
+              onResend={resend}
               nicknameChecked={nicknameChecked}
               onChange={handleChange}
             />
