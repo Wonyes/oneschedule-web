@@ -15,34 +15,40 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside
-      className="
+    <>
+      {/* 모바일: 바텀바 뒤 배경 띠. 위쪽은 투명해져서 스크롤 내용이 바 밑으로 녹아든다 */}
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-x-0 bottom-0 z-30 h-[calc(5rem+env(safe-area-inset-bottom))] bg-[linear-gradient(to_bottom,transparent,var(--main-bg)_28%)] sm:hidden"
+      />
+      <aside
+        className="
         fixed inset-x-4 py-1 z-40 h-fit rounded-2xl max-w-md mx-auto
-        bottom-[calc(1rem+env(safe-area-inset-bottom))]
+        bottom-[calc(0.75rem+env(safe-area-inset-bottom))]
         sm:static sm:inset-x-auto sm:bottom-auto sm:mt-4 sm:w-16 sm:h-[calc(100%-1rem)] sm:max-w-none sm:mx-0
         glass sm:neu-flat
         flex flex-row sm:flex-col items-center justify-around sm:justify-between
         py-0 sm:py-5 shrink-0
         select-none
       "
-    >
-      <div className="flex flex-row sm:flex-col items-center justify-around sm:justify-start gap-0 sm:gap-6 w-full sm:w-auto">
-        <nav className="flex flex-row sm:flex-col justify-around sm:justify-start gap-0 sm:gap-3 w-full sm:w-auto">
-          {menuItems.map((item) => {
-            const Icon = item.icon;
-            const isActive =
-              item.path === "/"
-                ? pathname === "/"
-                : pathname.startsWith(item.path);
+      >
+        <div className="flex flex-row sm:flex-col items-center justify-around sm:justify-start gap-0 sm:gap-6 w-full sm:w-auto">
+          <nav className="flex flex-row sm:flex-col justify-around sm:justify-start gap-0 sm:gap-3 w-full sm:w-auto">
+            {menuItems.map((item) => {
+              const Icon = item.icon;
+              const isActive =
+                item.path === "/"
+                  ? pathname === "/"
+                  : pathname.startsWith(item.path);
 
-            return (
-              <Link
-                key={item.id}
-                href={item.path}
-                prefetch
-                title={item.label}
-                aria-current={isActive ? "page" : undefined}
-                className={`
+              return (
+                <Link
+                  key={item.id}
+                  href={item.path}
+                  prefetch
+                  title={item.label}
+                  aria-current={isActive ? "page" : undefined}
+                  className={`
                   relative
                   w-10 h-10
                   rounded-xl
@@ -56,28 +62,29 @@ export default function Sidebar() {
                       : "neu-btn text-secondary hover:text-foreground"
                   }
                 `}
-              >
-                <Icon
-                  size={18}
-                  className="
+                >
+                  <Icon
+                    size={18}
+                    className="
                     transition-transform
                     group-hover:scale-110
                   "
-                />
-                {isActive && (
-                  <span
-                    className="
+                  />
+                  {isActive && (
+                    <span
+                      className="
                       absolute bottom-0.5 sm:bottom-auto sm:top-0.5
                       left-1/2 -translate-x-1/2
                       h-1 w-1 rounded-full bg-primary
                     "
-                  />
-                )}
-              </Link>
-            );
-          })}
-        </nav>
-      </div>
-    </aside>
+                    />
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+      </aside>
+    </>
   );
 }

@@ -17,7 +17,7 @@ export default function HeaderAuth({ user }: { user: MyInfoResponse | null }) {
         href="/login"
         icon={<LogIn size={13} strokeWidth={1.75} />}
         text="로그인"
-        className="h-8 gap-1.5 px-3.5 py-0 typo-caption-2 whitespace-nowrap"
+        className="h-9 gap-1.5 px-3.5 py-0 typo-caption-2 whitespace-nowrap"
       />
     );
   }
@@ -28,10 +28,10 @@ export default function HeaderAuth({ user }: { user: MyInfoResponse | null }) {
         href="/profile"
         prefetch
         aria-label="내 프로필"
-        className="btn-spring flex cursor-pointer items-center gap-2 rounded-lg hover:bg-surface-hover"
+        className="btn-spring flex h-9 cursor-pointer items-center gap-2 rounded-lg hover:bg-surface-hover"
       >
         <IconBox
-          size="sm"
+          size="header"
           shape="circle"
           className="overflow-hidden typo-caption-3 font-bold"
         >
@@ -45,7 +45,7 @@ export default function HeaderAuth({ user }: { user: MyInfoResponse | null }) {
       <button
         onClick={() => logout()}
         aria-label="로그아웃"
-        className="p-1.5 rounded-full h-8 w-8 neu-flat text-muted btn-spring hover:bg-surface-hover hover:text-foreground active:scale-95"
+        className="hidden h-9 w-9 items-center justify-center rounded-full neu-flat text-muted btn-spring hover:bg-surface-hover hover:text-foreground active:scale-95 lg:flex"
       >
         <LogOut size={15} strokeWidth={1.75} />
       </button>

@@ -45,7 +45,7 @@ export default function GroupActivitySection({
   }, [groupSchedules]);
 
   return (
-    <BaseCard className="flex flex-col p-5" childClass="flex flex-col">
+    <BaseCard className="flex flex-col p-4 sm:p-5" childClass="flex flex-col">
       <Column className="mb-3 gap-1">
         <span className="eyebrow">ACTIVITY</span>
         <h2 className="typo-sub-t-1 text-foreground">최근 활동</h2>

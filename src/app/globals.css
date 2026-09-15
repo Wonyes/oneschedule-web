@@ -615,6 +615,11 @@ html[data-theme-switching] *::after {
   line-height: 64px;
   font-weight: 500;
   letter-spacing: -0.01em;
+  /* 모바일: 줄일 수 있는 건 줄인다 */
+  @media (max-width: 639px) {
+    font-size: 30px;
+    line-height: 40px;
+  }
 }
 
 @utility typo-h2 {
@@ -638,6 +643,10 @@ html[data-theme-switching] *::after {
   font-size: 32px;
   line-height: 40px;
   font-weight: 500;
+  @media (max-width: 639px) {
+    font-size: 26px;
+    line-height: 32px;
+  }
 }
 
 @utility typo-title-1 {
@@ -645,6 +654,10 @@ html[data-theme-switching] *::after {
   font-size: 24px;
   line-height: 32px;
   font-weight: 500;
+  @media (max-width: 639px) {
+    font-size: 21px;
+    line-height: 28px;
+  }
 }
 
 @utility typo-title-2 {

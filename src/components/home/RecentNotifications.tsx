@@ -32,7 +32,7 @@ export default function RecentNotifications() {
   };
 
   return (
-    <BaseCard className="p-5">
+    <BaseCard className="p-4 sm:p-5">
       <Row className="mb-3 items-center gap-2">
         <Bell size={14} strokeWidth={1.75} className="text-accent" />
         <span className="typo-sub-t-1 text-foreground">최근 알림</span>

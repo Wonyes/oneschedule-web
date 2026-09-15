@@ -65,7 +65,7 @@ export default function UpcomingSchedules({ today }: { today: Date }) {
   }, [personalSchedules, groupSchedules, today]);
 
   return (
-    <BaseCard className="flex-1 p-5">
+    <BaseCard className="flex-1 p-4 sm:p-5">
       <Between className="mb-4">
         <Column className="gap-1">
           <span className="eyebrow">SCHEDULE</span>
@@ -75,7 +75,7 @@ export default function UpcomingSchedules({ today }: { today: Date }) {
         <Link
           href="/schedule"
           prefetch
-          className="typo-caption-2 text-accent hover:underline"
+          className="typo-caption-2 -m-2 p-2 text-accent hover:underline"
         >
           전체 보기
         </Link>

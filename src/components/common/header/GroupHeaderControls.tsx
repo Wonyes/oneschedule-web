@@ -10,5 +10,14 @@ export default function GroupHeaderControls() {
 
   if (!isGroupPage) return null;
 
-  return <GroupSwitcher align="left" />;
+  return (
+    <>
+      <div className="lg:hidden">
+        <GroupSwitcher compact />
+      </div>
+      <div className="hidden lg:block">
+        <GroupSwitcher align="left" />
+      </div>
+    </>
+  );
 }

@@ -102,7 +102,7 @@ export default function SignForm() {
               </button>
             )}
 
-            <Primary type="submit" className="w-full py-4" text={buttonText} />
+            <Primary type="submit" className="w-full py-3 sm:py-4" text={buttonText} />
           </Row>
         </motion.div>
 

@@ -42,7 +42,7 @@ export default function AccountInfo({ user }: { user: MyInfoResponse }) {
     phoneNumber.replace(/^(\d{3})(\d{4})(\d{4})$/, "$1-$2-$3");
 
   return (
-    <BaseCard className="p-5" glow>
+    <BaseCard className="p-4 sm:p-5" glow>
       <motion.div
         variants={stagger}
         initial="hidden"

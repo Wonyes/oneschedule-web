@@ -18,7 +18,7 @@ export default function GroupPicker({
 }) {
   const setActiveGroup = useActiveGroupStore((s) => s.setActiveGroup);
   return (
-    <BaseCard className="mx-auto w-full max-w-[420px] p-6" glow>
+    <BaseCard className="mx-auto w-full max-w-[420px] p-4 sm:p-6" glow>
       <Column className="mb-5 gap-1.5">
         <span className="eyebrow">SELECT GROUP</span>
         <span className="typo-title-2 text-foreground">그룹 선택</span>

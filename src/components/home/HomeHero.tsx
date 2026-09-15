@@ -46,7 +46,7 @@ export default function HomeHero({
   const todayWeather = weathers?.[format(today, "yyyyMMdd")];
 
   return (
-    <BaseCard glow className="p-6 lg:p-8">
+    <BaseCard glow className="p-4 sm:p-6 lg:p-8">
       <div className="grid items-center gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)_auto] lg:gap-10">
         <Column className="min-w-0 gap-5">
           <Column>

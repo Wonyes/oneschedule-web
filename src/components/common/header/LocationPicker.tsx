@@ -88,20 +88,21 @@ export default function LocationPicker() {
       label="지역 선택"
       align="left"
       panelClassName="w-40 lg:left-auto lg:right-0"
-      triggerClassName="neu-flat h-8 rounded-xl px-2.5 typo-caption-2 text-secondary hover:text-foreground lg:px-3"
+      triggerClassName="neu-btn relative h-9 w-9 justify-center rounded-xl p-0 text-secondary hover:text-foreground lg:w-auto lg:gap-1.5 lg:px-2.5"
       trigger={(isOpen) => (
         <>
           <MapPin size={13} strokeWidth={1.75} className="text-accent" />
 
-          <span className="max-w-[52px] truncate whitespace-nowrap lg:max-w-none">
+          <span className="hidden max-w-[96px] truncate whitespace-nowrap typo-caption-2 lg:inline">
             {name}
           </span>
 
-          <ChevronDown
-            size={12}
-            strokeWidth={1.75}
-            className={`shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`}
-          />
+          <span
+            aria-hidden
+            className={`absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-on-primary ring-2 ring-[var(--surface)] transition-transform ${isOpen ? "rotate-180" : ""}`}
+          >
+            <ChevronDown size={10} strokeWidth={2.5} />
+          </span>
         </>
       )}
     >

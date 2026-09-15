@@ -77,7 +77,7 @@ export function Input({
         className={cn(
           "relative w-full rounded-xl flex items-center px-4 overflow-hidden",
           "neu-input",
-          label ? "h-[52px]" : "py-3",
+          label ? "h-12 sm:h-[52px]" : "py-2.5 sm:py-3",
           className,
         )}
       >

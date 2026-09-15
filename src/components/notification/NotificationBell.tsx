@@ -1,10 +1,12 @@
 "use client";
 
 import { Bell } from "lucide-react";
+import { useEffect, useRef } from "react";
 
 import DropdownMenu from "@/src/components/ui/DropdownMenu";
 import { Column, Row } from "@/src/components/ui/layout/flex";
 import Skeleton from "@/src/components/ui/Skeleton";
+import { useMediaQuery } from "@/src/hooks/useMediaQuery";
 import { Notification } from "@/src/types/notification";
 import { cn } from "@/src/utils/cn";
 import { AnimatePresence } from "motion/react";
@@ -33,14 +35,29 @@ export default function NotificationBell({
   onReadAll,
   onLoadMore,
   className,
-  triggerClassName = "neu-btn h-8 w-8 rounded-full text-secondary",
+  triggerClassName = "neu-btn h-9 w-9 rounded-full text-secondary",
 }: NotificationBellProps) {
   const badge = unreadCount > 99 ? "99+" : unreadCount;
+
+  // 목록 바닥의 센티널이 보이면 다음 페이지 — "더 보기" 버튼 없이 스크롤 페이징
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el || !hasMore || loadingMore || !onLoadMore) return;
+    const io = new IntersectionObserver(
+      (entries) => entries[0]?.isIntersecting && onLoadMore(),
+      { root: el.parentElement, rootMargin: "40px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [hasMore, loadingMore, onLoadMore, items.length]);
+  // 폰에선 패널을 화면 가로 중앙에 (세로 위치는 종 기준 그대로)
+  const isDesktop = useMediaQuery("(min-width: 640px)");
 
   return (
     <DropdownMenu
       label="알림"
-      align="right"
+      align={isDesktop ? "right" : "center"}
       className={className}
       panelClassName="w-[340px] max-w-[calc(100vw-32px)]"
       triggerClassName={cn(
@@ -98,7 +115,8 @@ export default function NotificationBell({
               </span>
             </Column>
           ) : (
-            <Column className="scroll-hidden max-h-[60vh] w-full gap-0.5 overflow-y-auto">
+            // 항목 4개(각 ≈60px) 높이까지만 보이고, 그 아래는 스크롤
+            <Column className="scroll-hidden max-h-[248px] w-full gap-0.5 overflow-y-auto">
               <AnimatePresence initial={false}>
                 {items.map((item) => (
                   <NotificationItem
@@ -111,23 +129,16 @@ export default function NotificationBell({
                   />
                 ))}
               </AnimatePresence>
-            </Column>
-          )}
 
-          {hasMore && (
-            <div className="mt-1 border-t border-divider px-3 pt-2 text-center">
-              <button
-                type="button"
-                disabled={loadingMore}
-                onClick={onLoadMore}
-                className={cn(
-                  "typo-caption-3 text-accent hover:underline",
-                  loadingMore && "opacity-50",
-                )}
-              >
-                {loadingMore ? "불러오는 중…" : "이전 알림 더 보기"}
-              </button>
-            </div>
+              {hasMore && (
+                <div
+                  ref={sentinelRef}
+                  className="flex h-8 shrink-0 items-center justify-center typo-caption-3 text-place-h"
+                >
+                  {loadingMore ? "불러오는 중…" : ""}
+                </div>
+              )}
+            </Column>
           )}
         </>
       )}

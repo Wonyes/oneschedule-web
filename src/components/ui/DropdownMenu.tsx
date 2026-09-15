@@ -17,7 +17,8 @@ type DropdownMenuProps = {
   trigger: (isOpen: boolean) => React.ReactNode;
   children: (close: () => void) => React.ReactNode;
   label: string;
-  align?: "left" | "right" | "stretch";
+  /** center: 트리거와 무관하게 화면 가로 중앙 (세로는 트리거 기준 그대로) */
+  align?: "left" | "right" | "stretch" | "center";
   className?: string;
   panelClassName?: string;
   triggerClassName?: string;
@@ -70,13 +71,18 @@ export default function DropdownMenu({
       const flipUp = panelHeight > spaceBelow && anchor.top > panelHeight + GAP;
 
       const top = flipUp ? anchor.top - panelHeight - GAP : anchor.bottom + GAP;
-      const origin = `${flipUp ? "bottom" : "top"} ${align === "right" ? "right" : "left"}`;
+      const origin = `${flipUp ? "bottom" : "top"} ${align === "right" ? "right" : align === "center" ? "center" : "left"}`;
 
       const width =
         align === "stretch"
           ? anchor.width
           : (panelRef.current?.offsetWidth ?? 0);
-      const wanted = align === "right" ? anchor.right - width : anchor.left;
+      const wanted =
+        align === "right"
+          ? anchor.right - width
+          : align === "center"
+            ? (window.innerWidth - width) / 2
+            : anchor.left;
       const maxLeft = window.innerWidth - width - GAP;
       const left = Math.max(GAP, Math.min(wanted, maxLeft));
 

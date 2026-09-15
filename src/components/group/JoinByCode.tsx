@@ -57,7 +57,7 @@ export default function JoinByCode({ onJoined }: { onJoined?: () => void }) {
   };
 
   return (
-    <BaseCard className="w-full p-6" glow>
+    <BaseCard className="w-full p-4 sm:p-6" glow>
       <Column className="mb-4 gap-1">
         <span className="eyebrow">INVITE</span>
         <h2 className="typo-sub-t-1 text-foreground">초대코드로 참여</h2>

@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import DropdownMenu from "../ui/DropdownMenu";
 import GroupAvatar from "./GroupAvatar";
 import { Column } from "../ui/layout/flex";
+import Skeleton from "@/src/components/ui/Skeleton";
 import { useActiveGroup } from "@/src/hooks/querys/useGroup";
 import { useActiveGroupStore } from "@/src/hooks/stores/useActiveGroupStore";
 import { groupPath } from "@/src/lib/activeGroup";
@@ -21,11 +22,19 @@ export default function GroupSwitcher({
   /** 아바타만 보여주고 그룹 이름은 툴팁으로 넘긴다. */
   compact?: boolean;
 }) {
-  const { groups, group } = useActiveGroup(enabled);
+  const { groups, group, isLoading } = useActiveGroup(enabled);
   const setActiveGroup = useActiveGroupStore((s) => s.setActiveGroup);
   const router = useRouter();
   const pathname = usePathname();
 
+  // 서버 렌더·첫 로딩 동안엔 같은 크기의 자리표시자 — 데이터가 온 뒤 헤더가 밀리지 않게
+  if (isLoading && groups.length === 0) {
+    return (
+      <Skeleton
+        className={compact ? "h-9 w-9 rounded-xl" : "h-9 w-9 rounded-xl lg:w-32"}
+      />
+    );
+  }
   if (groups.length === 0) return null;
 
   return (
@@ -35,7 +44,7 @@ export default function GroupSwitcher({
       panelClassName="w-56"
       triggerClassName={
         compact
-          ? "relative h-8 w-8 justify-center rounded-xl p-0 text-secondary"
+          ? "neu-btn relative h-9 w-9 justify-center rounded-xl p-0 text-secondary"
           : "text-secondary px-2 py-1.5 typo-caption-2 hover:text-foreground lg:px-2.5"
       }
       trigger={(isOpen) => (
@@ -44,7 +53,7 @@ export default function GroupSwitcher({
             <GroupAvatar
               name={group.groupName}
               imageUrl={group.profileImageUrl}
-              size="sm"
+              size={compact ? "header" : "sm"}
             />
           ) : (
             <Users

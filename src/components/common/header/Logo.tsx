@@ -15,7 +15,7 @@ export default function Logo() {
         className="flex items-center gap-2 shrink-0"
         aria-label="홈으로 이동"
       >
-        <IconBox size="sm">
+        <IconBox size="header">
           <CalendarClock size={15} strokeWidth={1.75} />
         </IconBox>
 
@@ -29,7 +29,8 @@ export default function Logo() {
         </span>
       </Link>
 
-      <div className="lg:hidden">
+      {/* 폰(<640)에선 위치가 로고 옆, 그 위로는 헤더 우측 묶음에 */}
+      <div className="sm:hidden">
         <LocationPicker />
       </div>
     </Row>

@@ -8,6 +8,7 @@ import AvatarImage from "@/src/components/common/AvatarImage";
 import OrbitRing, { OrbitItem } from "@/src/components/common/OrbitRing";
 import GroupAvatar from "@/src/components/group/GroupAvatar";
 import { groupPath } from "@/src/lib/activeGroup";
+import { useMediaQuery } from "@/src/hooks/useMediaQuery";
 import { springSoft } from "@/src/lib/motion";
 import { MyGroupResponse } from "@/src/types/group";
 
@@ -26,6 +27,7 @@ export default function ProfileOrbit({
   uploading: boolean;
   onPickImage: () => void;
 }) {
+  const wide = useMediaQuery("(min-width: 640px)");
   const shown = groups.slice(0, MAX_SATELLITES);
   const hidden = groups.length - shown.length;
 
@@ -70,7 +72,8 @@ export default function ProfileOrbit({
 
   return (
     <OrbitRing
-      radius={96}
+      radius={wide ? 96 : 80}
+      className={wide ? "h-60 w-60" : "h-52 w-52"}
       items={items}
       center={
         <>
@@ -91,7 +94,7 @@ export default function ProfileOrbit({
             onClick={onPickImage}
             disabled={uploading}
             aria-label="프로필 사진 변경"
-            className="neu-btn btn-spring absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full text-secondary hover:text-foreground"
+            className="neu-btn btn-spring absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full text-secondary hover:text-foreground"
           >
             {uploading ? (
               <Loader2 size={13} className="animate-spin text-accent" />

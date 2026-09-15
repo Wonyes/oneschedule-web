@@ -9,7 +9,7 @@ export default function AuthHeader() {
   const isTitle = pathname === "/login" ? "홈으로" : "뒤로가기";
   const isPath = pathname === "/login" ? "/" : "/login";
   return (
-    <header className="w-full flex justify-between px-8 py-6 shrink-0 bg-transparent">
+    <header className="w-full flex justify-between px-4 py-4 shrink-0 bg-transparent lg:px-8 lg:py-6">
       <Link
         href={isPath}
         prefetch

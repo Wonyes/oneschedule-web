@@ -107,7 +107,7 @@ export default function FindPasswordForm() {
               </button>
             )}
 
-            <Primary type="submit" className="w-full py-4" text={buttonText} />
+            <Primary type="submit" className="w-full py-3 sm:py-4" text={buttonText} />
           </Row>
         </motion.div>
 
@@ -117,7 +117,7 @@ export default function FindPasswordForm() {
             <Link
               href="/login"
               prefetch
-              className="typo-sub-t-1 text-accent hover:underline"
+              className="typo-sub-t-1 -m-2 p-2 text-accent hover:underline"
             >
               로그인
             </Link>

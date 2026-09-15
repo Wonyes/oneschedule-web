@@ -24,7 +24,7 @@ export default function HomeContent({
   const today = useMemo(() => new Date(), []);
 
   return (
-    <div className="relative flex min-h-full w-full flex-col gap-4 lg:gap-6">
+    <div className="relative flex min-h-full w-full flex-col gap-3 sm:gap-4 lg:gap-6">
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
         <div className="absolute -top-24 left-1/4 h-72 w-72 rounded-full bg-accent/10" />
         <div className="absolute top-1/3 right-0 h-80 w-80 rounded-full bg-accent/[0.06]" />
@@ -39,14 +39,14 @@ export default function HomeContent({
 
       <OnboardingChecklist user={user} today={today} />
 
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:gap-6">
-        <div className="flex min-w-0 flex-1 flex-col gap-4 lg:gap-6">
+      <div className="flex flex-col gap-3 sm:gap-4 lg:flex-row lg:items-start lg:gap-6">
+        <div className="flex min-w-0 flex-1 flex-col gap-3 sm:gap-4 lg:gap-6">
           <UpcomingSchedules today={today} />
 
           <RecentNotifications />
         </div>
 
-        <div className="flex flex-col gap-4 lg:w-72 lg:shrink-0 lg:gap-6">
+        <div className="flex flex-col gap-3 sm:gap-4 lg:w-72 lg:shrink-0 lg:gap-6">
           <MiniCalendar today={today} />
 
           <GroupQuickLink

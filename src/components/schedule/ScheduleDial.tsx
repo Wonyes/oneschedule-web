@@ -1,6 +1,5 @@
 "use client";
 
-import { useRef } from "react";
 import { addDays, addMonths, format, isSameDay, isToday } from "date-fns";
 import { ko } from "date-fns/locale";
 import { motion } from "motion/react";
@@ -16,7 +15,6 @@ import WeatherIcon from "./components/WeatherIcon";
 
 /** 가운데 기준 양옆으로 몇 눈금까지 보여줄지 */
 const REACH = 3;
-const WHEEL_COOLDOWN = 260;
 
 type Tick = {
   key: string;
@@ -82,7 +80,7 @@ function buildTicks(
 
 /**
  * 스케줄 헤더의 다이얼. 가운데 눈금이 지금 보는 기간이고, 옆 눈금을 누르거나
- * 휠·스와이프로 돌리면 기간이 바뀐다. 제목과 화살표를 대신한다.
+ * 스와이프하면 기간이 바뀐다. 제목과 화살표를 대신한다.
  */
 export default function ScheduleDial({
   weathers,
@@ -91,94 +89,98 @@ export default function ScheduleDial({
 }) {
   const { mode, currentDate, next, prev, setCurrentDate } = useScheduleStore();
   const ticks = buildTicks(mode, currentDate, weathers);
-  const lastWheel = useRef(0);
   const swipe = useSwipe(next, prev);
 
-  const onWheel = (e: React.WheelEvent) => {
-    const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-    if (Math.abs(delta) < 8) return;
-    const t = Date.now();
-    if (t - lastWheel.current < WHEEL_COOLDOWN) return;
-    lastWheel.current = t;
-    if (delta > 0) next();
-    else prev();
-  };
+  const cornerLabel =
+    mode === "month"
+      ? format(currentDate, "yyyy")
+      : mode === "week"
+        ? format(currentDate, "yyyy년 M월")
+        : format(currentDate, "yyyy년 M월 EEEE", { locale: ko });
 
   return (
-    <div
-      role="group"
-      aria-label="기간 선택 다이얼"
-      onWheel={onWheel}
-      {...swipe}
-      className="relative flex min-w-0 flex-1 select-none items-center justify-center overflow-hidden py-1"
-      style={{
-        maskImage:
-          "linear-gradient(to right, transparent, black 18%, black 82%, transparent)",
-        WebkitMaskImage:
-          "linear-gradient(to right, transparent, black 18%, black 82%, transparent)",
-      }}
-    >
-      <div className="flex items-center gap-1 sm:gap-2">
-        {ticks.map((tick, i) => {
-          const distance = Math.abs(i - REACH);
-          return (
-            <motion.button
-              key={tick.key}
-              type="button"
-              layout
-              transition={springSnappy}
-              onClick={() => !tick.current && setCurrentDate(tick.date)}
-              aria-current={tick.current ? "date" : undefined}
-              aria-label={format(tick.date, "yyyy년 M월 d일", { locale: ko })}
-              className={cn(
-                "btn-spring flex shrink-0 flex-col items-center justify-center rounded-2xl transition-colors",
-                tick.current
-                  ? "neu-flat h-16 min-w-24 px-4 text-foreground"
-                  : "h-12 min-w-16 px-2 text-place-h hover:text-secondary",
-                distance === 2 && "opacity-70",
-                distance === 3 && "opacity-40",
-              )}
-            >
-              {tick.secondary && (
-                <span
-                  className={cn(
-                    "typo-caption-3",
-                    tick.current ? "text-accent" : "text-place-h",
-                  )}
-                >
-                  {tick.secondary}
-                </span>
-              )}
-              <span
-                className={cn(
-                  "leading-none tabular-nums",
+    <div className="relative min-w-0 flex-1">
+      {/* 연도(주/일 뷰는 년월·요일) — 다이얼 왼쪽 위 구석. 마스크 밖이라 흐려지지 않는다 */}
+      <span className="pointer-events-none absolute left-1 top-0 z-10 text-[10px] font-semibold leading-none tracking-wide text-accent sm:left-2">
+        {cornerLabel}
+      </span>
+
+      <div
+        role="group"
+        aria-label="기간 선택 다이얼"
+        {...swipe}
+        className="relative flex min-w-0 select-none items-center justify-center overflow-hidden py-0.5 sm:py-1"
+        style={{
+          maskImage:
+            "linear-gradient(to right, transparent, black 18%, black 82%, transparent)",
+          WebkitMaskImage:
+            "linear-gradient(to right, transparent, black 18%, black 82%, transparent)",
+        }}
+      >
+        <div className="flex items-center gap-1 sm:gap-2">
+          {ticks.map((tick, i) => {
+            const distance = Math.abs(i - REACH);
+            return (
+              <motion.button
+                key={tick.key}
+                type="button"
+                layout
+                transition={springSnappy}
+                onClick={() =>
+                  setCurrentDate(tick.current ? new Date() : tick.date)
+                }
+                aria-current={tick.current ? "date" : undefined}
+                aria-label={
                   tick.current
-                    ? "typo-title-2 font-bold"
-                    : "typo-sub-t-2 font-semibold",
-                  tick.today && !tick.current && "text-accent",
+                    ? "오늘로 이동"
+                    : format(tick.date, "yyyy년 M월 d일", { locale: ko })
+                }
+                title={tick.current && !tick.today ? "오늘로" : undefined}
+                className={cn(
+                  "btn-spring relative flex shrink-0 flex-col items-center justify-center rounded-2xl transition-colors",
+                  tick.current
+                    ? "neu-flat h-10 min-w-20 px-3 text-foreground sm:h-12 sm:min-w-24 sm:px-4"
+                    : "h-10 min-w-14 px-1.5 text-place-h hover:text-secondary sm:h-12 sm:min-w-16 sm:px-2",
+                  distance === 2 && "opacity-70",
+                  distance === 3 && "opacity-40",
                 )}
               >
-                {tick.primary}
-              </span>
-              {tick.weather && (
-                <Column className="mt-1 flex-row items-center gap-1 typo-caption-3 text-place-h">
-                  <WeatherIcon
-                    pty={tick.weather.pty}
-                    sky={tick.weather.sky}
-                    size={11}
-                  />
-                  {tick.current && <span>{tick.weather.tmp}°</span>}
-                </Column>
-              )}
-              {tick.today && (
+                {tick.secondary && !tick.current && (
+                  <span className="whitespace-nowrap typo-caption-3 text-place-h">
+                    {tick.secondary}
+                  </span>
+                )}
                 <span
-                  aria-hidden
-                  className="mt-1 h-1 w-1 rounded-full bg-accent"
-                />
-              )}
-            </motion.button>
-          );
-        })}
+                  className={cn(
+                    "leading-none tabular-nums",
+                    tick.current
+                      ? "typo-sub-t-1 font-bold sm:typo-title-2"
+                      : "typo-caption-1 font-semibold sm:typo-sub-t-2",
+                    tick.today && !tick.current && "text-accent",
+                  )}
+                >
+                  {tick.primary}
+                </span>
+                {tick.weather && (
+                  <Column className="mt-1 flex-row items-center gap-1 typo-caption-3 text-place-h">
+                    <WeatherIcon
+                      pty={tick.weather.pty}
+                      sky={tick.weather.sky}
+                      size={11}
+                    />
+                    {tick.current && <span>{tick.weather.tmp}°</span>}
+                  </Column>
+                )}
+                {tick.today && (
+                  <span
+                    aria-hidden
+                    className="mt-1 h-1 w-1 rounded-full bg-accent"
+                  />
+                )}
+              </motion.button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

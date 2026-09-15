@@ -105,7 +105,7 @@ export default function LoginForm() {
         <motion.div variants={rise}>
           <Primary
             type="submit"
-            className="w-full py-4"
+            className="w-full py-3 sm:py-4"
             text={isPending ? "로그인 중…" : "로그인"}
           />
         </motion.div>

@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { isToday } from "date-fns";
 
 type ViewMode = "day" | "week" | "month";
 
@@ -45,3 +46,16 @@ export const useScheduleStore = create<ScheduleStore>((set) => ({
       return { currentDate: date };
     }),
 }));
+
+/**
+ * 서버(SSR)에서는 스토어가 프로세스 전체에서 공유돼 모듈 로드 시점의 날짜가 남는다.
+ * 자정이 지나면 서버는 "어제", 클라이언트는 "오늘"을 그려 하이드레이션이 깨지므로
+ * 스케줄 페이지가 서버에서 렌더되기 직전에 오늘로 맞춘다. (클라이언트에선 아무것도 안 함)
+ */
+export function syncServerStoreToToday() {
+  if (typeof window !== "undefined") return;
+  const { currentDate } = useScheduleStore.getState();
+  if (!isToday(currentDate)) {
+    useScheduleStore.setState({ currentDate: new Date() });
+  }
+}

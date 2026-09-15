@@ -182,7 +182,7 @@ export default function PublicGroupList() {
   });
 
   return (
-    <BaseCard className="w-full p-6" glow>
+    <BaseCard className="w-full p-4 sm:p-6" glow>
       <Column className="mb-3 gap-1">
         <span className="eyebrow">DISCOVER</span>
         <h2 className="typo-sub-t-1 text-foreground">공개 그룹 둘러보기</h2>

@@ -29,16 +29,20 @@ export function BrandPlate({
     <Plate size="wide">
       <motion.section
         variants={stagger}
-        className="flex flex-col lg:w-[420px] lg:items-center lg:text-center"
+        className="flex flex-col items-center gap-0 text-center lg:w-[420px]"
       >
-        <motion.div variants={rise}>
+        <motion.div variants={rise} className="pt-4 lg:pt-0">
           <OrbitHero />
         </motion.div>
 
         <motion.div variants={rise} className="mt-2">
           <span className="eyebrow">ONE SCHEDULER</span>
-          <h1 className="typo-h1 mt-2 tracking-tight">{title}</h1>
-          <p className="typo-title-3 mt-2 text-muted">{subtitle}</p>
+          <h1 className="typo-h1 mt-2 break-keep tracking-tight">
+            {title}
+          </h1>
+          <p className="typo-caption-2 text-muted lg:typo-title-2 lg:mt-2">
+            {subtitle}
+          </p>
         </motion.div>
 
         <motion.ul
@@ -69,7 +73,7 @@ export function AuthLayoutGrid({ children }: { children: React.ReactNode }) {
       variants={stagger}
       initial="hidden"
       animate="show"
-      className="grid w-full gap-8 lg:grid-cols-[auto_auto] lg:items-center lg:justify-center lg:gap-0"
+      className="grid w-full gap-4 lg:grid-cols-[auto_auto] lg:items-center lg:justify-center lg:gap-0"
     >
       {children}
     </motion.div>
@@ -111,7 +115,7 @@ export function AuthAlternatives({
           <Link
             href={linkHref}
             prefetch
-            className="typo-sub-t-1 text-accent hover:underline"
+            className="typo-sub-t-1 -m-2 p-2 text-accent hover:underline"
           >
             {linkText}
           </Link>

@@ -25,7 +25,7 @@ const MAX_DOTS = 3;
 /** 오른쪽 열: 이번 달 한눈에. 날짜를 누르면 그 날 일 뷰로 */
 export default function MiniCalendar({ today }: { today: Date }) {
   const { group } = useActiveGroup();
-  const { data: holidays } = useHolidays();
+  const { data: holidays } = useHolidays(today);
   const { data: personal } = useSchedules("PERSONAL", true);
   const { data: groupSchedules } = useSchedules(
     "GROUP",
@@ -48,7 +48,7 @@ export default function MiniCalendar({ today }: { today: Date }) {
   }, [personal, groupSchedules]);
 
   return (
-    <BaseCard className="p-4">
+    <BaseCard className="p-3 sm:p-4">
       <Between className="mb-3 items-center">
         <span className="typo-caption-1 font-semibold text-foreground">
           {format(today, "M월", { locale: ko })}
@@ -56,7 +56,7 @@ export default function MiniCalendar({ today }: { today: Date }) {
         <Link
           href="/schedule?view=month"
           prefetch
-          className="typo-caption-3 text-accent hover:underline"
+          className="typo-caption-3 -m-2 p-2 text-accent hover:underline"
         >
           월 보기
         </Link>

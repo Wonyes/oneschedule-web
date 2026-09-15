@@ -5,6 +5,7 @@ import { Camera } from "lucide-react";
 import AvatarImage from "@/src/components/common/AvatarImage";
 import OrbitRing, { OrbitItem } from "@/src/components/common/OrbitRing";
 import { GroupMember, MemberPresence } from "@/src/types/group";
+import { useMediaQuery } from "@/src/hooks/useMediaQuery";
 import { cn } from "@/src/utils/cn";
 
 const MAX_SATELLITES = 6;
@@ -26,6 +27,7 @@ export default function GroupOrbit({
   onPickImage?: () => void;
   onMemberClick?: () => void;
 }) {
+  const wide = useMediaQuery("(min-width: 640px)");
   const shown = members.slice(0, MAX_SATELLITES);
   const hidden = members.length - shown.length;
 
@@ -76,8 +78,8 @@ export default function GroupOrbit({
 
   return (
     <OrbitRing
-      radius={92}
-      className="h-56 w-56"
+      radius={wide ? 92 : 78}
+      className={wide ? "h-56 w-56" : "h-48 w-48"}
       items={items}
       center={
         <>
@@ -94,7 +96,7 @@ export default function GroupOrbit({
               type="button"
               onClick={onPickImage}
               aria-label="그룹 이미지 변경"
-              className="neu-btn btn-spring absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full text-secondary hover:text-foreground"
+              className="neu-btn btn-spring absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full text-secondary hover:text-foreground"
             >
               <Camera size={12} strokeWidth={1.75} />
             </button>

@@ -211,7 +211,7 @@ export const GroupHero = ({ group }: { group: MyGroupResponse }) => {
   };
 
   return (
-    <BaseCard glow className="relative overflow-hidden p-5 sm:p-6">
+    <BaseCard glow className="relative overflow-hidden p-4 sm:p-5 sm:p-4 sm:p-6">
       <div
         aria-hidden
         className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full glow-blob"
@@ -315,7 +315,7 @@ export const GroupHero = ({ group }: { group: MyGroupResponse }) => {
                   type="button"
                   onClick={copyCode}
                   aria-label="초대 코드 복사"
-                  className="neu-btn btn-spring flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted hover:text-foreground"
+                  className="neu-btn btn-spring flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted hover:text-foreground"
                 >
                   <Copy size={12} strokeWidth={1.75} />
                 </button>

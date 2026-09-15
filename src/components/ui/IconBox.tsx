@@ -1,11 +1,12 @@
 import { cn } from "@/src/utils/cn";
 
-type IconBoxSize = "sm" | "md" | "lg";
+type IconBoxSize = "sm" | "header" | "md" | "lg";
 type IconBoxTone = "accent" | "muted" | "success" | "warning" | "danger";
 type IconBoxShape = "square" | "circle";
 
 const SIZE: Record<IconBoxSize, string> = {
   sm: "h-8 w-8 rounded-lg",
+  header: "h-9 w-9 rounded-xl",
   md: "h-9 w-9 rounded-lg",
   lg: "h-10 w-10 rounded-xl",
 };

@@ -180,7 +180,7 @@ export default function OnboardingChecklist({
           type="button"
           onClick={handleDismiss}
           aria-label="시작 가이드 닫기"
-          className="text-muted hover:text-foreground absolute right-3 top-3 shrink-0 rounded-lg p-1 transition-colors sm:static"
+          className="text-muted hover:text-foreground absolute right-2 top-2 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors sm:static"
         >
           <X size={14} strokeWidth={1.75} />
         </button>

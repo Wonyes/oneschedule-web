@@ -5,8 +5,10 @@ import { useWeatherStore } from "../stores/useWeatherStore";
 import { Get } from "./useMutations";
 import { holidayType, ProcessedWeather } from "@/src/types/schedule";
 
-export function useHolidays() {
-  const currentDate = useScheduleStore((s) => s.currentDate);
+/** 기준 달의 공휴일. date를 안 주면 스케줄 페이지가 보고 있는 달을 따른다 */
+export function useHolidays(date?: Date) {
+  const storeDate = useScheduleStore((s) => s.currentDate);
+  const currentDate = date ?? storeDate;
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth() + 1;

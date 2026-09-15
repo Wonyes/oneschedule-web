@@ -125,14 +125,9 @@
 | 심각도 | 내용 | 위치 |
 | :--- | :--- | :--- |
 | 🔴 | 회원가입 전화번호 — 구글 가입자는 번호가 없으므로 선택이 의도. 백엔드 `@NotBlank` 제거, `@Pattern`은 `^$|…`로 빈 값 허용 | `MemberSignupRequest` |
-| 🔴 | 그룹 이름 빈 값 → 500 (검증 누락) | `POST /group/create`, `PUT /group/group-name` |
 | 🔴 | 가입 신청 메시지 201자 → 500 (Oracle 바이트 길이) | `TB_GROUP_JOIN_REQUEST.message` |
-| 🟠 | 일정 시작·종료 역전 허용 | `ScheduleRequest` 검증 |
-| 🟠 | 없는 그룹 번호로 일정 조회 시 200 빈 배열 | `GET /schedules?type=GROUP` |
-| 🟠 | 그룹 이름 길이 제한 없음 (화면 잘림) | `POST /group/create` |
 | 🟠 | 미니 달력 공휴일이 스케줄 store 달을 따라감 | `MiniCalendar.tsx` |
-| 🟠 | 프론트 알림 타입 4/13종만 정의 | `types/notification.ts` |
-| 🟡 | 로그아웃 후 access-token 30분 유효 (블랙리스트 없음) | JWT 설계 |
+| ⚪ | 로그아웃 후 access-token이 만료(30분)까지 유효 — **설계상 허용**. HttpOnly 쿠키라 탈취 경로가 좁고, 로그아웃 시 refresh는 즉시 폐기되어 재진입은 불가. 블랙리스트는 Redis 도입 시 검토 | JWT 설계 |
 | 🟡 | 모바일 터치 타깃 32px 미만 일부 | 가이드 닫기, 전체 보기, 초대 코드 복사 등 |
 
 ## 9. 로드맵

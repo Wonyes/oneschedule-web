@@ -10,7 +10,6 @@ import { useActiveGroup } from "@/src/hooks/querys/useGroup";
 import { getWeekDates, toScheduleEvent } from "@/src/utils/schedule";
 import { ScheduleEvent } from "@/src/types/schedule";
 import ScheduleDial from "./ScheduleDial";
-import ViewModeToggle from "./ViewModeToggle";
 import { Row } from "../ui/layout/flex";
 
 function eventsOnDay(events: ScheduleEvent[], date: Date) {
@@ -72,26 +71,33 @@ export default function ScheduleHeader() {
         : getWeekDates(currentDate).some((d) => isSameDay(d, today));
 
   return (
-    <div className="flex shrink-0 flex-col gap-1.5">
-      {/* 모바일: 다이얼이 첫 줄 전체, 오늘·토글은 둘째 줄 */}
-      <Row className="flex-wrap items-center gap-2 sm:flex-nowrap sm:gap-3">
+    <div className="flex shrink-0 flex-col gap-1 sm:gap-1.5">
+      <Row className="relative items-center gap-2 sm:gap-3">
         <button
           type="button"
           onClick={() => setCurrentDate(new Date())}
           disabled={isTodayInView}
-          className="neu-btn btn-spring typo-caption-2 mr-auto h-9 shrink-0 rounded-xl px-3.5 font-semibold text-secondary hover:text-foreground disabled:opacity-40 sm:mr-0"
+          className="neu-btn btn-spring typo-caption-2 items-center hidden h-9 shrink-0 rounded-xl px-3.5 font-semibold text-secondary hover:text-foreground disabled:opacity-40 sm:flex"
         >
           오늘
         </button>
 
-        <div className="order-first flex basis-full sm:order-none sm:basis-auto sm:min-w-0 sm:flex-1">
+        <div className="flex min-w-0 flex-1 overflow-hidden">
           <ScheduleDial weathers={weathers} />
         </div>
 
-        <ViewModeToggle />
+        {!isTodayInView && (
+          <button
+            type="button"
+            onClick={() => setCurrentDate(new Date())}
+            className="neu-btn btn-spring typo-caption-3 absolute right-0 top-1/2 z-10 flex h-8 -translate-y-1/2 items-center rounded-lg px-2.5 font-semibold text-accent sm:hidden"
+          >
+            오늘
+          </button>
+        )}
       </Row>
 
-      <p className="typo-caption-2 truncate text-center text-muted">
+      <p className="hidden truncate text-center typo-caption-2 text-muted sm:block">
         {summary}
       </p>
     </div>

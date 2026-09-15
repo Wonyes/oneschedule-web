@@ -20,7 +20,7 @@ export default function QuickLink({
   href: string;
 }) {
   return (
-    <BaseCard glow className="p-5">
+    <BaseCard glow className="p-4 sm:p-5">
       <Link
         href={href}
         prefetch
