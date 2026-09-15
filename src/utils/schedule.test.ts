@@ -39,12 +39,12 @@ const event = (
 });
 
 describe("getWeekDates", () => {
-  test("월요일 시작으로 7일을 반환한다", () => {
+  test("일요일 시작으로 7일을 반환한다", () => {
     const dates = getWeekDates(new Date(2024, 0, 17));
 
     expect(dates).toHaveLength(7);
-    expect(dates[0]).toEqual(new Date(2024, 0, 15));
-    expect(dates[6]).toEqual(new Date(2024, 0, 21));
+    expect(dates[0]).toEqual(new Date(2024, 0, 14));
+    expect(dates[6]).toEqual(new Date(2024, 0, 20));
   });
 });
 
@@ -170,17 +170,17 @@ describe("getmonthTime", () => {
 
 describe("getMonthDates", () => {
   test("월 시작/종료가 주 경계와 딱 맞으면 4주(28일)를 반환한다", () => {
-    const dates = getMonthDates(new Date(2021, 1, 15));
+    const dates = getMonthDates(new Date(2015, 1, 15));
     expect(dates).toHaveLength(28);
-    expect(dates[0]).toEqual(new Date(2021, 1, 1));
-    expect(dates[dates.length - 1]).toEqual(new Date(2021, 1, 28));
+    expect(dates[0]).toEqual(new Date(2015, 1, 1));
+    expect(dates[dates.length - 1]).toEqual(new Date(2015, 1, 28));
   });
 
   test("월 앞뒤로 여백이 생기면 6주(42일)까지 채운다", () => {
     const dates = getMonthDates(new Date(2021, 4, 15));
     expect(dates).toHaveLength(42);
-    expect(dates[0]).toEqual(new Date(2021, 3, 26));
-    expect(dates[dates.length - 1]).toEqual(new Date(2021, 5, 6));
+    expect(dates[0]).toEqual(new Date(2021, 3, 25));
+    expect(dates[dates.length - 1]).toEqual(new Date(2021, 5, 5));
   });
 });
 

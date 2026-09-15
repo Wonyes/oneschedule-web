@@ -35,7 +35,7 @@ export default function GroupSwitcher({
       panelClassName="w-56"
       triggerClassName={
         compact
-          ? "relative h-10 w-10 justify-center rounded-xl p-0 text-secondary"
+          ? "relative h-8 w-8 justify-center rounded-xl p-0 text-secondary"
           : "text-secondary px-2 py-1.5 typo-caption-2 hover:text-foreground lg:px-2.5"
       }
       trigger={(isOpen) => (
@@ -44,7 +44,7 @@ export default function GroupSwitcher({
             <GroupAvatar
               name={group.groupName}
               imageUrl={group.profileImageUrl}
-              size={compact ? "sm" : "xs"}
+              size="sm"
             />
           ) : (
             <Users

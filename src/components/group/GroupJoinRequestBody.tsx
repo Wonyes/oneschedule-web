@@ -152,17 +152,18 @@ export default function GroupJoinRequestBody({
                           </span>
                         )}
                       </div>
-
-                      <motion.span
-                        animate={{ rotate: open ? 180 : 0 }}
-                        transition={springFirm}
-                        className={cn(
-                          "shrink-0 text-place-h",
-                          open && "text-accent",
-                        )}
-                      >
-                        <ChevronDown size={14} strokeWidth={2} />
-                      </motion.span>
+                      {request.message && (
+                        <motion.span
+                          animate={{ rotate: open ? 180 : 0 }}
+                          transition={springFirm}
+                          className={cn(
+                            "shrink-0 text-place-h",
+                            open && "text-accent",
+                          )}
+                        >
+                          <ChevronDown size={14} strokeWidth={2} />
+                        </motion.span>
+                      )}
                     </button>
 
                     <Row className="shrink-0 gap-1.5">

@@ -1,23 +1,18 @@
 "use client";
 
+import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { motion } from "motion/react";
 
 import { Primary } from "@/src/components/ui/layout/button";
 import { Row } from "@/src/components/ui/layout/flex";
-import {
-  AuthAlternatives,
-  AuthLayoutGrid,
-  BrandPlate,
-  rise,
-  stagger,
-} from "./AuthShell";
-import SignStepFields from "./SignStepFields";
+import { EmailVerifyFields, NewPasswordFields } from "./AuthFields";
+import { AuthLayoutGrid, BrandPlate, rise, stagger } from "./AuthShell";
 import { StepProgress, StepSlide } from "./StepFlow";
 import { emailButtonText } from "./useEmailVerification";
-import { SIGN_STEPS, useSignUp } from "./useSignUp";
+import { FIND_STEPS, useFindPassword } from "./useFindPassword";
 
-export default function SignForm() {
+export default function FindPasswordForm() {
   const {
     form,
     errors,
@@ -26,28 +21,25 @@ export default function SignForm() {
     busy,
     isLast,
     verification,
-    nicknameChecked,
     handleChange,
     goNext,
     goBack,
-  } = useSignUp();
+  } = useFindPassword();
 
-  const current = SIGN_STEPS[step];
+  const current = FIND_STEPS[step];
   const buttonText = busy
     ? isLast
-      ? "가입 중…"
+      ? "변경 중…"
       : "확인 중…"
     : isLast
-      ? "회원가입"
-      : step === 0
-        ? emailButtonText(verification.status)
-        : "다음";
+      ? "비밀번호 변경"
+      : emailButtonText(verification.status);
 
   return (
     <AuthLayoutGrid>
       <BrandPlate
-        title="시작해 볼까요?"
-        subtitle="이메일만 있으면 1분 안에 끝나요."
+        title="비밀번호를 잊으셨나요?"
+        subtitle="이메일 인증만 하면 새 비밀번호로 바꿀 수 있어요."
       />
 
       <motion.form
@@ -61,15 +53,15 @@ export default function SignForm() {
       >
         <motion.div variants={rise}>
           <StepProgress
-            total={SIGN_STEPS.length}
+            total={FIND_STEPS.length}
             current={step}
-            label="가입 단계"
+            label="비밀번호 찾기 단계"
           />
 
           <Row className="mt-4 items-baseline justify-between">
             <h2 className="typo-sub-t-1 text-foreground">{current.title}</h2>
             <span className="typo-caption-3 tabular-nums text-place-h">
-              {step + 1} / {SIGN_STEPS.length}
+              {step + 1} / {FIND_STEPS.length}
             </span>
           </Row>
           <p className="typo-caption-2 mt-1 text-muted">{current.hint}</p>
@@ -77,14 +69,27 @@ export default function SignForm() {
 
         <motion.div variants={rise}>
           <StepSlide stepKey={current.key} direction={direction}>
-            <SignStepFields
-              step={step}
-              form={form}
-              errors={errors}
-              verification={verification}
-              nicknameChecked={nicknameChecked}
-              onChange={handleChange}
-            />
+            {step === 0 ? (
+              <EmailVerifyFields
+                email={form.email}
+                code={form.emailCode}
+                status={verification.status}
+                codeSeconds={verification.codeSeconds}
+                resendSeconds={verification.resendSeconds}
+                emailError={errors.email}
+                codeError={errors.emailCode}
+                onChange={handleChange}
+                onResend={verification.resend}
+              />
+            ) : (
+              <NewPasswordFields
+                password={form.password}
+                passwordConfirm={form.passwordConfirm}
+                passwordError={errors.password}
+                confirmError={errors.passwordConfirm}
+                onChange={handleChange}
+              />
+            )}
           </StepSlide>
         </motion.div>
 
@@ -106,13 +111,18 @@ export default function SignForm() {
           </Row>
         </motion.div>
 
-        <AuthAlternatives
-          dividerText="또는 Google로 계속하기"
-          googleLabel="Google 계정으로 가입"
-          question="이미 계정이 있으신가요?"
-          linkHref="/login"
-          linkText="로그인"
-        />
+        <motion.div variants={rise}>
+          <Row className="w-full justify-center gap-2">
+            <p className="typo-sub-t-3 text-place-h">비밀번호가 기억나셨나요?</p>
+            <Link
+              href="/login"
+              prefetch
+              className="typo-sub-t-1 text-accent hover:underline"
+            >
+              로그인
+            </Link>
+          </Row>
+        </motion.div>
       </motion.form>
     </AuthLayoutGrid>
   );

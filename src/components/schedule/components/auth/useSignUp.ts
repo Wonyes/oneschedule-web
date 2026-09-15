@@ -9,12 +9,8 @@ import { Post } from "@/src/hooks/querys/useMutations";
 import { useNicknameCheck } from "@/src/hooks/querys/useMembers";
 import { useOverlay } from "@/src/hooks/useOverlay";
 import { getErrorMessage, useAppMutation } from "@/src/types/ErrorResponse";
-import {
-  VERIFICATION_CODE_TTL,
-  VERIFICATION_RESEND_WAIT,
-  verificationTypes,
-} from "@/src/types/verification";
-import { useCountdown } from "@/src/hooks/useCountdown";
+import { verificationTypes } from "@/src/types/verification";
+import { EMAIL_PATTERN, useEmailVerification } from "./useEmailVerification";
 
 export const SIGN_STEPS = [
   {
@@ -50,15 +46,11 @@ export type SignField =
 
 export type SignErrors = Partial<Record<SignField, string>>;
 
-/** idle: 코드 요청 전 → sent: 코드 입력 대기 → verified: 인증 완료 */
-export type EmailStatus = "idle" | "sent" | "verified";
-
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_PATTERN = /^\d{9,11}$/;
 
 export function useSignUp() {
   const router = useRouter();
-  const { openAlert, openToast } = useOverlay();
+  const { openAlert } = useOverlay();
 
   const { form, formChange } = useForm({
     email: "",
@@ -75,10 +67,6 @@ export function useSignUp() {
   const [errors, setErrors] = useState<SignErrors>({});
   const [checking, setChecking] = useState(false);
 
-  const [emailStatus, setEmailStatus] = useState<EmailStatus>("idle");
-  const codeTimer = useCountdown();
-  const resendTimer = useCountdown();
-
   const [checkedNickname, setCheckedNickname] = useState<string | null>(null);
   const nicknameChecked = !!form.nickname && form.nickname === checkedNickname;
 
@@ -92,43 +80,16 @@ export function useSignUp() {
   const clearError = (field: SignField) =>
     setErrors((prev) => (prev[field] ? { ...prev, [field]: undefined } : prev));
 
-  const { mutate: emailRequest, isPending: emailRequestPending } =
-    useAppMutation({
-      mutationFn: () =>
-        Post({
-          url: "/members/email-verification/request",
-          params: { email: form.email, purpose: verificationTypes.SIGNUP },
-        }),
-      onSuccess: () => {
-        setEmailStatus("sent");
-        clearError("emailCode");
-        codeTimer.start(VERIFICATION_CODE_TTL);
-        resendTimer.start(VERIFICATION_RESEND_WAIT);
-        openToast({ message: "인증 코드를 메일로 보냈어요." });
-      },
-      onError: (err) => fail("email", getErrorMessage(err)),
-    });
-
-  const { mutate: emailVerify, isPending: emailVerifyPending } =
-    useAppMutation({
-      mutationFn: () =>
-        Post({
-          url: "/members/email-verification/verify",
-          params: {
-            email: form.email,
-            purpose: verificationTypes.SIGNUP,
-            code: form.emailCode,
-          },
-        }),
-      onSuccess: () => {
-        setEmailStatus("verified");
-        codeTimer.stop();
-        resendTimer.stop();
-        setDirection(1);
-        setStep(1);
-      },
-      onError: (err) => fail("emailCode", getErrorMessage(err)),
-    });
+  const verification = useEmailVerification({
+    purpose: verificationTypes.SIGNUP,
+    email: form.email,
+    code: form.emailCode,
+    onError: fail,
+    onVerified: () => {
+      setDirection(1);
+      setStep(1);
+    },
+  });
 
   const { mutate: signUp, isPending } = useAppMutation({
     mutationFn: () =>
@@ -155,19 +116,12 @@ export function useSignUp() {
 
     // 이메일을 바꾸면 이전 인증은 무효
     if (name === "email" && e.target.value !== form.email) {
-      setEmailStatus("idle");
-      codeTimer.stop();
-      resendTimer.stop();
+      verification.reset();
       clearError("emailCode");
     }
 
     clearError(name);
     formChange(e);
-  };
-
-  const resend = () => {
-    if (busy || resendTimer.seconds > 0) return;
-    emailRequest();
   };
 
   const duplicationCheck = async (field: "nickname") => {
@@ -199,7 +153,7 @@ export function useSignUp() {
         if (!EMAIL_PATTERN.test(form.email)) {
           return fail("email", "이메일 형식을 확인해 주세요.");
         }
-        return emailStatus === "verified";
+        return verification.status === "verified";
 
       case 1:
         if (form.password.length < 8) {
@@ -228,25 +182,14 @@ export function useSignUp() {
     }
   };
 
-  const busy =
-    checking || isPending || emailRequestPending || emailVerifyPending;
+  const busy = checking || isPending || verification.busy;
   const isLast = step === SIGN_STEPS.length - 1;
 
   const goNext = async () => {
     if (busy) return;
 
-    // 0단계: 인증 전이면 버튼이 "코드 받기 → 확인" 역할을 한다
-    if (step === 0 && emailStatus !== "verified") {
-      if (!EMAIL_PATTERN.test(form.email)) {
-        return fail("email", "이메일 형식을 확인해 주세요.");
-      }
-      if (emailStatus === "idle") return emailRequest();
-      if (!form.emailCode.trim()) {
-        return fail("emailCode", "인증 코드를 입력해 주세요.");
-      }
-      return emailVerify();
-    }
-
+    // 0단계: 인증 전이면 버튼이 "코드 받기 → 인증하기" 역할을 한다
+    if (step === 0 && !verification.submit()) return;
     if (!(await validate(step))) return;
 
     if (isLast) {
@@ -271,10 +214,7 @@ export function useSignUp() {
     direction,
     busy,
     isLast,
-    emailStatus,
-    codeSeconds: codeTimer.seconds,
-    resendSeconds: resendTimer.seconds,
-    resend,
+    verification,
     nicknameChecked,
     handleChange,
     goNext,

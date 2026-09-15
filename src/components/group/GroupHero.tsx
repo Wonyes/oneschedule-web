@@ -214,7 +214,7 @@ export const GroupHero = ({ group }: { group: MyGroupResponse }) => {
     <BaseCard glow className="relative overflow-hidden p-5 sm:p-6">
       <div
         aria-hidden
-        className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-accent/15 blur-3xl"
+        className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full glow-blob"
       />
 
       <motion.div

@@ -20,7 +20,10 @@ import { PAGE_SIZE } from "@/src/lib/paging";
 import { usePagedQuery } from "./usePagedQuery";
 import { useRouter } from "next/navigation";
 
-const useMyGroups = (enabled = true, initialData?: MyGroupResponse[]) => {
+export const useMyGroups = (
+  enabled = true,
+  initialData?: MyGroupResponse[],
+) => {
   return useQuery({
     queryKey: [groupkeys.myGroup],
 

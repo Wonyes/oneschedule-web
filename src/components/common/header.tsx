@@ -5,7 +5,6 @@ import HeaderTabs from "./header/HeaderTabs";
 import HeaderAuth from "./header/HeaderAuth";
 import AuthSkeleton from "./header/AuthSkeleton";
 import { getMyInfo } from "@/src/lib/member";
-import ViewModeToggle from "./header/ViewModeToggle";
 import LocationPicker from "./header/LocationPicker";
 import ScheduleGroupSwitcher from "./header/ScheduleGroupSwitcher";
 import GroupHeaderControls from "./header/GroupHeaderControls";
@@ -42,7 +41,6 @@ export default async function Header() {
 
         <div className="flex justify-center lg:hidden">
           <GroupHeaderControls />
-          <ViewModeToggle />
         </div>
 
         <div className="flex min-w-0 items-center justify-end gap-1 lg:hidden">
@@ -76,10 +74,9 @@ export default async function Header() {
         <GroupHeaderControls />
       </div>
 
-      <div className="hidden items-center justify-end gap-2 lg:col-start-3 lg:row-start-1 lg:flex">
+      <div className="hidden items-center justify-end gap-3 lg:col-start-3 lg:row-start-1 lg:flex">
         <ScheduleGroupSwitcher compact />
         <LocationPicker />
-        <ViewModeToggle />
 
         {isLoggedIn && <NotificationMenu />}
         <ThemeToggle />

@@ -17,11 +17,9 @@ import { useScheduleView } from "@/src/hooks/useScheduleView";
 import { ScheduleViewProps } from "@/src/types/schedule";
 import WeatherBadge from "../components/WeatherBadge";
 import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
-import BaseCard from "../../ui/card/BaseCard";
 import { useSwipe } from "@/src/hooks/useSwipe";
-import NavButton from "../components/NavButton";
 
-const WEEKDAY_LABELS = ["월", "화", "수", "목", "금", "토", "일"];
+const WEEKDAY_LABELS = ["일", "월", "화", "수", "목", "금", "토"];
 
 export default function MonthView({
   events,
@@ -69,31 +67,17 @@ export default function MonthView({
   }, [events, monthDates]);
 
   return (
-    <div className="h-full neu-flat rounded-3xl flex flex-col overflow-hidden">
-      <BaseCard
-        className="shrink-0 px-3 py-1 sm:hidden"
-        childClass="flex items-center justify-between"
-      >
-        <NavButton direction="prev" onClick={prev} label="이전 달" />
-
-        <span className="typo-body-2 font-semibold text-primary">
-          {format(currentDate, "yyyy년 M월")}
-        </span>
-
-        <NavButton direction="next" onClick={next} label="다음 달" />
-      </BaseCard>
-
+    <div className="flex h-full flex-col overflow-hidden">
       <div className="hidden min-h-0 flex-1 flex-col sm:flex sm:overflow-x-auto">
         <div className="min-w-[560px] flex flex-col flex-1 min-h-0">
-          <BaseCard>
-            <div className="grid grid-cols-7 border-b border-divider shrink-0">
+          <div className="grid grid-cols-7 shrink-0 px-2 pt-3">
               {WEEKDAY_LABELS.map((d, i) => (
                 <div
                   key={d}
-                  className={`flex h-10 items-center justify-center typo-caption-2 font-medium ${
-                    i === 6
+                  className={`flex h-8 items-center justify-center typo-caption-3 font-semibold tracking-wide ${
+                    i === 0
                       ? "text-error-500"
-                      : i === 5
+                      : i === 6
                         ? "text-blue"
                         : "text-muted"
                   }`}
@@ -101,11 +85,13 @@ export default function MonthView({
                   {d}
                 </div>
               ))}
-            </div>
-          </BaseCard>
+          </div>
 
           <div className="flex-1 overflow-y-auto min-h-0 p-2">
-            <div className="grid grid-cols-7 grid-rows-6 min-h-full neu-pressed rounded-2xl">
+            <div
+              className="grid min-h-full grid-cols-7 gap-1.5 rounded-2xl neu-pressed p-1.5"
+              style={{ gridTemplateRows: `repeat(${monthDates.length / 7}, minmax(0, 1fr))` }}
+            >
               {monthDates.map((date) => {
                 const inCurrentMonth = isSameMonth(date, currentDate);
                 const isHoliday = findHoliday(date, holidays);
@@ -152,9 +138,13 @@ export default function MonthView({
                         else openSheet({ date, type: viewType });
                       }
                     }}
-                    className={`group relative border-r border-b border-divider/40 p-1 cursor-pointer hover:bg-surface/40 transition-colors ${
-                      inCurrentMonth ? "" : "opacity-40"
-                    }`}
+                    className={`group relative cursor-pointer rounded-xl p-1 transition-[background-color,box-shadow] duration-200 hover:neu-flat ${
+                      isSameDay(date, new Date())
+                        ? "neu-flat"
+                        : hasEvents
+                          ? "bg-surface/50"
+                          : ""
+                    } ${inCurrentMonth ? "" : "opacity-40"}`}
                   >
                     {hasEvents && (
                       <button

@@ -65,7 +65,7 @@ const toScheduleRequest = (payload: {
 };
 
 const getWeekDates = (currentDate: Date) => {
-  const start = startOfWeek(currentDate, { weekStartsOn: 1 });
+  const start = startOfWeek(currentDate, { weekStartsOn: 0 });
   return Array.from({ length: 7 }, (_, i) => addDays(start, i));
 };
 
@@ -98,8 +98,8 @@ const getEventPosition = (
 const getMonthDates = (currentDate: Date) => {
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
-  const gridStart = startOfWeek(monthStart, { weekStartsOn: 1 });
-  const gridEnd = endOfWeek(monthEnd, { weekStartsOn: 1 });
+  const gridStart = startOfWeek(monthStart, { weekStartsOn: 0 });
+  const gridEnd = endOfWeek(monthEnd, { weekStartsOn: 0 });
 
   const dates: Date[] = [];
   let day = gridStart;

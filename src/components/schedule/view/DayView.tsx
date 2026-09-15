@@ -1,38 +1,22 @@
 "use client";
 
-import { format } from "date-fns";
-import { ko } from "date-fns/locale";
 import { useEffect, useRef, useState } from "react";
-import { getDayColor, getDayEvents } from "@/src/utils/schedule";
+import { getDayEvents } from "@/src/utils/schedule";
 import { useScheduleStore } from "@/src/hooks/stores/useScheduleStore";
 import { useScheduleView } from "@/src/hooks/useScheduleView";
 import ScheduleCard from "../components/ScheduleCard";
 import { ScheduleViewProps } from "@/src/types/schedule";
-import { useIsHoliday } from "@/src/hooks/useIsHoliday";
-import WeatherBadge from "../components/WeatherBadge";
 import HourColumn from "../layout/HourColumn";
 import { HOURS } from "@/src/constant/schedule";
 import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
-import BaseCard from "../../ui/card/BaseCard";
-import { Column } from "../../ui/layout/flex";
 import { useSwipe } from "@/src/hooks/useSwipe";
-import NavButton from "../components/NavButton";
 
-export default function DayView({
-  events,
-  holidays,
-  weathers,
-  isWeatherLoading,
-}: ScheduleViewProps) {
+export default function DayView({ events }: ScheduleViewProps) {
   const currentDate = useScheduleStore((s) => s.currentDate);
   const next = useScheduleStore((s) => s.next);
   const prev = useScheduleStore((s) => s.prev);
-  const holiday = useIsHoliday(currentDate, holidays);
   const { viewType } = useScheduleView();
   const { openSheet } = useSheetStore();
-
-  const dateKey = format(currentDate, "yyyyMMdd");
-  const targetWeather = weathers?.[dateKey];
 
   const [showAllOverlaps, setShowAllOverlaps] = useState(false);
   const [expandedDate, setExpandedDate] = useState(currentDate);
@@ -72,39 +56,7 @@ export default function DayView({
   }, [currentDate, firstHour]);
 
   return (
-    <div className="h-full neu-flat rounded-3xl flex flex-col overflow-hidden">
-      <BaseCard
-        className="shrink-0 px-3 py-1"
-        glow
-        childClass="flex items-center justify-between sm:justify-center"
-      >
-        <NavButton
-          direction="prev"
-          onClick={prev}
-          label="이전 날"
-          className="shrink-0 sm:hidden"
-        />
-
-        <Column className="items-center">
-          <span
-            className={`typo-body-2 font-semibold ${getDayColor(currentDate, holiday)}`}
-          >
-            {format(currentDate, "M월 d일 EEEE", { locale: ko })}
-          </span>
-          <WeatherBadge
-            targetWeather={targetWeather}
-            isLoading={isWeatherLoading}
-          />
-        </Column>
-
-        <NavButton
-          direction="next"
-          onClick={next}
-          label="다음 날"
-          className="shrink-0 sm:hidden"
-        />
-      </BaseCard>
-
+    <div className="flex h-full flex-col overflow-hidden">
       <div
         ref={scrollRef}
         className="flex-1 overflow-y-auto min-h-0 p-2"

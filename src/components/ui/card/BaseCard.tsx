@@ -43,7 +43,6 @@ export default function BaseCard({
               h-(--card-glow-size)
               rounded-full
               bg-[image:var(--card-glow)]
-              blur-2xl
             "
           />
         </div>

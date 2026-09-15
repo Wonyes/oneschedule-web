@@ -23,12 +23,12 @@ export default function HeaderAuth({ user }: { user: MyInfoResponse | null }) {
   }
 
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex items-center gap-3">
       <Link
         href="/profile"
         prefetch
         aria-label="내 프로필"
-        className="btn-spring flex cursor-pointer items-center gap-2 rounded-lg p-1 hover:bg-surface-hover lg:px-2.5 lg:py-1.5"
+        className="btn-spring flex cursor-pointer items-center gap-2 rounded-lg hover:bg-surface-hover"
       >
         <IconBox
           size="sm"
@@ -45,7 +45,7 @@ export default function HeaderAuth({ user }: { user: MyInfoResponse | null }) {
       <button
         onClick={() => logout()}
         aria-label="로그아웃"
-        className="p-1.5 rounded-xl neu-flat text-muted btn-spring hover:bg-surface-hover hover:text-foreground active:scale-95"
+        className="p-1.5 rounded-full h-8 w-8 neu-flat text-muted btn-spring hover:bg-surface-hover hover:text-foreground active:scale-95"
       >
         <LogOut size={15} strokeWidth={1.75} />
       </button>

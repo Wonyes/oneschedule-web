@@ -8,13 +8,11 @@ export default function SchedulePage() {
   useScheduleUrlSync();
 
   return (
-    <div className="relative rounded-3xl h-full flex gap-6 w-full">
-      <div className="flex-1 flex flex-col gap-4">
-        <ScheduleHeader />
+    <div className="flex h-full w-full flex-col gap-4">
+      <ScheduleHeader />
 
-        <div className="flex-1 min-h-0 neu-flat rounded-3xl p-4">
-          <Schedule />
-        </div>
+      <div className="neu-flat min-h-0 flex-1 overflow-hidden rounded-3xl">
+        <Schedule />
       </div>
     </div>
   );

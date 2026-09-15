@@ -101,7 +101,7 @@ export function Input({
                 }}
                 transition={springSnappy}
                 className={cn(
-                  "pointer-events-none absolute left-0.5 origin-left typo-caption-2 transition-colors duration-200",
+                  "pointer-events-none absolute left-1 origin-left typo-caption-2 transition-colors duration-200",
                   focused ? "text-accent" : "text-place-h",
                 )}
               >
@@ -124,7 +124,7 @@ export function Input({
                 props.onBlur?.(e);
               }}
               className={cn(
-                "w-full px-0.5 outline-none typo-caption-2 bg-transparent text-foreground placeholder:text-place-h",
+                "w-full px-1 outline-none typo-caption-2 bg-transparent text-foreground placeholder:text-place-h",
                 "disabled:text-place-h",
                 label && "pt-4",
               )}

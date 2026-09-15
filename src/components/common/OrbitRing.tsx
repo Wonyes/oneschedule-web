@@ -31,7 +31,7 @@ export default function OrbitRing({
         className,
       )}
     >
-      <div className="absolute inset-0 rounded-full bg-accent/15 blur-3xl" />
+      <div className="absolute inset-0 rounded-full glow-blob" />
       <div className="neu-pressed absolute inset-2 rounded-full" />
       <motion.div
         aria-hidden

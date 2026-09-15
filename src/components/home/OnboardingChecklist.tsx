@@ -69,7 +69,7 @@ export default function OnboardingChecklist({
       id: "schedule",
       title: "첫 일정 등록하기",
       description: "오늘 할 일이나 약속을 하나 추가해보세요.",
-      icon: <CalendarPlus size={16} strokeWidth={1.75} />,
+      icon: <CalendarPlus size={14} strokeWidth={1.75} />,
       done: (schedules ?? []).length > 0,
       action: () => openSheet({ date: today, type: "PERSONAL" }),
       actionLabel: "일정 추가",
@@ -78,7 +78,7 @@ export default function OnboardingChecklist({
       id: "group",
       title: "그룹 만들거나 참여하기",
       description: "초대 코드로 가족·팀과 일정을 공유할 수 있어요.",
-      icon: <Users size={16} strokeWidth={1.75} />,
+      icon: <Users size={14} strokeWidth={1.75} />,
       done: groups.length > 0,
       href: "/group",
       actionLabel: "그룹으로",
@@ -87,7 +87,7 @@ export default function OnboardingChecklist({
       id: "profile",
       title: "프로필 사진 설정하기",
       description: "그룹 멤버가 나를 알아보기 쉬워져요.",
-      icon: <UserRound size={16} strokeWidth={1.75} />,
+      icon: <UserRound size={14} strokeWidth={1.75} />,
       done: !!user.profileImageUrl,
       href: "/profile",
       actionLabel: "프로필로",
@@ -109,96 +109,82 @@ export default function OnboardingChecklist({
     } catch {}
   };
 
+  const stepClass = (done: boolean) =>
+    `flex h-9 items-center gap-2 rounded-xl px-3 typo-caption-2 font-medium transition-colors ${
+      done
+        ? "neu-pressed text-muted"
+        : "neu-flat btn-spring text-foreground hover:text-accent"
+    }`;
+
   return (
-    <BaseCard className="p-5" glow>
-      <Row className="mb-4 items-start justify-between gap-3">
-        <Column className="gap-1">
-          <span className="eyebrow">GET STARTED</span>
-          <span className="typo-sub-t-1 text-foreground">
-            시작을 위한 {steps.length}단계
+    <BaseCard className="relative px-4 py-3">
+      <Row className="flex-wrap items-center gap-x-4 gap-y-2">
+        <Row className="items-center gap-3">
+          <span
+            className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+            role="progressbar"
+            aria-valuenow={doneCount}
+            aria-valuemin={0}
+            aria-valuemax={steps.length}
+            aria-label="시작 가이드 진행률"
+            style={{
+              background: `conic-gradient(var(--accent) ${(doneCount / steps.length) * 360}deg, var(--surface-hover) 0)`,
+            }}
+          >
+            <span className="neu-flat flex h-7 w-7 items-center justify-center rounded-full typo-caption-3 font-bold tabular-nums text-accent">
+              {doneCount}/{steps.length}
+            </span>
           </span>
-          <span className="typo-caption-2 text-muted">
-            {doneCount}/{steps.length} 완료
-          </span>
-        </Column>
+          <Column className="gap-0">
+            <span className="typo-caption-1 font-semibold text-foreground">
+              시작하기
+            </span>
+            <span className="typo-caption-3 text-muted">
+              세 가지만 하면 준비 끝이에요.
+            </span>
+          </Column>
+        </Row>
+
+        <Row className="flex-wrap gap-2 sm:ml-auto">
+          {steps.map((step) =>
+            step.done ? (
+              <span key={step.id} className={stepClass(true)}>
+                <Check size={14} strokeWidth={2.5} className="text-success-500" />
+                <span className="line-through">{step.title}</span>
+              </span>
+            ) : step.href ? (
+              <Link
+                key={step.id}
+                href={step.href}
+                prefetch
+                className={stepClass(false)}
+              >
+                <span className="text-accent">{step.icon}</span>
+                {step.title}
+              </Link>
+            ) : (
+              <button
+                key={step.id}
+                type="button"
+                onClick={step.action}
+                className={stepClass(false)}
+              >
+                <span className="text-accent">{step.icon}</span>
+                {step.title}
+              </button>
+            ),
+          )}
+        </Row>
 
         <button
           type="button"
           onClick={handleDismiss}
           aria-label="시작 가이드 닫기"
-          className="text-muted hover:text-foreground shrink-0 rounded-lg p-1 transition-colors"
+          className="text-muted hover:text-foreground absolute right-3 top-3 shrink-0 rounded-lg p-1 transition-colors sm:static"
         >
-          <X size={16} strokeWidth={1.75} />
+          <X size={14} strokeWidth={1.75} />
         </button>
       </Row>
-
-      <div
-        className="neu-pressed mb-4 h-1.5 w-full overflow-hidden rounded-full"
-        role="progressbar"
-        aria-valuenow={doneCount}
-        aria-valuemin={0}
-        aria-valuemax={steps.length}
-        aria-label="온보딩 진행률"
-      >
-        <div
-          className="bg-accent h-full rounded-full transition-[width] duration-500"
-          style={{ width: `${(doneCount / steps.length) * 100}%` }}
-        />
-      </div>
-
-      <Column className="w-full gap-2">
-        {steps.map((step) => (
-          <Row
-            key={step.id}
-            className={`neu-flat w-full gap-3 rounded-xl px-4 py-3 ${
-              step.done ? "opacity-55" : ""
-            }`}
-          >
-            <Row
-              className={`h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
-                step.done
-                  ? "bg-success-500/15 text-success-500"
-                  : "neu-flat text-accent"
-              }`}
-            >
-              {step.done ? <Check size={16} strokeWidth={2.5} /> : step.icon}
-            </Row>
-
-            <Column className="min-w-0 flex-1 gap-0.5">
-              <span
-                className={`typo-caption-1 font-semibold ${
-                  step.done ? "text-muted line-through" : "text-foreground"
-                }`}
-              >
-                {step.title}
-              </span>
-              <span className="typo-caption-3 text-muted truncate">
-                {step.description}
-              </span>
-            </Column>
-
-            {!step.done && step.href && (
-              <Link
-                href={step.href}
-                prefetch
-                className="btn-spring text-accent hover:bg-accent/10 shrink-0 rounded-lg px-3 py-1.5 typo-caption-2 font-medium"
-              >
-                {step.actionLabel}
-              </Link>
-            )}
-
-            {!step.done && step.action && (
-              <button
-                type="button"
-                onClick={step.action}
-                className="btn-spring text-accent hover:bg-accent/10 shrink-0 rounded-lg px-3 py-1.5 typo-caption-2 font-medium"
-              >
-                {step.actionLabel}
-              </button>
-            )}
-          </Row>
-        ))}
-      </Column>
     </BaseCard>
   );
 }

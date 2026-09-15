@@ -1,44 +1,22 @@
 "use client";
 
 import { useMemo } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { format, addDays, startOfDay, endOfDay } from "date-fns";
+import { addDays, endOfDay, format, isSameDay, startOfDay } from "date-fns";
 import { useScheduleStore } from "@/src/hooks/stores/useScheduleStore";
 import { useScheduleView } from "@/src/hooks/useScheduleView";
 import { useWeathers } from "@/src/hooks/querys/useCommonApi";
 import { useSchedules } from "@/src/hooks/querys/useSchedule";
 import { useActiveGroup } from "@/src/hooks/querys/useGroup";
-import { toScheduleEvent } from "@/src/utils/schedule";
+import { getWeekDates, toScheduleEvent } from "@/src/utils/schedule";
 import { ScheduleEvent } from "@/src/types/schedule";
-import WeatherBadge from "./components/WeatherBadge";
-import { DayGroup } from "./components/DayTimeline";
-import BaseCard from "../ui/card/BaseCard";
-import { Column } from "../ui/layout/flex";
-import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
+import ScheduleDial from "./ScheduleDial";
+import ViewModeToggle from "./ViewModeToggle";
+import { Row } from "../ui/layout/flex";
 
-function getFormattedDateTitle(mode: string, date: Date) {
-  if (!date || !(date instanceof Date)) return "";
-
-  if (mode === "month") {
-    return format(date, "yyyy년 M월");
-  }
-
-  if (mode === "week") {
-    const start = new Date(date);
-    start.setDate(date.getDate() - date.getDay() + 1);
-    const end = new Date(start);
-    end.setDate(start.getDate() + 6);
-    return `${format(start, "yyyy년 M월 d일")} - ${format(end, "d일")}`;
-  }
-
-  return format(date, "yyyy년 M월 d일");
-}
-
-function eventsOnDay(schedules: ScheduleEvent[], date: Date) {
+function eventsOnDay(events: ScheduleEvent[], date: Date) {
   const start = startOfDay(date).getTime();
   const end = endOfDay(date).getTime();
-
-  return schedules
+  return events
     .filter((e) => {
       const s = new Date(e.startDate).getTime();
       return s >= start && s <= end;
@@ -49,92 +27,73 @@ function eventsOnDay(schedules: ScheduleEvent[], date: Date) {
     );
 }
 
+/** "오늘 일정 2개, 14:00 회의부터 · 내일은 비어 있어요" */
+function summarize(today: ScheduleEvent[], tomorrow: ScheduleEvent[]) {
+  const first = today[0];
+  const todayText = first
+    ? `오늘 일정 ${today.length}개, ${format(new Date(first.startDate), "HH:mm")} ${first.title}부터`
+    : "오늘은 비어 있어요";
+  const tomorrowText = tomorrow.length
+    ? `내일 ${tomorrow.length}개`
+    : first
+      ? "내일은 비어 있어요"
+      : "내일도 비어 있어요";
+  return `${todayText} · ${tomorrowText}`;
+}
+
+/** 스케줄 헤더: 왼쪽 [오늘], 가운데 다이얼, 오른쪽 일/주/월. 아래에 오늘·내일 요약 한 줄 */
 export default function ScheduleHeader() {
-  const { mode, currentDate, next, prev } = useScheduleStore();
+  const { mode, currentDate, setCurrentDate } = useScheduleStore();
   const { viewType } = useScheduleView();
   const { group } = useActiveGroup();
-  const { data: weathers, isLoading: isWeatherLoading } = useWeathers();
+  const { data: weathers } = useWeathers();
   const { data: schedules } = useSchedules(viewType, true, group?.groupNo);
-  const { openSheet } = useSheetStore();
 
   const today = useMemo(() => new Date(), []);
-  const tomorrow = useMemo(() => addDays(today, 1), [today]);
-
-  const todayKey = format(today, "yyyyMMdd");
-  const tomorrowKey = format(tomorrow, "yyyyMMdd");
-
-  const todayWeather = weathers?.[todayKey];
-  const tomorrowWeather = weathers?.[tomorrowKey];
-
   const events = useMemo(
     () => (schedules ?? []).map(toScheduleEvent),
     [schedules],
   );
-
-  const todayEvents = useMemo(
-    () => eventsOnDay(events, today),
+  const summary = useMemo(
+    () =>
+      summarize(
+        eventsOnDay(events, today),
+        eventsOnDay(events, addDays(today, 1)),
+      ),
     [events, today],
   );
-  const tomorrowEvents = useMemo(
-    () => eventsOnDay(events, tomorrow),
-    [events, tomorrow],
-  );
+
+  const isTodayInView =
+    mode === "day"
+      ? isSameDay(currentDate, today)
+      : mode === "month"
+        ? currentDate.getMonth() === today.getMonth() &&
+          currentDate.getFullYear() === today.getFullYear()
+        : getWeekDates(currentDate).some((d) => isSameDay(d, today));
 
   return (
-    <BaseCard className="hidden shrink-0 flex-col sm:flex">
-      <div className="flex items-center justify-between px-5 py-3 border-b border-divider">
+    <div className="flex shrink-0 flex-col gap-1.5">
+      {/* 모바일: 다이얼이 첫 줄 전체, 오늘·토글은 둘째 줄 */}
+      <Row className="flex-wrap items-center gap-2 sm:flex-nowrap sm:gap-3">
         <button
           type="button"
-          onClick={prev}
-          aria-label="이전"
-          className="w-7 h-7 rounded-lg neu-btn flex items-center justify-center text-foreground btn-spring hover:scale-105"
+          onClick={() => setCurrentDate(new Date())}
+          disabled={isTodayInView}
+          className="neu-btn btn-spring typo-caption-2 mr-auto h-9 shrink-0 rounded-xl px-3.5 font-semibold text-secondary hover:text-foreground disabled:opacity-40 sm:mr-0"
         >
-          <ChevronLeft size={14} strokeWidth={1.75} />
+          오늘
         </button>
 
-        <Column className="items-center gap-0.5">
-          <span className="eyebrow">SCHEDULE</span>
-          <h2 className="typo-title-2 text-foreground tracking-tight text-center">
-            {getFormattedDateTitle(mode, currentDate)}
-          </h2>
-        </Column>
+        <div className="order-first flex basis-full sm:order-none sm:basis-auto sm:min-w-0 sm:flex-1">
+          <ScheduleDial weathers={weathers} />
+        </div>
 
-        <button
-          type="button"
-          onClick={next}
-          aria-label="다음"
-          className="w-7 h-7 rounded-lg neu-btn flex items-center justify-center text-foreground btn-spring hover:scale-105"
-        >
-          <ChevronRight size={14} strokeWidth={1.75} />
-        </button>
-      </div>
+        <ViewModeToggle />
+      </Row>
 
-      <div className="grid gap-x-8 gap-y-4 px-5 py-4 lg:grid-cols-2">
-        <DayGroup
-          date={today}
-          events={todayEvents}
-          emptyText="오늘은 비어 있어요."
-          trailing={
-            <WeatherBadge
-              targetWeather={todayWeather}
-              isLoading={isWeatherLoading}
-            />
-          }
-          onEventClick={(event) => openSheet({ event })}
-        />
-        <DayGroup
-          date={tomorrow}
-          events={tomorrowEvents}
-          emptyText="내일은 비어 있어요."
-          trailing={
-            <WeatherBadge
-              targetWeather={tomorrowWeather}
-              isLoading={isWeatherLoading}
-            />
-          }
-          onEventClick={(event) => openSheet({ event })}
-        />
-      </div>
-    </BaseCard>
+      <p className="typo-caption-2 truncate text-center text-muted">
+        {summary}
+      </p>
+    </div>
   );
 }

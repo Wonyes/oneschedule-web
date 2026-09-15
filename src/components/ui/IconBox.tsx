@@ -5,7 +5,7 @@ type IconBoxTone = "accent" | "muted" | "success" | "warning" | "danger";
 type IconBoxShape = "square" | "circle";
 
 const SIZE: Record<IconBoxSize, string> = {
-  sm: "h-7 w-7 rounded-lg",
+  sm: "h-8 w-8 rounded-lg",
   md: "h-9 w-9 rounded-lg",
   lg: "h-10 w-10 rounded-xl",
 };

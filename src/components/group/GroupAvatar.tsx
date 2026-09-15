@@ -5,7 +5,7 @@ import { cn } from "@/src/utils/cn";
 
 const SIZE = {
   xs: "h-6 w-6 rounded-lg text-[10px]",
-  sm: "h-9 w-9 rounded-xl typo-caption-2",
+  sm: "h-8 w-8 rounded-xl typo-caption-2",
   md: "h-11 w-11 rounded-[14px] typo-caption-1",
   lg: "h-12 w-12 rounded-2xl typo-sub-t-2",
 } as const;

@@ -30,8 +30,8 @@ export default function ProfileCard({ user }: { user: MyInfoResponse }) {
 
   const weekCount = useMemo(() => {
     const now = new Date();
-    const from = startOfWeek(now, { weekStartsOn: 1 }).getTime();
-    const to = endOfWeek(now, { weekStartsOn: 1 }).getTime();
+    const from = startOfWeek(now, { weekStartsOn: 0 }).getTime();
+    const to = endOfWeek(now, { weekStartsOn: 0 }).getTime();
 
     return (schedules ?? []).filter((s) => {
       const t = new Date(s.startDate).getTime();

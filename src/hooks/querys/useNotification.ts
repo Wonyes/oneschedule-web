@@ -8,7 +8,7 @@ import { useAppMutation } from "@/src/types/ErrorResponse";
 
 export const useNotification = (
   enabled = true,
-  size = PAGE_SIZE.notifications,
+  size: number = PAGE_SIZE.notifications,
 ) => {
   return usePagedQuery<Notification>({
     queryKey: [notificationkeys.list],

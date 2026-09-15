@@ -47,6 +47,16 @@
   box-shadow: var(--inset-1);
 }
 
+/* 부드러운 accent 글로우. filter: blur()는 테마 전환·스냅샷 때 비싸서 그라데이션으로 대체 */
+@utility glow-blob {
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--accent) 22%, transparent) 0%,
+    color-mix(in srgb, var(--accent) 8%, transparent) 45%,
+    transparent 72%
+  );
+}
+
 @utility neu-input {
   background: var(--back);
   box-shadow: var(--inset-1);
@@ -175,18 +185,24 @@
   color: var(--muted);
 }
 
+/* 테마 전환(원형 뷰 트랜지션) 동안: 새 화면을 정지 텍스처로 유지한다.
+   기본 크로스페이드는 끄고(우리가 clip-path로 직접 애니메이션), 모든 CSS 트랜지션·애니메이션을 멈춘다. */
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
 }
-
 ::view-transition-old(root) {
   z-index: 1;
 }
-
 ::view-transition-new(root) {
   z-index: 2;
+}
+html[data-theme-switching] *,
+html[data-theme-switching] *::before,
+html[data-theme-switching] *::after {
+  transition: none !important;
+  animation-play-state: paused !important;
 }
 
 @utility btn-primary {

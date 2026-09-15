@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
 import { motion } from "motion/react";
 import { useSearchParams } from "next/navigation";
@@ -17,15 +18,23 @@ import {
 import { useLogin } from "./useLogin";
 
 export default function LoginForm() {
-  const isWelcome = useSearchParams().get("welcome") === "1";
+  const params = useSearchParams();
+  const isWelcome = params.get("welcome") === "1";
+  const isReset = params.get("reset") === "1";
   const { form, error, isPending, handleChange, submit } = useLogin();
 
   return (
     <AuthLayoutGrid>
       <BrandPlate
-        title={isWelcome ? "가입이 완료됐어요." : "팀의 일정을 한눈에."}
-        subtitle={
+        title={
           isWelcome
+            ? "가입이 완료됐어요."
+            : isReset
+              ? "비밀번호를 바꿨어요."
+              : "팀의 일정을 한눈에."
+        }
+        subtitle={
+          isWelcome || isReset
             ? "로그인하면 바로 시작할 수 있어요."
             : "개인 일정과 그룹 일정을 함께 관리하세요."
         }
@@ -40,7 +49,7 @@ export default function LoginForm() {
         }}
         className="relative z-10 flex w-full flex-col gap-6 lg:ml-6 lg:w-[400px]"
       >
-        {isWelcome && (
+        {(isWelcome || isReset) && (
           <motion.div variants={rise}>
             <Row className="neu-flat w-full items-start gap-2.5 rounded-xl px-4 py-3">
               <CheckCircle2
@@ -49,8 +58,9 @@ export default function LoginForm() {
                 className="text-success-500 mt-0.5 shrink-0"
               />
               <span className="typo-caption-2 text-secondary">
-                계정이 만들어졌어요. 방금 입력한 이메일과 비밀번호로 로그인해
-                주세요.
+                {isWelcome
+                  ? "계정이 만들어졌어요. 방금 입력한 이메일과 비밀번호로 로그인해 주세요."
+                  : "새 비밀번호로 로그인해 주세요."}
               </span>
             </Row>
           </motion.div>
@@ -82,6 +92,13 @@ export default function LoginForm() {
               errorMessage={error ?? undefined}
               onChange={handleChange}
             />
+            <Link
+              href="/find-password"
+              prefetch
+              className="typo-caption-2 self-end text-place-h hover:text-accent hover:underline"
+            >
+              비밀번호를 잊으셨나요?
+            </Link>
           </Column>
         </motion.div>
 

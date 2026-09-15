@@ -10,11 +10,11 @@ export default function AuthLayout({
     <div className="relative flex h-screen w-full flex-col overflow-hidden">
       <div
         aria-hidden
-        className="pointer-events-none absolute -left-24 top-1/4 h-72 w-72 rounded-full bg-accent/15 blur-3xl"
+        className="pointer-events-none absolute -left-24 top-1/4 h-72 w-72 rounded-full glow-blob"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -right-20 bottom-10 h-80 w-80 rounded-full bg-accent/10 blur-3xl"
+        className="pointer-events-none absolute -right-20 bottom-10 h-80 w-80 rounded-full glow-blob opacity-70"
       />
 
       <AuthHeader />

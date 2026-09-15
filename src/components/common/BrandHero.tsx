@@ -3,7 +3,7 @@ import { CalendarClock, CalendarDays, Users } from "lucide-react";
 export default function BrandHero() {
   return (
     <div className="relative flex h-36 w-full items-center justify-center">
-      <div className="absolute h-40 w-40 rounded-full bg-accent/20 blur-3xl" />
+      <div className="absolute h-40 w-40 rounded-full glow-blob" />
 
       <div
         className="neu-float relative z-10 flex h-24 w-24 items-center justify-center rounded-[28px]"

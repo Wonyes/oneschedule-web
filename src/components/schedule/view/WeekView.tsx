@@ -3,7 +3,7 @@
 import { Timer } from "lucide-react";
 import { format, isSameDay, addDays } from "date-fns";
 import { ko } from "date-fns/locale";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import ScheduleCard from "../components/ScheduleCard";
 import WeatherBadge from "../components/WeatherBadge";
@@ -208,6 +208,28 @@ export default function WeekView({
     [events, weekDates],
   );
 
+  // 주가 바뀌면 오전 8시(첫 일정이 더 이르면 그 한 시간 전)가 보이도록 스크롤한다.
+  const scrollRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const firstHour = allWeekLayouts.length
+    ? Math.min(
+        8,
+        ...allWeekLayouts.map((l) => new Date(l.event.startDate).getHours()),
+      )
+    : 8;
+
+  useEffect(() => {
+    for (const root of scrollRefs.current) {
+      const row = root?.querySelector<HTMLElement>(
+        `[data-hour="${Math.max(firstHour - 1, 0)}"]`,
+      );
+      if (!root || !row) continue;
+      root.scrollTop =
+        row.getBoundingClientRect().top -
+        root.getBoundingClientRect().top +
+        root.scrollTop;
+    }
+  }, [weekDates, firstHour]);
+
   const handleClickTime = (date: Date, startTime: string) => {
     openSheet({
       date,
@@ -231,13 +253,13 @@ export default function WeekView({
   const swipeHandlers = useSwipe(handleMobileNext, handleMobilePrevious);
 
   return (
-    <div className="h-full overflow-hidden rounded-3xl neu-flat">
+    <div className="h-full overflow-hidden">
       <div className="hidden h-full min-h-0 flex-col sm:flex">
         <div className="shrink-0 px-2.5">
           <BaseCard glow>
             <div
               className="
-                grid h-12
+                grid h-12 pt-1
                 grid-cols-[60px_repeat(7,minmax(0,1fr))]
                 border-b border-divider
               "
@@ -263,7 +285,12 @@ export default function WeekView({
           </BaseCard>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto p-2">
+        <div
+          ref={(el) => {
+            scrollRefs.current[0] = el;
+          }}
+          className="min-h-0 flex-1 overflow-y-auto p-2"
+        >
           <div
             className="
               grid min-h-full
@@ -299,6 +326,9 @@ export default function WeekView({
         />
 
         <div
+          ref={(el) => {
+            scrollRefs.current[1] = el;
+          }}
           className="min-h-0 flex-1 overflow-y-auto p-2"
           onTouchStart={swipeHandlers.onTouchStart}
           onTouchEnd={swipeHandlers.onTouchEnd}
