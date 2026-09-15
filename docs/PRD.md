@@ -124,7 +124,7 @@
 
 | 심각도 | 내용 | 위치 |
 | :--- | :--- | :--- |
-| 🔴 | 회원가입 전화번호 — 프론트는 선택, 백엔드는 필수(`@NotBlank`) | `MemberSignupRequest` |
+| 🔴 | 회원가입 전화번호 — 구글 가입자는 번호가 없으므로 선택이 의도. 백엔드 `@NotBlank` 제거, `@Pattern`은 `^$|…`로 빈 값 허용 | `MemberSignupRequest` |
 | 🔴 | 그룹 이름 빈 값 → 500 (검증 누락) | `POST /group/create`, `PUT /group/group-name` |
 | 🔴 | 가입 신청 메시지 201자 → 500 (Oracle 바이트 길이) | `TB_GROUP_JOIN_REQUEST.message` |
 | 🟠 | 일정 시작·종료 역전 허용 | `ScheduleRequest` 검증 |
