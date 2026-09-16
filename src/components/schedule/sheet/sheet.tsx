@@ -6,7 +6,7 @@ import { fadeQuick, springFirm, springSoft } from "@/src/lib/motion";
 import { useMediaQuery } from "@/src/hooks/useMediaQuery";
 import { cn } from "@/src/utils/cn";
 import { usePathname } from "next/navigation";
-import AvatarImage from "@/src/components/common/AvatarImage";
+import MemberAvatar from "@/src/components/common/MemberAvatar";
 import {
   CalendarDays,
   Check,
@@ -20,10 +20,10 @@ import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
 import { useScheduleView } from "@/src/hooks/useScheduleView";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
-import { Input } from "../layout/input";
-import { Row } from "../layout/flex";
-import DropdownMenu from "../DropdownMenu";
-import { Primary, GhostBtn } from "../layout/button";
+import { Input } from "../../ui/layout/input";
+import { Row } from "../../ui/layout/flex";
+import DropdownMenu from "../../ui/DropdownMenu";
+import { Primary, GhostBtn } from "../../ui/layout/button";
 import CalendarBody from "./calendar/CalendarBody";
 import { useCalendarStore } from "@/src/hooks/stores/useCalendarStore";
 import { formatTime } from "@/src/utils/time";
@@ -118,12 +118,11 @@ function ParticipantPicker({
                   key={m.memberNo}
                   className="flex items-center gap-1 rounded-full bg-accent/10 py-0.5 pl-1 pr-2"
                 >
-                  <span className="flex h-4 w-4 items-center justify-center overflow-hidden rounded-full bg-accent/20 text-[9px] font-bold text-accent">
-                    <AvatarImage
-                      src={m.profileImageUrl}
-                      nickname={m.nickname}
-                    />
-                  </span>
+                  <MemberAvatar
+                    nickname={m.nickname}
+                    src={m.profileImageUrl}
+                    size="2xs"
+                  />
                   <span className="typo-caption-3 text-secondary">
                     {m.nickname}
                   </span>
@@ -187,12 +186,11 @@ function ParticipantPicker({
                     onClick={() => toggle(m.memberNo)}
                     className="hover:bg-surface-hover flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left transition-colors"
                   >
-                    <span className="typo-caption-3 flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded-full bg-accent/15 font-bold text-accent">
-                      <AvatarImage
-                        src={m.profileImageUrl}
-                        nickname={m.nickname}
-                      />
-                    </span>
+                    <MemberAvatar
+                      nickname={m.nickname}
+                      src={m.profileImageUrl}
+                      size="xs"
+                    />
                     <span className="typo-caption-2 flex-1 text-secondary">
                       {m.nickname}
                     </span>

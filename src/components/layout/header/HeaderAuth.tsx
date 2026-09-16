@@ -1,8 +1,7 @@
 "use client";
 
-import AvatarImage from "@/src/components/common/AvatarImage";
+import MemberAvatar from "@/src/components/common/MemberAvatar";
 import { LogIn, LogOut } from "lucide-react";
-import IconBox from "../../ui/IconBox";
 import Link from "next/link";
 
 import { MyInfoResponse, useLogout } from "@/src/hooks/querys/useMembers";
@@ -30,13 +29,7 @@ export default function HeaderAuth({ user }: { user: MyInfoResponse | null }) {
         aria-label="내 프로필"
         className="btn-spring flex h-9 cursor-pointer items-center gap-2 rounded-lg hover:bg-surface-hover"
       >
-        <IconBox
-          size="header"
-          shape="circle"
-          className="overflow-hidden typo-caption-3 font-bold"
-        >
-          <AvatarImage src={user.profileImageUrl} nickname={user.nickname} />
-        </IconBox>
+        <MemberAvatar nickname={user.nickname} src={user.profileImageUrl} />
         <span className="typo-caption-2 text-secondary hidden min-[1360px]:inline">
           {user.nickname}
         </span>

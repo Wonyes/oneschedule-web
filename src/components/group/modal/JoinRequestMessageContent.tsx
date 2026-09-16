@@ -2,8 +2,8 @@
 
 import { forwardRef, useImperativeHandle, useState } from "react";
 
-import { Column } from "../../layout/flex";
-import { Textarea } from "../../layout/textarea";
+import { Column } from "../../ui/layout/flex";
+import { Textarea } from "../../ui/layout/textarea";
 
 const MAX_LENGTH = 200;
 

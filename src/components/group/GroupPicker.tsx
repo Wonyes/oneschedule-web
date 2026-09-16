@@ -7,7 +7,7 @@ import { Column, Row } from "../ui/layout/flex";
 import IconBox from "../ui/IconBox";
 import { useActiveGroupStore } from "@/src/hooks/stores/useActiveGroupStore";
 import { MyGroupResponse } from "@/src/types/group";
-import GroupAvatar from "./GroupAvatar";
+import GroupAvatar from "@/src/components/common/GroupAvatar";
 
 export default function GroupPicker({
   groups,

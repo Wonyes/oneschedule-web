@@ -1,4 +1,4 @@
-import SignForm from "@/src/components/schedule/components/auth/SignForm";
+import SignForm from "@/src/components/auth/SignForm";
 
 export default function page() {
   return (

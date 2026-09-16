@@ -5,12 +5,12 @@ import { format, isSameDay, addDays } from "date-fns";
 import { ko } from "date-fns/locale";
 import { useEffect, useMemo, useRef } from "react";
 
-import ScheduleCard from "../components/ScheduleCard";
-import WeatherBadge from "../components/WeatherBadge";
-import HourColumn from "../layout/HourColumn";
-import TimeGrid from "../components/TimeGrid";
+import ScheduleCard from "../parts/ScheduleCard";
+import WeatherBadge from "../../common/weather/WeatherBadge";
+import HourColumn from "../parts/HourColumn";
+import TimeGrid from "../parts/TimeGrid";
 import BaseCard from "../../ui/card/BaseCard";
-import NavButton from "../components/NavButton";
+import NavButton from "../parts/NavButton";
 
 import { ScheduleEvent, ScheduleViewProps } from "@/src/types/schedule";
 import {

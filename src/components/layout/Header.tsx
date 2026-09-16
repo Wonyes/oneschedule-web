@@ -10,7 +10,7 @@ import LocationPicker from "./header/LocationPicker";
 import ScheduleGroupSwitcher from "./header/ScheduleGroupSwitcher";
 import GroupHeaderControls from "./header/GroupHeaderControls";
 import ThemeToggle from "./header/ThemeToggle";
-import NotificationMenu from "./header/NotificationMenu";
+import NotificationMenu from "../notification/NotificationMenu";
 
 async function HeaderAuthResolved() {
   const user = await getMyInfo();

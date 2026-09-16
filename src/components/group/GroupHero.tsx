@@ -12,6 +12,7 @@ import { GhostBtn } from "../ui/layout/button";
 import { GroupEditPanel } from "./GroupHeroEditors";
 import { useOverlay } from "@/src/hooks/useOverlay";
 import { useRef, useState } from "react";
+import { countOnline } from "@/src/utils/presence";
 import {
   useGroupProfileImageUpload,
   useJoinRequests,
@@ -172,9 +173,7 @@ export const GroupHero = ({ group }: { group: MyGroupResponse }) => {
   const { data: presence } = useMemberPresence(group.groupNo);
   const { data: requestPages } = useJoinRequests(group.groupNo, canReview);
   const pendingCount = requestPages?.pages[0]?.totalElements ?? 0;
-  const onlineCount = group.members.filter(
-    (m) => presence?.get(m.memberNo)?.online,
-  ).length;
+  const onlineCount = countOnline(presence);
 
   const scrollTo = (ids: string[]) => {
     const target = ids

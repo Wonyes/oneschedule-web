@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useMemo } from "react";
 
 import { Column, Row } from "@/src/components/ui/layout/flex";
-import WeatherIcon from "@/src/components/schedule/components/WeatherIcon";
+import WeatherIcon from "@/src/components/common/weather/WeatherIcon";
 import { EVENT_STYLES } from "@/src/constant/schedule";
 import { useWeathers } from "@/src/hooks/querys/useCommonApi";
 import { useActiveGroup } from "@/src/hooks/querys/useGroup";

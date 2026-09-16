@@ -11,7 +11,7 @@ import { Column, Row } from "@/src/components/ui/layout/flex";
 import { MyInfoResponse } from "@/src/hooks/querys/useMembers";
 import { useWeathers } from "@/src/hooks/querys/useCommonApi";
 import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
-import WeatherIcon from "@/src/components/schedule/components/WeatherIcon";
+import WeatherIcon from "@/src/components/common/weather/WeatherIcon";
 import { MyGroupResponse } from "@/src/types/group";
 import HomeOrbit from "./HomeOrbit";
 import HomeStats from "./HomeStats";

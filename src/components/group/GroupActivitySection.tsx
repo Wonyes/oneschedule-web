@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 
-import AvatarImage from "../common/AvatarImage";
+import MemberAvatar from "../common/MemberAvatar";
 import BaseCard from "../ui/card/BaseCard";
 import SectionBody from "./SectionBody";
 import Skeleton from "../ui/Skeleton";
@@ -17,6 +17,8 @@ import { MyGroupResponse } from "@/src/types/group";
 import { cn } from "@/src/utils/cn";
 import { toScheduleEvent } from "@/src/utils/schedule";
 import { formatRelativeTime } from "@/src/utils/time";
+import SectionHeading from "../ui/layout/SectionHeading";
+import EmptyState from "../ui/EmptyState";
 
 const MAX_ITEMS = 4;
 
@@ -46,10 +48,7 @@ export default function GroupActivitySection({
 
   return (
     <BaseCard className="flex flex-col p-4 sm:p-5" childClass="flex flex-col">
-      <Column className="mb-3 gap-1">
-        <span className="eyebrow">ACTIVITY</span>
-        <h2 className="typo-sub-t-1 text-foreground">최근 활동</h2>
-      </Column>
+      <SectionHeading className="mb-3" eyebrow="ACTIVITY" title="최근 활동" />
 
       <SectionBody animate={animate}>
         {isLoading ? (
@@ -65,18 +64,18 @@ export default function GroupActivitySection({
             ))}
           </Column>
         ) : recent.length === 0 ? (
-          <Column className="items-center gap-3 py-4 text-center">
-            <span className="typo-caption-2 text-muted">
-              아직 그룹에 등록된 일정이 없어요.
-            </span>
-            <button
-              type="button"
-              onClick={() => openSheet({ date: new Date(), type: "GROUP" })}
-              className="btn-spring neu-btn flex h-9 items-center gap-1.5 rounded-xl px-4 typo-caption-2 font-medium text-secondary hover:text-foreground"
-            >
-              <CalendarPlus size={14} strokeWidth={2} />첫 그룹 일정 만들기
-            </button>
-          </Column>
+          <EmptyState
+            title="아직 그룹에 등록된 일정이 없어요."
+            action={
+              <button
+                type="button"
+                onClick={() => openSheet({ date: new Date(), type: "GROUP" })}
+                className="btn-spring neu-btn flex h-9 items-center gap-1.5 rounded-xl px-4 typo-caption-2 font-medium text-secondary hover:text-foreground"
+              >
+                <CalendarPlus size={14} strokeWidth={2} />첫 그룹 일정 만들기
+              </button>
+            }
+          />
         ) : (
           <div className="relative w-full">
             <span
@@ -96,9 +95,11 @@ export default function GroupActivitySection({
                   key={schedule.id}
                   className="relative w-full items-start gap-3 py-2"
                 >
-                  <span className="neu-flat relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full typo-caption-3 font-bold text-accent ring-4 ring-[var(--surface)]">
-                    <AvatarImage nickname={author.nickname} />
-                  </span>
+                  <MemberAvatar
+                    nickname={author.nickname}
+                    size="sm"
+                    className="relative ring-4 ring-[var(--surface)]"
+                  />
 
                   <Column className="min-w-0 flex-1 gap-0.5 pt-1">
                     <p className="truncate typo-caption-2 text-secondary">

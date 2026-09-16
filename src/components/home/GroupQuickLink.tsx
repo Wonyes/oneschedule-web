@@ -1,6 +1,6 @@
 "use client";
 
-import AvatarImage from "@/src/components/common/AvatarImage";
+import MemberAvatar from "@/src/components/common/MemberAvatar";
 import { Users } from "lucide-react";
 
 import { Row } from "@/src/components/ui/layout/flex";
@@ -31,12 +31,13 @@ export default function GroupQuickLink({
           <Row className="items-center gap-2">
             <Row className="-space-x-1.5">
               {displayGroup.members.slice(0, MAX_AVATARS).map((m) => (
-                <span
+                <MemberAvatar
                   key={m.memberNo}
-                  className="ring-surface flex h-5 w-5 items-center justify-center overflow-hidden rounded-full bg-accent/20 text-[9px] font-bold text-accent ring-2"
-                >
-                  <AvatarImage src={m.profileImageUrl} nickname={m.nickname} />
-                </span>
+                  nickname={m.nickname}
+                  src={m.profileImageUrl}
+                  size="2xs"
+                  className="ring-2 ring-[var(--surface)]"
+                />
               ))}
             </Row>
             <span className="typo-caption-2 text-muted truncate">

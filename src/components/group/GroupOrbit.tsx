@@ -3,10 +3,12 @@
 import { Camera } from "lucide-react";
 
 import AvatarImage from "@/src/components/common/AvatarImage";
+import MemberAvatar from "@/src/components/common/MemberAvatar";
+import PresenceDot from "@/src/components/common/PresenceDot";
+import { getPresence } from "@/src/utils/presence";
 import OrbitRing, { OrbitItem } from "@/src/components/common/OrbitRing";
 import { GroupMember, MemberPresence } from "@/src/types/group";
 import { useMediaQuery } from "@/src/hooks/useMediaQuery";
-import { cn } from "@/src/utils/cn";
 
 const MAX_SATELLITES = 6;
 
@@ -32,7 +34,7 @@ export default function GroupOrbit({
   const hidden = members.length - shown.length;
 
   const items: OrbitItem[] = shown.map((member) => {
-    const online = presence?.get(member.memberNo)?.online ?? false;
+    const { online, label } = getPresence(presence, member.memberNo);
 
     return {
       key: member.memberNo,
@@ -40,21 +42,14 @@ export default function GroupOrbit({
         <button
           type="button"
           onClick={onMemberClick}
-          title={`${member.nickname}${online ? " · 온라인" : ""}`}
+          title={`${member.nickname} · ${label}`}
           className="relative block btn-spring hover:scale-110"
         >
-          <span className="neu-flat flex h-9 w-9 items-center justify-center overflow-hidden rounded-full typo-caption-3 font-bold text-accent">
-            <AvatarImage
-              src={member.profileImageUrl}
-              nickname={member.nickname}
-            />
-          </span>
-          <span
-            className={cn(
-              "absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full ring-2 ring-[var(--surface)]",
-              online ? "bg-success-500" : "bg-place-h",
-            )}
+          <MemberAvatar
+            nickname={member.nickname}
+            src={member.profileImageUrl}
           />
+          <PresenceDot online={online} />
         </button>
       ),
     };

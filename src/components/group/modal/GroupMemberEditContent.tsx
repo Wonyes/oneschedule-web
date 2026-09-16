@@ -1,11 +1,11 @@
 "use client";
 
 import { forwardRef, useImperativeHandle } from "react";
-import { Column } from "../../layout/flex";
-import Dropdown from "../../Dropdown";
+import { Column } from "../../ui/layout/flex";
+import Dropdown from "../../ui/Dropdown";
 import { useForm } from "@/src/hooks/useForm";
 import { GroupMember, GroupRole } from "@/src/types/group";
-import { Input } from "../../layout/input";
+import { Input } from "../../ui/layout/input";
 
 
 const roleOptions = [

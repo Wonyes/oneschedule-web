@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import AvatarImage from "@/src/components/common/AvatarImage";
-import IconBox from "../ui/IconBox";
+import MemberAvatar from "@/src/components/common/MemberAvatar";
 import { Column, Row } from "../ui/layout/flex";
 import ScrollListArea, { ScrollSentinel } from "../ui/ScrollListArea";
 import { useInfiniteScroll } from "@/src/hooks/useInfiniteScroll";
@@ -114,17 +113,10 @@ export default function GroupJoinRequestBody({
                   className="w-full border-b border-divider py-2.5 last:border-none"
                 >
                   <div className="flex w-full items-center gap-3">
-                    <IconBox
-                      size="md"
-                      shape="circle"
-                      tone="accent"
-                      className="typo-caption-3 shrink-0 overflow-hidden bg-accent/10 font-bold"
-                    >
-                      <AvatarImage
-                        src={request.profileImageUrl}
-                        nickname={request.nickname}
-                      />
-                    </IconBox>
+                    <MemberAvatar
+                      nickname={request.nickname}
+                      src={request.profileImageUrl}
+                    />
 
                     <button
                       type="button"

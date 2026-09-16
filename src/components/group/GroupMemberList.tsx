@@ -1,6 +1,8 @@
 "use client";
 
-import AvatarImage from "@/src/components/common/AvatarImage";
+import MemberAvatar from "@/src/components/common/MemberAvatar";
+import PresenceDot from "@/src/components/common/PresenceDot";
+import { getPresence } from "@/src/utils/presence";
 import { Crown, MoreVertical, Shield } from "lucide-react";
 import { useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -10,11 +12,10 @@ import { useOverlay } from "@/src/hooks/useOverlay";
 import {
   GroupMemberEditContent,
   GroupMemberEditRef,
-} from "../ui/overlay/modal/GroupMemberEditContent";
+} from "./modal/GroupMemberEditContent";
 import { getErrorMessage, useAppMutation } from "@/src/types/ErrorResponse";
 import { Patch, Delete } from "@/src/hooks/querys/useMutations";
 import { groupkeys } from "@/src/hooks/querys/key/groupKey";
-import IconBox from "../ui/IconBox";
 import DropdownMenu from "../ui/DropdownMenu";
 import { GroupMember, GroupRole } from "@/src/types/group";
 import { useMyInfo } from "@/src/hooks/querys/useMembers";
@@ -25,8 +26,6 @@ import { AnimatePresence, motion } from "motion/react";
 import { fadeQuick, springSoft } from "@/src/lib/motion";
 import { PAGE_SIZE } from "@/src/lib/paging";
 import ScrollListArea, { ScrollSentinel } from "../ui/ScrollListArea";
-import { formatDistanceToNowStrict } from "date-fns";
-import { ko } from "date-fns/locale";
 
 export default function GroupMemberList({
   members,
@@ -150,16 +149,10 @@ export default function GroupMemberList({
     >
       <AnimatePresence initial={false} mode="popLayout">
         {visibleMembers.map((member: GroupMember) => {
-          const status = presence?.get(member.memberNo);
-          const isOnline = status?.online ?? false;
-          const statusLabel = isOnline
-            ? "온라인"
-            : status?.lastSeenAt
-              ? formatDistanceToNowStrict(new Date(status.lastSeenAt), {
-                  addSuffix: true,
-                  locale: ko,
-                })
-              : "오프라인";
+          const { online: isOnline, label: statusLabel } = getPresence(
+            presence,
+            member.memberNo,
+          );
           const canManage =
             isAdmin &&
             member.groupRole !== "SUPER" &&
@@ -174,24 +167,11 @@ export default function GroupMemberList({
               className="group flex w-full items-center gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-surface-hover"
             >
               <span className="relative shrink-0">
-                <IconBox
-                  size="md"
-                  shape="circle"
-                  tone="accent"
-                  className="overflow-hidden typo-caption-3 font-bold bg-accent/10"
-                >
-                  <AvatarImage
-                    src={member.profileImageUrl}
-                    nickname={member.nickname}
-                  />
-                </IconBox>
-                <span
-                  title={statusLabel}
-                  className={cn(
-                    "absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full ring-2 ring-[var(--surface)]",
-                    isOnline ? "bg-success-500" : "bg-place-h",
-                  )}
+                <MemberAvatar
+                  nickname={member.nickname}
+                  src={member.profileImageUrl}
                 />
+                <PresenceDot online={isOnline} title={statusLabel} />
               </span>
 
               <Column className="min-w-0 flex-1 gap-0">

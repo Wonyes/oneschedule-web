@@ -7,13 +7,14 @@ import { useMemo } from "react";
 
 import BaseCard from "@/src/components/ui/card/BaseCard";
 import { Column, Between } from "@/src/components/ui/layout/flex";
-import { DayGroup } from "@/src/components/schedule/components/DayTimeline";
+import { DayGroup } from "@/src/components/schedule/parts/DayTimeline";
 import { useSchedules } from "@/src/hooks/querys/useSchedule";
 import { useActiveGroup } from "@/src/hooks/querys/useGroup";
 import Skeleton from "@/src/components/ui/Skeleton";
 import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
 import { ScheduleEvent } from "@/src/types/schedule";
 import { toScheduleEvent } from "@/src/utils/schedule";
+import SectionHeading from "../ui/layout/SectionHeading";
 
 /** 오늘·내일은 항상, 그 뒤로는 일정이 있는 날만 — 합쳐서 최대 며칠 */
 const MAX_DAYS = 4;
@@ -67,10 +68,7 @@ export default function UpcomingSchedules({ today }: { today: Date }) {
   return (
     <BaseCard className="flex-1 p-4 sm:p-5">
       <Between className="mb-4">
-        <Column className="gap-1">
-          <span className="eyebrow">SCHEDULE</span>
-          <span className="typo-sub-t-1 text-foreground">다가오는 일정</span>
-        </Column>
+        <SectionHeading eyebrow="SCHEDULE" title="다가오는 일정" />
 
         <Link
           href="/schedule"

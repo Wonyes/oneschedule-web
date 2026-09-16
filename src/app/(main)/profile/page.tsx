@@ -1,8 +1,8 @@
 "use client";
 
-import AccountInfo from "@/src/components/schedule/components/profile/AccountInfo";
-import ProfileActions from "@/src/components/schedule/components/profile/ProfileActions";
-import ProfileCard from "@/src/components/schedule/components/profile/ProfileCard";
+import AccountInfo from "@/src/components/profile/AccountInfo";
+import ProfileActions from "@/src/components/profile/ProfileActions";
+import ProfileCard from "@/src/components/profile/ProfileCard";
 import BaseCard from "@/src/components/ui/card/BaseCard";
 import Skeleton from "@/src/components/ui/Skeleton";
 import { Column } from "@/src/components/ui/layout/flex";

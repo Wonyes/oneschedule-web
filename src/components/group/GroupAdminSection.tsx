@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 import BaseCard from "../ui/card/BaseCard";
-import { Column, Row } from "../ui/layout/flex";
 import SegmentedTabs from "../ui/layout/SegmentedTabs";
 import GroupJoinRequestBody from "./GroupJoinRequestBody";
 import GroupSettingBody from "./GroupSettingBody";
@@ -13,6 +12,7 @@ import SectionBody from "./SectionBody";
 import { GROUP_SECTION_HEIGHT } from "./sectionHeight";
 import { useJoinRequests } from "@/src/hooks/querys/useGroup";
 import { MyGroupResponse } from "@/src/types/group";
+import SectionHeading from "../ui/layout/SectionHeading";
 
 type AdminTab = "request" | "setting";
 
@@ -75,19 +75,16 @@ export default function GroupAdminSection({
       className={`relative z-30 flex w-full flex-col p-5 ${GROUP_SECTION_HEIGHT}`}
       childClass="flex min-h-0 flex-1 flex-col"
     >
-      <Column className="mb-4 shrink-0 gap-1">
-        <span className="eyebrow">MANAGE</span>
-        <Row className="items-center gap-2">
-          <h2 className="typo-sub-t-1 text-foreground">
-            {active === "request" ? "가입 신청" : "그룹 설정"}
-          </h2>
-          {active === "request" && pendingCount > 0 && (
-            <span className="rounded-full bg-accent/12 px-2 py-0.5 typo-caption-3 font-bold tabular-nums text-accent">
-              {pendingCount}건 대기
-            </span>
-          )}
-        </Row>
-      </Column>
+      <SectionHeading
+        className="mb-4"
+        eyebrow="MANAGE"
+        title={active === "request" ? "가입 신청" : "그룹 설정"}
+        meta={
+          active === "request" && pendingCount > 0
+            ? `${pendingCount}건 대기`
+            : undefined
+        }
+      />
 
       {showTabs && (
         <div className="mb-4 shrink-0">

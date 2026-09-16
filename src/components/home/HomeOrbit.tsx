@@ -6,8 +6,8 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 
 import OrbitRing, { OrbitItem } from "@/src/components/common/OrbitRing";
-import GroupAvatar from "@/src/components/group/GroupAvatar";
-import WeatherIcon from "@/src/components/schedule/components/WeatherIcon";
+import GroupAvatar from "@/src/components/common/GroupAvatar";
+import WeatherIcon from "@/src/components/common/weather/WeatherIcon";
 import { Column } from "@/src/components/ui/layout/flex";
 import { useActiveGroup } from "@/src/hooks/querys/useGroup";
 import { groupPath } from "@/src/lib/activeGroup";

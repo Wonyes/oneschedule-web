@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { MyInfoResponse } from "@/src/hooks/querys/useMembers";
 import { MyGroupResponse } from "@/src/types/group";
 import GroupQuickLink from "./GroupQuickLink";
-import HorizonFooter from "@/src/components/common/HorizonFooter";
+import HorizonFooter from "@/src/components/layout/HorizonFooter";
 import HomeHero from "./HomeHero";
 import MiniCalendar from "./MiniCalendar";
 import OnboardingChecklist from "./OnboardingChecklist";

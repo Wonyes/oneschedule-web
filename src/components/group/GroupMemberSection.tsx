@@ -6,7 +6,6 @@ import { Settings, UserPlus, Users } from "lucide-react";
 
 import BaseCard from "../ui/card/BaseCard";
 import { GROUP_SECTION_HEIGHT } from "./sectionHeight";
-import { Column } from "../ui/layout/flex";
 import SegmentedTabs from "../ui/layout/SegmentedTabs";
 import GroupJoinRequestBody from "./GroupJoinRequestBody";
 import GroupMemberList from "./GroupMemberList";
@@ -14,6 +13,7 @@ import GroupSettingBody from "./GroupSettingBody";
 import SectionBody from "./SectionBody";
 import { useJoinRequests } from "@/src/hooks/querys/useGroup";
 import { MyGroupResponse } from "@/src/types/group";
+import SectionHeading from "../ui/layout/SectionHeading";
 
 type TeamTab = "members" | "requests" | "settings";
 
@@ -76,15 +76,12 @@ export default function GroupMemberSection({
       className={`flex flex-col p-5 ${GROUP_SECTION_HEIGHT}`}
       childClass="flex min-h-0 flex-1 flex-col"
     >
-      <Column className="mb-4 shrink-0 gap-1">
-        <span className="eyebrow">TEAM</span>
-        <h2 className="typo-sub-t-1 text-foreground">
-          멤버{" "}
-          <span className="font-normal text-place-h">
-            {group.members.length}
-          </span>
-        </h2>
-      </Column>
+      <SectionHeading
+        className="mb-4"
+        eyebrow="TEAM"
+        title="멤버"
+        meta={group.members.length}
+      />
 
       {tabs.length > 1 && (
         <div className="mb-4">

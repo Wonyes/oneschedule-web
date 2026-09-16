@@ -4,7 +4,7 @@ import { Bell, Check, X } from "lucide-react";
 import { formatDistanceToNowStrict } from "date-fns";
 import { ko } from "date-fns/locale";
 
-import AvatarImage from "@/src/components/common/AvatarImage";
+import MemberAvatar from "@/src/components/common/MemberAvatar";
 import { Notification } from "@/src/types/notification";
 import { cn } from "@/src/utils/cn";
 import { motion } from "motion/react";
@@ -66,21 +66,22 @@ export default function NotificationItem({
         read && "opacity-70",
       )}
     >
-      <span
-        className={cn(
-          "typo-caption-3 flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full font-bold",
-          system ? system.tone : "bg-accent/10 text-accent",
-        )}
-      >
-        {system ? (
-          system.icon
-        ) : (
-          <AvatarImage
-            src={senderProfileImageUrl}
-            nickname={senderNickname ?? ""}
-          />
-        )}
-      </span>
+      {system ? (
+        <span
+          className={cn(
+            "flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
+            system.tone,
+          )}
+        >
+          {system.icon}
+        </span>
+      ) : (
+        <MemberAvatar
+          nickname={senderNickname ?? ""}
+          src={senderProfileImageUrl}
+          size="sm"
+        />
+      )}
 
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span className="typo-caption-2 text-foreground">

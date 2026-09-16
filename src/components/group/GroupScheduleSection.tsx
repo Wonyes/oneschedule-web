@@ -5,16 +5,18 @@ import { CalendarPlus } from "lucide-react";
 
 import BaseCard from "../ui/card/BaseCard";
 import { GROUP_SECTION_MAX_HEIGHT } from "./sectionHeight";
-import { Column, Row } from "../ui/layout/flex";
+import { Row } from "../ui/layout/flex";
 import ScrollListArea, { ScrollSentinel } from "../ui/ScrollListArea";
 import SectionBody from "./SectionBody";
 import { UPCOMING_RANGE_DAYS, useGroupSchedules } from "./useGroupSchedules";
-import { DayGroup } from "../schedule/components/DayTimeline";
+import { DayGroup } from "../schedule/parts/DayTimeline";
 import { useIncrementalList } from "@/src/hooks/useIncrementalList";
 import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
 import { PAGE_SIZE } from "@/src/lib/paging";
 import { MyGroupResponse } from "@/src/types/group";
 import { ScheduleEvent } from "@/src/types/schedule";
+import SectionHeading from "../ui/layout/SectionHeading";
+import EmptyState from "../ui/EmptyState";
 
 export default function GroupScheduleSection({
   group,
@@ -42,18 +44,14 @@ export default function GroupScheduleSection({
       childClass="flex min-h-0 flex-1 flex-col"
     >
       <Row className="mb-4 shrink-0 items-start justify-between gap-3">
-        <Column className="gap-1">
-          <span className="eyebrow">SCHEDULE</span>
-          <Row className="items-baseline gap-2">
-            <h2 className="typo-sub-t-1 text-foreground">그룹 일정</h2>
-            {!isEmpty && (
-              <span className="typo-caption-3 text-place-h">
-                오늘 {today.length} · {UPCOMING_RANGE_DAYS}일 내{" "}
-                {upcoming.length}
-              </span>
-            )}
-          </Row>
-        </Column>
+        <SectionHeading
+          eyebrow="SCHEDULE"
+          title="그룹 일정"
+          meta={
+            !isEmpty &&
+            `오늘 ${today.length} · ${UPCOMING_RANGE_DAYS}일 내 ${upcoming.length}`
+          }
+        />
 
         <button
           type="button"
@@ -67,14 +65,10 @@ export default function GroupScheduleSection({
 
       <SectionBody animate={animate}>
         {isEmpty ? (
-          <Column className="items-center justify-center gap-1 py-8 text-center">
-            <span className="typo-caption-1 text-secondary">
-              앞으로 {UPCOMING_RANGE_DAYS}일 동안 그룹 일정이 없어요.
-            </span>
-            <span className="typo-caption-3 text-place-h">
-              일정을 추가하면 멤버들에게 알림이 가요.
-            </span>
-          </Column>
+          <EmptyState
+            title={`앞으로 ${UPCOMING_RANGE_DAYS}일 동안 그룹 일정이 없어요.`}
+            hint="일정을 추가하면 멤버들에게 알림이 가요."
+          />
         ) : (
           <ScrollListArea
             rootRef={rootRef}

@@ -13,6 +13,7 @@ import { Post } from "@/src/hooks/querys/useMutations";
 import { useForm } from "@/src/hooks/useForm";
 import { useOverlay } from "@/src/hooks/useOverlay";
 import { getErrorMessage, useAppMutation } from "@/src/types/ErrorResponse";
+import SectionHeading from "../ui/layout/SectionHeading";
 
 export default function JoinByCode({ onJoined }: { onJoined?: () => void }) {
   const queryClient = useQueryClient();
@@ -58,13 +59,12 @@ export default function JoinByCode({ onJoined }: { onJoined?: () => void }) {
 
   return (
     <BaseCard className="w-full p-4 sm:p-6" glow>
-      <Column className="mb-4 gap-1">
-        <span className="eyebrow">INVITE</span>
-        <h2 className="typo-sub-t-1 text-foreground">초대코드로 참여</h2>
-        <p className="typo-caption-2 text-muted">
-          비공개 그룹은 초대코드로만 들어갈 수 있어요.
-        </p>
-      </Column>
+      <SectionHeading
+        className="mb-4"
+        eyebrow="INVITE"
+        title="초대코드로 참여"
+        description="비공개 그룹은 초대코드로만 들어갈 수 있어요."
+      />
 
       <Column className="w-full gap-3">
         <Input

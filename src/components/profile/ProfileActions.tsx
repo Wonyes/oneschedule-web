@@ -12,7 +12,7 @@ import { CustomError, getErrorMessage } from "@/src/types/ErrorResponse";
 import {
   PasswordChangeForm,
   PasswordFormRef,
-} from "../../layout/modal/PasswordFromRef";
+} from "./PasswordFromRef";
 
 export default function ProfileActions({
   auth,

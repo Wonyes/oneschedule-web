@@ -1,5 +1,5 @@
-import AuthHeader from "@/src/components/common/header/AuthHeader";
-import GlobalOverlays from "@/src/components/ui/GlobalOverlay";
+import AuthHeader from "@/src/components/layout/header/AuthHeader";
+import GlobalOverlays from "@/src/components/ui/overlay/GlobalOverlay";
 
 export default function AuthLayout({
   children,

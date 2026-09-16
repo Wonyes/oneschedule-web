@@ -5,7 +5,7 @@ import { ko } from "date-fns/locale";
 import { Bell } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-import AvatarImage from "@/src/components/common/AvatarImage";
+import MemberAvatar from "@/src/components/common/MemberAvatar";
 import BaseCard from "@/src/components/ui/card/BaseCard";
 import Skeleton from "@/src/components/ui/Skeleton";
 import { Column, Row } from "@/src/components/ui/layout/flex";
@@ -15,6 +15,7 @@ import {
 } from "@/src/hooks/querys/useNotification";
 import { Notification } from "@/src/types/notification";
 import { cn } from "@/src/utils/cn";
+import EmptyState from "../ui/EmptyState";
 
 const SIZE = 4;
 
@@ -44,9 +45,7 @@ export default function RecentNotifications() {
           <Skeleton className="h-9 w-full rounded-lg" />
         </Column>
       ) : items.length === 0 ? (
-        <p className="py-2 typo-caption-3 text-place-h">
-          아직 받은 알림이 없어요.
-        </p>
+        <EmptyState title="아직 받은 알림이 없어요." />
       ) : (
         <Column className="gap-1">
           {items.map((n) => (
@@ -56,23 +55,17 @@ export default function RecentNotifications() {
               onClick={() => handleSelect(n)}
               className="btn-spring flex w-full items-center gap-2.5 rounded-lg px-1.5 py-1.5 text-left hover:bg-surface-hover"
             >
-              <span
-                className={cn(
-                  "flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full",
-                  n.senderNickname === null
-                    ? "bg-accent/10 text-accent"
-                    : "bg-accent/20 text-[10px] font-bold text-accent",
-                )}
-              >
-                {n.senderNickname === null ? (
+              {n.senderNickname === null ? (
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent/10 text-accent">
                   <Bell size={12} strokeWidth={2} />
-                ) : (
-                  <AvatarImage
-                    src={n.senderProfileImageUrl}
-                    nickname={n.senderNickname}
-                  />
-                )}
-              </span>
+                </span>
+              ) : (
+                <MemberAvatar
+                  nickname={n.senderNickname}
+                  src={n.senderProfileImageUrl}
+                  size="sm"
+                />
+              )}
 
               <Row className="min-w-0 flex-1 items-baseline gap-2">
                 <span

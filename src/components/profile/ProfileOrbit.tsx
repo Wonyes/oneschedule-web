@@ -6,7 +6,7 @@ import Link from "next/link";
 
 import AvatarImage from "@/src/components/common/AvatarImage";
 import OrbitRing, { OrbitItem } from "@/src/components/common/OrbitRing";
-import GroupAvatar from "@/src/components/group/GroupAvatar";
+import GroupAvatar from "@/src/components/common/GroupAvatar";
 import { groupPath } from "@/src/lib/activeGroup";
 import { useMediaQuery } from "@/src/hooks/useMediaQuery";
 import { springSoft } from "@/src/lib/motion";

@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, Hourglass, Loader2, Plus, Search, Users } from "lucide-react";
-import GroupAvatar from "./GroupAvatar";
+import GroupAvatar from "@/src/components/common/GroupAvatar";
 import { useRef, useState } from "react";
 
 import BaseCard from "@/src/components/ui/card/BaseCard";
@@ -23,11 +23,13 @@ import { PublicGroup } from "@/src/types/group";
 import {
   JoinRequestMessageContent,
   JoinRequestMessageRef,
-} from "@/src/components/ui/overlay/modal/JoinRequestMessageContent";
+} from "@/src/components/group/modal/JoinRequestMessageContent";
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import { rise, stagger } from "@/src/lib/motion";
 import { cn } from "@/src/utils/cn";
+import SectionHeading from "../ui/layout/SectionHeading";
+import EmptyState from "../ui/EmptyState";
 
 function GroupRow({ group }: { group: PublicGroup }) {
   const router = useRouter();
@@ -183,10 +185,7 @@ export default function PublicGroupList() {
 
   return (
     <BaseCard className="w-full p-4 sm:p-6" glow>
-      <Column className="mb-3 gap-1">
-        <span className="eyebrow">DISCOVER</span>
-        <h2 className="typo-sub-t-1 text-foreground">공개 그룹 둘러보기</h2>
-      </Column>
+      <SectionHeading className="mb-3" eyebrow="DISCOVER" title="공개 그룹 둘러보기" />
 
       <Input
         value={keyword}
@@ -213,11 +212,13 @@ export default function PublicGroupList() {
             목록을 불러오지 못했습니다.
           </p>
         ) : groups.length === 0 ? (
-          <p className="typo-caption-2 py-8 text-center text-muted">
-            {keyword.trim()
-              ? "검색 결과가 없습니다."
-              : "아직 공개된 그룹이 없습니다."}
-          </p>
+          <EmptyState
+            title={
+              keyword.trim()
+                ? "검색 결과가 없어요."
+                : "아직 공개된 그룹이 없어요."
+            }
+          />
         ) : (
           <ScrollListArea
             rootRef={rootRef}

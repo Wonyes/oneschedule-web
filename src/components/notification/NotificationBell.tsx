@@ -11,6 +11,7 @@ import { Notification } from "@/src/types/notification";
 import { cn } from "@/src/utils/cn";
 import { AnimatePresence } from "motion/react";
 import NotificationItem from "./NotificationItem";
+import EmptyState from "../ui/EmptyState";
 
 type NotificationBellProps = {
   items: Notification[];
@@ -106,14 +107,10 @@ export default function NotificationBell({
               <Skeleton className="h-9 w-full rounded-xl" />
             </Column>
           ) : items.length === 0 ? (
-            <Column className="items-center gap-2 px-3 py-8">
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-surface-hover text-muted">
-                <Bell size={16} strokeWidth={1.75} />
-              </span>
-              <span className="typo-caption-2 text-muted">
-                아직 알림이 없어요.
-              </span>
-            </Column>
+            <EmptyState
+              icon={<Bell size={16} strokeWidth={1.75} />}
+              title="아직 알림이 없어요."
+            />
           ) : (
             // 항목 4개(각 ≈60px) 높이까지만 보이고, 그 아래는 스크롤
             <Column className="scroll-hidden max-h-[248px] w-full gap-0.5 overflow-y-auto">

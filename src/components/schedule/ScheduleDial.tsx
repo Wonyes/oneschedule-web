@@ -11,7 +11,7 @@ import { springSnappy } from "@/src/lib/motion";
 import { ProcessedWeather } from "@/src/types/schedule";
 import { cn } from "@/src/utils/cn";
 import { getWeekDates } from "@/src/utils/schedule";
-import WeatherIcon from "./components/WeatherIcon";
+import WeatherIcon from "../common/weather/WeatherIcon";
 
 /** 가운데 기준 양옆으로 몇 눈금까지 보여줄지 */
 const REACH = 3;

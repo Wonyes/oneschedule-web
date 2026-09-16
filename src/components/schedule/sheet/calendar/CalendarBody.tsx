@@ -1,10 +1,10 @@
 import { useCalendarLogic } from "./useCalendarLogic";
 
-import { Column, Between } from "../../layout/flex";
+import { Column, Between } from "../../../ui/layout/flex";
 import { useCalendarStore } from "@/src/hooks/stores/useCalendarStore";
 import { cn } from "@/src/utils/cn";
 import { ChevronRight } from "lucide-react";
-import { Primary } from "../../layout/button";
+import { Primary } from "../../../ui/layout/button";
 
 export default function CalendarBody() {
   const { currentMonth, createCalendar } = useCalendarLogic();

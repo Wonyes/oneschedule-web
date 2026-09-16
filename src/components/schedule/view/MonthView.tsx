@@ -11,13 +11,14 @@ import {
   getMonthWeekLanes,
   getSortedDayEvents,
 } from "@/src/utils/schedule";
-import ScheduleCard from "../components/ScheduleCard";
+import ScheduleCard from "../parts/ScheduleCard";
 import { useScheduleStore } from "@/src/hooks/stores/useScheduleStore";
 import { useScheduleView } from "@/src/hooks/useScheduleView";
 import { ScheduleViewProps } from "@/src/types/schedule";
-import WeatherBadge from "../components/WeatherBadge";
+import WeatherBadge from "../../common/weather/WeatherBadge";
 import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
 import { useSwipe } from "@/src/hooks/useSwipe";
+import EmptyState from "../../ui/EmptyState";
 
 const WEEKDAY_LABELS = ["일", "월", "화", "수", "목", "금", "토"];
 
@@ -71,26 +72,28 @@ export default function MonthView({
       <div className="hidden min-h-0 flex-1 flex-col sm:flex sm:overflow-x-auto">
         <div className="min-w-[560px] flex flex-col flex-1 min-h-0">
           <div className="grid grid-cols-7 shrink-0 px-2 pt-3">
-              {WEEKDAY_LABELS.map((d, i) => (
-                <div
-                  key={d}
-                  className={`flex h-8 items-center justify-center typo-caption-3 font-semibold tracking-wide ${
-                    i === 0
-                      ? "text-error-500"
-                      : i === 6
-                        ? "text-blue"
-                        : "text-muted"
-                  }`}
-                >
-                  {d}
-                </div>
-              ))}
+            {WEEKDAY_LABELS.map((d, i) => (
+              <div
+                key={d}
+                className={`flex h-8 items-center justify-center typo-caption-3 font-semibold tracking-wide ${
+                  i === 0
+                    ? "text-error-500"
+                    : i === 6
+                      ? "text-blue"
+                      : "text-muted"
+                }`}
+              >
+                {d}
+              </div>
+            ))}
           </div>
 
           <div className="flex-1 overflow-y-auto min-h-0 p-2">
             <div
               className="grid min-h-full grid-cols-7 gap-1.5 rounded-2xl neu-pressed p-1.5"
-              style={{ gridTemplateRows: `repeat(${monthDates.length / 7}, minmax(0, 1fr))` }}
+              style={{
+                gridTemplateRows: `repeat(${monthDates.length / 7}, minmax(0, 1fr))`,
+              }}
             >
               {monthDates.map((date) => {
                 const inCurrentMonth = isSameMonth(date, currentDate);
@@ -299,20 +302,21 @@ export default function MonthView({
           </div>
 
           {selectedDateEvents.length === 0 ? (
-            <div className="flex flex-col items-center gap-3 py-6">
-              <p className="typo-caption-2 text-muted">이 날은 비어 있어요.</p>
-
-              <button
-                type="button"
-                onClick={() =>
-                  openSheet({ date: selectedDate, type: viewType })
-                }
-                className="btn-spring neu-btn text-secondary hover:text-foreground flex h-9 items-center gap-1.5 rounded-xl px-4 typo-caption-2 font-medium"
-              >
-                <Plus size={14} strokeWidth={2} />
-                일정 추가
-              </button>
-            </div>
+            <EmptyState
+              title="이 날은 비어 있어요."
+              action={
+                <button
+                  type="button"
+                  onClick={() =>
+                    openSheet({ date: selectedDate, type: viewType })
+                  }
+                  className="btn-spring neu-btn text-secondary hover:text-foreground flex h-9 items-center gap-1.5 rounded-xl px-4 typo-caption-2 font-medium"
+                >
+                  <Plus size={14} strokeWidth={2} />
+                  일정 추가
+                </button>
+              }
+            />
           ) : (
             <div className="flex flex-col gap-2">
               {selectedDateEvents.map((event) => (

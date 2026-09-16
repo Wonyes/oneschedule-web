@@ -11,8 +11,9 @@ import { useProfileEdit } from "@/src/hooks/useProfileEdit";
 import { motion } from "motion/react";
 import { rise, stagger } from "@/src/lib/motion";
 import Link from "next/link";
-import GroupAvatar from "@/src/components/group/GroupAvatar";
+import GroupAvatar from "@/src/components/common/GroupAvatar";
 import { groupPath } from "@/src/lib/activeGroup";
+import SectionHeading from "@/src/components/ui/layout/SectionHeading";
 
 export default function AccountInfo({ user }: { user: MyInfoResponse }) {
   const {
@@ -50,8 +51,7 @@ export default function AccountInfo({ user }: { user: MyInfoResponse }) {
         className="flex w-full flex-col gap-2"
       >
         <motion.div variants={rise} className="flex flex-col gap-1">
-          <span className="eyebrow">ACCOUNT</span>
-          <h2 className="typo-sub-t-1 text-foreground">계정 정보</h2>
+          <SectionHeading eyebrow="ACCOUNT" title="계정 정보" />
         </motion.div>
 
         <Column className="w-full">

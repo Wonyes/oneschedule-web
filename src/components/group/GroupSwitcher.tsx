@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
 import DropdownMenu from "../ui/DropdownMenu";
-import GroupAvatar from "./GroupAvatar";
+import GroupAvatar from "@/src/components/common/GroupAvatar";
 import { Column } from "../ui/layout/flex";
 import Skeleton from "@/src/components/ui/Skeleton";
 import { useActiveGroup } from "@/src/hooks/querys/useGroup";
