@@ -26,8 +26,9 @@ const readTheme = (): Theme => {
   return window.matchMedia(DARK_QUERY).matches ? "dark" : "light";
 };
 
-export default function ThemeToggle() {
-  const theme = useSyncExternalStore(subscribe, readTheme, () => "light");
+/** initial: 서버가 쿠키에서 읽은 테마. SSR과 첫 화면이 같게 나오도록 서버 스냅샷으로 쓴다 */
+export default function ThemeToggle({ initial = "light" }: { initial?: Theme }) {
+  const theme = useSyncExternalStore(subscribe, readTheme, () => initial);
 
   const toggle = (e: React.MouseEvent<HTMLButtonElement>) => {
     const next: Theme = theme === "light" ? "dark" : "light";

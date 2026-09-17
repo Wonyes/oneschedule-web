@@ -20,6 +20,7 @@ async function HeaderAuthResolved() {
 export default async function Header() {
   const cookieStore = await cookies();
   const isLoggedIn = !!cookieStore.get("access-token");
+  const initialTheme = cookieStore.get("theme")?.value === "dark" ? "dark" : "light";
 
   return (
     <header
@@ -53,7 +54,7 @@ export default async function Header() {
           {isLoggedIn && (
             <NotificationMenu mobileSlot="top" className="sm:hidden" />
           )}
-          <ThemeToggle />
+          <ThemeToggle initial={initialTheme} />
           <Suspense fallback={<AuthSkeleton />}>
             <HeaderAuthResolved />
           </Suspense>
@@ -90,7 +91,7 @@ export default async function Header() {
         <ViewModeToggle />
 
         {isLoggedIn && <NotificationMenu />}
-        <ThemeToggle />
+        <ThemeToggle initial={initialTheme} />
         <Suspense fallback={<AuthSkeleton />}>
           <HeaderAuthResolved />
         </Suspense>

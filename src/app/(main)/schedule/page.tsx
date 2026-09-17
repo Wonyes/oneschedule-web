@@ -2,11 +2,9 @@
 
 import Schedule from "@/src/components/schedule/Schedule";
 import ScheduleHeader from "@/src/components/schedule/ScheduleHeader";
-import { syncServerStoreToToday } from "@/src/hooks/stores/useScheduleStore";
 import { useScheduleUrlSync } from "@/src/hooks/useScheduleUrlSync";
 
 export default function SchedulePage() {
-  syncServerStoreToToday();
   useScheduleUrlSync();
 
   return (
