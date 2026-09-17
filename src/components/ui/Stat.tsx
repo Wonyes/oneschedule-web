@@ -32,7 +32,9 @@ export default function Stat({
       {countUp ? (
         <CountUp value={value} className={color} />
       ) : (
-        <span className={cn("typo-caption-1 font-semibold tabular-nums", color)}>
+        <span
+          className={cn("typo-caption-1 font-semibold tabular-nums", color)}
+        >
           {value}
         </span>
       )}
@@ -54,7 +56,9 @@ function CountUp({ value, className }: { value: number; className: string }) {
   }, [count, value]);
 
   return (
-    <motion.span className={cn("typo-caption-1 font-semibold tabular-nums", className)}>
+    <motion.span
+      className={cn("typo-caption-1 font-semibold tabular-nums", className)}
+    >
       {text}
     </motion.span>
   );

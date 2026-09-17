@@ -9,10 +9,7 @@ import {
 } from "@/src/hooks/querys/useMembers";
 import { useOverlay } from "@/src/hooks/useOverlay";
 import { CustomError, getErrorMessage } from "@/src/types/ErrorResponse";
-import {
-  PasswordChangeForm,
-  PasswordFormRef,
-} from "./PasswordFromRef";
+import { PasswordChangeForm, PasswordFormRef } from "./PasswordFromRef";
 
 export default function ProfileActions({
   auth,

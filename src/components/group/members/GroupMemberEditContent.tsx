@@ -7,7 +7,6 @@ import { useForm } from "@/src/hooks/useForm";
 import { GroupMember, GroupRole } from "@/src/types/group";
 import { Input } from "../../ui/layout/input";
 
-
 const roleOptions = [
   {
     label: "관리자",

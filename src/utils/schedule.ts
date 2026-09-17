@@ -133,13 +133,7 @@ const getDayColor = (date: Date, isHoliday: holidayType | undefined) => {
 };
 
 export type WeatherKind =
-  | "rain"
-  | "sleet"
-  | "snow"
-  | "shower"
-  | "sun"
-  | "partly"
-  | "cloud";
+  "rain" | "sleet" | "snow" | "shower" | "sun" | "partly" | "cloud";
 
 /** 기상청 단기예보의 강수형태(PTY)·하늘상태(SKY) 코드를 아이콘 종류로 바꾼다. */
 export const getWeatherKind = (
@@ -410,7 +404,11 @@ const getSortedDayEvents = (events: ScheduleEvent[], date: Date) => {
  * 월뷰 한 주(7일)의 일정 배치. 여러 날에 걸친 일정이 주 안에서 같은 줄(lane)을 유지하도록
  * 시작일 → 긴 기간 순으로 줄을 배정한다. 결과는 날짜별로 lane 인덱스 → 일정(없으면 null).
  */
-type MonthLaneCell = { event: ScheduleEvent; isStart: boolean; isEnd: boolean };
+export type MonthLaneCell = {
+  event: ScheduleEvent;
+  isStart: boolean;
+  isEnd: boolean;
+};
 
 const getMonthWeekLanes = (
   events: ScheduleEvent[],

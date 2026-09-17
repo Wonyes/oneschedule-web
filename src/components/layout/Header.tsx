@@ -50,7 +50,9 @@ export default async function Header() {
           <ScheduleGroupSwitcher compact className="hidden sm:block" />
           {/* 종: 태블릿은 항상 1줄, 폰은 스케줄 페이지가 아닐 때만 1줄(스케줄은 2줄 왼쪽) */}
           {isLoggedIn && <NotificationMenu className="hidden sm:block" />}
-          {isLoggedIn && <NotificationMenu mobileSlot="top" className="sm:hidden" />}
+          {isLoggedIn && (
+            <NotificationMenu mobileSlot="top" className="sm:hidden" />
+          )}
           <ThemeToggle />
           <Suspense fallback={<AuthSkeleton />}>
             <HeaderAuthResolved />

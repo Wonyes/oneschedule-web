@@ -31,8 +31,9 @@ export function useScheduleMutations({
     queryClient.invalidateQueries({ queryKey: [scheduleKeys.list] });
     onDone();
   };
-  const fail = (title: string) => (err: Parameters<typeof getErrorMessage>[0]) =>
-    openAlert({ title, message: getErrorMessage(err) });
+  const fail =
+    (title: string) => (err: Parameters<typeof getErrorMessage>[0]) =>
+      openAlert({ title, message: getErrorMessage(err) });
 
   const { mutate: create } = useAppMutation({
     mutationFn: (body: Body) =>

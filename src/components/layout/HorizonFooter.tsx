@@ -49,7 +49,8 @@ export default function HorizonFooter() {
       style={{
         // 아래로 갈수록 배경에 녹아들어 잘린 선이 안 보이게
         maskImage: "linear-gradient(to bottom, black 62%, transparent 100%)",
-        WebkitMaskImage: "linear-gradient(to bottom, black 62%, transparent 100%)",
+        WebkitMaskImage:
+          "linear-gradient(to bottom, black 62%, transparent 100%)",
       }}
     >
       {/* 원판: 윗부분만 보이도록 아래로 내려 둔다 */}

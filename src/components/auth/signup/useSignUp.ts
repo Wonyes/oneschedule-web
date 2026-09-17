@@ -1,17 +1,15 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { isAxiosError } from "axios";
 
 import { useForm } from "@/src/hooks/useForm";
 import { useStepForm } from "@/src/hooks/useStepForm";
 import { Post } from "@/src/hooks/querys/useMutations";
-import { useNicknameCheck } from "@/src/hooks/querys/useMembers";
 import { useOverlay } from "@/src/hooks/useOverlay";
 import { getErrorMessage, useAppMutation } from "@/src/types/ErrorResponse";
 import { verificationTypes } from "@/src/types/verification";
 import { EMAIL_PATTERN, useEmailVerification } from "../useEmailVerification";
+import { useNicknameAvailability } from "./useNicknameAvailability";
 import { validatePassword } from "../validators";
 
 export const SIGN_STEPS = [
@@ -66,12 +64,10 @@ export function useSignUp() {
 
   const { step, direction, errors, isLast, fail, clearError, next, back } =
     useStepForm<SignField>(SIGN_STEPS.length);
-  const [checking, setChecking] = useState(false);
 
-  const [checkedNickname, setCheckedNickname] = useState<string | null>(null);
-  const nicknameChecked = !!form.nickname && form.nickname === checkedNickname;
-
-  const { refetch: checkNickname } = useNicknameCheck(form.nickname);
+  const nickname = useNicknameAvailability(form.nickname, () =>
+    fail("nickname", "이미 사용 중인 닉네임이에요."),
+  );
 
   const verification = useEmailVerification({
     purpose: verificationTypes.SIGNUP,
@@ -114,29 +110,6 @@ export function useSignUp() {
     formChange(e);
   };
 
-  const duplicationCheck = async (field: "nickname") => {
-    const label = "닉네임";
-    const taken = () => fail(field, `이미 사용 중인 ${label}이에요.`);
-
-    setChecking(true);
-    try {
-      const result = await checkNickname();
-
-      if (result.error) throw result.error;
-      if (!result.data) return taken();
-      else setCheckedNickname(form.nickname);
-
-      return true;
-    } catch (err) {
-      if (isAxiosError(err) && err.response?.status === 409) return taken();
-
-      openAlert({ title: "중복 확인 실패", message: getErrorMessage(err) });
-      return false;
-    } finally {
-      setChecking(false);
-    }
-  };
-
   const validate = async (index: number) => {
     switch (index) {
       case 0:
@@ -153,7 +126,7 @@ export function useSignUp() {
         if (!form.nickname.trim()) {
           return fail("nickname", "닉네임을 입력해 주세요.");
         }
-        return nicknameChecked || duplicationCheck("nickname");
+        return nickname.available || nickname.check();
 
       case 3:
         if (form.phone && !PHONE_PATTERN.test(form.phone)) {
@@ -166,7 +139,7 @@ export function useSignUp() {
     }
   };
 
-  const busy = checking || isPending || verification.busy;
+  const busy = nickname.checking || isPending || verification.busy;
 
   const goNext = async () => {
     if (busy) return;
@@ -196,7 +169,7 @@ export function useSignUp() {
     busy,
     isLast,
     verification,
-    nicknameChecked,
+    nicknameChecked: nickname.available,
     handleChange,
     goNext,
     goBack,

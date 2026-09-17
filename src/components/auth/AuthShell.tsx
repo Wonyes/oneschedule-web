@@ -37,9 +37,7 @@ export function BrandPlate({
 
         <motion.div variants={rise} className="mt-2">
           <span className="eyebrow">ONE SCHEDULER</span>
-          <h1 className="typo-h1 mt-2 break-keep tracking-tight">
-            {title}
-          </h1>
+          <h1 className="typo-h1 mt-2 break-keep tracking-tight">{title}</h1>
           <p className="typo-caption-2 text-muted lg:typo-title-2 lg:mt-2">
             {subtitle}
           </p>

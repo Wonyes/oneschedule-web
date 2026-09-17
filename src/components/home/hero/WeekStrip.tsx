@@ -21,11 +21,7 @@ export default function WeekStrip({ today }: { today: Date }) {
   const { group } = useActiveGroup();
   const { data: weathers } = useWeathers();
   const { data: personal } = useSchedules("PERSONAL", true);
-  const { data: groupSchedules } = useSchedules(
-    "GROUP",
-    true,
-    group?.groupNo,
-  );
+  const { data: groupSchedules } = useSchedules("GROUP", true, group?.groupNo);
 
   const week = useMemo(() => getWeekDates(today), [today]);
 
@@ -94,7 +90,11 @@ export default function WeekStrip({ today }: { today: Date }) {
               >
                 {weather && (
                   <>
-                    <WeatherIcon pty={weather.PTY} sky={weather.SKY} size={11} />
+                    <WeatherIcon
+                      pty={weather.PTY}
+                      sky={weather.SKY}
+                      size={11}
+                    />
                     {weather.TMP}°
                   </>
                 )}

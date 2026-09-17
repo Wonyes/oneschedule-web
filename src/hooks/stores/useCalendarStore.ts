@@ -1,73 +1,28 @@
+import { addMonths, startOfMonth } from "date-fns";
 import { create } from "zustand";
 
-interface CalendarState {
-  currentDate: Date;
-  today: Date;
+/** 일정 시트 안 날짜 선택 달력 */
+interface CalendarStore {
+  /** 보고 있는 달 (그 달의 1일) */
+  viewMonth: Date;
   isCalendarOpen: boolean;
-}
-
-interface CalendarActions {
-  resetToggleCalendar: () => void;
-
+  /** 열 때 날짜를 주면 그 달부터 보여준다 */
   toggleCalendar: (date?: Date | null) => void;
-
-  setToday: (date: Date) => void;
-
-  isSameDate: (date1: Date | null, date2: Date | null) => boolean;
-
   moveMonth: (direction: "next" | "prev") => void;
-
-  createClickedDate: (dayToRender: number) => Date;
 }
 
-export const useCalendarStore = create<CalendarState & CalendarActions>(
-  (set, get) => ({
-    currentDate: new Date(),
-    today: new Date(),
-    isCalendarOpen: false,
+export const useCalendarStore = create<CalendarStore>((set) => ({
+  viewMonth: startOfMonth(new Date()),
+  isCalendarOpen: false,
 
-    setToday: (date) =>
-      set({
-        today: date,
-      }),
+  toggleCalendar: (date) =>
+    set((state) => ({
+      isCalendarOpen: !state.isCalendarOpen,
+      viewMonth: date ? startOfMonth(date) : state.viewMonth,
+    })),
 
-    isSameDate: (date1, date2) =>
-      date1 instanceof Date &&
-      date2 instanceof Date &&
-      date1.getTime() === date2.getTime(),
-
-    moveMonth: (direction) => {
-      const { today } = get();
-
-      const newDate = new Date(
-        today.getFullYear(),
-        today.getMonth() + (direction === "next" ? 1 : -1),
-        1,
-      );
-
-      set({
-        today: newDate,
-      });
-    },
-
-    createClickedDate: (dayToRender) => {
-      const { today } = get();
-
-      return new Date(today.getFullYear(), today.getMonth(), dayToRender);
-    },
-
-    toggleCalendar: (date) =>
-      set((state) => ({
-        isCalendarOpen: !state.isCalendarOpen,
-
-        today: date
-          ? new Date(date.getFullYear(), date.getMonth(), 1)
-          : state.today,
-      })),
-
-    resetToggleCalendar: () =>
-      set({
-        isCalendarOpen: false,
-      }),
-  }),
-);
+  moveMonth: (direction) =>
+    set((state) => ({
+      viewMonth: addMonths(state.viewMonth, direction === "next" ? 1 : -1),
+    })),
+}));

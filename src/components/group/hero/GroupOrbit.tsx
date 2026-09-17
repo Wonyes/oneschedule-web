@@ -83,7 +83,9 @@ export default function GroupOrbit({
             />
           </div>
 
-          {picker && <OrbitEditButton label="그룹 이미지 변경" picker={picker} />}
+          {picker && (
+            <OrbitEditButton label="그룹 이미지 변경" picker={picker} />
+          )}
         </>
       }
     />

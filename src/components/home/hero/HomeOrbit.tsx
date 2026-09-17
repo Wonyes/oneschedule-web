@@ -36,10 +36,7 @@ export default function HomeOrbit({
 
   // 활성 그룹을 맨 앞에
   const ordered = activeGroup
-    ? [
-        activeGroup,
-        ...groups.filter((g) => g.groupNo !== activeGroup.groupNo),
-      ]
+    ? [activeGroup, ...groups.filter((g) => g.groupNo !== activeGroup.groupNo)]
     : groups;
   const { shown, hidden } = splitSatellites(ordered, MAX_SATELLITES);
 

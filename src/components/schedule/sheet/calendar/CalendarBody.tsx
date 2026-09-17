@@ -1,71 +1,108 @@
-import { useCalendarLogic } from "./useCalendarLogic";
+"use client";
 
-import { Column, Between } from "../../../ui/layout/flex";
+import { format, isSameMonth } from "date-fns";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
+import { Primary } from "@/src/components/ui/layout/button";
+import { Between } from "@/src/components/ui/layout/flex";
 import { useCalendarStore } from "@/src/hooks/stores/useCalendarStore";
+import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
+import { getDayState, getMonthGrid, pickRange } from "@/src/utils/calendar";
 import { cn } from "@/src/utils/cn";
-import { ChevronRight } from "lucide-react";
-import { Primary } from "../../../ui/layout/button";
+import CalendarDay from "./CalendarDay";
 
+const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
+
+const navClass =
+  "flex h-7 w-7 items-center justify-center rounded-lg text-muted transition-colors hover:bg-surface-hover hover:text-foreground disabled:cursor-auto disabled:opacity-30 disabled:hover:bg-transparent";
+
+/** 일정 시트 안 날짜 범위 선택 달력. 시작/종료일은 시트 폼에 바로 쓴다 */
 export default function CalendarBody() {
-  const { currentMonth, createCalendar } = useCalendarLogic();
+  const { viewMonth, moveMonth, toggleCalendar } = useCalendarStore();
+  const { form, updateForm } = useSheetStore();
 
-  const { today, moveMonth, toggleCalendar } = useCalendarStore();
+  const today = new Date();
+  const weeks = getMonthGrid(viewMonth);
 
-  const isCurrentMonth =
-    today.getMonth() === new Date().getMonth() &&
-    today.getFullYear() === new Date().getFullYear();
+  const select = (date: Date) => {
+    const next = pickRange(date, form.startDate, form.endDate);
+    if (next) updateForm(next);
+  };
 
   return (
-    <div
-      className={cn(
-        "neu-flat rounded-2xl p-5",
-        "shadow-2xl mt-2 z-[999] w-full flex flex-col items-center gap-4 text-foreground",
-      )}
-    >
-      <Column className="w-full">
-        <Between className="w-full items-center">
-          <button
-            type="button"
-            className={cn(
-              "w-7 h-7 flex items-center justify-center rounded-lg",
-              "text-muted hover:bg-surface-hover hover:text-foreground transition-colors",
-              "cursor-pointer rotate-180",
-              isCurrentMonth &&
-                "cursor-auto opacity-30 hover:bg-transparent hover:text-muted",
-            )}
-            disabled={isCurrentMonth}
-            onClick={() => moveMonth("prev")}
-          >
-            <ChevronRight size={18} />
-          </button>
+    <div className="neu-flat mt-2 flex w-full flex-col items-center gap-4 rounded-2xl p-5 text-foreground shadow-2xl">
+      <Between className="w-full items-center">
+        <button
+          type="button"
+          aria-label="이전 달"
+          className={navClass}
+          disabled={isSameMonth(viewMonth, today)}
+          onClick={() => moveMonth("prev")}
+        >
+          <ChevronLeft size={18} />
+        </button>
 
-          <span className="typo-body-2 text-foreground font-semibold px-4">
-            {`${today.getFullYear()}년 ${currentMonth.name}`}
-          </span>
+        <span className="px-4 typo-body-2 font-semibold">
+          {format(viewMonth, "yyyy년 M월")}
+        </span>
 
-          <button
-            type="button"
-            className={cn(
-              "w-7 h-7 flex items-center justify-center rounded-lg",
-              "text-muted hover:bg-surface-hover hover:text-foreground transition-colors",
-              "cursor-pointer",
-            )}
-            onClick={() => moveMonth("next")}
-          >
-            <ChevronRight size={18} />
-          </button>
-        </Between>
-      </Column>
+        <button
+          type="button"
+          aria-label="다음 달"
+          className={navClass}
+          onClick={() => moveMonth("next")}
+        >
+          <ChevronRight size={18} />
+        </button>
+      </Between>
 
-      <div>{createCalendar()}</div>
+      <table className="w-full max-w-[360px] table-fixed border-spacing-0">
+        <thead>
+          <tr>
+            {WEEKDAYS.map((label, i) => (
+              <th
+                key={label}
+                className={cn(
+                  "h-10 typo-body-2 font-medium text-muted",
+                  i === 0 && "font-semibold text-error-500",
+                  i === 6 && "font-semibold text-blue",
+                )}
+              >
+                {label}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {weeks.map((week, w) => (
+            <tr key={w}>
+              {week.map((date, i) =>
+                date ? (
+                  <CalendarDay
+                    key={date.getTime()}
+                    date={date}
+                    state={getDayState(
+                      date,
+                      form.startDate,
+                      form.endDate,
+                      today,
+                    )}
+                    onSelect={select}
+                  />
+                ) : (
+                  <td key={`empty-${w}-${i}`} />
+                ),
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
-      <div className="w-full p-2">
-        <Primary
-          text="확인"
-          className="w-full p-3"
-          onClick={() => toggleCalendar()}
-        />
-      </div>
+      <Primary
+        text="확인"
+        className="w-full p-3"
+        onClick={() => toggleCalendar()}
+      />
     </div>
   );
 }

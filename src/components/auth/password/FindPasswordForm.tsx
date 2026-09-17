@@ -3,7 +3,13 @@
 import { motion } from "motion/react";
 
 import { EmailVerifyFields, NewPasswordFields } from "../AuthFields";
-import { AuthFooterLink, AuthForm, AuthLayoutGrid, BrandPlate, rise } from "../AuthShell";
+import {
+  AuthFooterLink,
+  AuthForm,
+  AuthLayoutGrid,
+  BrandPlate,
+  rise,
+} from "../AuthShell";
 import { StepActions, StepHeader, StepSlide } from "../StepFlow";
 import { emailButtonText } from "../useEmailVerification";
 import { FIND_STEPS, useFindPassword } from "./useFindPassword";

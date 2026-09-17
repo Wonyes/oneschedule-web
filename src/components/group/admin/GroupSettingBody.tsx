@@ -124,7 +124,9 @@ export default function GroupSettingBody({
                   onClick={() => selectVisibility(option, close)}
                   className={cn(
                     "w-full rounded-xl px-3 py-2.5 focus-visible:outline-none",
-                    selected ? "neu-flat" : "neu-pressed hover:bg-surface-hover",
+                    selected
+                      ? "neu-flat"
+                      : "neu-pressed hover:bg-surface-hover",
                   )}
                 >
                   <OptionRow

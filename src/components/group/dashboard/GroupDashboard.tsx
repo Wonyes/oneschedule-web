@@ -52,9 +52,7 @@ export default function GroupDashboard({ group }: { group: MyGroupResponse }) {
         <BaseCard className="w-full p-2">{mobileTabs}</BaseCard>
 
         {tab === "schedule" && <GroupScheduleSection group={group} animate />}
-        {tab === "member" && (
-          <GroupMemberSection group={group} animate />
-        )}
+        {tab === "member" && <GroupMemberSection group={group} animate />}
         {tab === "activity" && <GroupActivitySection group={group} animate />}
 
         <GroupAdminSection group={group} />

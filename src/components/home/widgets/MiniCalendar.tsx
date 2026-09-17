@@ -27,11 +27,7 @@ export default function MiniCalendar({ today }: { today: Date }) {
   const { group } = useActiveGroup();
   const { data: holidays } = useHolidays(today);
   const { data: personal } = useSchedules("PERSONAL", true);
-  const { data: groupSchedules } = useSchedules(
-    "GROUP",
-    true,
-    group?.groupNo,
-  );
+  const { data: groupSchedules } = useSchedules("GROUP", true, group?.groupNo);
 
   const dates = useMemo(() => getMonthDates(today), [today]);
 
@@ -68,7 +64,11 @@ export default function MiniCalendar({ today }: { today: Date }) {
             key={d}
             className={cn(
               "text-center typo-caption-3",
-              i === 0 ? "text-error-500" : i === 6 ? "text-blue" : "text-place-h",
+              i === 0
+                ? "text-error-500"
+                : i === 6
+                  ? "text-blue"
+                  : "text-place-h",
             )}
           >
             {d}
@@ -99,7 +99,10 @@ export default function MiniCalendar({ today }: { today: Date }) {
                   "typo-caption-3 leading-none tabular-nums",
                   current
                     ? "font-semibold text-on-primary"
-                    : cn(getDayColor(date, holiday), isSameDay(date, today) && "font-semibold"),
+                    : cn(
+                        getDayColor(date, holiday),
+                        isSameDay(date, today) && "font-semibold",
+                      ),
                 )}
               >
                 {format(date, "d")}

@@ -137,7 +137,11 @@ export function StepActions({
         </button>
       )}
 
-      <Primary type="submit" className="w-full py-3 sm:py-4" text={submitText} />
+      <Primary
+        type="submit"
+        className="w-full py-3 sm:py-4"
+        text={submitText}
+      />
     </Row>
   );
 }

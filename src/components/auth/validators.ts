@@ -7,7 +7,10 @@ export function validatePassword<F extends "password" | "passwordConfirm">(
   fail: (field: F, message: string) => false,
 ) {
   if (password.length < PASSWORD_MIN_LENGTH) {
-    return fail("password" as F, `비밀번호는 ${PASSWORD_MIN_LENGTH}자 이상이어야 해요.`);
+    return fail(
+      "password" as F,
+      `비밀번호는 ${PASSWORD_MIN_LENGTH}자 이상이어야 해요.`,
+    );
   }
   if (password !== confirm) {
     return fail("passwordConfirm" as F, "비밀번호가 일치하지 않아요.");

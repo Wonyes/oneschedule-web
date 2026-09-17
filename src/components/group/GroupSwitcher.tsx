@@ -31,7 +31,9 @@ export default function GroupSwitcher({
   if (isLoading && groups.length === 0) {
     return (
       <Skeleton
-        className={compact ? "h-9 w-9 rounded-xl" : "h-9 w-9 rounded-xl lg:w-32"}
+        className={
+          compact ? "h-9 w-9 rounded-xl" : "h-9 w-9 rounded-xl lg:w-32"
+        }
       />
     );
   }

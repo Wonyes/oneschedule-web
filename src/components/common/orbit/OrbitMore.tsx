@@ -34,7 +34,12 @@ export default function OrbitMore({
   }
 
   return (
-    <button type="button" onClick={onClick} aria-label={label} className={className}>
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      className={className}
+    >
       +{count}
     </button>
   );

@@ -20,7 +20,10 @@ describe("getPresence", () => {
 
   it("기록이 없으면 '오프라인'", () => {
     expect(getPresence(map(), 1)).toEqual({ online: false, label: "오프라인" });
-    expect(getPresence(undefined, 1)).toEqual({ online: false, label: "오프라인" });
+    expect(getPresence(undefined, 1)).toEqual({
+      online: false,
+      label: "오프라인",
+    });
   });
 });
 

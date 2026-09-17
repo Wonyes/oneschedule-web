@@ -15,7 +15,7 @@ type OpenSheetParams = {
   type?: ScheduleViewType;
 };
 
-type SheetForm = {
+export type SheetForm = {
   title: string;
 
   endDate: Date | null;

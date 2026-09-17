@@ -1,78 +1,20 @@
 "use client";
 
-import { CalendarPlus, Check, UserRound, Users, X } from "lucide-react";
-import Link from "next/link";
-import { useSyncExternalStore } from "react";
+import { CalendarPlus, UserRound, Users, X } from "lucide-react";
 
 import BaseCard from "@/src/components/ui/card/BaseCard";
 import { Column, Row } from "@/src/components/ui/layout/flex";
-import { MyInfoResponse } from "@/src/hooks/querys/useMembers";
 import { useActiveGroup } from "@/src/hooks/querys/useGroup";
+import { MyInfoResponse } from "@/src/hooks/querys/useMembers";
 import { useSchedules } from "@/src/hooks/querys/useSchedule";
 import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
+import OnboardingStep, { Step } from "./OnboardingStep";
+import {
+  dismissOnboarding,
+  useOnboardingDismissed,
+} from "./useOnboardingDismissed";
 
-const LEGACY_DISMISS_KEY = "onboarding-dismissed";
-
-const dismissKey = (memberNo?: number) =>
-  memberNo ? `onboarding-dismissed:${memberNo}` : LEGACY_DISMISS_KEY;
-
-const readDismissed = (memberNo?: number) => {
-  const key = dismissKey(memberNo);
-
-  if (localStorage.getItem(key) === "true") return true;
-
-  if (memberNo && localStorage.getItem(LEGACY_DISMISS_KEY) === "true") {
-    localStorage.setItem(key, "true");
-    localStorage.removeItem(LEGACY_DISMISS_KEY);
-    return true;
-  }
-
-  return false;
-};
-
-// localStorage 구독. 서버에선 null(미정)로 그려서 깜빡임을 피한다
-const listeners = new Set<() => void>();
-
-const subscribe = (onChange: () => void) => {
-  listeners.add(onChange);
-  window.addEventListener("storage", onChange);
-  return () => {
-    listeners.delete(onChange);
-    window.removeEventListener("storage", onChange);
-  };
-};
-
-const useDismissed = (memberNo?: number) =>
-  useSyncExternalStore(
-    subscribe,
-    () => {
-      try {
-        return readDismissed(memberNo);
-      } catch {
-        return false;
-      }
-    },
-    () => null,
-  );
-
-const writeDismissed = (memberNo?: number) => {
-  try {
-    localStorage.setItem(dismissKey(memberNo), "true");
-  } catch {}
-  listeners.forEach((notify) => notify());
-};
-
-type Step = {
-  id: string;
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-  done: boolean;
-  href?: string;
-  action?: () => void;
-  actionLabel: string;
-};
-
+/** 홈 상단 시작 가이드. 세 단계 다 끝나거나 닫으면 안 보인다 */
 export default function OnboardingChecklist({
   user,
   today,
@@ -84,66 +26,48 @@ export default function OnboardingChecklist({
   const { data: schedules, isLoading: schedulesLoading } =
     useSchedules("PERSONAL");
   const { groups, isLoading: groupsLoading } = useActiveGroup();
-
-  const dismissed = useDismissed(user.memberNo);
+  const dismissed = useOnboardingDismissed(user.memberNo);
 
   const steps: Step[] = [
     {
       id: "schedule",
       title: "첫 일정 등록하기",
-      description: "오늘 할 일이나 약속을 하나 추가해보세요.",
       icon: <CalendarPlus size={14} strokeWidth={1.75} />,
       done: (schedules ?? []).length > 0,
       action: () => openSheet({ date: today, type: "PERSONAL" }),
-      actionLabel: "일정 추가",
     },
     {
       id: "group",
       title: "그룹 만들거나 참여하기",
-      description: "초대 코드로 가족·팀과 일정을 공유할 수 있어요.",
       icon: <Users size={14} strokeWidth={1.75} />,
       done: groups.length > 0,
       href: "/group",
-      actionLabel: "그룹으로",
     },
     {
       id: "profile",
       title: "프로필 사진 설정하기",
-      description: "그룹 멤버가 나를 알아보기 쉬워져요.",
       icon: <UserRound size={14} strokeWidth={1.75} />,
       done: !!user.profileImageUrl,
       href: "/profile",
-      actionLabel: "프로필로",
     },
   ];
 
   const doneCount = steps.filter((step) => step.done).length;
-  const allDone = doneCount === steps.length;
-
   const undecided = dismissed === null || schedulesLoading || groupsLoading;
 
-  if (undecided || dismissed || allDone) return null;
-
-  const handleDismiss = () => writeDismissed(user.memberNo);
-
-  const stepClass = (done: boolean) =>
-    `flex h-9 items-center gap-2 rounded-xl px-3 typo-caption-2 font-medium transition-colors ${
-      done
-        ? "neu-pressed text-muted"
-        : "neu-flat btn-spring text-foreground hover:text-accent"
-    }`;
+  if (undecided || dismissed || doneCount === steps.length) return null;
 
   return (
     <BaseCard className="relative px-4 py-3">
       <Row className="flex-wrap items-center gap-x-4 gap-y-2">
         <Row className="items-center gap-3">
           <span
-            className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
             role="progressbar"
             aria-valuenow={doneCount}
             aria-valuemin={0}
             aria-valuemax={steps.length}
             aria-label="시작 가이드 진행률"
+            className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
             style={{
               background: `conic-gradient(var(--accent) ${(doneCount / steps.length) * 360}deg, var(--surface-hover) 0)`,
             }}
@@ -163,41 +87,16 @@ export default function OnboardingChecklist({
         </Row>
 
         <Row className="flex-wrap gap-2 sm:ml-auto">
-          {steps.map((step) =>
-            step.done ? (
-              <span key={step.id} className={stepClass(true)}>
-                <Check size={14} strokeWidth={2.5} className="text-success-500" />
-                <span className="line-through">{step.title}</span>
-              </span>
-            ) : step.href ? (
-              <Link
-                key={step.id}
-                href={step.href}
-                prefetch
-                className={stepClass(false)}
-              >
-                <span className="text-accent">{step.icon}</span>
-                {step.title}
-              </Link>
-            ) : (
-              <button
-                key={step.id}
-                type="button"
-                onClick={step.action}
-                className={stepClass(false)}
-              >
-                <span className="text-accent">{step.icon}</span>
-                {step.title}
-              </button>
-            ),
-          )}
+          {steps.map((step) => (
+            <OnboardingStep key={step.id} step={step} />
+          ))}
         </Row>
 
         <button
           type="button"
-          onClick={handleDismiss}
+          onClick={() => dismissOnboarding(user.memberNo)}
           aria-label="시작 가이드 닫기"
-          className="text-muted hover:text-foreground absolute right-2 top-2 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors sm:static"
+          className="absolute right-2 top-2 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-muted transition-colors hover:text-foreground sm:static"
         >
           <X size={14} strokeWidth={1.75} />
         </button>

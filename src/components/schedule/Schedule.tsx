@@ -3,9 +3,9 @@
 import { useMemo } from "react";
 import { useScheduleStore } from "@/src/hooks/stores/useScheduleStore";
 import { useScheduleView } from "@/src/hooks/useScheduleView";
-import DayView from "./view/DayView";
-import MonthView from "./view/MonthView";
-import WeekView from "./view/WeekView";
+import DayView from "./view/day/DayView";
+import MonthView from "./view/month/MonthView";
+import WeekView from "./view/week/WeekView";
 import { useHolidays, useWeathers } from "@/src/hooks/querys/useCommonApi";
 import { useSchedules } from "@/src/hooks/querys/useSchedule";
 import { useActiveGroup } from "@/src/hooks/querys/useGroup";
