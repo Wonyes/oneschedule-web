@@ -1,6 +1,5 @@
 "use client";
 
-import { Bell, Check, X } from "lucide-react";
 import { formatDistanceToNowStrict } from "date-fns";
 import { ko } from "date-fns/locale";
 
@@ -9,17 +8,7 @@ import { Notification } from "@/src/types/notification";
 import { cn } from "@/src/utils/cn";
 import { motion } from "motion/react";
 import { springSoft } from "@/src/lib/motion";
-
-const SYSTEM_ICON = {
-  GROUP_JOIN_APPROVED: {
-    icon: <Check size={14} strokeWidth={2.5} />,
-    tone: "bg-success-500/15 text-success-500",
-  },
-  GROUP_JOIN_REJECTED: {
-    icon: <X size={14} strokeWidth={2.5} />,
-    tone: "bg-surface-hover text-muted",
-  },
-} as const;
+import { notificationIcon } from "./notificationIcons";
 
 function emphasize(title: string, name: string | null) {
   if (!name || !title.includes(name)) return title;
@@ -47,13 +36,7 @@ export default function NotificationItem({
   const { read, title, content, senderNickname, senderProfileImageUrl, type } =
     notification;
 
-  const system =
-    senderNickname === null
-      ? (SYSTEM_ICON[type as keyof typeof SYSTEM_ICON] ?? {
-          icon: <Bell size={14} strokeWidth={2} />,
-          tone: "bg-accent/10 text-accent",
-        })
-      : null;
+  const { icon, tone } = notificationIcon(type);
 
   const time = formatDistanceToNowStrict(new Date(notification.createdAt), {
     addSuffix: true,
@@ -77,21 +60,32 @@ export default function NotificationItem({
         read && "opacity-70",
       )}
     >
-      {system ? (
+      {senderNickname === null ? (
         <span
           className={cn(
             "flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
-            system.tone,
+            tone,
           )}
         >
-          {system.icon}
+          {icon}
         </span>
       ) : (
-        <MemberAvatar
-          nickname={senderNickname ?? ""}
-          src={senderProfileImageUrl}
-          size="sm"
-        />
+        // 사람이 보낸 알림: 아바타 + 모서리에 타입 배지
+        <span className="relative shrink-0">
+          <MemberAvatar
+            nickname={senderNickname}
+            src={senderProfileImageUrl}
+            size="sm"
+          />
+          <span
+            className={cn(
+              "absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full ring-2 ring-[var(--surface)] [&>svg]:h-2.5 [&>svg]:w-2.5",
+              tone,
+            )}
+          >
+            {icon}
+          </span>
+        </span>
       )}
 
       {compact ? (
