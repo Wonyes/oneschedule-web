@@ -46,7 +46,7 @@ export default function GroupSwitcher({
       panelClassName="w-56"
       triggerClassName={
         compact
-          ? "neu-btn relative h-9 w-9 justify-center rounded-xl p-0 text-secondary"
+          ? "neu-flat relative h-9 w-9 justify-center rounded-xl p-0 text-secondary"
           : "text-secondary px-2 py-1.5 typo-caption-2 hover:text-foreground lg:px-2.5"
       }
       trigger={(isOpen) => (

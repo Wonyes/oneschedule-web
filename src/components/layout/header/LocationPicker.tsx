@@ -88,7 +88,7 @@ export default function LocationPicker() {
       label="지역 선택"
       align="left"
       panelClassName="w-40 lg:left-auto lg:right-0"
-      triggerClassName="neu-btn relative h-9 w-9 justify-center rounded-xl p-0 text-secondary hover:text-foreground lg:w-auto lg:gap-1.5 lg:px-2.5"
+      triggerClassName="neu-flat relative h-9 w-9 justify-center rounded-xl p-0 text-secondary hover:text-foreground lg:w-auto lg:gap-1.5 lg:px-2.5"
       trigger={(isOpen) => (
         <>
           <MapPin size={13} strokeWidth={1.75} className="text-accent" />

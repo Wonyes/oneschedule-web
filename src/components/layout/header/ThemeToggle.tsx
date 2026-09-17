@@ -91,7 +91,7 @@ export default function ThemeToggle({ initial = "light" }: { initial?: Theme }) 
       type="button"
       onClick={toggle}
       aria-label={theme === "light" ? "다크 모드로 전환" : "라이트 모드로 전환"}
-      className="neu-btn btn-spring flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-secondary hover:text-foreground"
+      className="neu-flat btn-spring flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-accent"
     >
       {theme === "light" ? (
         <Moon size={15} strokeWidth={1.75} />
