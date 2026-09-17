@@ -41,11 +41,19 @@ function applyParams(searchParams: URLSearchParams) {
  * 첫 렌더에서는 effect가 아니라 렌더 중에 맞춘다 — 그래야 SSR과 하이드레이션 첫 화면이
  * URL대로 나오고(새로고침 때 월뷰가 잠깐 비치지 않음), 서버 스토어에 남은 어제 날짜도 오늘로 바뀐다.
  */
-export function useScheduleUrlSync() {
+/**
+ * 첫 렌더 중에 URL을 스토어에 반영한다 (useState 초기화 함수는 딱 한 번 돈다).
+ * 스케줄 페이지와, 페이지보다 먼저 렌더되는 헤더의 ViewModeToggle이 둘 다 부른다 —
+ * 어느 쪽이 먼저 그려지든 같은 상태로 시작해야 하이드레이션이 맞는다.
+ */
+export function useScheduleUrlInit() {
   const searchParams = useSearchParams();
-
-  // useState 초기화 함수는 첫 렌더에 딱 한 번 돈다
   useState(() => applyParams(searchParams));
+  return searchParams;
+}
+
+export function useScheduleUrlSync() {
+  const searchParams = useScheduleUrlInit();
 
   // URL → 스토어: 뒤로가기/앞으로가기
   useEffect(() => {

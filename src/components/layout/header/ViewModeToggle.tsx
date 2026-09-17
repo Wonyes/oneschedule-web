@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 
 import { useScheduleStore } from "@/src/hooks/stores/useScheduleStore";
+import { useScheduleUrlInit } from "@/src/hooks/useScheduleUrlSync";
 
 const labels = {
   day: "일",
@@ -13,6 +14,7 @@ const labels = {
 const views = ["day", "week", "month"] as const;
 
 export default function ViewModeToggle() {
+  useScheduleUrlInit();
   const { mode, setMode } = useScheduleStore();
   const pathname = usePathname();
 
@@ -25,7 +27,7 @@ export default function ViewModeToggle() {
       <div
         className="absolute inset-y-1 left-1 rounded-md neu-flat transition-transform duration-300"
         style={{
-          width: `calc(${100 / views.length}% - 2.7px)`,
+          width: `calc(${(100 / views.length).toFixed(4)}% - 2.7px)`,
           transform: `translateX(${Math.max(activeIndex, 0) * 100}%)`,
         }}
       />
