@@ -36,7 +36,7 @@ export default function NotificationBell({
   onReadAll,
   onLoadMore,
   className,
-  triggerClassName = "neu-btn h-9 w-9 rounded-full text-secondary",
+  triggerClassName = "neu-btn h-9 w-9 rounded-xl text-secondary hover:text-foreground",
 }: NotificationBellProps) {
   const badge = unreadCount > 99 ? "99+" : unreadCount;
 

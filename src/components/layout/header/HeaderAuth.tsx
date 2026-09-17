@@ -38,7 +38,7 @@ export default function HeaderAuth({ user }: { user: MyInfoResponse | null }) {
       <button
         onClick={() => logout()}
         aria-label="로그아웃"
-        className="hidden h-9 w-9 items-center justify-center rounded-full neu-flat text-muted btn-spring hover:bg-surface-hover hover:text-foreground active:scale-95 lg:flex"
+        className="neu-btn btn-spring hidden h-9 w-9 items-center justify-center rounded-xl text-secondary hover:text-foreground lg:flex"
       >
         <LogOut size={15} strokeWidth={1.75} />
       </button>

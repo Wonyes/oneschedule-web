@@ -8,7 +8,7 @@ export default function AuthSkeleton() {
         <Skeleton className="hidden h-3 w-12 min-[1360px]:block" />
       </div>
 
-      <Skeleton className="hidden h-9 w-9 rounded-full lg:block" />
+      <Skeleton className="hidden h-9 w-9 rounded-xl lg:block" />
     </div>
   );
 }
