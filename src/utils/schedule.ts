@@ -410,6 +410,16 @@ export type MonthLaneCell = {
   isEnd: boolean;
 };
 
+/** 시작일과 종료일이 다른 날 — 시간 격자 대신 종일 줄에 그린다 */
+const isMultiDay = (event: ScheduleEvent) =>
+  !isSameDay(new Date(event.startDate), new Date(event.endDate));
+
+/** 시간 격자에 놓을 것과 종일 줄에 놓을 것으로 가른다 */
+const splitMultiDay = (events: ScheduleEvent[]) => ({
+  timed: events.filter((e) => !isMultiDay(e)),
+  multiDay: events.filter(isMultiDay),
+});
+
 const getMonthWeekLanes = (
   events: ScheduleEvent[],
   weekDates: Date[],
@@ -501,6 +511,8 @@ function eventsInRange(events: ScheduleEvent[], from: Date, to: Date) {
 
 export {
   byStart,
+  isMultiDay,
+  splitMultiDay,
   eventsInRange,
   groupByDay,
   canEditSchedule,

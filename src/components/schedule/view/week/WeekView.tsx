@@ -7,7 +7,11 @@ import { useScheduleStore } from "@/src/hooks/stores/useScheduleStore";
 import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
 import { useScheduleView } from "@/src/hooks/useScheduleView";
 import { ScheduleViewProps } from "@/src/types/schedule";
-import { getWeekDates, getWeekEvents } from "@/src/utils/schedule";
+import {
+  getWeekDates,
+  getWeekEvents,
+  splitMultiDay,
+} from "@/src/utils/schedule";
 import { useScrollToFirstHour } from "./useScrollToFirstHour";
 import { WeekHandlers } from "./WeekDayColumn";
 import WeekDesktop from "./WeekDesktop";
@@ -31,9 +35,11 @@ export default function WeekView({ events, ...rest }: ScheduleViewProps) {
     return weekDates.slice(i - 1, i + 2);
   }, [weekDates, currentDate]);
 
+  // 여러 날 걸친 일정은 종일 줄로, 나머지만 시간 격자에
+  const { timed, multiDay } = useMemo(() => splitMultiDay(events), [events]);
   const layouts = useMemo(
-    () => getWeekEvents(events, weekDates),
-    [events, weekDates],
+    () => getWeekEvents(timed, weekDates),
+    [timed, weekDates],
   );
   const scrollRef = useScrollToFirstHour(layouts, weekDates[0].getTime());
 
@@ -52,6 +58,7 @@ export default function WeekView({ events, ...rest }: ScheduleViewProps) {
       <WeekDesktop
         dates={weekDates}
         layouts={layouts}
+        allDay={multiDay}
         scrollRef={scrollRef(0)}
         {...rest}
         {...handlers}
@@ -59,6 +66,7 @@ export default function WeekView({ events, ...rest }: ScheduleViewProps) {
       <WeekMobile
         dates={mobileDates}
         layouts={layouts}
+        allDay={multiDay}
         scrollRef={scrollRef(1)}
         onPrev={() => setCurrentDate(addDays(currentDate, -3))}
         onNext={() => setCurrentDate(addDays(currentDate, 3))}

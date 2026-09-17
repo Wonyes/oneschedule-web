@@ -3,7 +3,8 @@
 import { Timer } from "lucide-react";
 
 import BaseCard from "@/src/components/ui/card/BaseCard";
-import { ScheduleViewProps } from "@/src/types/schedule";
+import { ScheduleEvent, ScheduleViewProps } from "@/src/types/schedule";
+import AllDayRow from "../../parts/AllDayRow";
 import HourColumn from "../../parts/HourColumn";
 import WeekDayColumn, { WeekHandlers, WeekLayouts } from "./WeekDayColumn";
 import WeekDayHeader from "./WeekDayHeader";
@@ -12,6 +13,7 @@ import WeekDayHeader from "./WeekDayHeader";
 export default function WeekDesktop({
   dates,
   layouts,
+  allDay,
   holidays,
   weathers,
   isWeatherLoading,
@@ -21,6 +23,7 @@ export default function WeekDesktop({
   Pick<ScheduleViewProps, "holidays" | "weathers" | "isWeatherLoading"> & {
     dates: Date[];
     layouts: WeekLayouts;
+    allDay: ScheduleEvent[];
     scrollRef: (el: HTMLDivElement | null) => void;
   }) {
   return (
@@ -47,6 +50,13 @@ export default function WeekDesktop({
           </div>
         </BaseCard>
       </div>
+
+      <AllDayRow
+        dates={dates}
+        events={allDay}
+        gutter="60px"
+        onClick={handlers.onClickEvent}
+      />
 
       <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto p-2">
         <div className="neu-pressed grid min-h-full grid-cols-[60px_repeat(7,minmax(0,1fr))] rounded-2xl">

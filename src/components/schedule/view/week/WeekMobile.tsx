@@ -4,7 +4,8 @@ import { format } from "date-fns";
 
 import BaseCard from "@/src/components/ui/card/BaseCard";
 import { useSwipe } from "@/src/hooks/useSwipe";
-import { ScheduleViewProps } from "@/src/types/schedule";
+import { ScheduleEvent, ScheduleViewProps } from "@/src/types/schedule";
+import AllDayRow from "../../parts/AllDayRow";
 import HourColumn from "../../parts/HourColumn";
 import NavButton from "../../parts/NavButton";
 import WeekDayColumn, { WeekHandlers, WeekLayouts } from "./WeekDayColumn";
@@ -14,6 +15,7 @@ import WeekDayHeader from "./WeekDayHeader";
 export default function WeekMobile({
   dates,
   layouts,
+  allDay,
   holidays,
   weathers,
   isWeatherLoading,
@@ -25,6 +27,7 @@ export default function WeekMobile({
   Pick<ScheduleViewProps, "holidays" | "weathers" | "isWeatherLoading"> & {
     dates: Date[];
     layouts: WeekLayouts;
+    allDay: ScheduleEvent[];
     scrollRef: (el: HTMLDivElement | null) => void;
     onPrev: () => void;
     onNext: () => void;
@@ -67,6 +70,13 @@ export default function WeekMobile({
           ))}
         </div>
       </BaseCard>
+
+      <AllDayRow
+        dates={dates}
+        events={allDay}
+        gutter="36px"
+        onClick={handlers.onClickEvent}
+      />
 
       <div
         ref={scrollRef}

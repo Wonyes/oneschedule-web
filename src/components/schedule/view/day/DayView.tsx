@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { getDayEvents } from "@/src/utils/schedule";
+import { getDayEvents, splitMultiDay } from "@/src/utils/schedule";
+import AllDayRow from "../../parts/AllDayRow";
 import { useScheduleStore } from "@/src/hooks/stores/useScheduleStore";
 import { useScheduleView } from "@/src/hooks/useScheduleView";
 import ScheduleCard from "../../parts/card/ScheduleCard";
@@ -26,8 +27,9 @@ export default function DayView({ events }: ScheduleViewProps) {
     setShowAllOverlaps(false);
   }
 
+  const { timed, multiDay } = splitMultiDay(events);
   const getDayLayouts = getDayEvents(
-    events,
+    timed,
     currentDate,
     showAllOverlaps ? Infinity : undefined,
   );
@@ -57,6 +59,13 @@ export default function DayView({ events }: ScheduleViewProps) {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
+      <AllDayRow
+        dates={[currentDate]}
+        events={multiDay}
+        gutter="60px"
+        onClick={(event) => openSheet({ event })}
+      />
+
       <div
         ref={scrollRef}
         className="flex-1 overflow-y-auto min-h-0 p-2"
