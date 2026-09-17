@@ -12,7 +12,7 @@ import SectionHeading from "@/src/components/ui/layout/SectionHeading";
 import ScrollListArea, {
   ScrollSentinel,
 } from "@/src/components/ui/ScrollListArea";
-import Skeleton from "@/src/components/ui/Skeleton";
+import { GroupTileSkeleton } from "@/src/components/ui/SkeletonParts";
 import { usePublicGroups } from "@/src/hooks/querys/useGroup";
 import { useInfiniteScroll } from "@/src/hooks/useInfiniteScroll";
 import { stagger } from "@/src/lib/motion";
@@ -20,13 +20,9 @@ import PublicGroupCard from "./PublicGroupCard";
 
 function TileSkeletons({ count }: { count: number }) {
   return (
-    <div className="grid w-full grid-cols-2 gap-3 sm:grid-cols-3">
+    <div className="grid w-full grid-cols-2 gap-1 sm:grid-cols-3">
       {Array.from({ length: count }).map((_, i) => (
-        <Column key={i} className="items-center gap-2 p-3">
-          <Skeleton className="h-20 w-20 rounded-full" />
-          <Skeleton className="h-3 w-16" />
-          <Skeleton className="h-2.5 w-10" />
-        </Column>
+        <GroupTileSkeleton key={i} />
       ))}
     </div>
   );

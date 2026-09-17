@@ -8,7 +8,7 @@ import { ko } from "date-fns/locale";
 import MemberAvatar from "../../common/MemberAvatar";
 import BaseCard from "../../ui/card/BaseCard";
 import SectionBody from "../dashboard/SectionBody";
-import Skeleton from "../../ui/Skeleton";
+import { ActivityRowSkeleton } from "../../ui/SkeletonParts";
 import { Column, Row } from "../../ui/layout/flex";
 import { EVENT_STYLES } from "@/src/constant/schedule";
 import { useSchedules } from "@/src/hooks/querys/useSchedule";
@@ -52,16 +52,9 @@ export default function GroupActivitySection({
 
       <SectionBody animate={animate}>
         {isLoading ? (
-          <Column className="w-full gap-3">
-            {Array.from({ length: 2 }).map((_, i) => (
-              <Row key={i} className="w-full gap-3">
-                <Skeleton className="h-8 w-8 rounded-full" />
-                <Column className="flex-1 gap-1.5">
-                  <Skeleton className="h-3 w-48" />
-                  <Skeleton className="h-2.5 w-28" />
-                </Column>
-              </Row>
-            ))}
+          <Column className="w-full">
+            <ActivityRowSkeleton />
+            <ActivityRowSkeleton />
           </Column>
         ) : recent.length === 0 ? (
           <EmptyState

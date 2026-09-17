@@ -10,7 +10,7 @@ import { Column, Between } from "@/src/components/ui/layout/flex";
 import { DayGroup } from "@/src/components/schedule/parts/DayTimeline";
 import { useSchedules } from "@/src/hooks/querys/useSchedule";
 import { useActiveGroup } from "@/src/hooks/querys/useGroup";
-import Skeleton from "@/src/components/ui/Skeleton";
+import { DayGroupSkeleton } from "@/src/components/ui/SkeletonParts";
 import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
 import { ScheduleEvent } from "@/src/types/schedule";
 import { byStart, toScheduleEvent } from "@/src/utils/schedule";
@@ -77,9 +77,9 @@ export default function UpcomingSchedules({ today }: { today: Date }) {
       </Between>
 
       {loading ? (
-        <Column className="w-full gap-3">
-          <Skeleton className="h-12 w-full rounded-xl" />
-          <Skeleton className="h-12 w-full rounded-xl" />
+        <Column className="w-full gap-5">
+          <DayGroupSkeleton items={2} />
+          <DayGroupSkeleton items={1} />
         </Column>
       ) : (
         <Column className="gap-5">

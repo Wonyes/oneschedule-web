@@ -3,7 +3,7 @@
 import { Bell } from "lucide-react";
 
 import BaseCard from "@/src/components/ui/card/BaseCard";
-import Skeleton from "@/src/components/ui/Skeleton";
+import { NotificationRowSkeleton } from "@/src/components/ui/SkeletonParts";
 import { Column, Row } from "@/src/components/ui/layout/flex";
 import {
   useNotification,
@@ -29,9 +29,9 @@ export default function RecentNotifications() {
       </Row>
 
       {isLoading ? (
-        <Column className="gap-2">
-          <Skeleton className="h-9 w-full rounded-lg" />
-          <Skeleton className="h-9 w-full rounded-lg" />
+        <Column className="gap-1">
+          <NotificationRowSkeleton compact />
+          <NotificationRowSkeleton compact />
         </Column>
       ) : items.length === 0 ? (
         <EmptyState title="아직 받은 알림이 없어요." className="py-3" />

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { AnimatePresence } from "motion/react";
 
 import EmptyState from "@/src/components/ui/EmptyState";
-import { Column, Row } from "@/src/components/ui/layout/flex";
+import { MemberRowSkeleton } from "@/src/components/ui/SkeletonParts";
 import ScrollListArea, {
   ScrollSentinel,
 } from "@/src/components/ui/ScrollListArea";
@@ -108,15 +108,7 @@ export default function GroupJoinRequestBody({
           ))}
         </AnimatePresence>
 
-        {isFetchingNextPage && (
-          <Row className="w-full items-center gap-3 py-2.5">
-            <div className="size-9 shrink-0 animate-pulse rounded-full bg-surface-hover" />
-            <Column className="flex-1 gap-1.5">
-              <div className="h-2.5 w-20 animate-pulse rounded bg-surface-hover" />
-              <div className="h-2 w-32 animate-pulse rounded bg-surface-hover" />
-            </Column>
-          </Row>
-        )}
+        {isFetchingNextPage && <MemberRowSkeleton />}
 
         {hasNextPage && <ScrollSentinel sentinelRef={sentinelRef} />}
       </ScrollListArea>

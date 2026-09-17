@@ -1,4 +1,9 @@
 import {
+  byStart,
+  eventsInRange,
+  groupByDay,
+  isMultiDay,
+  splitMultiDay,
   getWeekDates,
   isSameDate,
   findHoliday,
@@ -593,5 +598,60 @@ describe("getMonthWeekLanes (월뷰 주 단위 줄 배치)", () => {
       week,
     );
     expect(lanes[3][0]?.event.id).toBe(2);
+  });
+});
+
+describe("byStart · eventsInRange · groupByDay", () => {
+  const a = event({
+    id: 1,
+    startDate: "2024-01-17T14:00:00",
+    endDate: "2024-01-17T15:00:00",
+  });
+  const b = event({
+    id: 2,
+    startDate: "2024-01-17T09:00:00",
+    endDate: "2024-01-17T10:00:00",
+  });
+  const c = event({
+    id: 3,
+    startDate: "2024-01-18T09:00:00",
+    endDate: "2024-01-18T10:00:00",
+  });
+
+  test("byStart는 시작 시각 오름차순", () => {
+    expect([a, c, b].sort(byStart).map((e) => e.id)).toEqual([2, 1, 3]);
+  });
+
+  test("eventsInRange는 [from, to] 경계를 포함한다", () => {
+    const from = new Date(2024, 0, 17, 9, 0, 0);
+    const to = new Date(2024, 0, 17, 14, 0, 0);
+    expect(eventsInRange([a, b, c], from, to).map((e) => e.id)).toEqual([1, 2]);
+  });
+
+  test("groupByDay는 연속된 같은 날을 한 묶음으로 (정렬된 입력 기준)", () => {
+    const days = groupByDay([b, a, c]);
+    expect(days).toHaveLength(2);
+    expect(days[0].events.map((e) => e.id)).toEqual([2, 1]);
+    expect(days[1].events.map((e) => e.id)).toEqual([3]);
+  });
+});
+
+describe("isMultiDay · splitMultiDay (종일 줄 분리)", () => {
+  const oneDay = event({ id: 1 });
+  const twoDays = event({
+    id: 2,
+    startDate: "2024-01-17T22:00:00",
+    endDate: "2024-01-18T01:00:00",
+  });
+
+  test("시작·종료가 다른 날이면 multiDay", () => {
+    expect(isMultiDay(oneDay)).toBe(false);
+    expect(isMultiDay(twoDays)).toBe(true);
+  });
+
+  test("timed와 multiDay로 가른다", () => {
+    const { timed, multiDay } = splitMultiDay([oneDay, twoDays]);
+    expect(timed.map((e) => e.id)).toEqual([1]);
+    expect(multiDay.map((e) => e.id)).toEqual([2]);
   });
 });

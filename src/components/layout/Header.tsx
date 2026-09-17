@@ -43,7 +43,7 @@ export default async function Header() {
           <ViewModeToggle />
         </div>
 
-        <div className="flex min-w-0 items-center justify-end gap-1 lg:hidden">
+        <div className="flex min-w-0 items-center justify-end gap-2 lg:hidden">
           {/* 태블릿(640~1023): 위치·그룹·종이 1줄 우측에. 폰은 위치는 로고 옆, 그룹·종은 2줄로 */}
           <div className="hidden sm:block">
             <LocationPicker />

@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 
 import DropdownMenu from "@/src/components/ui/DropdownMenu";
 import { Column, Row } from "@/src/components/ui/layout/flex";
-import Skeleton from "@/src/components/ui/Skeleton";
+import { NotificationRowSkeleton } from "@/src/components/ui/SkeletonParts";
 import { useMediaQuery } from "@/src/hooks/useMediaQuery";
 import { Notification } from "@/src/types/notification";
 import { cn } from "@/src/utils/cn";
@@ -101,10 +101,10 @@ export default function NotificationBell({
           </Row>
 
           {loading ? (
-            <Column className="gap-2 px-3 py-2">
-              <Skeleton className="h-9 w-full rounded-xl" />
-              <Skeleton className="h-9 w-full rounded-xl" />
-              <Skeleton className="h-9 w-full rounded-xl" />
+            <Column className="gap-0.5">
+              <NotificationRowSkeleton />
+              <NotificationRowSkeleton />
+              <NotificationRowSkeleton />
             </Column>
           ) : items.length === 0 ? (
             <EmptyState
