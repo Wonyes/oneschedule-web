@@ -133,7 +133,13 @@ const getDayColor = (date: Date, isHoliday: holidayType | undefined) => {
 };
 
 export type WeatherKind =
-  "rain" | "sleet" | "snow" | "shower" | "sun" | "partly" | "cloud";
+  | "rain"
+  | "sleet"
+  | "snow"
+  | "shower"
+  | "sun"
+  | "partly"
+  | "cloud";
 
 /** 기상청 단기예보의 강수형태(PTY)·하늘상태(SKY) 코드를 아이콘 종류로 바꾼다. */
 export const getWeatherKind = (
@@ -396,7 +402,7 @@ const getSortedDayEvents = (events: ScheduleEvent[], date: Date) => {
       return durationB - durationA;
     }
 
-    return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
+    return byStart(a, b);
   });
 };
 
@@ -467,7 +473,38 @@ const getMonthWeekLanes = (
   return lanes;
 };
 
+function groupByDay(events: ScheduleEvent[]) {
+  const days: { date: Date; events: ScheduleEvent[] }[] = [];
+
+  for (const event of events) {
+    const date = new Date(event.startDate);
+    const last = days[days.length - 1];
+
+    if (last && isSameDay(last.date, date)) last.events.push(event);
+    else days.push({ date, events: [event] });
+  }
+
+  return days;
+}
+
+/** 시작 시각 오름차순 comparator — `.sort(byStart)` */
+const byStart = (a: ScheduleEvent, b: ScheduleEvent) =>
+  new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
+
+/** 시작 시각이 [from, to] 안에 드는 일정만 */
+function eventsInRange(events: ScheduleEvent[], from: Date, to: Date) {
+  const f = from.getTime();
+  const t = to.getTime();
+  return events.filter((e) => {
+    const s = new Date(e.startDate).getTime();
+    return s >= f && s <= t;
+  });
+}
+
 export {
+  byStart,
+  eventsInRange,
+  groupByDay,
   canEditSchedule,
   getMonthWeekLanes,
   isSameDate,

@@ -67,6 +67,55 @@ export function BrandPlate({
   );
 }
 
+/** 오른쪽 폼 컬럼. submit은 preventDefault 처리 후 onSubmit만 호출 */
+export function AuthForm({
+  onSubmit,
+  children,
+}: {
+  onSubmit: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <motion.form
+      variants={stagger}
+      noValidate
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit();
+      }}
+      className="relative z-10 flex w-full flex-col gap-6 lg:ml-6 lg:w-[400px]"
+    >
+      {children}
+    </motion.form>
+  );
+}
+
+/** "계정이 없으신가요? 회원가입" 같은 하단 안내 링크 */
+export function AuthFooterLink({
+  question,
+  href,
+  text,
+}: {
+  question: string;
+  href: string;
+  text: string;
+}) {
+  return (
+    <motion.div variants={rise}>
+      <Row className="w-full justify-center gap-2">
+        <p className="typo-sub-t-3 text-place-h">{question}</p>
+        <Link
+          href={href}
+          prefetch
+          className="typo-sub-t-1 -m-2 p-2 text-accent hover:underline"
+        >
+          {text}
+        </Link>
+      </Row>
+    </motion.div>
+  );
+}
+
 export function AuthLayoutGrid({ children }: { children: React.ReactNode }) {
   return (
     <motion.div
@@ -109,18 +158,7 @@ export function AuthAlternatives({
         </Column>
       </motion.div>
 
-      <motion.div variants={rise}>
-        <Row className="w-full justify-center gap-2">
-          <p className="typo-sub-t-3 text-place-h">{question}</p>
-          <Link
-            href={linkHref}
-            prefetch
-            className="typo-sub-t-1 -m-2 p-2 text-accent hover:underline"
-          >
-            {linkText}
-          </Link>
-        </Row>
-      </motion.div>
+      <AuthFooterLink question={question} href={linkHref} text={linkText} />
     </>
   );
 }

@@ -3,8 +3,8 @@
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-import GroupDashboard from "@/src/components/group/GroupDashboard";
-import GroupDashboardSkeleton from "@/src/components/group/GroupDashboardSkeleton";
+import GroupDashboard from "@/src/components/group/dashboard/GroupDashboard";
+import GroupDashboardSkeleton from "@/src/components/group/dashboard/GroupDashboardSkeleton";
 import { useActiveGroup } from "@/src/hooks/querys/useGroup";
 import { useActiveGroupStore } from "@/src/hooks/stores/useActiveGroupStore";
 import { useMounted } from "@/src/hooks/useMounted";

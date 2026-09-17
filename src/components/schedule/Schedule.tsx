@@ -9,7 +9,7 @@ import WeekView from "./view/WeekView";
 import { useHolidays, useWeathers } from "@/src/hooks/querys/useCommonApi";
 import { useSchedules } from "@/src/hooks/querys/useSchedule";
 import { useActiveGroup } from "@/src/hooks/querys/useGroup";
-import GroupPicker from "../group/GroupPicker";
+import GroupPicker from "../group/landing/GroupPicker";
 import { markConflicts, toScheduleEvent } from "@/src/utils/schedule";
 
 export default function Schedule() {

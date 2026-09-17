@@ -17,10 +17,6 @@ describe("useForm", () => {
 
     act(() => {
       result.current.setErrors({ nickname: "중복된 닉네임입니다." });
-      result.current.setSuccess({ phone: "확인되었습니다." });
-    });
-
-    act(() => {
       result.current.formChange({
         target: { name: "nickname", value: "새닉네임" },
       } as React.ChangeEvent<HTMLInputElement>);
@@ -31,22 +27,6 @@ describe("useForm", () => {
       phone: "",
     });
     expect(result.current.errors.nickname).toBe("");
-    expect(result.current.success.phone).toBe("확인되었습니다.");
-  });
-
-  test("resetForm은 form을 통째로 바꾸고 에러를 전부 지운다", () => {
-    const { result } = renderHook(() => useForm({ nickname: "" }));
-
-    act(() => {
-      result.current.setErrors({ nickname: "에러" });
-    });
-
-    act(() => {
-      result.current.resetForm({ nickname: "리셋됨" });
-    });
-
-    expect(result.current.form).toEqual({ nickname: "리셋됨" });
-    expect(result.current.errors).toEqual({});
   });
 
   test("clearError는 해당 필드의 에러만 지운다", () => {

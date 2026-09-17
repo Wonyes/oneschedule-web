@@ -61,3 +61,8 @@ export interface MemberPresence {
   online: boolean;
   lastSeenAt: string | null;
 }
+
+export const roleOf = (role?: GroupRole) => ({
+  owner: role === "SUPER",
+  manager: role === "SUPER" || role === "SUB",
+});

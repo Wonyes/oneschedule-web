@@ -1,6 +1,6 @@
 "use client";
 
-import { AtSign, Crown, Mail, Phone, User, Users } from "lucide-react";
+import { AtSign, Mail, Phone, User, Users } from "lucide-react";
 
 import BaseCard from "@/src/components/ui/card/BaseCard";
 import { Column, Row } from "@/src/components/ui/layout/flex";
@@ -14,12 +14,13 @@ import Link from "next/link";
 import GroupAvatar from "@/src/components/common/GroupAvatar";
 import { groupPath } from "@/src/lib/activeGroup";
 import SectionHeading from "@/src/components/ui/layout/SectionHeading";
+import RoleBadge from "../group/RoleBadge";
 
 export default function AccountInfo({ user }: { user: MyInfoResponse }) {
   const {
     form,
     errors,
-    success,
+    nicknameSuccess,
     editingField,
 
     startEdit,
@@ -65,7 +66,6 @@ export default function AccountInfo({ user }: { user: MyInfoResponse }) {
               dimmed={dim("name")}
               error={errors.name}
               deps={nameDes}
-              success={success.name}
               onEdit={() => startEdit("name")}
               onSave={saveEdit}
               onCancel={cancelEdit}
@@ -86,7 +86,7 @@ export default function AccountInfo({ user }: { user: MyInfoResponse }) {
               showCheck
               error={errors.nickname}
               deps={nicknameDes}
-              success={success.nickname}
+              success={nicknameSuccess}
               onEdit={() => startEdit("nickname")}
               onSave={saveEdit}
               onCancel={cancelEdit}
@@ -114,7 +114,6 @@ export default function AccountInfo({ user }: { user: MyInfoResponse }) {
               }
               error={errors.phoneNumber}
               deps={phoneDes}
-              success={success.phoneNumber}
               editing={editingField === "phoneNumber"}
               dimmed={dim("phoneNumber")}
               onEdit={() => startEdit("phoneNumber")}
@@ -160,14 +159,7 @@ export default function AccountInfo({ user }: { user: MyInfoResponse }) {
                         <span className="typo-caption-2 font-medium text-foreground">
                           {group.groupName}
                         </span>
-                        {group.groupRole === "SUPER" && (
-                          <Crown
-                            size={11}
-                            strokeWidth={2}
-                            className="text-pending-500"
-                            aria-label="관리자"
-                          />
-                        )}
+                        <RoleBadge role={group.groupRole} />
                       </Link>
                     ))}
                   </Row>

@@ -1,4 +1,4 @@
-import FindPasswordForm from "@/src/components/auth/FindPasswordForm";
+import FindPasswordForm from "@/src/components/auth/password/FindPasswordForm";
 
 export default function page() {
   return (

@@ -1,14 +1,13 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 import NotificationBell from "@/src/components/notification/NotificationBell";
-import { Notification } from "@/src/types/notification";
 import {
   useAllreadNotifications,
   useNotification,
   useUnreadNotifications,
-  useUpdateNotificationReadStatus,
+  useOpenNotification,
 } from "@/src/hooks/querys/useNotification";
 
 export default function NotificationMenu({
@@ -20,7 +19,6 @@ export default function NotificationMenu({
   triggerClassName?: string;
   mobileSlot?: "top" | "sub";
 }) {
-  const router = useRouter();
   const pathname = usePathname();
   const isSchedulePage = pathname === "/schedule";
 
@@ -32,21 +30,13 @@ export default function NotificationMenu({
     fetchNextPage,
   } = useNotification();
   const { data: unreadCount = 0 } = useUnreadNotifications();
-  const { mutate: markRead } = useUpdateNotificationReadStatus();
+  const handleSelect = useOpenNotification();
   const { mutate: markAllRead } = useAllreadNotifications();
 
   const items = notifications?.pages.flatMap((page) => page.content) ?? [];
 
   if (mobileSlot === "top" && isSchedulePage) return null;
   if (mobileSlot === "sub" && !isSchedulePage) return null;
-
-  const handleSelect = (notification: Notification) => {
-    if (!notification.read) markRead(notification.notificationNo);
-
-    if (notification.targetNo) {
-      router.push(`/group/${notification.targetNo}`);
-    }
-  };
 
   return (
     <NotificationBell

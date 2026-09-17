@@ -1,38 +1,42 @@
 "use client";
 
 import { Moon, Sun } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { flushSync } from "react-dom";
 
 type Theme = "dark" | "light";
 
+// 진실은 <html data-theme>. 여기선 그걸 구독만 한다 (서버에선 light로 그리고 hydration 후 맞춘다)
+const listeners = new Set<() => void>();
+const DARK_QUERY = "(prefers-color-scheme: dark)";
+
+const subscribe = (onChange: () => void) => {
+  listeners.add(onChange);
+  const media = window.matchMedia(DARK_QUERY);
+  media.addEventListener("change", onChange);
+  return () => {
+    listeners.delete(onChange);
+    media.removeEventListener("change", onChange);
+  };
+};
+
+const readTheme = (): Theme => {
+  const explicit = document.documentElement.dataset.theme;
+  if (explicit === "dark" || explicit === "light") return explicit;
+  return window.matchMedia(DARK_QUERY).matches ? "dark" : "light";
+};
+
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>("light");
-
-  useEffect(() => {
-    const explicit = document.documentElement.dataset.theme;
-    const systemDark = window.matchMedia(
-      "(prefers-color-scheme: dark)",
-    ).matches;
-
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setTheme(
-      explicit === "dark" || explicit === "light"
-        ? explicit
-        : systemDark
-          ? "dark"
-          : "light",
-    );
-  }, []);
+  const theme = useSyncExternalStore(subscribe, readTheme, () => "light");
 
   const toggle = (e: React.MouseEvent<HTMLButtonElement>) => {
     const next: Theme = theme === "light" ? "dark" : "light";
     const root = document.documentElement;
 
     const apply = () => {
-      setTheme(next);
       document.cookie = `theme=${next}; path=/; max-age=31536000; samesite=lax`;
       root.setAttribute("data-theme", next);
+      listeners.forEach((notify) => notify());
     };
 
     if (!document.startViewTransition) {

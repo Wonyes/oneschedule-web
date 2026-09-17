@@ -7,23 +7,18 @@ import { useScheduleView } from "@/src/hooks/useScheduleView";
 import { useWeathers } from "@/src/hooks/querys/useCommonApi";
 import { useSchedules } from "@/src/hooks/querys/useSchedule";
 import { useActiveGroup } from "@/src/hooks/querys/useGroup";
-import { getWeekDates, toScheduleEvent } from "@/src/utils/schedule";
+import {
+  byStart,
+  eventsInRange,
+  getWeekDates,
+  toScheduleEvent,
+} from "@/src/utils/schedule";
 import { ScheduleEvent } from "@/src/types/schedule";
 import ScheduleDial from "./ScheduleDial";
 import { Row } from "../ui/layout/flex";
 
 function eventsOnDay(events: ScheduleEvent[], date: Date) {
-  const start = startOfDay(date).getTime();
-  const end = endOfDay(date).getTime();
-  return events
-    .filter((e) => {
-      const s = new Date(e.startDate).getTime();
-      return s >= start && s <= end;
-    })
-    .sort(
-      (a, b) =>
-        new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
-    );
+  return eventsInRange(events, startOfDay(date), endOfDay(date)).sort(byStart);
 }
 
 /** "오늘 일정 2개, 14:00 회의부터 · 내일은 비어 있어요" */

@@ -1,45 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { fadeQuick, springFirm, springSoft } from "@/src/lib/motion";
 import { useMediaQuery } from "@/src/hooks/useMediaQuery";
 import { cn } from "@/src/utils/cn";
 import { usePathname } from "next/navigation";
-import MemberAvatar from "@/src/components/common/MemberAvatar";
-import {
-  CalendarDays,
-  Check,
-  ChevronDown,
-  Search,
-  Trash2,
-  X,
-} from "lucide-react";
-import { useQueryClient } from "@tanstack/react-query";
+import { CalendarDays, ChevronDown } from "lucide-react";
 import { useSheetStore } from "@/src/hooks/stores/useSheetStore";
 import { useScheduleView } from "@/src/hooks/useScheduleView";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { Input } from "../../ui/layout/input";
-import { Row } from "../../ui/layout/flex";
-import DropdownMenu from "../../ui/DropdownMenu";
-import { Primary, GhostBtn } from "../../ui/layout/button";
 import CalendarBody from "./calendar/CalendarBody";
+import ParticipantPicker from "./ParticipantPicker";
+import { FieldLabel, SheetFooter, SheetHeader } from "./SheetParts";
+import { useScheduleMutations } from "./useScheduleMutations";
 import { useCalendarStore } from "@/src/hooks/stores/useCalendarStore";
 import { formatTime } from "@/src/utils/time";
 import { EVENT_STYLES } from "@/src/constant/schedule";
 import { canEditSchedule, toScheduleRequest } from "@/src/utils/schedule";
-import {
-  createSchedule,
-  createGroupSchedule,
-  deleteSchedule,
-  updateSchedule,
-} from "@/src/hooks/querys/useSchedule";
-import { scheduleKeys } from "@/src/hooks/querys/key/scheduleKey";
-import { useOverlay } from "@/src/hooks/useOverlay";
-import { getErrorMessage, useAppMutation } from "@/src/types/ErrorResponse";
 import { useActiveGroup } from "@/src/hooks/querys/useGroup";
-import { GroupMember } from "@/src/types/group";
 import { useMyInfo } from "@/src/hooks/querys/useMembers";
 
 const combineDateTime = (date: Date, time: string) => {
@@ -56,251 +37,6 @@ const categories = [
   { value: "important", label: "중요" },
 ] as const;
 
-function ParticipantPicker({
-  members,
-  selected,
-  onChange,
-  readOnly = false,
-}: {
-  members: GroupMember[];
-  selected: number[];
-  onChange: (ids: number[]) => void;
-  readOnly?: boolean;
-}) {
-  const [query, setQuery] = useState("");
-
-  const filtered = members.filter((m) =>
-    m.nickname.toLowerCase().includes(query.toLowerCase()),
-  );
-
-  const selectedMembers = members.filter((m) => selected.includes(m.memberNo));
-  const allFilteredSelected =
-    filtered.length > 0 && filtered.every((m) => selected.includes(m.memberNo));
-
-  const toggleAll = () => {
-    const ids = filtered.map((m) => m.memberNo);
-    onChange(
-      allFilteredSelected
-        ? selected.filter((id) => !ids.includes(id))
-        : Array.from(new Set([...selected, ...ids])),
-    );
-  };
-
-  const toggle = (memberNo: number) => {
-    onChange(
-      selected.includes(memberNo)
-        ? selected.filter((id) => id !== memberNo)
-        : [...selected, memberNo],
-    );
-  };
-
-  return (
-    <DropdownMenu
-      label="참여자 선택"
-      align="stretch"
-      className="w-full"
-      disabled={readOnly}
-      triggerClassName={`w-full justify-between rounded-xl neu-btn border border-accent/20 px-4 py-3 text-left transition-colors ${
-        readOnly
-          ? "opacity-70"
-          : "hover:-translate-y-0.5 hover:border-accent/50"
-      }`}
-      trigger={(isOpen) => (
-        <>
-          {selectedMembers.length === 0 ? (
-            <span className="typo-caption-2 text-place-h">
-              참여자를 선택하세요.
-            </span>
-          ) : (
-            <div className="flex flex-wrap items-center gap-1.5">
-              {selectedMembers.map((m) => (
-                <span
-                  key={m.memberNo}
-                  className="flex items-center gap-1 rounded-full bg-accent/10 py-0.5 pl-1 pr-2"
-                >
-                  <MemberAvatar
-                    nickname={m.nickname}
-                    src={m.profileImageUrl}
-                    size="2xs"
-                  />
-                  <span className="typo-caption-3 text-secondary">
-                    {m.nickname}
-                  </span>
-                </span>
-              ))}
-            </div>
-          )}
-
-          <span
-            className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent/12 text-accent transition-transform ${isOpen ? "rotate-180" : ""}`}
-          >
-            <ChevronDown size={13} strokeWidth={2} />
-          </span>
-        </>
-      )}
-    >
-      {() => (
-        <>
-          <div className="neu-pressed flex items-center gap-2 rounded-xl px-3 py-2">
-            <Search size={14} strokeWidth={1.75} className="text-muted" />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="이름으로 검색"
-              className="typo-caption-2 text-foreground placeholder:text-place-h w-full bg-transparent focus:outline-none"
-            />
-          </div>
-
-          {filtered.length > 0 && (
-            <Row className="mt-2 items-center justify-between px-2 pt-1">
-              <span className="typo-caption-3 text-place-h">
-                {selected.length > 0
-                  ? `${selected.length}명 선택`
-                  : `멤버 ${members.length}명`}
-              </span>
-              <button
-                type="button"
-                onClick={toggleAll}
-                className="neu-btn btn-spring flex h-7 items-center gap-1 rounded-lg px-2.5 typo-caption-3 font-semibold text-accent"
-              >
-                <Check size={12} strokeWidth={2.5} />
-                {allFilteredSelected ? "전체 해제" : "전체 선택"}
-              </button>
-            </Row>
-          )}
-
-          <div className="mt-1 flex max-h-[min(60dvh,320px)] flex-col gap-0.5 overflow-y-auto">
-            {filtered.length === 0 ? (
-              <p className="typo-caption-2 text-muted py-4 text-center">
-                검색 결과가 없습니다.
-              </p>
-            ) : (
-              filtered.map((m) => {
-                const isSelected = selected.includes(m.memberNo);
-                return (
-                  <button
-                    key={m.memberNo}
-                    type="button"
-                    role="menuitemcheckbox"
-                    aria-checked={isSelected}
-                    onClick={() => toggle(m.memberNo)}
-                    className="hover:bg-surface-hover flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left transition-colors"
-                  >
-                    <MemberAvatar
-                      nickname={m.nickname}
-                      src={m.profileImageUrl}
-                      size="xs"
-                    />
-                    <span className="typo-caption-2 flex-1 text-secondary">
-                      {m.nickname}
-                    </span>
-                    {isSelected && (
-                      <Check
-                        size={14}
-                        strokeWidth={2}
-                        className="text-accent"
-                      />
-                    )}
-                  </button>
-                );
-              })
-            )}
-          </div>
-        </>
-      )}
-    </DropdownMenu>
-  );
-}
-
-function FieldLabel({
-  children,
-  required = false,
-}: {
-  children: React.ReactNode;
-  required?: boolean;
-}) {
-  return (
-    <span className="eyebrow flex items-center gap-1.5">
-      {children}
-      {required && (
-        <span className="rounded-full bg-accent/12 px-1.5 py-px text-[10px] font-semibold leading-4 tracking-normal text-accent">
-          필수
-        </span>
-      )}
-    </span>
-  );
-}
-
-function SheetHeader({
-  onClose,
-  isEditing,
-  canEdit,
-}: {
-  onClose: () => void;
-  isEditing: boolean;
-  canEdit: boolean;
-}) {
-  return (
-    <header className="flex shrink-0 items-center justify-between px-5 pt-4 sm:px-7 sm:pt-6">
-      <span className="eyebrow">
-        {isEditing ? (canEdit ? "EDIT SCHEDULE" : "SCHEDULE") : "NEW SCHEDULE"}
-      </span>
-      <button
-        type="button"
-        onClick={onClose}
-        aria-label="닫기"
-        className="neu-btn btn-spring flex h-9 w-9 items-center justify-center rounded-full text-muted hover:text-foreground"
-      >
-        <X size={16} strokeWidth={2} />
-      </button>
-    </header>
-  );
-}
-
-function SheetFooter({
-  onClose,
-  onSave,
-  onDelete,
-  isEditing,
-  canEdit,
-}: {
-  onClose: () => void;
-  onSave: () => void;
-  onDelete: () => void;
-  isEditing: boolean;
-  canEdit: boolean;
-}) {
-  return (
-    <footer className="flex shrink-0 items-center gap-2 border-t border-divider px-5 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-4 sm:px-7 lg:pb-5">
-      {isEditing && canEdit && (
-        <button
-          type="button"
-          onClick={onDelete}
-          className="btn-spring flex h-10 items-center gap-1.5 rounded-xl px-3 typo-caption-2 font-medium text-place-h hover:text-error-500"
-        >
-          <Trash2 size={14} strokeWidth={1.75} />
-          삭제
-        </button>
-      )}
-
-      <div className="ml-auto flex items-center gap-2">
-        <GhostBtn
-          text={canEdit ? "취소" : "닫기"}
-          onClick={onClose}
-          className="h-10 rounded-xl px-4 typo-caption-2"
-        />
-        {canEdit && (
-          <Primary
-            text={isEditing ? "저장" : "추가"}
-            onClick={onSave}
-            className="h-10 rounded-xl px-6 typo-caption-2"
-          />
-        )}
-      </div>
-    </footer>
-  );
-}
-
 export default function Sheet() {
   const {
     form,
@@ -315,13 +51,9 @@ export default function Sheet() {
   const [titleError, setTitleError] = useState("");
   const { group } = useActiveGroup(open);
   const { viewType } = useScheduleView();
-  const { openAlert } = useOverlay();
   const { data: myInfo } = useMyInfo(open);
-  const queryClient = useQueryClient();
   const pathname = usePathname();
   const isDesktop = useMediaQuery("(min-width: 1024px)");
-
-  const groupNo = group?.groupNo;
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "unset";
@@ -340,69 +72,23 @@ export default function Sheet() {
     if (isCalendarOpen) toggleCalendar();
   };
 
+  // 열린 드롭다운(참여자 선택)이 있으면 그쪽이 먼저 닫힌다.
+  const onEscape = useEffectEvent(() => {
+    if (!document.querySelector('[role="menu"]')) close();
+  });
+
   useEffect(() => {
     if (!open) return;
     const onKeyDown = (e: KeyboardEvent) => {
-      // 열린 드롭다운(참여자 선택)이 있으면 그쪽이 먼저 닫힌다.
-      if (e.key === "Escape" && !document.querySelector('[role="menu"]')) {
-        close();
-      }
+      if (e.key === "Escape") onEscape();
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  const invalidateSchedules = () => {
-    queryClient.invalidateQueries({ queryKey: [scheduleKeys.list] });
-  };
-
-  const { mutate: create } = useAppMutation({
-    mutationFn: (body: ReturnType<typeof toScheduleRequest>) =>
-      createType === "GROUP" && group
-        ? createGroupSchedule(groupNo!, body)
-        : createSchedule(body),
-    onSuccess: () => {
-      invalidateSchedules();
-      close();
-    },
-    onError: (err) =>
-      openAlert({
-        title: "일정 저장에 실패했습니다.",
-        message: getErrorMessage(err),
-      }),
-  });
-
-  const { mutate: update } = useAppMutation({
-    mutationFn: ({
-      id,
-      body,
-    }: {
-      id: number;
-      body: ReturnType<typeof toScheduleRequest>;
-    }) => updateSchedule(id, body),
-    onSuccess: () => {
-      invalidateSchedules();
-      close();
-    },
-    onError: (err) =>
-      openAlert({
-        title: "일정 수정에 실패했습니다.",
-        message: getErrorMessage(err),
-      }),
-  });
-
-  const { mutate: remove } = useAppMutation({
-    mutationFn: deleteSchedule,
-    onSuccess: () => {
-      invalidateSchedules();
-      close();
-    },
-    onError: (err) =>
-      openAlert({
-        title: "일정 삭제에 실패했습니다.",
-        message: getErrorMessage(err),
-      }),
+  const { create, update, remove } = useScheduleMutations({
+    groupNo: createType === "GROUP" ? group?.groupNo : undefined,
+    onDone: close,
   });
 
   const currentForm = form;

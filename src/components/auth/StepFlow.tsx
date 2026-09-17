@@ -1,8 +1,10 @@
 "use client";
 
 import { useRef } from "react";
+import { ArrowLeft } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 
+import { Primary } from "@/src/components/ui/layout/button";
 import { Row } from "@/src/components/ui/layout/flex";
 import { springSnappy, springSoft } from "@/src/lib/motion";
 
@@ -77,5 +79,65 @@ export function StepSlide({
         </motion.div>
       </AnimatePresence>
     </div>
+  );
+}
+
+/** 진행바 + 단계 제목 + n / N + 힌트 */
+export function StepHeader({
+  total,
+  current,
+  label,
+  title,
+  hint,
+}: {
+  total: number;
+  current: number;
+  label: string;
+  title: string;
+  hint?: string;
+}) {
+  return (
+    <div>
+      <StepProgress total={total} current={current} label={label} />
+
+      <Row className="mt-4 items-baseline justify-between">
+        <h2 className="typo-sub-t-1 text-foreground">{title}</h2>
+        <span className="typo-caption-3 tabular-nums text-place-h">
+          {current + 1} / {total}
+        </span>
+      </Row>
+      {hint && <p className="typo-caption-2 mt-1 text-muted">{hint}</p>}
+    </div>
+  );
+}
+
+/** 뒤로가기(첫 단계 제외) + 제출 버튼 */
+export function StepActions({
+  canGoBack,
+  busy,
+  onBack,
+  submitText,
+}: {
+  canGoBack: boolean;
+  busy: boolean;
+  onBack: () => void;
+  submitText: string;
+}) {
+  return (
+    <Row className="gap-2">
+      {canGoBack && (
+        <button
+          type="button"
+          onClick={onBack}
+          disabled={busy}
+          aria-label="이전 단계"
+          className="neu-btn btn-spring flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-secondary disabled:opacity-40"
+        >
+          <ArrowLeft size={16} strokeWidth={2} />
+        </button>
+      )}
+
+      <Primary type="submit" className="w-full py-3 sm:py-4" text={submitText} />
+    </Row>
   );
 }

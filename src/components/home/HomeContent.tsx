@@ -4,13 +4,13 @@ import { useMemo } from "react";
 
 import { MyInfoResponse } from "@/src/hooks/querys/useMembers";
 import { MyGroupResponse } from "@/src/types/group";
-import GroupQuickLink from "./GroupQuickLink";
+import GroupQuickLink from "./widgets/GroupQuickLink";
 import HorizonFooter from "@/src/components/layout/HorizonFooter";
-import HomeHero from "./HomeHero";
-import MiniCalendar from "./MiniCalendar";
-import OnboardingChecklist from "./OnboardingChecklist";
-import RecentNotifications from "./RecentNotifications";
-import UpcomingSchedules from "./UpcomingSchedules";
+import HomeHero from "./hero/HomeHero";
+import MiniCalendar from "./widgets/MiniCalendar";
+import OnboardingChecklist from "./widgets/OnboardingChecklist";
+import RecentNotifications from "./widgets/RecentNotifications";
+import UpcomingSchedules from "./widgets/UpcomingSchedules";
 
 export default function HomeContent({
   user,

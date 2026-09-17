@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 
-import LoginForm from "@/src/components/auth/LoginForm";
+import LoginForm from "@/src/components/auth/login/LoginForm";
 
 export default function Page() {
   return (

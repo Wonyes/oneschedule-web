@@ -3,9 +3,9 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect } from "react";
 
-import GroupDashboardSkeleton from "@/src/components/group/GroupDashboardSkeleton";
-import GroupLanding from "@/src/components/group/GroupLanding";
-import GroupPicker from "@/src/components/group/GroupPicker";
+import GroupDashboardSkeleton from "@/src/components/group/dashboard/GroupDashboardSkeleton";
+import GroupLanding from "@/src/components/group/landing/GroupLanding";
+import GroupPicker from "@/src/components/group/landing/GroupPicker";
 import { useActiveGroup } from "@/src/hooks/querys/useGroup";
 import { useMounted } from "@/src/hooks/useMounted";
 import { groupPath } from "@/src/lib/activeGroup";

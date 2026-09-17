@@ -1,32 +1,27 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { endOfWeek, startOfWeek } from "date-fns";
 import { Mail } from "lucide-react";
-import { animate, motion, useMotionValue, useTransform } from "motion/react";
+import { motion } from "motion/react";
 
 import Plate from "@/src/components/common/Plate";
 
 import GoogleMark from "@/src/components/common/GoogleMark";
 import { Row } from "@/src/components/ui/layout/flex";
 import { useActiveGroup } from "@/src/hooks/querys/useGroup";
-import {
-  MyInfoResponse,
-  useProfileImageUpload,
-} from "@/src/hooks/querys/useMembers";
+import { MyInfoResponse } from "@/src/hooks/querys/useMembers";
 import { useSchedules } from "@/src/hooks/querys/useSchedule";
-import { useOverlay } from "@/src/hooks/useOverlay";
+import { useMemberImagePicker } from "@/src/hooks/useProfileImagePicker";
 import { rise, stagger } from "@/src/lib/motion";
-import { getErrorMessage } from "@/src/types/ErrorResponse";
-import { cn } from "@/src/utils/cn";
+import { roleOf } from "@/src/types/group";
 import ProfileOrbit from "./ProfileOrbit";
+import Stat from "../ui/Stat";
 
 export default function ProfileCard({ user }: { user: MyInfoResponse }) {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const { mutate: uploadImage, isPending } = useProfileImageUpload();
-  const { openToast } = useOverlay();
+  const picker = useMemberImagePicker();
   const { groups } = useActiveGroup();
   const { data: schedules } = useSchedules("PERSONAL");
 
-  const adminCount = groups.filter((g) => g.groupRole === "SUPER").length;
+  const ownerCount = groups.filter((g) => roleOf(g.groupRole).owner).length;
 
   const weekCount = useMemo(() => {
     const now = new Date();
@@ -38,18 +33,6 @@ export default function ProfileCard({ user }: { user: MyInfoResponse }) {
       return t >= from && t <= to;
     }).length;
   }, [schedules]);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    e.target.value = "";
-    if (!file) return;
-
-    uploadImage(file, {
-      onError: (err) => {
-        openToast({ message: getErrorMessage(err) });
-      },
-    });
-  };
 
   return (
     <Plate
@@ -67,15 +50,7 @@ export default function ProfileCard({ user }: { user: MyInfoResponse }) {
             nickname={user.nickname}
             imageUrl={user.profileImageUrl}
             groups={groups}
-            uploading={isPending}
-            onPickImage={() => fileInputRef.current?.click()}
-          />
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={handleFileChange}
+            picker={picker}
           />
         </motion.div>
 
@@ -93,9 +68,9 @@ export default function ProfileCard({ user }: { user: MyInfoResponse }) {
 
         <motion.div variants={rise}>
           <Row className="mt-1 flex-wrap justify-center gap-x-4 gap-y-1">
-            <Stat label="그룹" value={groups.length} />
-            <Stat label="관리자" value={adminCount} tone="pending" />
-            <Stat label="이번 주 일정" value={weekCount} />
+            <Stat label="그룹" value={groups.length} countUp />
+            <Stat label="관리자" value={ownerCount} tone="pending" countUp />
+            <Stat label="이번 주 일정" value={weekCount} countUp />
           </Row>
         </motion.div>
 
@@ -113,43 +88,5 @@ export default function ProfileCard({ user }: { user: MyInfoResponse }) {
         </motion.div>
       </motion.div>
     </Plate>
-  );
-}
-
-function Stat({
-  label,
-  value,
-  tone,
-}: {
-  label: string;
-  value: number;
-  tone?: "pending";
-}) {
-  const count = useMotionValue(0);
-  const text = useTransform(count, (v) => Math.round(v).toString());
-
-  useEffect(() => {
-    const controls = animate(count, value, {
-      duration: 0.9,
-      ease: "easeOut",
-      delay: 0.3,
-    });
-    return () => controls.stop();
-  }, [count, value]);
-
-  return (
-    <Row className="items-baseline gap-1">
-      <span className="typo-caption-3 text-place-h">{label}</span>
-      <motion.span
-        className={cn(
-          "typo-caption-1 font-semibold tabular-nums",
-          tone === "pending" && value > 0
-            ? "text-pending-500"
-            : "text-foreground",
-        )}
-      >
-        {text}
-      </motion.span>
-    </Row>
   );
 }

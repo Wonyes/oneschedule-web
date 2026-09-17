@@ -1,16 +1,21 @@
 "use client";
 
-import { Camera, Crown, Loader2 } from "lucide-react";
+import { Crown } from "lucide-react";
 import { motion } from "motion/react";
 import Link from "next/link";
 
 import AvatarImage from "@/src/components/common/AvatarImage";
-import OrbitRing, { OrbitItem } from "@/src/components/common/OrbitRing";
+import OrbitRing, {
+  OrbitItem,
+  splitSatellites,
+} from "@/src/components/common/orbit/OrbitRing";
+import OrbitMore from "@/src/components/common/orbit/OrbitMore";
+import OrbitEditButton from "@/src/components/common/orbit/OrbitEditButton";
 import GroupAvatar from "@/src/components/common/GroupAvatar";
+import { ProfileImagePicker } from "@/src/hooks/useProfileImagePicker";
 import { groupPath } from "@/src/lib/activeGroup";
-import { useMediaQuery } from "@/src/hooks/useMediaQuery";
 import { springSoft } from "@/src/lib/motion";
-import { MyGroupResponse } from "@/src/types/group";
+import { MyGroupResponse, roleOf } from "@/src/types/group";
 
 const MAX_SATELLITES = 6;
 
@@ -18,18 +23,14 @@ export default function ProfileOrbit({
   nickname,
   imageUrl,
   groups,
-  uploading,
-  onPickImage,
+  picker,
 }: {
   nickname: string;
   imageUrl?: string | null;
   groups: MyGroupResponse[];
-  uploading: boolean;
-  onPickImage: () => void;
+  picker: ProfileImagePicker;
 }) {
-  const wide = useMediaQuery("(min-width: 640px)");
-  const shown = groups.slice(0, MAX_SATELLITES);
-  const hidden = groups.length - shown.length;
+  const { shown, hidden } = splitSatellites(groups, MAX_SATELLITES);
 
   const items: OrbitItem[] = shown.map((group) => ({
     key: group.groupNo,
@@ -45,7 +46,7 @@ export default function ProfileOrbit({
           imageUrl={group.profileImageUrl}
           className="h-9 w-9 rounded-full"
         />
-        {group.groupRole === "SUPER" && (
+        {roleOf(group.groupRole).owner && (
           <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-pending-500 text-on-primary ring-2 ring-[var(--surface)]">
             <Crown size={9} strokeWidth={2.5} />
           </span>
@@ -58,22 +59,19 @@ export default function ProfileOrbit({
     items.push({
       key: "more",
       node: (
-        <Link
+        <OrbitMore
+          count={hidden}
+          label={`그룹 ${hidden}개 더 보기`}
           href="/group"
-          prefetch
-          aria-label={`그룹 ${hidden}개 더 보기`}
-          className="neu-flat flex h-9 w-9 items-center justify-center rounded-full typo-caption-3 font-semibold text-muted btn-spring hover:scale-110"
-        >
-          +{hidden}
-        </Link>
+        />
       ),
     });
   }
 
   return (
     <OrbitRing
-      radius={wide ? 96 : 80}
-      className={wide ? "h-60 w-60" : "h-52 w-52"}
+      size="md"
+      wideSize="xl"
       items={items}
       center={
         <>
@@ -89,19 +87,7 @@ export default function ProfileOrbit({
             />
           </motion.div>
 
-          <button
-            type="button"
-            onClick={onPickImage}
-            disabled={uploading}
-            aria-label="프로필 사진 변경"
-            className="neu-btn btn-spring absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full text-secondary hover:text-foreground"
-          >
-            {uploading ? (
-              <Loader2 size={13} className="animate-spin text-accent" />
-            ) : (
-              <Camera size={13} strokeWidth={1.75} />
-            )}
-          </button>
+          <OrbitEditButton label="프로필 사진 변경" picker={picker} />
         </>
       }
     />

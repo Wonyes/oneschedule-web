@@ -37,9 +37,12 @@ function emphasize(title: string, name: string | null) {
 export default function NotificationItem({
   notification,
   onClick,
+  compact = false,
 }: {
   notification: Notification;
   onClick: (notification: Notification) => void;
+  /** 홈 카드용 한 줄 레이아웃. 내용은 sm 이상에서만 */
+  compact?: boolean;
 }) {
   const { read, title, content, senderNickname, senderProfileImageUrl, type } =
     notification;
@@ -52,17 +55,25 @@ export default function NotificationItem({
         })
       : null;
 
+  const time = formatDistanceToNowStrict(new Date(notification.createdAt), {
+    addSuffix: true,
+    locale: ko,
+  });
+
   return (
     <motion.button
       type="button"
-      role="menuitem"
+      role={compact ? undefined : "menuitem"}
       layout
       initial={{ opacity: 0, y: -8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={springSoft}
       onClick={() => onClick(notification)}
       className={cn(
-        "flex w-full items-start gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-surface-hover",
+        "flex w-full text-left transition-colors hover:bg-surface-hover",
+        compact
+          ? "items-center gap-2.5 rounded-lg px-1.5 py-1.5"
+          : "items-start gap-3 rounded-xl px-3 py-2.5",
         read && "opacity-70",
       )}
     >
@@ -83,23 +94,39 @@ export default function NotificationItem({
         />
       )}
 
-      <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className="typo-caption-2 text-foreground">
-          {emphasize(title, senderNickname)}
+      {compact ? (
+        <>
+          <span className="flex min-w-0 flex-1 items-baseline gap-2">
+            <span className="shrink-0 typo-caption-2 text-foreground">
+              {emphasize(title, senderNickname)}
+            </span>
+            {content && (
+              <span className="hidden min-w-0 flex-1 truncate typo-caption-3 text-muted sm:block">
+                {content}
+              </span>
+            )}
+          </span>
+          <span className="shrink-0 typo-caption-3 text-place-h">{time}</span>
+        </>
+      ) : (
+        <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <span className="typo-caption-2 text-foreground">
+            {emphasize(title, senderNickname)}
+          </span>
+          {content && (
+            <span className="typo-caption-3 text-muted">{content}</span>
+          )}
+          <span className="typo-caption-3 text-place-h">{time}</span>
         </span>
-        {content && (
-          <span className="typo-caption-3 text-muted">{content}</span>
-        )}
-        <span className="typo-caption-3 text-place-h">
-          {formatDistanceToNowStrict(new Date(notification.createdAt), {
-            addSuffix: true,
-            locale: ko,
-          })}
-        </span>
-      </span>
+      )}
 
       {!read && (
-        <span className="mt-1.5 size-2 shrink-0 rounded-full bg-accent" />
+        <span
+          className={cn(
+            "shrink-0 rounded-full bg-accent",
+            compact ? "size-1.5" : "mt-1.5 size-2",
+          )}
+        />
       )}
     </motion.button>
   );

@@ -3,7 +3,7 @@
 import { Bell, CalendarClock, CalendarDays, MapPin, Users } from "lucide-react";
 
 import { useMediaQuery } from "@/src/hooks/useMediaQuery";
-import OrbitRing from "./OrbitRing";
+import OrbitRing from "./orbit/OrbitRing";
 
 const SATELLITES = [Users, CalendarDays, Bell, MapPin];
 

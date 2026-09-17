@@ -9,107 +9,81 @@ import {
   useMyinfoChange,
   useNicknameCheck,
 } from "@/src/hooks/querys/useMembers";
-import { CustomError } from "../types/ErrorResponse";
+import { CustomError, getErrorMessage } from "../types/ErrorResponse";
 
+type EditField = "name" | "nickname" | "phoneNumber";
+
+/** 프로필 필드를 하나씩 인라인 편집. 닉네임은 저장 전 중복 확인이 필요하다 */
 export function useProfileEdit(user: MyInfoResponse) {
-  const [editingField, setEditingField] = useState<
-    "name" | "nickname" | "phoneNumber" | null
-  >(null);
+  const initial = () => ({
+    name: user.name,
+    nickname: user.nickname,
+    phoneNumber: user.phoneNumber ?? "",
+  });
 
+  const [editingField, setEditingField] = useState<EditField | null>(null);
   const [nicknameChecked, setNicknameChecked] = useState(false);
-
-  const { form, formChange, setForm, errors, setErrors, success, setSuccess } =
-    useForm({
-      name: user.name,
-      nickname: user.nickname,
-      phoneNumber: user.phoneNumber ?? "",
-    });
+  /** 중복 확인 통과 메시지. 닉네임에만 있다 */
+  const [nicknameSuccess, setNicknameSuccess] = useState("");
+  const { form, formChange, setForm, errors, setErrors } = useForm(initial());
 
   const { refetch: checkNickname } = useNicknameCheck(form.nickname);
-
   const { mutate: changeInfo } = useMyinfoChange();
 
-  const startEdit = (field: "name" | "nickname" | "phoneNumber") => {
+  /** 편집 시작·취소·저장 완료 때 공통: 값은 서버 값으로, 메시지는 비우고 */
+  const reset = () => {
+    setForm(initial());
+    setErrors({});
+    setNicknameSuccess("");
+    setNicknameChecked(false);
+  };
+
+  const startEdit = (field: EditField) => {
+    reset();
     setEditingField(field);
+  };
 
-    if (field === "nickname") {
-      setNicknameChecked(false);
-    }
-
-    setSuccess((prev) => ({ ...prev, [field]: "" }));
-    setErrors((prev) => ({ ...prev, [field]: "" }));
-
-    setForm({
-      name: user.name,
-      nickname: user.nickname,
-      phoneNumber: user.phoneNumber ?? "",
-    });
+  const cancelEdit = () => {
+    reset();
+    setEditingField(null);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     formChange(e);
-
     if (e.target.name === "nickname") {
       setNicknameChecked(false);
-
-      setSuccess({
-        nickname: "",
-      });
-
-      setErrors({
-        nickname: "",
-      });
+      setNicknameSuccess("");
     }
   };
 
   const checkNicknameDuplicate = async () => {
     setNicknameChecked(false);
-
-    setSuccess({
-      nickname: "",
-    });
+    setNicknameSuccess("");
 
     const result = await checkNickname();
+
     if (result.error) {
-      const error = result.error as CustomError;
-
-      setErrors({
-        nickname: error?.response?.data?.message ?? "닉네임 확인 실패",
+      return setErrors({
+        nickname: getErrorMessage(
+          result.error as CustomError,
+          "닉네임 확인 실패",
+        ),
       });
-
-      return;
     }
-
     if (!result.data) {
-      setErrors({
-        nickname: "이미 사용 중인 닉네임입니다.",
-      });
-
-      return;
+      return setErrors({ nickname: "이미 사용 중인 닉네임입니다." });
     }
 
-    setErrors({
-      nickname: "",
-    });
-
-    setSuccess({
-      nickname: "사용 가능한 닉네임입니다.",
-    });
-
+    setErrors({});
+    setNicknameSuccess("사용 가능한 닉네임입니다.");
     setNicknameChecked(true);
   };
 
   const saveEdit = () => {
-    if (!editingField) {
-      return false;
-    }
+    if (!editingField) return false;
 
     if (editingField === "nickname" && !nicknameChecked) {
-      setErrors((prev) => ({
-        ...prev,
-        nickname: "닉네임 중복 확인을 해주세요.",
-      }));
-
+      setErrors({ nickname: "닉네임 중복 확인을 해주세요." });
       return false;
     }
 
@@ -117,63 +91,25 @@ export function useProfileEdit(user: MyInfoResponse) {
     const payload: MyInfoChangeRequest = { [field]: form[field] };
 
     changeInfo(payload, {
-      onError: (error) => {
-        setErrors((prev) => ({
-          ...prev,
-          [field]: error.response?.data?.message ?? "수정에 실패했습니다.",
-        }));
-      },
-
       onSuccess: () => {
+        reset();
         setEditingField(null);
-
-        setNicknameChecked(false);
-
-        setSuccess((prev) => ({ ...prev, [field]: "" }));
-        setErrors((prev) => ({ ...prev, [field]: "" }));
       },
+      onError: (err) =>
+        setErrors({ [field]: getErrorMessage(err, "수정에 실패했습니다.") }),
     });
 
     return true;
   };
 
-  const cancelEdit = () => {
-    setEditingField(null);
-
-    setNicknameChecked(false);
-
-    setForm({
-      name: user.name,
-      nickname: user.nickname,
-      phoneNumber: user.phoneNumber ?? "",
-    });
-
-    setErrors({
-      name: "",
-      nickname: "",
-      phoneNumber: "",
-    });
-
-    setSuccess({
-      name: "",
-      nickname: "",
-      phoneNumber: "",
-    });
-  };
-
   return {
     form,
-
     errors,
-    success,
-
+    nicknameSuccess,
     editingField,
-
     startEdit,
     handleChange,
-
     checkNicknameDuplicate,
-
     saveEdit,
     cancelEdit,
   };
