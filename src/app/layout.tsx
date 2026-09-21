@@ -60,6 +60,9 @@ export default async function RootLayout({
       className={`${pretendard.variable} ${gmarket.variable} antialiased`}
     >
       <body className="bg-main-bg w-full h-dvh flex justify-center">
+        <a href="#main" className="skip-link">
+          본문으로 건너뛰기
+        </a>
         <Providers>{children}</Providers>
       </body>
     </html>

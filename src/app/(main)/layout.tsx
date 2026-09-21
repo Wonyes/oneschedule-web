@@ -21,7 +21,10 @@ export default async function MainLayout({
       {isLoggedIn && <EventStreamListener />}
       <Header />
       <div className="relative flex-1 flex overflow-hidden">
-        <main className="flex w-full h-full p-1.5 gap-2 overflow-hidden sm:p-4 sm:gap-6">
+        <main
+          id="main"
+          className="flex w-full h-full p-1.5 gap-2 overflow-hidden sm:p-4 sm:gap-6"
+        >
           <Sidebar />
           <div className="scroll-hidden flex-1 min-w-0 min-h-0 h-full overflow-y-auto overscroll-contain px-3 pt-2 sm:px-4 sm:pt-4 pb-[calc(5.5rem+env(safe-area-inset-bottom))] sm:pb-0">
             <div className="mx-auto grid min-h-full w-full max-w-[1200px] grid-cols-[minmax(0,1fr)] grid-rows-[1fr]">

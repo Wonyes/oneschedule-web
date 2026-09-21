@@ -160,6 +160,33 @@
   animation: skeleton-shimmer 1.8s ease-in-out infinite;
 }
 
+/* z-index 단계: 헤더 50 < 드롭다운 60 < 토스트 70 */
+@utility z-dropdown {
+  z-index: 60;
+}
+@utility z-toast {
+  z-index: 70;
+}
+
+/* 키보드 사용자용 본문 건너뛰기. 포커스 전엔 화면 밖 */
+@utility skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 50%;
+  z-index: 70;
+  transform: translate(-50%, -200%);
+  border-radius: 0.75rem;
+  background: var(--accent);
+  color: var(--on-primary);
+  padding: 0.5rem 1rem;
+  font-size: 13px;
+  font-weight: 600;
+  transition: transform 0.15s ease;
+  &:focus-visible {
+    transform: translate(-50%, 0);
+  }
+}
+
 @utility eyebrow {
   display: inline-flex;
   align-items: center;
@@ -264,6 +291,12 @@ html[data-theme-switching] *::after {
   --surface-hover: #262b3b;
   --back: #14161e;
 
+  /* 일정 카테고리. 채움색은 공통, 글자색은 surface 위 ≥4.5:1로 테마별 */
+  --cat-meeting-text: #48bb78;
+  --cat-work-text: #38b2ac;
+  --cat-personal-text: #d69e2e;
+  --cat-important-text: #fc8181;
+
   --neu-light: #2c3142;
   --neu-dark: #0d0e13;
 
@@ -337,6 +370,12 @@ html[data-theme-switching] *::after {
     --surface: #1f2330;
     --surface-hover: #262b3b;
     --back: #14161e;
+
+    /* 일정 카테고리. 채움색은 공통, 글자색은 surface 위 ≥4.5:1로 테마별 */
+    --cat-meeting-text: #48bb78;
+    --cat-work-text: #38b2ac;
+    --cat-personal-text: #d69e2e;
+    --cat-important-text: #fc8181;
 
     --neu-light: #2c3142;
     --neu-dark: #0d0e13;
@@ -412,6 +451,16 @@ html[data-theme-switching] *::after {
   --surface-hover: #f3f5fa;
   --back: #d9dde9;
 
+  /* 일정 카테고리. 채움색은 공통, 글자색은 밝은 surface 위 ≥4.5:1 */
+  --cat-meeting: #2f855a;
+  --cat-work: #319795;
+  --cat-personal: #d69e2e;
+  --cat-important: #e53e3e;
+  --cat-meeting-text: #276749;
+  --cat-work-text: #285e61;
+  --cat-personal-text: #975a16;
+  --cat-important-text: #c53030;
+
   --neu-light: #ffffff;
   /* 불투명 회색이면 배경과 경계가 딱 끊겨 띠처럼 보여서 반투명으로 쓴다 */
   --neu-dark: rgba(141, 154, 186, 0.4);
@@ -451,8 +500,6 @@ html[data-theme-switching] *::after {
   --radius-inner: 0.875rem;
   --radius-nested: 0.75rem;
   --radius-nested-row: 0.5rem;
-
-  --gradient-primary: linear-gradient(135deg, #8b7cf7 0%, #5b4fd6 100%);
 
   --glass-bg: rgba(235, 238, 246, 1);
   --glass-border: rgba(255, 255, 255, 0.7);
@@ -594,8 +641,14 @@ html[data-theme-switching] *::after {
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
   --color-on-primary: var(--on-primary);
-
-  --background-image-gradient-primary: var(--gradient-primary);
+  --color-cat-meeting: var(--cat-meeting);
+  --color-cat-work: var(--cat-work);
+  --color-cat-personal: var(--cat-personal);
+  --color-cat-important: var(--cat-important);
+  --color-cat-meeting-text: var(--cat-meeting-text);
+  --color-cat-work-text: var(--cat-work-text);
+  --color-cat-personal-text: var(--cat-personal-text);
+  --color-cat-important-text: var(--cat-important-text);
 
   --shadow-soft: var(--soft);
 }

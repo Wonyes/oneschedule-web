@@ -19,7 +19,7 @@ export default function ToastContent({ message }: ToastContentProps) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -10, scale: 0.97, transition: fadeQuick }}
       transition={springSnappy}
-      className="neu-float fixed inset-x-4 top-[calc(env(safe-area-inset-top)+5rem)] z-[10000] mx-auto flex w-fit max-w-full items-center gap-2.5 rounded-full bg-surface py-2.5 pl-3 pr-4"
+      className="neu-float fixed inset-x-4 top-[calc(env(safe-area-inset-top)+5rem)] z-toast mx-auto flex w-fit max-w-full items-center gap-2.5 rounded-full bg-surface py-2.5 pl-3 pr-4"
     >
       <motion.span
         initial={{ scale: 0.4 }}

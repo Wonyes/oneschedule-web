@@ -7,9 +7,11 @@ export default function LegalLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-screen w-full flex-col overflow-hidden">
+    <div className="flex h-dvh w-full flex-col overflow-hidden">
       <AuthHeader />
-      <div className="flex-1 overflow-y-auto px-4">{children}</div>
+      <main id="main" className="flex-1 overflow-y-auto px-4">
+        {children}
+      </main>
     </div>
   );
 }
