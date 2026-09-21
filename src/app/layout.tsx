@@ -1,23 +1,22 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Plus_Jakarta_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import { cookies } from "next/headers";
 import "./globals.css";
 import Providers from "./providers";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+// 본문: Pretendard(가변), 제목: GmarketSans — 셀프 호스팅 (CDN @import는 렌더 블로킹이라 제거)
+const pretendard = localFont({
+  src: "./fonts/PretendardVariable.woff2",
+  variable: "--font-pretendard",
+  weight: "45 920",
+  display: "swap",
 });
 
-const geistMono = Geist({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const jakarta = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  variable: "--font-main",
-  weight: ["400", "500", "600", "700"],
+const gmarket = localFont({
+  src: "./fonts/GmarketSansMedium.woff",
+  variable: "--font-gmarket-local",
+  weight: "500",
+  display: "swap",
 });
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://oneschedule.site";
@@ -58,7 +57,7 @@ export default async function RootLayout({
     <html
       lang="ko"
       data-theme={theme}
-      className={`${geistSans.variable} ${geistMono.variable} ${jakarta.variable} antialiased`}
+      className={`${pretendard.variable} ${gmarket.variable} antialiased`}
     >
       <body className="bg-main-bg w-full h-dvh flex justify-center">
         <Providers>{children}</Providers>

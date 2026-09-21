@@ -1,7 +1,7 @@
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import { cookies } from "next/headers";
 
-import GuestHome from "@/src/components/home/GuestHome";
+import GuestHome from "@/src/components/home/guest/GuestHome";
 import HomeContent from "@/src/components/home/HomeContent";
 import { groupkeys } from "@/src/hooks/querys/key/groupKey";
 import { memberskeys } from "@/src/hooks/querys/key/members";

@@ -1,4 +1,6 @@
-import { CalendarClock, CalendarDays, Users } from "lucide-react";
+import { CalendarDays, Users } from "lucide-react";
+
+import BrandMark from "./BrandMark";
 
 export default function BrandHero() {
   return (
@@ -9,7 +11,7 @@ export default function BrandHero() {
         className="neu-float relative z-10 flex h-24 w-24 items-center justify-center rounded-[28px]"
         style={{ "--float-rotate": "-6deg" } as React.CSSProperties}
       >
-        <CalendarClock size={38} strokeWidth={1.5} className="text-accent" />
+        <BrandMark size={56} />
       </div>
 
       <div

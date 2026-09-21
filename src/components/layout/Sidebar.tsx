@@ -58,7 +58,7 @@ export default function Sidebar() {
                   group
                   ${
                     isActive
-                      ? "neu-pressed text-primary"
+                      ? "neu-pressed text-accent"
                       : "neu-btn text-secondary hover:text-foreground"
                   }
                 `}
@@ -75,7 +75,7 @@ export default function Sidebar() {
                       className="
                       absolute bottom-0.5 sm:bottom-auto sm:top-0.5
                       left-1/2 -translate-x-1/2
-                      h-1 w-1 rounded-full bg-primary
+                      h-1 w-1 rounded-full bg-accent
                     "
                     />
                   )}

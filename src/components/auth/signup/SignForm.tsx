@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "motion/react";
 
 import {
@@ -24,6 +25,8 @@ export default function SignForm() {
     isLast,
     verification,
     nicknameChecked,
+    consent,
+    handleConsent,
     handleChange,
     goNext,
     goBack,
@@ -66,6 +69,8 @@ export default function SignForm() {
               errors={errors}
               verification={verification}
               nicknameChecked={nicknameChecked}
+              consent={consent}
+              onConsent={handleConsent}
               onChange={handleChange}
             />
           </StepSlide>
@@ -87,6 +92,31 @@ export default function SignForm() {
           linkHref="/login"
           linkText="로그인"
         />
+
+        <motion.p
+          variants={rise}
+          className="text-center typo-caption-3 text-place-h"
+        >
+          Google로 가입하면{" "}
+          <Link
+            href="/terms"
+            target="_blank"
+            rel="noopener"
+            className="underline underline-offset-2 hover:text-accent"
+          >
+            이용약관
+          </Link>
+          과{" "}
+          <Link
+            href="/privacy"
+            target="_blank"
+            rel="noopener"
+            className="underline underline-offset-2 hover:text-accent"
+          >
+            개인정보처리방침
+          </Link>
+          에 동의한 것으로 봐요.
+        </motion.p>
       </AuthForm>
     </AuthLayoutGrid>
   );

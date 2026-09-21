@@ -78,9 +78,9 @@ export default function MonthMobile({
                 className={cn(
                   "flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium transition-colors",
                   isSelected
-                    ? "bg-primary text-on-primary"
+                    ? "bg-accent text-on-primary"
                     : isToday
-                      ? "border border-primary text-primary"
+                      ? "border border-accent text-accent"
                       : getDayColor(date, findHoliday(date, holidays)),
                 )}
               >
@@ -96,7 +96,7 @@ export default function MonthMobile({
                 {dots.map((event) => (
                   <span
                     key={event.id}
-                    className="h-1 w-1 rounded-full bg-primary"
+                    className="h-1 w-1 rounded-full bg-accent"
                     aria-hidden
                   />
                 ))}
@@ -108,7 +108,7 @@ export default function MonthMobile({
 
       <div className="shrink-0 border-t border-divider px-3 py-3">
         <div className="mb-2 flex items-center justify-between">
-          <span className="typo-body-2 font-semibold text-primary">
+          <span className="typo-body-2 font-semibold text-accent">
             {format(selectedDate, "M월 d일 EEEE", { locale: ko })}
           </span>
           <button

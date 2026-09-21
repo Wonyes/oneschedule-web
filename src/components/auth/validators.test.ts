@@ -1,9 +1,8 @@
 import { validatePassword } from "./validators";
 
 describe("validatePassword", () => {
-  const fail = jest.fn(
-    (_field: "password" | "passwordConfirm", _message: string) =>
-      false as const,
+  const fail = jest.fn<false, ["password" | "passwordConfirm", string]>(
+    () => false,
   );
 
   beforeEach(() => fail.mockClear());

@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import { useRouter } from "next/navigation";
 
 import { useForm } from "@/src/hooks/useForm";
@@ -10,6 +12,7 @@ import { getErrorMessage, useAppMutation } from "@/src/types/ErrorResponse";
 import { verificationTypes } from "@/src/types/verification";
 import { EMAIL_PATTERN, useEmailVerification } from "../useEmailVerification";
 import { useNicknameAvailability } from "./useNicknameAvailability";
+import { Consent } from "./ConsentFields";
 import { validatePassword } from "../validators";
 
 export const SIGN_STEPS = [
@@ -30,8 +33,8 @@ export const SIGN_STEPS = [
   },
   {
     key: "phone",
-    title: "전화번호",
-    hint: "선택 사항입니다. 숫자만 입력해 주세요.",
+    title: "전화번호와 약관",
+    hint: "전화번호는 선택이에요. 약관 동의는 필수예요.",
   },
 ] as const;
 
@@ -42,7 +45,8 @@ export type SignField =
   | "passwordConfirm"
   | "name"
   | "nickname"
-  | "phone";
+  | "phone"
+  | "consent";
 
 export type SignErrors = Partial<Record<SignField, string>>;
 
@@ -97,6 +101,12 @@ export function useSignUp() {
       }),
   });
 
+  const [consent, setConsent] = useState<Consent>({ terms: false, privacy: false });
+  const handleConsent = (next: Consent) => {
+    clearError("consent");
+    setConsent(next);
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.target.name as SignField;
 
@@ -131,6 +141,9 @@ export function useSignUp() {
       case 3:
         if (form.phone && !PHONE_PATTERN.test(form.phone)) {
           return fail("phone", "'-' 없이 숫자만 입력해 주세요.");
+        }
+        if (!consent.terms || !consent.privacy) {
+          return fail("consent", "이용약관과 개인정보처리방침에 동의해 주세요.");
         }
         return true;
 
@@ -170,6 +183,8 @@ export function useSignUp() {
     isLast,
     verification,
     nicknameChecked: nickname.available,
+    consent,
+    handleConsent,
     handleChange,
     goNext,
     goBack,

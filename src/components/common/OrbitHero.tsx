@@ -1,6 +1,8 @@
 "use client";
 
-import { Bell, CalendarClock, CalendarDays, MapPin, Users } from "lucide-react";
+import { Bell, CalendarDays, MapPin, Users } from "lucide-react";
+
+import BrandMark from "./BrandMark";
 
 import { useMediaQuery } from "@/src/hooks/useMediaQuery";
 import OrbitRing from "./orbit/OrbitRing";
@@ -17,7 +19,7 @@ export default function OrbitHero() {
       className={wide ? "h-60 w-60" : "h-[168px] w-[168px]"}
       center={
         <div className="neu-float flex h-24 w-24 items-center justify-center rounded-[28px]">
-          <CalendarClock size={38} strokeWidth={1.5} className="text-accent" />
+          <BrandMark size={56} />
         </div>
       }
       items={SATELLITES.map((Icon, i) => ({

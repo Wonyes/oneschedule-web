@@ -3,6 +3,7 @@
 import { Column } from "@/src/components/ui/layout/flex";
 import { Input } from "@/src/components/ui/layout/input";
 import { EmailVerifyFields, NewPasswordFields } from "../AuthFields";
+import ConsentFields, { Consent } from "./ConsentFields";
 import { SignErrors, useSignUp } from "./useSignUp";
 
 type SignStepFieldsProps = {
@@ -11,6 +12,8 @@ type SignStepFieldsProps = {
   errors: SignErrors;
   verification: ReturnType<typeof useSignUp>["verification"];
   nicknameChecked: boolean;
+  consent: Consent;
+  onConsent: (next: Consent) => void;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
@@ -20,6 +23,8 @@ export default function SignStepFields({
   errors,
   verification,
   nicknameChecked,
+  consent,
+  onConsent,
   onChange,
 }: SignStepFieldsProps) {
   switch (step) {
@@ -75,16 +80,23 @@ export default function SignStepFields({
 
     case 3:
       return (
-        <Input
-          name="phone"
-          type="tel"
-          inputMode="numeric"
-          autoComplete="tel"
-          label="전화번호 (선택)"
-          value={form.phone}
-          onChange={onChange}
-          errorMessage={errors.phone}
-        />
+        <Column className="w-full gap-4">
+          <Input
+            name="phone"
+            type="tel"
+            inputMode="numeric"
+            autoComplete="tel"
+            label="전화번호 (선택)"
+            value={form.phone}
+            onChange={onChange}
+            errorMessage={errors.phone}
+          />
+          <ConsentFields
+            value={consent}
+            error={errors.consent}
+            onChange={onConsent}
+          />
+        </Column>
       );
 
     default:

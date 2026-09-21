@@ -40,7 +40,7 @@ export default function WeekMobile({
         <div className="mb-3 flex items-center justify-between">
           <NavButton direction="prev" onClick={onPrev} label="이전 주" />
           <div className="flex items-center gap-2">
-            <span className="typo-body-2 font-semibold text-primary">
+            <span className="typo-body-2 font-semibold text-accent">
               {format(dates[0], "yyyy년 M월")}
             </span>
             <span className="text-xs text-muted">

@@ -1,7 +1,6 @@
 "use client";
 
-import { CalendarClock } from "lucide-react";
-import IconBox from "../../ui/IconBox";
+import BrandMark from "../../common/BrandMark";
 import Link from "next/link";
 import LocationPicker from "./LocationPicker";
 import { Row } from "../../ui/layout/flex";
@@ -15,9 +14,7 @@ export default function Logo() {
         className="flex items-center gap-2 shrink-0"
         aria-label="홈으로 이동"
       >
-        <IconBox size="header">
-          <CalendarClock size={15} strokeWidth={1.75} />
-        </IconBox>
+        <BrandMark size={36} />
 
         <span className="hidden items-baseline gap-1 sm:flex">
           <span className="typo-sub-t-2 font-bold text-foreground tracking-tight">
