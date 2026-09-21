@@ -24,7 +24,7 @@ export default function LegalDoc({
       <header className="mb-8">
         <span className="eyebrow">ONE SCHEDULER</span>
         <h1 className="mt-2 typo-h2 text-foreground">{title}</h1>
-        <p className="mt-1 typo-caption-2 text-muted">시행일 {effectiveDate}</p>
+        <p className="mt-1 text-[13px] text-muted">시행일 {effectiveDate}</p>
       </header>
 
       <div className="flex flex-col gap-7">
@@ -33,7 +33,7 @@ export default function LegalDoc({
             <h2 className="typo-sub-t-1 text-foreground">
               제{i + 1}조 ({section.title})
             </h2>
-            <div className="mt-2 flex flex-col gap-2 typo-caption-1 leading-relaxed text-secondary">
+            <div className="mt-2 flex flex-col gap-2 text-[14px] leading-7 text-secondary">
               {section.body.map((item, j) =>
                 Array.isArray(item) ? (
                   <ol key={j} className="flex list-decimal flex-col gap-1 pl-5">
@@ -50,15 +50,19 @@ export default function LegalDoc({
         ))}
       </div>
 
-      <footer className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-divider pt-5 typo-caption-2 text-muted">
+      <footer className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-divider pt-3 typo-caption-2 text-muted">
         <Link
           href={other.href}
           prefetch
-          className="text-accent hover:underline"
+          className="-mx-2 px-2 py-3 text-accent hover:underline"
         >
           {other.label} 보기
         </Link>
-        <Link href="/login" prefetch className="hover:text-foreground">
+        <Link
+          href="/login"
+          prefetch
+          className="-mx-2 px-2 py-3 hover:text-foreground"
+        >
           돌아가기
         </Link>
       </footer>

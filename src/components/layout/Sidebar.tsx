@@ -50,7 +50,7 @@ export default function Sidebar() {
                   aria-current={isActive ? "page" : undefined}
                   className={`
                   relative
-                  w-10 h-10
+                  w-11 h-11
                   rounded-xl
                   flex items-center justify-center
                   transition-all duration-200

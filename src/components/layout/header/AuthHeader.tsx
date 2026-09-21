@@ -13,7 +13,7 @@ export default function AuthHeader() {
       <Link
         href={isPath}
         prefetch
-        className="neu-btn btn-spring flex items-center gap-2 rounded-xl px-3.5 py-2 typo-caption-2 font-medium text-muted hover:text-foreground"
+        className="neu-btn btn-spring flex h-10 items-center gap-2 rounded-xl px-3.5 typo-caption-2 font-medium text-muted hover:text-foreground"
       >
         <ArrowLeft size={14} />
         {isTitle}

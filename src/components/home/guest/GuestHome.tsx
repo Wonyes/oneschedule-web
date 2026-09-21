@@ -39,12 +39,20 @@ export default function GuestHome() {
 
       <GuestPreview today={today} />
 
-      <p className="flex justify-center gap-3 pb-2 typo-caption-3 text-place-h">
-        <Link href="/terms" prefetch className="hover:text-foreground">
+      <p className="flex items-center justify-center gap-1 typo-caption-3 text-place-h">
+        <Link
+          href="/terms"
+          prefetch
+          className="px-2 py-3 hover:text-foreground"
+        >
           이용약관
         </Link>
         <span aria-hidden>·</span>
-        <Link href="/privacy" prefetch className="hover:text-foreground">
+        <Link
+          href="/privacy"
+          prefetch
+          className="px-2 py-3 hover:text-foreground"
+        >
           개인정보처리방침
         </Link>
       </p>
