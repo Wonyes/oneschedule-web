@@ -47,3 +47,6 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# impeccable(디자인 스킬) 로컬 산출물 — 비평 스냅샷·라이브서버 설정
+.impeccable/
