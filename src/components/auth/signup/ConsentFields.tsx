@@ -99,7 +99,7 @@ function ConsentRow({
           href={link}
           target="_blank"
           rel="noopener"
-          className="shrink-0 typo-caption-3 text-place-h underline-offset-2 hover:text-accent hover:underline"
+          className="shrink-0 px-2 py-3 typo-caption-3 text-place-h hover:text-accent hover:underline"
         >
           보기
         </Link>

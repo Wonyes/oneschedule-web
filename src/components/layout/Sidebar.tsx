@@ -1,18 +1,22 @@
 "use client";
 
-import { Calendar, Home, Users, Settings } from "lucide-react";
+import { Calendar, Home, Lock, Users, Settings } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function Sidebar() {
-  const pathname = usePathname();
+import { useOverlay } from "@/src/hooks/useOverlay";
 
-  const menuItems = [
-    { id: "home", label: "홈", icon: Home, path: "/" },
-    { id: "calendar", label: "캘린더", icon: Calendar, path: "/schedule" },
-    { id: "group", label: "그룹", icon: Users, path: "/group" },
-    { id: "profile", label: "설정", icon: Settings, path: "/profile" },
-  ];
+const MENU = [
+  { id: "home", label: "홈", icon: Home, path: "/" },
+  { id: "calendar", label: "캘린더", icon: Calendar, path: "/schedule" },
+  { id: "group", label: "그룹", icon: Users, path: "/group" },
+  { id: "profile", label: "설정", icon: Settings, path: "/profile" },
+];
+
+/** 비로그인이면 홈 말고는 잠긴 상태로 보여준다. 눌러도 옮기지 않고 안내만 띄운다 */
+export default function Sidebar({ isLoggedIn }: { isLoggedIn: boolean }) {
+  const pathname = usePathname();
+  const { openToast } = useOverlay();
 
   return (
     <>
@@ -34,57 +38,89 @@ export default function Sidebar() {
       >
         <div className="flex flex-row sm:flex-col items-center justify-around sm:justify-start gap-0 sm:gap-6 w-full sm:w-auto">
           <nav className="flex flex-row sm:flex-col justify-around sm:justify-start gap-0 sm:gap-3 w-full sm:w-auto">
-            {menuItems.map((item) => {
-              const Icon = item.icon;
-              const isActive =
-                item.path === "/"
-                  ? pathname === "/"
-                  : pathname.startsWith(item.path);
-
-              return (
-                <Link
-                  key={item.id}
-                  href={item.path}
-                  prefetch
-                  title={item.label}
-                  aria-current={isActive ? "page" : undefined}
-                  className={`
-                  relative
-                  w-11 h-11
-                  rounded-xl
-                  flex items-center justify-center
-                  transition-all duration-200
-                  active:scale-95
-                  group
-                  ${
-                    isActive
-                      ? "neu-pressed text-accent"
-                      : "neu-btn text-secondary hover:text-foreground"
-                  }
-                `}
-                >
-                  <Icon
-                    size={18}
-                    className="
-                    transition-transform
-                    group-hover:scale-110
-                  "
-                  />
-                  {isActive && (
-                    <span
-                      className="
-                      absolute bottom-0.5 sm:bottom-auto sm:top-0.5
-                      left-1/2 -translate-x-1/2
-                      h-1 w-1 rounded-full bg-accent
-                    "
-                    />
-                  )}
-                </Link>
-              );
-            })}
+            {MENU.map((item) => (
+              <NavItem
+                key={item.id}
+                item={item}
+                isActive={
+                  item.path === "/"
+                    ? pathname === "/"
+                    : pathname.startsWith(item.path)
+                }
+                locked={!isLoggedIn && item.path !== "/"}
+                onLockedClick={() =>
+                  openToast({
+                    message: `로그인하면 ${item.label} 화면을 볼 수 있어요.`,
+                  })
+                }
+              />
+            ))}
           </nav>
         </div>
       </aside>
     </>
+  );
+}
+
+function NavItem({
+  item,
+  isActive,
+  locked,
+  onLockedClick,
+}: {
+  item: (typeof MENU)[number];
+  isActive: boolean;
+  locked: boolean;
+  onLockedClick: () => void;
+}) {
+  const Icon = item.icon;
+
+  const className = `
+    relative w-11 h-11 rounded-xl
+    flex items-center justify-center
+    transition-all duration-200 active:scale-95 group
+    ${isActive ? "neu-pressed text-accent" : "neu-btn text-secondary hover:text-foreground"}
+  `;
+
+  const inner = (
+    <>
+      <Icon size={18} className="transition-transform group-hover:scale-110" />
+      {locked && (
+        <span
+          aria-hidden
+          className="neu-flat absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-surface text-place-h"
+        >
+          <Lock size={9} strokeWidth={2.5} />
+        </span>
+      )}
+      {isActive && (
+        <span className="absolute bottom-0.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-accent sm:bottom-auto sm:top-0.5" />
+      )}
+    </>
+  );
+
+  if (locked)
+    return (
+      <button
+        type="button"
+        onClick={onLockedClick}
+        title={`${item.label} (로그인 필요)`}
+        aria-label={`${item.label} — 로그인이 필요해요`}
+        className={className}
+      >
+        {inner}
+      </button>
+    );
+
+  return (
+    <Link
+      href={item.path}
+      prefetch
+      title={item.label}
+      aria-current={isActive ? "page" : undefined}
+      className={className}
+    >
+      {inner}
+    </Link>
   );
 }

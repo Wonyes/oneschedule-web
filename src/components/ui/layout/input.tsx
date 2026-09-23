@@ -124,7 +124,8 @@ export function Input({
                 props.onBlur?.(e);
               }}
               className={cn(
-                "w-full px-1 outline-none typo-caption-2 bg-transparent text-foreground placeholder:text-place-h",
+                // h-full: 상자 전체가 탭 영역이 되도록. 글자 위치는 pt-4와 상쇄돼 그대로다
+                "h-full w-full px-1 outline-none typo-caption-2 bg-transparent text-foreground placeholder:text-place-h",
                 "disabled:text-place-h",
                 label && "pt-4",
               )}

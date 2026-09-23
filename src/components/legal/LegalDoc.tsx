@@ -33,7 +33,7 @@ export default function LegalDoc({
             <h2 className="typo-sub-t-1 text-foreground">
               제{i + 1}조 ({section.title})
             </h2>
-            <div className="mt-2 flex flex-col gap-2 text-[14px] leading-7 text-secondary">
+            <div className="mt-2 flex max-w-[68ch] flex-col gap-2 text-[14px] leading-7 text-secondary">
               {section.body.map((item, j) =>
                 Array.isArray(item) ? (
                   <ol key={j} className="flex list-decimal flex-col gap-1 pl-5">

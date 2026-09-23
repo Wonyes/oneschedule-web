@@ -3,9 +3,8 @@
 import { useMemo } from "react";
 import { endOfDay, format, isSameMonth, startOfDay } from "date-fns";
 import { ko } from "date-fns/locale";
-import { useRouter } from "next/navigation";
-
 import { DayGroup } from "@/src/components/schedule/parts/DayTimeline";
+import { useOverlay } from "@/src/hooks/useOverlay";
 import MonthDayCell from "@/src/components/schedule/view/month/MonthDayCell";
 import WeekdayRow from "@/src/components/schedule/view/month/WeekdayRow";
 import {
@@ -19,11 +18,13 @@ import { demoEvents } from "./demoEvents";
 
 /**
  * 비로그인 홈에서 보여주는 실제 월간 뷰. 달력 컴포넌트를 그대로 쓰고 데이터만 가짜.
- * 어디를 눌러도 로그인으로 보낸다. sm 미만은 오늘·내일 목록으로 대신 보여준다.
+ * 눌러도 페이지를 옮기지 않고 안내만 띄운다 — 구경하던 사람을 예고 없이 로그인 폼으로 보내지 않기 위해.
+ * sm 미만은 오늘·내일 목록으로 대신 보여준다.
  */
 export default function GuestPreview({ today }: { today: Date }) {
-  const router = useRouter();
-  const goLogin = () => router.push("/login");
+  const { openToast } = useOverlay();
+  const hint = () =>
+    openToast({ message: "로그인하면 일정을 직접 추가할 수 있어요." });
 
   const events = useMemo(() => demoEvents(today), [today]);
   const monthDates = useMemo(() => getMonthDates(today), [today]);
@@ -70,9 +71,9 @@ export default function GuestPreview({ today }: { today: Date }) {
                 lanes={lanesByDate.get(date.getTime()) ?? []}
                 inCurrentMonth={isSameMonth(date, today)}
                 holidays={[]}
-                onOpenDay={goLogin}
-                onAdd={goLogin}
-                onOpenEvent={goLogin}
+                onOpenDay={hint}
+                onAdd={hint}
+                onOpenEvent={hint}
               />
             ))}
           </div>
@@ -93,7 +94,7 @@ export default function GuestPreview({ today }: { today: Date }) {
                 startOfDay(date),
                 endOfDay(date),
               ).sort(byStart)}
-              onEventClick={goLogin}
+              onEventClick={hint}
             />
           );
         })}
