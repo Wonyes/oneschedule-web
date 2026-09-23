@@ -683,14 +683,6 @@ html[data-theme-switching] *::after {
   letter-spacing: -0.01em;
 }
 
-@utility typo-h3 {
-  font-family: var(--font-gmarket);
-  font-size: 36px;
-  line-height: 48px;
-  font-weight: 500;
-  letter-spacing: -0.005em;
-}
-
 @utility typo-h4 {
   font-family: var(--font-gmarket);
   font-size: 32px;
@@ -735,18 +727,6 @@ html[data-theme-switching] *::after {
   font-size: 13px;
   line-height: 24px;
   font-weight: 600;
-}
-
-@utility typo-sub-t-4 {
-  font-size: 13px;
-  line-height: 20px;
-  font-weight: 500;
-}
-
-@utility typo-body-1 {
-  font-size: 13px;
-  line-height: 20px;
-  font-weight: 400;
 }
 
 @utility typo-body-2 {

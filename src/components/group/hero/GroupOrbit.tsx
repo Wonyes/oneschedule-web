@@ -75,7 +75,7 @@ export default function GroupOrbit({
       items={items}
       center={
         <>
-          <div className="neu-float flex h-[84px] w-[84px] items-center justify-center overflow-hidden rounded-[28px] typo-h3 font-bold text-accent">
+          <div className="neu-float flex h-[84px] w-[84px] items-center justify-center overflow-hidden rounded-[28px] typo-h4 font-bold text-accent">
             <AvatarImage
               src={imageUrl}
               nickname={name}
