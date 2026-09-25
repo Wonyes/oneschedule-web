@@ -81,6 +81,21 @@ export function useSignUp() {
     onVerified: next,
   });
 
+  /** 가입 API는 토큰을 주지 않는다. 방금 만든 계정으로 바로 로그인해 다시 입력하지 않게 한다 */
+  const { mutate: autoLogin } = useAppMutation({
+    mutationFn: () =>
+      Post({
+        url: "/members/login",
+        body: { email: form.email, password: form.password },
+      }),
+    onSuccess: () => {
+      router.replace("/?welcome=1");
+      router.refresh();
+    },
+    // 계정은 이미 만들어졌으므로 로그인만 실패하면 기존 흐름으로 되돌린다
+    onError: () => router.push("/login?welcome=1"),
+  });
+
   const { mutate: signUp, isPending } = useAppMutation({
     mutationFn: () =>
       Post({
@@ -93,7 +108,7 @@ export function useSignUp() {
           name: form.name,
         },
       }),
-    onSuccess: () => router.push("/login?welcome=1"),
+    onSuccess: () => autoLogin(),
     onError: (err) =>
       openAlert({
         title: "회원가입에 실패하였습니다.",

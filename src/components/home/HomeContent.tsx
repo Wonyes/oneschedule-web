@@ -1,16 +1,34 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { MyInfoResponse } from "@/src/hooks/querys/useMembers";
 import { MyGroupResponse } from "@/src/types/group";
 import GroupQuickLink from "./widgets/GroupQuickLink";
 import HorizonFooter from "@/src/components/layout/HorizonFooter";
+import { useOverlay } from "@/src/hooks/useOverlay";
 import HomeHero from "./hero/HomeHero";
 import MiniCalendar from "./widgets/MiniCalendar";
 import OnboardingChecklist from "./widgets/OnboardingChecklist";
 import RecentNotifications from "./widgets/RecentNotifications";
 import UpcomingSchedules from "./widgets/UpcomingSchedules";
+
+/** 가입 직후 자동 로그인으로 넘어오면 한 번만 반겨준다 (?welcome=1) */
+function useWelcomeToast(nickname: string) {
+  const router = useRouter();
+  const { openToast } = useOverlay();
+  const shown = useRef(false);
+  const welcome = useSearchParams().get("welcome") === "1";
+
+  useEffect(() => {
+    if (!welcome || shown.current) return;
+    shown.current = true;
+
+    openToast({ message: `${nickname}님, 환영해요! 첫 일정을 만들어 보세요.` });
+    router.replace("/"); // 새로고침해도 다시 뜨지 않게 쿼리를 지운다
+  }, [welcome, nickname, openToast, router]);
+}
 
 export default function HomeContent({
   user,
@@ -22,6 +40,8 @@ export default function HomeContent({
   activeGroup?: MyGroupResponse;
 }) {
   const today = useMemo(() => new Date(), []);
+
+  useWelcomeToast(user.nickname);
 
   return (
     <div className="relative flex min-h-full w-full flex-col gap-3 sm:gap-4 lg:gap-6">
