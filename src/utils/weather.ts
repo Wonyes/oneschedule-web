@@ -36,3 +36,29 @@ export function latLngToGrid(lat: number, lng: number) {
     ny: Math.floor(ro - ra * Math.cos(theta) + YO + 0.5),
   };
 }
+
+export type WeatherKind =
+  "rain" | "sleet" | "snow" | "shower" | "sun" | "partly" | "cloud";
+
+/** 기상청 단기예보의 강수형태(PTY)·하늘상태(SKY) 코드를 아이콘 종류로 바꾼다. */
+export const getWeatherKind = (
+  pty: string,
+  sky: string,
+): WeatherKind | null => {
+  const rain: Record<string, WeatherKind> = {
+    "1": "rain",
+    "2": "sleet",
+    "3": "snow",
+    "4": "shower",
+  };
+
+  if (pty !== "0") return rain[pty] ?? null;
+
+  const skyKinds: Record<string, WeatherKind> = {
+    "1": "sun",
+    "3": "partly",
+    "4": "cloud",
+  };
+
+  return skyKinds[sky] ?? null;
+};

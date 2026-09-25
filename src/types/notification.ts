@@ -23,6 +23,8 @@ export interface Notification {
   title: string;
   content: string;
   targetNo: number | null;
+  /** 일정 알림만 채워진다 (YYYY-MM-DD). 클릭하면 그 날짜의 일간 뷰로 */
+  scheduleDate: string | null;
   read: boolean;
   senderNickname: string | null;
   senderProfileImageUrl: string | null;

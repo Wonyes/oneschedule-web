@@ -66,9 +66,12 @@ export const useAllreadNotifications = () => {
   });
 };
 
-/** 알림 종류별 이동 경로. null이면 이동하지 않는다.
- *  targetNo는 전부 groupNo다 — 일정 알림도 날짜를 안 실어 주므로 그룹으로만 보낸다 */
-const notificationHref = ({ type, targetNo }: Notification): string | null => {
+/** 알림 종류별 이동 경로. null이면 이동하지 않는다. targetNo는 전부 groupNo다 */
+const notificationHref = ({
+  type,
+  targetNo,
+  scheduleDate,
+}: Notification): string | null => {
   switch (type) {
     // 내 계정 관련
     case "WELCOME":
@@ -84,6 +87,16 @@ const notificationHref = ({ type, targetNo }: Notification): string | null => {
     // 관리자가 처리할 것이 있는 경우 — 신청 탭으로 바로
     case "GROUP_JOIN_REQUESTED":
       return targetNo ? `/group/${targetNo}?tab=requests` : "/group";
+
+    // 일정 알림 — 날짜를 알면 그 날의 일간 뷰로, 모르면 그룹으로
+    case "GROUP_SCHEDULE_CREATED":
+    case "GROUP_SCHEDULE_UPDATED":
+    case "GROUP_SCHEDULE_REMINDER":
+    case "SCHEDULE_PARTICIPANT_ADDED":
+      if (scheduleDate) {
+        return `/schedule?view=day&date=${scheduleDate}&type=GROUP`;
+      }
+      return targetNo ? `/group/${targetNo}` : "/group";
 
     default:
       return targetNo ? `/group/${targetNo}` : null;
