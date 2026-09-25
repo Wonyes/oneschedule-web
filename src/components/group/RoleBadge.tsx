@@ -5,8 +5,8 @@ import { GroupRole } from "@/src/types/group";
 const BADGE: Partial<
   Record<GroupRole, { icon: typeof Crown; label: string; className: string }>
 > = {
-  SUPER: { icon: Crown, label: "관리자", className: "text-pending-500" },
-  SUB: { icon: Shield, label: "부관리자", className: "text-accent" },
+  SUPER: { icon: Crown, label: "그룹장", className: "text-pending-500" },
+  SUB: { icon: Shield, label: "관리자", className: "text-accent" },
 };
 
 export default function RoleBadge({ role }: { role: GroupRole }) {

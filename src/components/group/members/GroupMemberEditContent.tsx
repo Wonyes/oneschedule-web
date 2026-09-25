@@ -7,16 +7,13 @@ import { useForm } from "@/src/hooks/useForm";
 import { GroupMember, GroupRole } from "@/src/types/group";
 import { Input } from "../../ui/layout/input";
 
-const roleOptions = [
-  {
-    label: "관리자",
-    value: "SUB",
-  },
-  {
-    label: "일반 멤버",
-    value: "MEMBER",
-  },
+const ROLE_OPTIONS = [
+  { label: "관리자", value: "SUB" },
+  { label: "일반 멤버", value: "MEMBER" },
 ];
+
+/** 그룹장 넘기기는 현재 그룹장에게만 보인다 */
+const OWNER_OPTION = { label: "그룹장 넘기기", value: "SUPER" };
 
 interface GroupMemberEditValues {
   memberNo: number;
@@ -32,8 +29,10 @@ export const GroupMemberEditContent = forwardRef<
   GroupMemberEditRef,
   {
     member: GroupMember;
+    /** 보는 사람이 그룹장인가 */
+    owner: boolean;
   }
->(({ member }, ref) => {
+>(({ member, owner }, ref) => {
   const { form, setForm, formChange } = useForm({
     groupRole: member.groupRole as GroupRole,
     position: member.position ?? "",
@@ -60,7 +59,7 @@ export const GroupMemberEditContent = forwardRef<
 
         <Dropdown
           value={form.groupRole}
-          options={roleOptions}
+          options={owner ? [...ROLE_OPTIONS, OWNER_OPTION] : ROLE_OPTIONS}
           onChange={(value) =>
             setForm((prev) => ({
               ...prev,
@@ -69,6 +68,12 @@ export const GroupMemberEditContent = forwardRef<
           }
         />
       </Column>
+
+      {form.groupRole === "SUPER" && (
+        <span className="typo-caption-3 text-error-500">
+          그룹장을 넘기면 나는 일반 멤버가 되고, 되돌릴 수 없어요.
+        </span>
+      )}
 
       <Column className="gap-2 w-full">
         <span className="typo-caption-1 text-muted">직책</span>

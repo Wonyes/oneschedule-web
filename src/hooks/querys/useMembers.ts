@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Get, Patch, Post, Put } from "./useMutations";
+import { Delete, Get, Patch, Post, Put } from "./useMutations";
 import { memberskeys } from "./key/members";
 import { groupkeys } from "./key/groupKey";
 import { useAppMutation } from "@/src/types/ErrorResponse";
@@ -25,21 +25,6 @@ export type MyInfoChangeRequest = {
 type PasswordChangeRequest = {
   currentPassword: string;
   newPassword: string;
-};
-
-export const useEmailCheck = (email: string) => {
-  return useQuery({
-    queryKey: [memberskeys.emailCheck, email],
-    queryFn: () =>
-      Get<boolean>({
-        url: "/members/email-check",
-        params: {
-          email: email,
-        },
-      }),
-    retry: false,
-    enabled: false,
-  });
 };
 
 export const useNicknameCheck = (nickname: string) => {
@@ -82,6 +67,24 @@ export const useLogout = () => {
       Post({
         url: "/members/logout",
       }),
+
+    onSuccess: () => {
+      clearActiveGroup();
+      queryClient.clear();
+      router.push("/");
+      router.refresh();
+    },
+  });
+};
+
+/** 회원 탈퇴. 성공하면 서버가 쿠키를 만료시키므로 캐시만 비우고 홈으로 보낸다 */
+export const useWithdraw = () => {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+  const clearActiveGroup = useActiveGroupStore((s) => s.clearActiveGroup);
+
+  return useAppMutation({
+    mutationFn: () => Delete({ url: "/members" }),
 
     onSuccess: () => {
       clearActiveGroup();

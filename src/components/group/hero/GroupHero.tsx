@@ -92,7 +92,7 @@ export const GroupHero = ({ group }: { group: MyGroupResponse }) => {
                     className="text-pending-500"
                   />
                   <span className="typo-caption-3 font-semibold text-pending-500">
-                    관리자
+                    그룹장
                   </span>
                 </Row>
               )}

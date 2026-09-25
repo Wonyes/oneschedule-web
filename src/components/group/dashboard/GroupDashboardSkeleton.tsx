@@ -11,7 +11,9 @@ import { GROUP_SECTION_HEIGHT } from "./sectionHeight";
 
 function ScheduleSectionSkeleton() {
   return (
-    <div className={`neu-flat flex w-full flex-col rounded-[var(--radius-outer)] p-5 ${GROUP_SECTION_HEIGHT}`}>
+    <div
+      className={`neu-flat flex w-full flex-col rounded-[var(--radius-outer)] p-5 ${GROUP_SECTION_HEIGHT}`}
+    >
       <Row className="mb-4 shrink-0 items-start justify-between gap-3">
         <HeadingSkeleton />
         <Skeleton className="h-9 w-24 shrink-0 rounded-xl" />
@@ -26,7 +28,9 @@ function ScheduleSectionSkeleton() {
 
 function MemberSectionSkeleton({ withTabs }: { withTabs: boolean }) {
   return (
-    <div className={`neu-flat flex w-full flex-col rounded-[var(--radius-outer)] p-5 ${GROUP_SECTION_HEIGHT}`}>
+    <div
+      className={`neu-flat flex w-full flex-col rounded-[var(--radius-outer)] p-5 ${GROUP_SECTION_HEIGHT}`}
+    >
       <HeadingSkeleton className="mb-4 gap-1" />
       {withTabs && (
         <div className="mb-4">

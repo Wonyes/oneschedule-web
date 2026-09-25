@@ -16,16 +16,19 @@ import { useManageMember } from "./useManageMember";
 export default function GroupMemberList({
   members,
   manager,
+  owner,
   groupNo,
 }: {
   members: GroupMember[];
   /** 보는 사람이 관리자면 멤버 관리 메뉴가 보인다 */
   manager: boolean;
+  /** 그룹장만 그룹장을 넘길 수 있다 */
+  owner: boolean;
   groupNo: number;
 }) {
   const { data: myInfo } = useMyInfo();
   const { data: presence } = useMemberPresence(groupNo);
-  const { edit, kick } = useManageMember(groupNo);
+  const { edit, kick } = useManageMember(groupNo, owner);
   const { visible, hasMore, rootRef, sentinelRef } = useIncrementalList(
     members,
     PAGE_SIZE.groupMembers,

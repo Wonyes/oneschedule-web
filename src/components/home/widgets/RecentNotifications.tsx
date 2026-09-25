@@ -12,14 +12,16 @@ import {
 import NotificationItem from "../../notification/NotificationItem";
 import EmptyState from "../../ui/EmptyState";
 
-const SIZE = 4;
+/** 헤더 종과 같은 쿼리를 쓰고 앞에서 몇 개만 보여준다.
+ *  size를 다르게 주면 queryKey가 갈라져 같은 목록을 두 번 받아온다 */
+const SHOW = 4;
 
 /** 다가오는 일정 아래: 최근 알림 몇 개. 전체 목록은 헤더 종 아이콘에서 */
 export default function RecentNotifications() {
-  const { data, isLoading } = useNotification(true, SIZE);
+  const { data, isLoading } = useNotification();
   const open = useOpenNotification();
 
-  const items = data?.pages[0]?.content ?? [];
+  const items = (data?.pages[0]?.content ?? []).slice(0, SHOW);
 
   return (
     <BaseCard className="p-4 sm:p-5">

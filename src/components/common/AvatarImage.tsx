@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, type ReactNode } from "react";
 
 type AvatarImageProps = {
@@ -20,13 +21,17 @@ export default function AvatarImage({
   }
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={src}
-      alt=""
-      referrerPolicy="no-referrer"
-      onError={() => setFailed(true)}
-      className="h-full w-full object-cover"
-    />
+    // fill 은 부모가 relative 여야 해서 여기서 감싼다 (호출부는 크기만 정한다)
+    <span className="relative block h-full w-full">
+      <Image
+        src={src}
+        alt=""
+        fill
+        sizes="96px"
+        referrerPolicy="no-referrer"
+        onError={() => setFailed(true)}
+        className="object-cover"
+      />
+    </span>
   );
 }

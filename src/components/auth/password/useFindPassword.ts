@@ -25,7 +25,6 @@ export const FIND_STEPS = [
 ] as const;
 
 export type FindField = "email" | "emailCode" | "password" | "passwordConfirm";
-export type FindErrors = Partial<Record<FindField, string>>;
 
 export function useFindPassword() {
   const router = useRouter();

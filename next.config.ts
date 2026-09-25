@@ -29,8 +29,9 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
+        // 프로필·그룹 이미지 업로드 저장소 (네이버)
         protocol: "https",
-        hostname: "cdn-lostark.game.onstove.com",
+        hostname: "shop-phinf.pstatic.net",
         pathname: "/**",
       },
     ],

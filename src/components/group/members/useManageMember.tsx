@@ -14,7 +14,7 @@ import {
 } from "./GroupMemberEditContent";
 
 /** 관리자의 멤버 수정(모달) · 내보내기(확인창) */
-export function useManageMember(groupNo: number) {
+export function useManageMember(groupNo: number, owner = false) {
   const queryClient = useQueryClient();
   const { openModal, openToast, openConfirm, closeModal } = useOverlay();
   const editRef = useRef<GroupMemberEditRef>(null);
@@ -60,10 +60,27 @@ export function useManageMember(groupNo: number) {
   const edit = (member: GroupMember) =>
     openModal({
       title: "멤버 관리",
-      content: () => <GroupMemberEditContent ref={editRef} member={member} />,
+      content: () => (
+        <GroupMemberEditContent ref={editRef} member={member} owner={owner} />
+      ),
       mainBtn: "저장",
       subBtn: "취소",
-      onFunc: () => editRef.current?.submit(update),
+      onFunc: () =>
+        editRef.current?.submit((data) => {
+          // 그룹장 넘기기는 되돌릴 수 없어 한 번 더 묻는다
+          if (data.groupRole === "SUPER") {
+            closeModal();
+            openConfirm({
+              title: "그룹장 넘기기",
+              message: `${member.nickname}님에게 그룹장을 넘길까요? 나는 일반 멤버가 되고 되돌릴 수 없어요.`,
+              mainBtn: "넘기기",
+              subBtn: "취소",
+              onFunc: () => update(data),
+            });
+            return;
+          }
+          update(data);
+        }),
     });
 
   const kick = (member: GroupMember) =>

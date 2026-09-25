@@ -79,7 +79,7 @@ export default function GroupActivitySection({
             {recent.map((schedule) => {
               const style =
                 EVENT_STYLES[schedule.category as keyof typeof EVENT_STYLES];
-              const author = schedule.author ?? { nickname: "알 수 없음" };
+              const author = schedule.author ?? { nickname: "탈퇴한 사용자" };
               const count = schedule.participants?.length ?? 0;
               const start = new Date(toScheduleEvent(schedule).startDate);
 

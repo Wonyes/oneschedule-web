@@ -62,4 +62,3 @@ export function useScheduleStore<T>(selector?: (state: ScheduleStore) => T) {
 useScheduleStore.getState = store.getState;
 useScheduleStore.setState = store.setState;
 useScheduleStore.subscribe = store.subscribe;
-

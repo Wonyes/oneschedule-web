@@ -93,6 +93,7 @@ export default function GroupMemberSection({
           <GroupMemberList
             members={group.members}
             manager={manager}
+            owner={owner}
             groupNo={group.groupNo}
           />
         )}

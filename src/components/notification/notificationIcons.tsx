@@ -4,6 +4,7 @@ import {
   CalendarMinus,
   CalendarPlus,
   Check,
+  Crown,
   KeyRound,
   LogOut,
   Pencil,
@@ -57,6 +58,10 @@ const ICONS: Record<NotificationType, IconSpec> = {
   },
   GROUP_ROLE_CHANGED: {
     icon: <Shield {...sz} />,
+    tone: "bg-pending-500/15 text-pending-500",
+  },
+  GROUP_OWNER_TRANSFERRED: {
+    icon: <Crown {...sz} />,
     tone: "bg-pending-500/15 text-pending-500",
   },
   GROUP_DISBANDED: {

@@ -69,7 +69,7 @@ export default function ProfileCard({ user }: { user: MyInfoResponse }) {
         <motion.div variants={rise}>
           <Row className="mt-1 flex-wrap justify-center gap-x-4 gap-y-1">
             <Stat label="그룹" value={groups.length} countUp />
-            <Stat label="관리자" value={ownerCount} tone="pending" countUp />
+            <Stat label="그룹장" value={ownerCount} tone="pending" countUp />
             <Stat label="이번 주 일정" value={weekCount} countUp />
           </Row>
         </motion.div>

@@ -14,10 +14,11 @@ export type ScheduleEvent = {
   displayStart?: Date;
   displayEnd?: Date;
   hasConflict?: boolean;
+  /** 개인 일정이거나 작성자가 탈퇴하면 null */
   author: {
     memberNo: number;
     nickname: string;
-  };
+  } | null;
   createdAt: string;
   createdBy?: number;
 };
@@ -50,10 +51,11 @@ export type ScheduleApiResponse = {
   startTime: string;
   endTime: string;
   createdAt: string;
+  /** 개인 일정이거나 작성자가 탈퇴하면 null */
   author: {
     memberNo: number;
     nickname: string;
-  };
+  } | null;
   participants: ScheduleParticipant[];
   type?: ScheduleViewType;
   createdBy?: number;

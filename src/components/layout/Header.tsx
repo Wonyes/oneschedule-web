@@ -20,7 +20,8 @@ async function HeaderAuthResolved() {
 export default async function Header() {
   const cookieStore = await cookies();
   const isLoggedIn = !!cookieStore.get("access-token");
-  const initialTheme = cookieStore.get("theme")?.value === "dark" ? "dark" : "light";
+  const initialTheme =
+    cookieStore.get("theme")?.value === "dark" ? "dark" : "light";
 
   return (
     <header

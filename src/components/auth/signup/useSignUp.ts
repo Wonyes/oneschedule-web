@@ -101,7 +101,10 @@ export function useSignUp() {
       }),
   });
 
-  const [consent, setConsent] = useState<Consent>({ terms: false, privacy: false });
+  const [consent, setConsent] = useState<Consent>({
+    terms: false,
+    privacy: false,
+  });
   const handleConsent = (next: Consent) => {
     clearError("consent");
     setConsent(next);
@@ -143,7 +146,10 @@ export function useSignUp() {
           return fail("phone", "'-' 없이 숫자만 입력해 주세요.");
         }
         if (!consent.terms || !consent.privacy) {
-          return fail("consent", "이용약관과 개인정보처리방침에 동의해 주세요.");
+          return fail(
+            "consent",
+            "이용약관과 개인정보처리방침에 동의해 주세요.",
+          );
         }
         return true;
 

@@ -80,7 +80,11 @@ export function ActivityRowSkeleton() {
 }
 
 /** NotificationItem. compact는 홈 카드의 한 줄 버전 */
-export function NotificationRowSkeleton({ compact = false }: { compact?: boolean }) {
+export function NotificationRowSkeleton({
+  compact = false,
+}: {
+  compact?: boolean;
+}) {
   if (compact) {
     return (
       <Row className="w-full items-center gap-2.5 rounded-lg px-1.5 py-1.5">
