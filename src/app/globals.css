@@ -1,0 +1,789 @@
+@import "tailwindcss";
+
+/* =========================================================
+   THEME
+========================================================= */
+
+@theme {
+  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.18);
+  --shadow-float: 0 12px 28px -10px rgba(0, 0, 0, 0.4);
+}
+
+/* =========================================================
+   SURFACES — 카드는 "배경 위에 떠 있는" 형태로 표현한다.
+   좌상단 밝은 후광 + 우하단 어두운 그림자(이중 그림자) 방식은
+   배경색과 표면색이 다를 때 오히려 움푹 파인 것처럼 읽혀서 쓰지 않는다.
+   깊이는 아래로 떨어지는 단일 방향 그림자로만 만든다.
+   눌린 표현(neu-pressed)은 입력창/그리드처럼 실제로 들어가야 하는 곳에만.
+========================================================= */
+
+@utility neu-flat {
+  background: var(--surface);
+  box-shadow: var(--elevation-1);
+}
+
+@utility neu-float {
+  background: var(--surface);
+  box-shadow: var(--elevation-2);
+}
+
+@utility neu-pressed {
+  background: var(--back);
+  box-shadow: var(--inset-1);
+}
+
+/* 부드러운 accent 글로우. filter: blur()는 테마 전환·스냅샷 때 비싸서 그라데이션으로 대체 */
+@utility glow-blob {
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--accent) 22%, transparent) 0%,
+    color-mix(in srgb, var(--accent) 8%, transparent) 45%,
+    transparent 72%
+  );
+}
+
+@utility neu-input {
+  background: var(--back);
+  box-shadow: var(--inset-1);
+  transition: box-shadow 200ms ease-out;
+
+  &:focus-within {
+    box-shadow:
+      0 0 0 1.5px color-mix(in srgb, var(--accent) 70%, transparent),
+      0 0 0 5px color-mix(in srgb, var(--accent) 14%, transparent);
+  }
+
+  &[data-invalid="true"] {
+    box-shadow:
+      0 0 0 1.5px color-mix(in srgb, var(--error-500) 70%, transparent),
+      0 0 0 5px color-mix(in srgb, var(--error-500) 14%, transparent);
+  }
+}
+
+/* =========================================================
+   GLASSMORPHISM
+   떠 있는 오버레이(모달/시트/드롭다운/플로팅 독) 전용
+========================================================= */
+
+@utility scroll-fade {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    black 20px,
+    black calc(100% - 20px),
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    black 20px,
+    black calc(100% - 20px),
+    transparent 100%
+  );
+}
+
+@utility glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-float);
+}
+
+@utility neu-btn {
+  background: var(--surface);
+
+  box-shadow: var(--elevation-btn);
+
+  transition:
+    transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    background-color 200ms ease,
+    box-shadow 200ms ease;
+
+  &:hover {
+    background: var(--surface-hover);
+    box-shadow: var(--elevation-1);
+  }
+
+  &:active {
+    box-shadow: var(--inset-1);
+  }
+}
+
+@keyframes float-a {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--float-rotate, 0deg));
+  }
+  50% {
+    transform: translateY(-6px) rotate(var(--float-rotate, 0deg));
+  }
+}
+
+@keyframes float-b {
+  0%,
+  100% {
+    transform: translateY(-3px) rotate(var(--float-rotate, 0deg));
+  }
+  50% {
+    transform: translateY(4px) rotate(var(--float-rotate, 0deg));
+  }
+}
+
+@utility animate-float-a {
+  animation: float-a 5s ease-in-out infinite;
+}
+
+@utility animate-float-b {
+  animation: float-b 6s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 150% 0;
+  }
+  100% {
+    background-position: -150% 0;
+  }
+}
+
+/* 로딩 placeholder. 카드와 같은 톤(--surface)에서 살짝 밝은 톤(--surface-hover)이
+   가로로 훑고 지나가서, 정지된 회색 박스보다 "불러오는 중"임이 잘 느껴진다. */
+@utility skeleton {
+  border-radius: var(--radius-inner);
+  background-image: linear-gradient(
+    100deg,
+    var(--surface) 35%,
+    var(--surface-hover) 50%,
+    var(--surface) 65%
+  );
+  background-size: 250% 100%;
+  box-shadow: var(--elevation-1);
+  animation: skeleton-shimmer 1.8s ease-in-out infinite;
+}
+
+/* z-index 단계: 헤더 50 < 드롭다운 60 < 토스트 70 */
+@utility z-dropdown {
+  z-index: 60;
+}
+@utility z-toast {
+  z-index: 70;
+}
+
+/* 키보드 사용자용 본문 건너뛰기. 포커스 전엔 화면 밖 */
+@utility skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 50%;
+  z-index: 70;
+  transform: translate(-50%, -200%);
+  border-radius: 0.75rem;
+  background: var(--accent-strong);
+  color: var(--on-primary);
+  padding: 0.5rem 1rem;
+  font-size: 13px;
+  font-weight: 600;
+  transition: transform 0.15s ease;
+  &:focus-visible {
+    transform: translate(-50%, 0);
+  }
+}
+
+/* 테마 토글 아이콘은 CSS로만 고른다.
+   JS가 현재 테마를 판단해 아이콘을 고르면, 쿠키가 없는 방문자에게서
+   서버(light 가정)와 클라이언트(OS 설정)가 어긋나 하이드레이션이 깨진다.
+   선택자는 위 팔레트 규칙과 똑같이 맞춘다. */
+.theme-icon-dark {
+  display: none;
+}
+
+:root[data-theme="dark"] .theme-icon-light {
+  display: none;
+}
+:root[data-theme="dark"] .theme-icon-dark {
+  display: block;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-icon-light {
+    display: none;
+  }
+  :root:not([data-theme="light"]) .theme-icon-dark {
+    display: block;
+  }
+}
+
+@utility eyebrow {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+/* 테마 전환(원형 뷰 트랜지션) 동안: 새 화면을 정지 텍스처로 유지한다.
+   기본 크로스페이드는 끄고(우리가 clip-path로 직접 애니메이션), 모든 CSS 트랜지션·애니메이션을 멈춘다. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 2;
+}
+html[data-theme-switching] *,
+html[data-theme-switching] *::before,
+html[data-theme-switching] *::after {
+  transition: none !important;
+  animation-play-state: paused !important;
+}
+
+@utility btn-primary {
+  color: var(--on-primary);
+  background: linear-gradient(
+    180deg,
+    var(--accent-strong) 0%,
+    color-mix(in srgb, var(--accent-strong) 86%, black) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.14),
+    0 8px 16px -8px color-mix(in srgb, var(--accent) 70%, transparent);
+  transition:
+    transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 200ms ease,
+    filter 200ms ease;
+
+  &:hover {
+    filter: brightness(1.06);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.32),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.14),
+      0 10px 20px -8px color-mix(in srgb, var(--accent) 80%, transparent);
+  }
+
+  &:active {
+    transform: translateY(1px);
+    box-shadow:
+      inset 0 2px 6px rgba(0, 0, 0, 0.3),
+      0 2px 6px -4px color-mix(in srgb, var(--accent) 60%, transparent);
+  }
+
+  &:disabled {
+    filter: none;
+  }
+}
+
+@utility btn-spring {
+  transition:
+    transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    background-color 200ms ease,
+    box-shadow 200ms ease,
+    border-color 200ms ease,
+    opacity 200ms ease;
+}
+
+/* =========================================================
+   DARK PALETTE — <html data-theme="dark">일 때만 적용된다.
+   기본값은 아래 :root(라이트)이고, 이 블록이 그 위를 덮는다.
+========================================================= */
+
+:root[data-theme="dark"] {
+  --main-bg: #191c26;
+
+  --surface: #1f2330;
+  --surface-hover: #262b3b;
+  --back: #14161e;
+
+  /* 일정 카테고리. 채움색은 공통, 글자색은 surface 위 ≥4.5:1로 테마별 */
+  --cat-meeting-text: #48bb78;
+  --cat-work-text: #38b2ac;
+  --cat-personal-text: #d69e2e;
+  --cat-important-text: #fc8181;
+
+  --neu-light: #2c3142;
+  --neu-dark: #0d0e13;
+
+  --foreground: #f5f6fb;
+
+  --t-title: #ffffff;
+  --text: #e4e6f0;
+  --muted: #98a0b8;
+  --secondary: #ccd0e0;
+  --place-h: #8a92ad; /* surface 위 4.6:1 — 10px 캡션이 AA를 넘게 */
+
+  --divider: rgba(255, 255, 255, 0.1);
+  --disable: #1e2233;
+  --b-color: rgba(124, 108, 246, 0.32);
+  --table-header: #1e2233;
+
+  --primary-500: #6d5bf2;
+  --success-500: #34d399;
+  --error-500: #f87171;
+  --pending-500: #fbbf24;
+
+  --accent: #7c6cf6;
+  --accent-text: #a89dff; /* 다크 surface 위 텍스트용 ≥5:1 */
+  --accent-strong: #6354e0; /* 흰 글자를 얹는 면(버튼·오늘 배지)용 — 흰색 5.4:1 */
+  --accent-soft: rgba(124, 108, 246, 0.15);
+  --accent-glow: rgba(124, 108, 246, 0.18);
+  --on-primary: #ffffff;
+
+  --blue: #38bdf8;
+  --input: #151824;
+  --line: rgba(255, 255, 255, 0.12);
+  --red: #f87171;
+
+  --soft: 0 10px 30px rgba(0, 0, 0, 0.4);
+
+  --glass-bg: rgba(30, 34, 51, 1);
+  --glass-border: rgba(255, 255, 255, 0.1);
+
+  /* 떠 있는 카드용 그림자. 어두운 배경에서는 그림자만으로는 경계가 약해서
+     아주 옅은 흰 테두리(inset 1px)를 같이 얹어 표면을 분리한다. */
+  /* 뉴모피즘 이중 그림자 + 상단 1px 베벨 하이라이트.
+     베벨(윗면이 빛을 받는 선)이 있어야 같은 그림자라도 "솟았다"로 읽힌다. */
+  --elevation-1:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08), 3px 4px 10px var(--neu-dark),
+    -2px -2px 7px var(--neu-light);
+  --elevation-2:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1), 5px 7px 18px var(--neu-dark),
+    -4px -4px 12px var(--neu-light);
+  --elevation-btn:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07), 2px 3px 7px var(--neu-dark),
+    -2px -2px 5px var(--neu-light);
+  /* 입력창처럼 높이가 낮은 요소에서는 양방향 inset이 서로 겹쳐 통통해 보인다.
+     위에서 떨어지는 그림자 + 얇은 테두리로만 "파인 면"을 표현한다. */
+  --inset-1:
+    inset 0 2px 4px rgba(0, 0, 0, 0.45),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+
+  /* 어두운 배경 위에서는 빛을 "더하는" 방식이라 단색 보라로 충분하다 */
+  --card-glow-size: 16rem;
+  --card-glow: radial-gradient(
+    circle at center,
+    rgba(124, 108, 246, 0.3) 0%,
+    rgba(124, 108, 246, 0.12) 45%,
+    transparent 70%
+  );
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --main-bg: #191c26;
+
+    --surface: #1f2330;
+    --surface-hover: #262b3b;
+    --back: #14161e;
+
+    /* 일정 카테고리. 채움색은 공통, 글자색은 surface 위 ≥4.5:1로 테마별 */
+    --cat-meeting-text: #48bb78;
+    --cat-work-text: #38b2ac;
+    --cat-personal-text: #d69e2e;
+    --cat-important-text: #fc8181;
+
+    --neu-light: #2c3142;
+    --neu-dark: #0d0e13;
+
+    --foreground: #f5f6fb;
+
+    --t-title: #ffffff;
+    --text: #e4e6f0;
+    --muted: #98a0b8;
+    --secondary: #ccd0e0;
+    --place-h: #8a92ad; /* surface 위 4.6:1 — 10px 캡션이 AA를 넘게 */
+
+    --divider: rgba(255, 255, 255, 0.1);
+    --disable: #1e2233;
+    --b-color: rgba(124, 108, 246, 0.32);
+    --table-header: #1e2233;
+
+    --primary-500: #6d5bf2;
+    --success-500: #34d399;
+    --error-500: #f87171;
+    --pending-500: #fbbf24;
+
+    --accent: #7c6cf6;
+    --accent-text: #a89dff;
+    --accent-strong: #6354e0;
+    --accent-soft: rgba(124, 108, 246, 0.15);
+    --accent-glow: rgba(124, 108, 246, 0.18);
+    --on-primary: #ffffff;
+
+    --blue: #38bdf8;
+    --input: #151824;
+    --line: rgba(255, 255, 255, 0.12);
+    --red: #f87171;
+
+    --soft: 0 10px 30px rgba(0, 0, 0, 0.4);
+
+    --glass-bg: rgba(30, 34, 51, 1);
+    --glass-border: rgba(255, 255, 255, 0.1);
+
+    --elevation-1:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08), 3px 4px 10px var(--neu-dark),
+      -2px -2px 7px var(--neu-light);
+    --elevation-2:
+      inset 0 1px 0 rgba(255, 255, 255, 0.1), 5px 7px 18px var(--neu-dark),
+      -4px -4px 12px var(--neu-light);
+    --elevation-btn:
+      inset 0 1px 0 rgba(255, 255, 255, 0.07), 2px 3px 7px var(--neu-dark),
+      -2px -2px 5px var(--neu-light);
+    --inset-1:
+      inset 0 2px 4px rgba(0, 0, 0, 0.45),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+
+    --card-glow-size: 16rem;
+    --card-glow: radial-gradient(
+      circle at center,
+      rgba(124, 108, 246, 0.3) 0%,
+      rgba(124, 108, 246, 0.12) 45%,
+      transparent 70%
+    );
+  }
+}
+
+/* =========================================================
+   LIGHT PALETTE — 기본 테마.
+   data-theme 속성이 없으면(= 쿠키가 없거나 light면) 이 값이 쓰인다.
+========================================================= */
+
+:root {
+  /* 뉴모피즘 유지. 단, 표면을 배경보다 한 단계 밝게 둬야 "솟은 면"으로 읽힌다.
+     배경과 같거나 어두우면 같은 그림자여도 구멍처럼 보인다. */
+  --main-bg: #dfe3ee;
+
+  --surface: #edf0f7;
+  --surface-hover: #f3f5fa;
+  --back: #d9dde9;
+
+  /* 일정 카테고리. 채움색은 공통, 글자색은 밝은 surface 위 ≥4.5:1 */
+  --cat-meeting: #2f855a;
+  --cat-work: #319795;
+  --cat-personal: #d69e2e;
+  --cat-important: #e53e3e;
+  --cat-meeting-text: #276749;
+  --cat-work-text: #285e61;
+  --cat-personal-text: #975a16;
+  --cat-important-text: #c53030;
+
+  --neu-light: #ffffff;
+  /* 불투명 회색이면 배경과 경계가 딱 끊겨 띠처럼 보여서 반투명으로 쓴다 */
+  --neu-dark: rgba(141, 154, 186, 0.4);
+
+  --foreground: #161923;
+
+  --t-title: #0f1117;
+  --text: #262b38;
+  --muted: #5d637d;
+  --secondary: #454b5c;
+  --place-h: #5c637c;
+
+  --divider: rgba(15, 23, 42, 0.08);
+  --disable: #e7eaf1;
+  --b-color: rgba(109, 91, 242, 0.25);
+  --table-header: #f1f3f8;
+
+  --primary-500: #6d5bf2;
+  --success-500: #059669;
+  --error-500: #dc2626;
+  --pending-500: #d97706;
+
+  --accent: #6d5bf2;
+  --accent-text: #5343d4; /* 라이트 surface 위 텍스트용 ≥5:1 */
+  --accent-strong: #6354e0;
+  --accent-soft: rgba(109, 91, 242, 0.1);
+  --accent-glow: rgba(109, 91, 242, 0.16);
+  --on-primary: #ffffff;
+
+  --blue: #0284c7;
+  --input: #ffffff;
+  --line: rgba(15, 23, 42, 0.12);
+  --red: #dc2626;
+
+  --soft: 0 10px 30px rgba(15, 23, 42, 0.1);
+
+  --radius-outer: 1.25rem;
+  --radius-inner: 0.875rem;
+  --radius-nested: 0.75rem;
+  --radius-nested-row: 0.5rem;
+
+  --glass-bg: rgba(235, 238, 246, 1);
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --shadow-float: 0 12px 28px -10px rgba(15, 23, 42, 0.18);
+
+  --elevation-1:
+    inset 0 1px 0 rgba(255, 255, 255, 1), 3px 4px 10px var(--neu-dark),
+    -2px -2px 7px var(--neu-light);
+  --elevation-2:
+    inset 0 1px 0 rgba(255, 255, 255, 1), 5px 7px 18px var(--neu-dark),
+    -4px -4px 12px var(--neu-light);
+  --elevation-btn:
+    inset 0 1px 0 rgba(255, 255, 255, 1), 2px 3px 7px var(--neu-dark),
+    -2px -2px 5px var(--neu-light);
+  --inset-1:
+    inset 0 2px 4px rgba(16, 24, 40, 0.09),
+    inset 0 0 0 1px rgba(16, 24, 40, 0.07);
+
+  /* 흰 배경 위에서는 반투명 보라를 얹어봐야 빛이 아니라 얼룩으로 보인다.
+     채도를 올린 바이올렛→핑크 그라데이션으로 "의도한 색"처럼 읽히게 한다. */
+  --card-glow-size: 15rem;
+  --card-glow: radial-gradient(
+    circle at center,
+    rgba(129, 91, 245, 0.16) 0%,
+    rgba(214, 92, 232, 0.09) 42%,
+    rgba(96, 165, 250, 0.06) 62%,
+    transparent 76%
+  );
+}
+
+/* =========================================================
+   BASE & SCROLLBAR
+========================================================= */
+
+@layer base {
+  html,
+  body {
+    background: var(--main-bg);
+    color: var(--foreground);
+
+    font-family: var(--font-sans);
+
+    min-height: 100dvh;
+
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--accent) 32%, transparent);
+    color: var(--foreground);
+  }
+
+  input,
+  textarea,
+  [contenteditable] {
+    caret-color: var(--accent);
+  }
+
+  :where(input[type="checkbox"], input[type="radio"], progress) {
+    accent-color: var(--accent);
+  }
+
+  a {
+    text-underline-offset: 0.2em;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scroll-stable {
+    scrollbar-gutter: stable;
+  }
+
+  .scroll-hidden {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .scroll-hidden::-webkit-scrollbar {
+    display: none;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--divider);
+    border-radius: 100px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-500);
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--divider) transparent;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+  /* 뉴모피즘 표면 위에서는 기본 포커스 링이 잘 안 보여서 액센트 링으로 대체한다.
+     마우스 클릭 때는 뜨지 않고 키보드 이동일 때만 보인다. */
+  :where(button, a, input, textarea, select, [tabindex]):focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-inner);
+  }
+}
+
+/* =========================================================
+   TAILWIND V4 THEME CONFIGURATION
+========================================================= */
+
+@theme inline {
+  --font-sans: var(--font-pretendard), "Pretendard", sans-serif;
+
+  --radius-card: var(--radius-outer);
+  --radius-nest: var(--radius-nested);
+  --radius-nest-row: var(--radius-nested-row);
+
+  --font-gmarket: var(--font-gmarket-local), "GmarketSans", sans-serif;
+
+  --color-background: var(--main-bg);
+  --color-foreground: var(--foreground);
+
+  --color-muted: var(--muted);
+  --color-primary-500: var(--primary-500);
+  --color-success-500: var(--success-500);
+  --color-error-500: var(--error-500);
+  --color-pending-500: var(--pending-500);
+
+  --color-b-color: var(--b-color);
+  --color-divider: var(--divider);
+  --color-disable: var(--disable);
+  --color-place-h: var(--place-h);
+  --color-line: var(--line);
+
+  --color-red: var(--red);
+  --color-back: var(--back);
+  --color-blue: var(--blue);
+  --color-secondary: var(--secondary);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-main-bg: var(--main-bg);
+  --color-t-title: var(--t-title);
+  --color-table-header: var(--table-header);
+
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-primary: var(--on-primary);
+  --color-cat-meeting: var(--cat-meeting);
+  --color-cat-work: var(--cat-work);
+  --color-cat-personal: var(--cat-personal);
+  --color-cat-important: var(--cat-important);
+  --color-cat-meeting-text: var(--cat-meeting-text);
+  --color-cat-work-text: var(--cat-work-text);
+  --color-cat-personal-text: var(--cat-personal-text);
+  --color-cat-important-text: var(--cat-important-text);
+
+  --shadow-soft: var(--soft);
+}
+
+/* =========================================================
+   TYPOGRAPHY UTILITIES
+========================================================= */
+
+@utility typo-h1 {
+  font-family: var(--font-gmarket);
+  font-size: 48px;
+  line-height: 64px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  /* 모바일: 줄일 수 있는 건 줄인다 */
+  @media (max-width: 639px) {
+    font-size: 30px;
+    line-height: 40px;
+  }
+}
+
+@utility typo-h2 {
+  font-family: var(--font-gmarket);
+  font-size: 40px;
+  line-height: 56px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+@utility typo-h4 {
+  font-family: var(--font-gmarket);
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 500;
+  @media (max-width: 639px) {
+    font-size: 26px;
+    line-height: 32px;
+  }
+}
+
+@utility typo-title-1 {
+  font-family: var(--font-gmarket);
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 500;
+  @media (max-width: 639px) {
+    font-size: 21px;
+    line-height: 28px;
+  }
+}
+
+@utility typo-title-2 {
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 700;
+}
+
+@utility typo-sub-t-1 {
+  font-size: 15px;
+  line-height: 24px;
+  font-weight: 600;
+}
+
+@utility typo-sub-t-2 {
+  font-size: 15px;
+  line-height: 24px;
+  font-weight: 500;
+}
+
+@utility typo-sub-t-3 {
+  font-size: 13px;
+  line-height: 24px;
+  font-weight: 600;
+}
+
+@utility typo-body-2 {
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 500;
+}
+
+@utility typo-caption-1 {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+}
+
+@utility typo-caption-2 {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+}
+
+@utility typo-caption-3 {
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 500;
+}
+
+/* accent를 '글자'로 쓸 때는 대비를 맞춘 별도 토큰(--accent-text). 배경(bg-accent)·테두리는 원래 accent.
+   코어 text-accent가 @utility보다 우선하므로 같은 레이어 뒤에서 덮어쓴다 */
+@layer utilities {
+  .text-accent {
+    color: var(--accent-text);
+  }
+  .text-accent\/80 {
+    color: color-mix(in oklab, var(--accent-text) 80%, transparent);
+  }
+}
