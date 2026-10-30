@@ -3,8 +3,8 @@ import localFont from "next/font/local";
 import { cookies } from "next/headers";
 import "./globals.css";
 import Providers from "./providers";
+import StoreProvider from "../store/StoreProvider";
 
-// 본문: Pretendard(가변), 제목: GmarketSans — 셀프 호스팅 (CDN @import는 렌더 블로킹이라 제거)
 const pretendard = localFont({
   src: "./fonts/PretendardVariable.woff2",
   variable: "--font-pretendard",
@@ -63,7 +63,9 @@ export default async function RootLayout({
         <a href="#main" className="skip-link">
           본문으로 건너뛰기
         </a>
-        <Providers>{children}</Providers>
+        <StoreProvider>
+          <Providers>{children}</Providers>
+        </StoreProvider>
       </body>
     </html>
   );
